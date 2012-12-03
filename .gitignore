@@ -1,0 +1,14 @@
+~*
+obj
+bin
+_ReSharper.*
+*.user
+*.suo
+*.orig
+*.log
+aspnet_client
+*.userprefs
+*.pidb
+
+# Nuget sources
+src/packages/*/src/*

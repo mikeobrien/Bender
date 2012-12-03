@@ -1,4 +1,3 @@
-Bender
-======
+Bender - Xml De/Serialization for .NET
+=============
 
-Xml De/Serialization for .NET
