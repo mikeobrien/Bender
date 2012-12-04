@@ -15,5 +15,11 @@ namespace Tests
         {
             
         }
+
+        [Test]
+        public void should_be_faster_than_the_fcl_xml_deserializer()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
