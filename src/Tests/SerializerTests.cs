@@ -416,20 +416,15 @@ namespace Tests
                             Value0 = "ssdfsfsfd", Value1 = "sfdsfsdf", Value2 = "adasd", Value3 = "wqerqwe", Value4 = "qwerqwer"}).ToList()
                 }));
             var stopwatch = new Stopwatch();
-            var bender = Serializer.Create();
+
             stopwatch.Start();
-            for (var i = 0; i < 100; i++) bender.Serialize(collection);
+            for (var i = 0; i < 100; i++) Serializer.Create().Serialize(collection);
             stopwatch.Stop();
             long benderSpeed = stopwatch.ElapsedTicks;
+
             var xmlSerializer = new XmlSerializer(typeof(List<SpeedTestCollection>));
             stopwatch.Start();
-            for (var i = 0; i < 100; i++)
-            {
-                var stream = new MemoryStream();
-                xmlSerializer.Serialize(stream, collection);
-                stream.Position = 0;
-                var xml = new StreamReader(stream).ReadToEnd();
-            }
+            for (var i = 0; i < 100; i++) xmlSerializer.Serialize(new MemoryStream(), collection);
             stopwatch.Stop();
             long xmlSerializerSpeed = stopwatch.ElapsedTicks;
 
