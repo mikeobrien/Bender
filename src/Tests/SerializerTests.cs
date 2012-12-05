@@ -23,7 +23,7 @@ namespace Tests
             public byte[] ByteArray { get; set; }
             public sbyte UnsignedByte { get; set; } public sbyte? NullableUnsignedByte { get; set; }
             public short Short { get; set; } public short? NullableShort { get; set; }
-            public uint UnsignedShort { get; set; } public uint? NullableUnsignedShort { get; set; }
+            public ushort UnsignedShort { get; set; } public ushort? NullableUnsignedShort { get; set; }
             public int Integer { get; set; } public int? NullableInteger { get; set; }
             public uint UnsignedInteger { get; set; } public uint? NullableUnsignedInteger { get; set; }
             public long Long { get; set; } public long? NullableLong { get; set; }
@@ -63,7 +63,7 @@ namespace Tests
                     Enum = Enum.Value2, NullableEnum = Enum.Value2
                 };
 
-            var xml = Serializer.Create().Serialize(simpleTypes);
+            var xml = Serializer.Create(x => x.PrettyPrint()).Serialize(simpleTypes);
             Debug.WriteLine(xml);
 
             xml.ShouldNotBeNull();
@@ -144,7 +144,7 @@ namespace Tests
         }
 
         [Test]
-        public void should_exclude_value_when_null()
+        public void should_exclude_element_when_null()
         {
             var xml = Serializer.Create(x => x.ExcludeNullValues()).Serialize(new NullValue());
             XDocument.Parse(xml).Element("NullValue").Element("Value1").ShouldBeNull();
@@ -158,7 +158,7 @@ namespace Tests
         }
 
         [Test]
-        public void should_exclude_type_when_null()
+        public void should_exclude_element_when_type_is_null()
         {
             var xml = Serializer.Create(x => x.ExcludeNullValues()).Serialize(new NullValue());
             XDocument.Parse(xml).Element("NullValue").Element("Value2").ShouldBeNull();
@@ -170,9 +170,9 @@ namespace Tests
         }
 
         [Test]
-        public void should_serialize_custom_format()
+        public void should_serialize_custom_writer()
         {
-            var xml = Serializer.Create(x => x.AddFormatter<DateTime>((p, v) => v.ToString("hh-mm")))
+            var xml = Serializer.Create(x => x.AddWriter<DateTime>((p, v) => v.ToString("hh-mm")))
                 .Serialize(new CustomFormat { Timestamp = DateTime.MaxValue });
             XDocument.Parse(xml).Element("CustomFormat").Element("Timestamp").Value.ShouldEqual("11-59");   
         }
@@ -245,6 +245,26 @@ namespace Tests
             root.Skip(1).First().Element("Value2").Value.ShouldEqual("hai2");
         }
 
+        public class SomeItemsProperty
+        {
+            public SomeItems Items { get; set; }
+        }
+
+        [Test]
+        public void should_serialize_inherited_list_type_property()
+        {
+            var xml = Serializer.Create().Serialize(new SomeItemsProperty
+            {
+                Items = new SomeItems {
+                new GraphNode { Value2 = "hai1" },
+                new GraphNode { Value2 = "hai2" }}
+            });
+            var root = XDocument.Parse(xml).Element("SomeItemsProperty").Element("Items").Elements("GraphNode");
+            root.ShouldNotBeNull();
+            root.First().Element("Value2").Value.ShouldEqual("hai1");
+            root.Skip(1).First().Element("Value2").Value.ShouldEqual("hai2");
+        }
+
         public class CircularReference
         {
             public CircularReferenceNode Value { get; set; }
@@ -257,7 +277,7 @@ namespace Tests
         }
 
         [Test]
-        public void should_not_serialize_circular_reference()
+        public void should_not_serialize_circular_references()
         {
             var graph = new CircularReference { Value = new CircularReferenceNode { Value1 = "hai" } };
             graph.Value.Value2 = graph;
@@ -294,7 +314,7 @@ namespace Tests
         public void should_not_serialize_xml_ignored_members()
         {
             var xml = Serializer.Create().Serialize(new CustomNames { Value1 = "oh", Value2 = "hai" });
-            XDocument.Parse(xml).Element("SomeType").Element("Value2").ShouldNotBeNull();
+            XDocument.Parse(xml).Element("SomeType").Element("Value2").ShouldBeNull();
         }
 
         public class SomeItems : List<GraphNode> {}
@@ -306,23 +326,6 @@ namespace Tests
                 new GraphNode { Value2 = "hai1" },
                 new GraphNode { Value2 = "hai2" }});
             var root = XDocument.Parse(xml).Element("SomeItems").Elements("GraphNode");
-            root.ShouldNotBeNull();
-            root.First().Element("Value2").Value.ShouldEqual("hai1");
-            root.Skip(1).First().Element("Value2").Value.ShouldEqual("hai2"); 
-        }
-
-        public class SomeItemsProperty
-        {
-            public SomeItems Items { get; set; }
-        }
-
-        [Test]
-        public void should_serialize_inherited_list_type_property()
-        {
-            var xml = Serializer.Create().Serialize(new SomeItemsProperty { Items = new SomeItems {
-                new GraphNode { Value2 = "hai1" },
-                new GraphNode { Value2 = "hai2" }}});
-            var root = XDocument.Parse(xml).Element("SomeItemsProperty").Element("Items").Elements("GraphNode");
             root.ShouldNotBeNull();
             root.First().Element("Value2").Value.ShouldEqual("hai1");
             root.Skip(1).First().Element("Value2").Value.ShouldEqual("hai2"); 
@@ -382,19 +385,15 @@ namespace Tests
 
         public class SpeedTestCollection
         {
-            public List<SpeedTestItem> Value0 { get; set; }
-            public List<SpeedTestItem> Value1 { get; set; }
-            public List<SpeedTestItem> Value2 { get; set; }
-            public List<SpeedTestItem> Value3 { get; set; }
+            public List<SpeedTestItem> Value0 { get; set; } public List<SpeedTestItem> Value1 { get; set; }
+            public List<SpeedTestItem> Value2 { get; set; } public List<SpeedTestItem> Value3 { get; set; }
             public List<SpeedTestItem> Value4 { get; set; }
         }
 
         public class SpeedTestItem
         {
-            public string Value0 { get; set; }
-            public string Value1 { get; set; }
-            public string Value2 { get; set; }
-            public string Value3 { get; set; }
+            public string Value0 { get; set; } public string Value1 { get; set; }
+            public string Value2 { get; set; } public string Value3 { get; set; }
             public string Value4 { get; set; }
         }
 
@@ -415,18 +414,19 @@ namespace Tests
                     Value4 = Enumerable.Range(0, 5).Select(y => new SpeedTestItem {
                             Value0 = "ssdfsfsfd", Value1 = "sfdsfsdf", Value2 = "adasd", Value3 = "wqerqwe", Value4 = "qwerqwer"}).ToList()
                 }));
+
             var stopwatch = new Stopwatch();
 
             stopwatch.Start();
             for (var i = 0; i < 100; i++) Serializer.Create().Serialize(collection);
             stopwatch.Stop();
-            long benderSpeed = stopwatch.ElapsedTicks;
+            var benderSpeed = stopwatch.ElapsedTicks;
 
             var xmlSerializer = new XmlSerializer(typeof(List<SpeedTestCollection>));
             stopwatch.Start();
             for (var i = 0; i < 100; i++) xmlSerializer.Serialize(new MemoryStream(), collection);
             stopwatch.Stop();
-            long xmlSerializerSpeed = stopwatch.ElapsedTicks;
+            var xmlSerializerSpeed = stopwatch.ElapsedTicks;
 
             Debug.WriteLine("Bender speed (ticks): {0:#,##0}", benderSpeed);
             Debug.WriteLine("XmlSerializer speed (ticks): {0:#,##0}", xmlSerializerSpeed);

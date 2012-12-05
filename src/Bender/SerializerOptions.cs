@@ -1,43 +1,57 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Bender
 {
     public class SerializerOptions
     {
-        private readonly Dictionary<Type, Func<PropertyInfo, object, string>> _formatters = 
-            new Dictionary<Type, Func<PropertyInfo, object, string>>();
+        private readonly Options _options;
 
-        public SerializerOptions()
+        public SerializerOptions(Options options)
         {
-            ExcludedTypes = new List<Func<Type, bool>>();
-            AddFormatter<byte[]>((p, v) => Convert.ToBase64String(v));
-            AddFormatter<bool>((p, v) => v.ToString().ToLower());
-            AddFormatter<bool?>((p, v) => v.HasValue ? v.ToString().ToLower() : "");
-            DefaultGenericTypeNameFormat = "{0}Of{1}";
-            DefaultGenericListNameFormat = "ArrayOf{0}";
+            _options = options;
         }
 
-        public bool PrettyPrint { get; set; }
-        public bool ExcludeNullValues { get; set; }
-        public List<Func<Type, bool>> ExcludedTypes { get; set; }
-        public string DefaultGenericTypeNameFormat { get; set; }
-        public string DefaultGenericListNameFormat { get; set; }
-
-        public bool HasFormatter(Type type)
+        public SerializerOptions PrettyPrint()
         {
-            return _formatters.ContainsKey(type);
+            _options.PrettyPrint = true;
+            return this;
         }
 
-        public Func<PropertyInfo, object, string> GetFormatter(Type type)
+        public SerializerOptions ExcludeNullValues()
         {
-            return _formatters[type];
+            _options.ExcludeNullValues = true;
+            return this;
         }
 
-        public void AddFormatter<T>(Func<PropertyInfo, T, string> formatter)
+        public SerializerOptions AddWriter<T>(Func<PropertyInfo, T, string> writter)
         {
-            _formatters.Add(typeof(T), (p, v) => formatter(p, (T)v));
-        } 
+            _options.AddWriter(writter);
+            return this;
+        }
+
+        public SerializerOptions ExcludeTypes(Func<Type, bool> typeFilter)
+        {
+            _options.ExcludedTypes.Add(typeFilter);
+            return this;
+        }
+
+        public SerializerOptions ExcludeType<T>()
+        {
+            _options.ExcludedTypes.Add(x => x == typeof(T));
+            return this;
+        }
+
+        public SerializerOptions WithDefaultGenericTypeNameFormat(string typeNameFormat)
+        {
+            _options.DefaultGenericTypeNameFormat = typeNameFormat;
+            return this;
+        }
+
+        public SerializerOptions WithDefaultGenericListNameFormat(string listNameFormat)
+        {
+            _options.DefaultGenericListNameFormat = listNameFormat;
+            return this;
+        }
     }
 }
