@@ -122,7 +122,7 @@ The following are the deserialization configuration options:
   </tr>
   <tr>
     <td><code>IgnoreTypeElementNames()</code></td>
-    <td>Ignore type elements in the source xml that don't match the type xml name. This applies specifically to the root element and elements in a list. In these two cases the element name is based on the type xml name. By default an exception is thrown if the names do not match.</td>
+    <td>Ignore type element names in the source xml that don't match the type xml name. This applies specifically to the root element and list elements. In these two cases the element name is based on the type xml name. By default an exception is thrown if the element name does not match the type xml name.</td>
   </tr>
 </table>
 
