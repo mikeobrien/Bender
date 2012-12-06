@@ -232,7 +232,7 @@ namespace Tests
         {
             const string xml = @"<root><Timestamp>06197805</Timestamp></root>";
             Deserializer.Create(x => x.AddReader<DateTime>(
-                    (p, v) => DateTime.ParseExact(v, "MMyyyydd", CultureInfo.InvariantCulture)))
+                    (o, p, v) => DateTime.ParseExact(v, "MMyyyydd", CultureInfo.InvariantCulture)))
                 .Deserialize<CustomFormat>(xml).Timestamp.ShouldEqual(DateTime.Parse("6/5/1978"));
         }
 

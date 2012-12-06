@@ -72,7 +72,6 @@ namespace Bender
                 default:
                     if (type.IsTypeOrNullable<Guid>()) return returnDefault ? Guid.Empty : Guid.Parse(value);
                     if (type.IsTypeOrNullable<TimeSpan>()) return returnDefault ? TimeSpan.MinValue : TimeSpan.Parse(value);
-                    if (type == typeof(Uri)) return new Uri(returnDefault ? "http://tempuri.org/" : value);
                     throw new ParseException(type);
             }
         }

@@ -24,7 +24,7 @@ namespace Bender
             return this;
         }
 
-        public SerializerOptions AddWriter<T>(Func<PropertyInfo, T, string> writter)
+        public SerializerOptions AddWriter<T>(Func<Options, PropertyInfo, T, string> writter)
         {
             _options.AddWriter(writter);
             return this;

@@ -12,7 +12,7 @@ namespace Bender
             _options = options;
         }
 
-        public DeserializerOptions AddReader<T>(Func<PropertyInfo, string, T> reader)
+        public DeserializerOptions AddReader<T>(Func<Options, PropertyInfo, string, T> reader)
         {
             _options.AddReader(reader);
             return this;
