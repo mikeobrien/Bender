@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -22,6 +23,16 @@ namespace Bender
             return new Deserializer(options);
         }
 
+        public T Deserialize<T>(Stream stream)
+        {
+            return (T)Deserialize(typeof(T), stream);
+        }
+
+        public object Deserialize(Type type, Stream stream)
+        {
+            return Deserialize(type, XDocument.Load(stream));
+        }
+
         public T Deserialize<T>(string source)
         {
             return (T)Deserialize(typeof(T), source);
@@ -29,13 +40,17 @@ namespace Bender
 
         public object Deserialize(Type type, string source)
         {
-            var document = XDocument.Parse(source);
+            return Deserialize(type, XDocument.Parse(source));
+        }
+
+        private object Deserialize(Type type, XDocument document)
+        {
             var instance = Activator.CreateInstance(type);
             Traverse(instance, document.Root);
             return instance;
         }
 
-        public void Traverse(object @object, XElement element)
+        private void Traverse(object @object, XElement element)
         {
             if (@object.GetType().IsList())
             {

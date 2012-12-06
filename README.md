@@ -33,10 +33,13 @@ To de/serialize, call the respective methods:
 
 ```csharp
 var model = deserializer.Deserialize<YadaModel>("<yada>...</yada>");
+var model = deserializer.Deserialize<YadaModel>(stream);
 
 var model = deserializer.Deserialize(typeof(YadaModel), "<yada>...</yada>");
+var model = deserializer.Deserialize(typeof(YadaModel), stream);
 
 var xml = serializer.Serialize(new YadaModel {...});
+serializer.Serialize(new YadaModel {...}, stream);
 ```
 
 To override de/serialization add a reader or writer:

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -15,10 +16,12 @@ namespace Bender
         }
 
         private readonly Options _options;
+        private SaveOptions _saveOptions;
 
         public Serializer(Options options)
         {
             _options = options;
+            _saveOptions = _options.PrettyPrint ? SaveOptions.None : SaveOptions.DisableFormatting;
         }
 
         public static Serializer Create(Action<SerializerOptions> configure = null)
@@ -28,14 +31,24 @@ namespace Bender
             return new Serializer(options);
         }
 
+        public void Serialize(object @object, Stream stream)
+        {
+            SerializeToDocument(@object).Save(stream, _saveOptions);
+        }
+
         public string Serialize(object @object)
+        {
+            return SerializeToDocument(@object).ToString(_saveOptions);
+        }
+
+        private XDocument SerializeToDocument(object @object)
         {
             var document = new XDocument();
             var type = @object.GetType();
             document.Add(new XElement(type.GetXmlName(
                 _options.DefaultGenericListNameFormat, _options.DefaultGenericTypeNameFormat)));
             Traverse(type, @object, document.Root, new Node());
-            return document.ToString(_options.PrettyPrint ? SaveOptions.None : SaveOptions.DisableFormatting);
+            return document;
         }
 
         private void Traverse(Type type, object @object, XElement element, Node parent)
