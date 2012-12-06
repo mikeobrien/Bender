@@ -76,7 +76,7 @@ nuspec :createSpec => :prepPackage do |nuspec|
    nuspec.iconUrl = "https://github.com/mikeobrien/Bender/raw/master/misc/logo.png"
    nuspec.working_directory = packagePath
    nuspec.output_file = nuspecFilename
-   nuspec.tags = "xml serialization"
+   nuspec.tags = "xml serialization deserialization deserializer serializer"
 end
 
 nugetpack :createPackage => :createSpec do |nugetpack|
