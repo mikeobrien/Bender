@@ -34,12 +34,18 @@ To de/serialize, call the respective methods:
 ```csharp
 var model = deserializer.Deserialize<YadaModel>("<yada>...</yada>");
 var model = deserializer.Deserialize<YadaModel>(stream);
+var model = deserializer.Deserialize<YadaModel>(xdocument);
+var model = deserializer.DeserializeFile<YadaModel>(@"d:\files\file.xml");
 
 var model = deserializer.Deserialize(typeof(YadaModel), "<yada>...</yada>");
 var model = deserializer.Deserialize(typeof(YadaModel), stream);
+var model = deserializer.Deserialize(typeof(YadaModel), xdocument);
+var model = deserializer.DeserializeFile(typeof(YadaModel), @"d:\files\file.xml");
 
-var xml = serializer.Serialize(new YadaModel {...});
+string xml = serializer.Serialize(new YadaModel {...});
+XDocument document = serializer.SerializeAsDocument(new YadaModel {...});
 serializer.Serialize(new YadaModel {...}, stream);
+serializer.Serialize(new YadaModel {...}, @"d:\files\file.xml");
 ```
 
 To override de/serialization add a reader or writer:

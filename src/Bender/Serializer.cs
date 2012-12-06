@@ -33,15 +33,20 @@ namespace Bender
 
         public void Serialize(object @object, Stream stream)
         {
-            SerializeToDocument(@object).Save(stream, _saveOptions);
+            SerializeAsDocument(@object).Save(stream, _saveOptions);
+        }
+
+        public void Serialize(object @object, string path)
+        {
+            SerializeAsDocument(@object).Save(path, _saveOptions);
         }
 
         public string Serialize(object @object)
         {
-            return SerializeToDocument(@object).ToString(_saveOptions);
+            return SerializeAsDocument(@object).ToString(_saveOptions);
         }
 
-        private XDocument SerializeToDocument(object @object)
+        public XDocument SerializeAsDocument(object @object)
         {
             var document = new XDocument();
             var type = @object.GetType();

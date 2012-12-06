@@ -23,6 +23,16 @@ namespace Bender
             return new Deserializer(options);
         }
 
+        public T DeserializeFile<T>(string path)
+        {
+            return (T)DeserializeFile(typeof(T), path);
+        }
+
+        public object DeserializeFile(Type type, string path)
+        {
+            return Deserialize(type, XDocument.Load(path));
+        }
+
         public T Deserialize<T>(Stream stream)
         {
             return (T)Deserialize(typeof(T), stream);
@@ -43,7 +53,12 @@ namespace Bender
             return Deserialize(type, XDocument.Parse(source));
         }
 
-        private object Deserialize(Type type, XDocument document)
+        public object Deserialize<T>(XDocument document)
+        {
+            return Deserialize(typeof (T), document);
+        }
+
+        public object Deserialize(Type type, XDocument document)
         {
             var instance = Activator.CreateInstance(type);
             Traverse(instance, document.Root);
