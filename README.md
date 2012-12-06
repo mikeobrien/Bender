@@ -13,7 +13,7 @@ Bender can be found on nuget:
 Usage
 ------------
 
-The serializer and deserializer can be instantialted by passing in an options object:
+The serializer and deserializer can be instantiated by passing in an options object:
 
 ```csharp
 var serializer = new Serializer(new Options {...});
@@ -29,7 +29,7 @@ var serializer = Serializer.Create(x => x.PrettyPrint().ExcludeNullValues());
 var deserializer = Deserializer.Create(x => x.ExcludeType<Token>().ExcludeType<Password>());
 ```
 
-To de/serialize call the respective methods:
+To de/serialize, call the respective methods:
 
 ```csharp
 var model = deserializer.Deserialize<YadaModel>("<yada>...</yada>");
@@ -39,7 +39,7 @@ var model = deserializer.Deserialize(typeof(YadaModel), "<yada>...</yada>");
 var xml = serializer.Serialize(new YadaModel {...});
 ```
 
-To overried de/serialization add a reader or writer:
+To override de/serialization add a reader or writer:
 
 ```csharp
 var serializer = Serializer.Create(x => x.AddWriter<byte[]>((o, p, v) => Convert.ToBase64String(v)));
@@ -47,7 +47,7 @@ var serializer = Serializer.Create(x => x.AddWriter<byte[]>((o, p, v) => Convert
 var deserializer = Deserializer.Create(x => x.AddReader<byte[]>((o, p, v) => Convert.FromBase64String(v)));
 ```
 
-The first parameter is the `Options` object, the second paramater is the corresponding `PropertyInfo` and the last parameter is the raw value. Simply return the value you want de/serialized. Note: the `byte[]` reader/writer demonstrated above is automatically added by default so you get that behavior by default.
+The first parameter is the `Options` object, the second parameter is the corresponding `PropertyInfo` and the last parameter is the raw value. Simply return the value you want de/serialized. Note: the `byte[]` reader/writer shown above is automatically added by default so you get that behavior by default.
 
 Some additional notes:
 
@@ -71,11 +71,11 @@ The following are the common configuration options:
   </tr>
   <tr>
     <td><code>WithDefaultGenericTypeNameFormat(string typeNameFormat)</code></td>
-    <td>This is the format of generic type xml names that haven't been decorated with the `XmlTypeAttribute`. The default is the same as the `XmlSerializer` ([Type]Of[TypeArgs]).</td>
+    <td>This is the format of generic xml type element names that haven't been decorated with the <code>XmlTypeAttribute</code>. The default is the same as the `XmlSerializer` (&lt[TypeName]Of[GenericTypeArgs]/&gt;).</td>
   </tr>
   <tr>
     <td><code>WithDefaultGenericListNameFormat(string listNameFormat)</code></td>
-    <td>This is the format of generic list xml names. The default is the same as the `XmlSerializer` (ArrayOf[TypeArgs]).</td>
+    <td>This is the format of generic xml list element names. The default is the same as the <code>XmlSerializer</code> (&ltArrayOf[GenericTypeArgs]/&gt;).</td>
   </tr>
 </table>
 
@@ -92,7 +92,7 @@ The following are the serialization configuration options:
   </tr>
   <tr>
     <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, string&gt; writter)</code></td>
-    <td>Allows you to override how a value is written.</td>
+    <td>Allows you to override how a value is serialized.</td>
   </tr>
 </table>
 
@@ -101,7 +101,7 @@ The following are the deserialization configuration options:
 <table>
   <tr>
     <td><code>AddReader&lt;T&gt;(Func&lt;Options, PropertyInfo, string, T&gt; reader)</code></td>
-    <td>Allows you to override how a value is read.</td>
+    <td>Allows you to override how a value is deserialized.</td>
   </tr>
   <tr>
     <td><code>DefaultNonNullableTypesWhenEmpty()</code></td>
