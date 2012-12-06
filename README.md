@@ -71,7 +71,7 @@ The following are the common configuration options:
   </tr>
   <tr>
     <td><code>WithDefaultGenericTypeNameFormat(string typeNameFormat)</code></td>
-    <td>This is the format of generic xml type element names that haven't been decorated with the <code>XmlTypeAttribute</code>. The default is the same as the `XmlSerializer` (<code>&lt;[TypeName]Of[GenericTypeArgs]/&gt;</code>).</td>
+    <td>This is the format of generic xml type element names that haven't been decorated with the <code>XmlTypeAttribute</code>. The default is the same as the <code>XmlSerializer</code> (<code>&lt;[TypeName]Of[GenericTypeArgs]/&gt;</code>).</td>
   </tr>
   <tr>
     <td><code>WithDefaultGenericListNameFormat(string listNameFormat)</code></td>
