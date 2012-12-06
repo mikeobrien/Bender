@@ -24,6 +24,18 @@ namespace Bender
             return this;
         }
 
+        public DeserializerOptions IgnoreUnmatchedElements()
+        {
+            _options.IgnoreUnmatchedElements = true;
+            return this;
+        }
+
+        public DeserializerOptions IgnoreTypeElementNames()
+        {
+            _options.IgnoreTypeElementNames = true;
+            return this;
+        }
+
         public DeserializerOptions ExcludeTypes(Func<Type, bool> typeFilter)
         {
             _options.ExcludedTypes.Add(typeFilter);

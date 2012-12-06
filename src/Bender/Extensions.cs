@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace Bender
@@ -119,6 +120,12 @@ namespace Bender
         public static bool HasCustomAttribute<T>(this PropertyInfo property) where T : Attribute
         {
             return property.GetCustomAttribute<T>() != null;
+        }
+
+        public static string GetXPath(this XElement element)
+        {
+            return (element.Ancestors().Any() ? "/" + element.Ancestors().Select(x => x.Name.LocalName)
+                            .Aggregate((a, i) => a + "/" + i) : "") + "/" + element.Name.LocalName;
         }
     }
 }

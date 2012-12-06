@@ -44,7 +44,7 @@ namespace Tests
         public void should_deserialize_simple_types()
         {
             const string xml =
-                @"<root>
+                @"<SimpleTypes>
                       <String>hai</String>
                       <Boolean>true</Boolean><NullableBoolean>true</NullableBoolean>
                       <Byte>1</Byte><NullableByte>1</NullableByte>
@@ -64,7 +64,7 @@ namespace Tests
                       <Guid>00000000-0000-0000-0000-000000000000</Guid><NullableGuid>00000000-0000-0000-0000-000000000000</NullableGuid>
                       <Enum>Value2</Enum><NullableEnum>Value2</NullableEnum>
                       <Uri>http://www.google.com/</Uri>
-                </root>";
+                </SimpleTypes>";
             var result = Deserializer.Create().Deserialize<SimpleTypes>(xml);
             result.String.ShouldEqual("hai");
             result.Boolean.ShouldBeTrue();
@@ -107,7 +107,7 @@ namespace Tests
         public void should_deserialize_simple_empty_types()
         {
             const string xml =
-                @"<root>
+                @"<SimpleTypes>
                       <String></String>
                       <Boolean></Boolean><NullableBoolean></NullableBoolean>
                       <Byte></Byte><NullableByte></NullableByte>
@@ -127,7 +127,7 @@ namespace Tests
                       <Guid></Guid><NullableGuid></NullableGuid>
                       <Enum></Enum><NullableEnum></NullableEnum>
                       <Uri></Uri>
-                </root>";
+                </SimpleTypes>";
             var result = Deserializer.Create(x => x.DefaultNonNullableTypesWhenEmpty()).Deserialize<SimpleTypes>(xml);
             result.String.ShouldBeEmpty();
             result.Boolean.ShouldBeFalse();
@@ -169,7 +169,7 @@ namespace Tests
         [Test]
         public void should_throw_format_exception_when_value_is_empty_and_not_set_to_use_default()
         {
-            const string xml = @"<root><Boolean></Boolean></root>";
+            const string xml = @"<SimpleTypes><Boolean></Boolean></SimpleTypes>";
             Assert.Throws<FormatException>(() => Deserializer.Create().Deserialize<SimpleTypes>(xml));
         }
 
@@ -186,14 +186,14 @@ namespace Tests
         [Test]
         public void should_deserialize_graph()
         {
-            const string xml = @"<root><Value1><Value2>hai</Value2></Value1></root>";
+            const string xml = @"<Graph><Value1><Value2>hai</Value2></Value1></Graph>";
             Deserializer.Create().Deserialize<Graph>(xml).Value1.Value2.ShouldEqual("hai");
         }
 
         [Test]
         public void should_exclude_types()
         {
-            const string xml = @"<root><Value1><Value2>hai</Value2></Value1></root>";
+            const string xml = @"<Graph><Value1><Value2>hai</Value2></Value1></Graph>";
             Deserializer.Create(x => x.ExcludeType<GraphNode>()).Deserialize<Graph>(xml).Value1.ShouldBeNull();
         }
 
@@ -207,19 +207,19 @@ namespace Tests
         [Test]
         public void should_set_type_with_missing_element_to_null()
         {
-            Deserializer.Create().Deserialize<NullValue>("<root></root>").Value2.ShouldBeNull();
+            Deserializer.Create().Deserialize<NullValue>("<NullValue></NullValue>").Value2.ShouldBeNull();
         }
 
         [Test]
         public void should_set_value_with_missing_element_to_default()
         {
-            Deserializer.Create().Deserialize<NullValue>("<root></root>").Value3.ShouldEqual(0);
+            Deserializer.Create().Deserialize<NullValue>("<NullValue></NullValue>").Value3.ShouldEqual(0);
         }
 
         [Test]
         public void should_set_nullable_value_with_missing_element_to_null()
         {
-            Deserializer.Create().Deserialize<NullValue>("<root></root>").Value1.ShouldBeNull();
+            Deserializer.Create().Deserialize<NullValue>("<NullValue></NullValue>").Value1.ShouldBeNull();
         }
 
         public class CustomFormat
@@ -230,7 +230,7 @@ namespace Tests
         [Test]
         public void should_deserialize_custom_reader()
         {
-            const string xml = @"<root><Timestamp>06197805</Timestamp></root>";
+            const string xml = @"<CustomFormat><Timestamp>06197805</Timestamp></CustomFormat>";
             Deserializer.Create(x => x.AddReader<DateTime>(
                     (o, p, v) => DateTime.ParseExact(v, "MMyyyydd", CultureInfo.InvariantCulture)))
                 .Deserialize<CustomFormat>(xml).Timestamp.ShouldEqual(DateTime.Parse("6/5/1978"));
@@ -240,10 +240,10 @@ namespace Tests
         public void should_deserialize_list()
         {
             const string xml =
-                @"<root>
+                @"<ArrayOfGraph>
                     <Graph><Value1><Value2>hai1</Value2></Value1></Graph>
                     <Graph><Value1><Value2>hai2</Value2></Value1></Graph>
-                </root>";
+                </ArrayOfGraph>";
             var result = Deserializer.Create().Deserialize<List<Graph>>(xml);
             result.Count.ShouldEqual(2);
             result[0].Value1.Value2.ShouldEqual("hai1");
@@ -259,12 +259,12 @@ namespace Tests
         public void should_deserialize_list_property()
         {
             const string xml =
-                @"<root>
+                @"<ListProperty>
                     <Items>
                         <GraphNode><Value2>hai1</Value2></GraphNode>
                         <GraphNode><Value2>hai2</Value2></GraphNode>
                     </Items>
-                </root>";
+                </ListProperty>";
             var result = Deserializer.Create().Deserialize<ListProperty>(xml).Items;
             result.Count.ShouldEqual(2);
             result[0].Value2.ShouldEqual("hai1");
@@ -279,7 +279,7 @@ namespace Tests
         [Test]
         public void should_deserialize_generic_type()
         {
-            const string xml = @"<root><Value2>67</Value2></root>";
+            const string xml = @"<GraphNodeOfInt32String><Value2>67</Value2></GraphNodeOfInt32String>";
             var result = Deserializer.Create().Deserialize<GraphNode<int, string>>(xml);
             result.Value2.ShouldEqual(67);
         }
@@ -293,12 +293,12 @@ namespace Tests
         public void should_deserialize_inherited_list_type_property()
         {
             const string xml =
-                @"<root>
+                @"<ListProperty>
                     <Items>
                         <GraphNode><Value2>hai1</Value2></GraphNode>
                         <GraphNode><Value2>hai2</Value2></GraphNode>
                     </Items>
-                </root>";
+                </ListProperty>";
             var result = Deserializer.Create().Deserialize<ListProperty>(xml).Items;
             result.Count.ShouldEqual(2);
             result[0].Value2.ShouldEqual("hai1");
@@ -319,10 +319,10 @@ namespace Tests
         public void should_deserialize_xml_type_name()
         {
             const string xml =
-                @"<root>
+                @"<ArrayOfSomeType>
                     <SomeType></SomeType>
                     <SomeType></SomeType>
-                </root>";
+                </ArrayOfSomeType>";
             var result = Deserializer.Create().Deserialize<List<CustomNames>>(xml);
             result.Count.ShouldEqual(2);
         }
@@ -330,7 +330,7 @@ namespace Tests
         [Test]
         public void should_deserialize_xml_element_name()
         {
-            const string xml = @"<root><SomeElement>hai</SomeElement></root>";
+            const string xml = @"<SomeType><SomeElement>hai</SomeElement></SomeType>";
             var result = Deserializer.Create().Deserialize<CustomNames>(xml);
             result.Value1.ShouldEqual("hai");
         }
@@ -338,7 +338,7 @@ namespace Tests
         [Test]
         public void should_not_deserialize_xml_ignored_members()
         {
-            const string xml = @"<root><Value2>hai</Value2></root>";
+            const string xml = @"<SomeType><Value2>hai</Value2></SomeType>";
             var result = Deserializer.Create().Deserialize<CustomNames>(xml);
             result.Value2.ShouldBeNull();
         }
@@ -349,14 +349,66 @@ namespace Tests
         public void should_deserialize_inherited_list_type()
         {
             const string xml =
-                @"<root>
+                @"<SomeItems>
                     <GraphNode><Value2>hai1</Value2></GraphNode>
                     <GraphNode><Value2>hai2</Value2></GraphNode>
-                </root>";
+                </SomeItems>";
             var result = Deserializer.Create().Deserialize<SomeItems>(xml);
             result.Count.ShouldEqual(2);
             result[0].Value2.ShouldEqual("hai1");
             result[1].Value2.ShouldEqual("hai2");
+        }
+
+        [Test]
+        public void should_not_fail_on_unmatched_elements()
+        {
+            const string xml = @"<GraphNode><yada>hai</yada></GraphNode>";
+            GraphNode result = null;
+            Assert.DoesNotThrow(() => result = Deserializer.Create(x => x.IgnoreUnmatchedElements()).Deserialize<GraphNode>(xml));
+            result.ShouldNotBeNull();
+            result.Value2.ShouldBeNull();
+        }
+
+        [Test]
+        public void should_fail_on_unmatched_elements()
+        {
+            const string xml = @"<GraphNode><yada>hai</yada></GraphNode>";
+            Assert.Throws<UnmatchedElementException>(() => Deserializer.Create().Deserialize<GraphNode>(xml));
+        }
+
+        [Test]
+        public void should_not_fail_on_unmatched_root_element()
+        {
+            const string xml = @"<root><Value2>hai</Value2></root>";
+            GraphNode result = null;
+            Assert.DoesNotThrow(() => result = Deserializer.Create(x => x.IgnoreTypeElementNames()).Deserialize<GraphNode>(xml));
+            result.ShouldNotBeNull();
+            result.Value2.ShouldEqual("hai");
+        }
+
+        [Test]
+        public void should_fail_on_unmatched_root_element()
+        {
+            const string xml = @"<root><Value2>hai</Value2></root>";
+            Assert.Throws<UnmatchedElementException>(() => Deserializer.Create().Deserialize<GraphNode>(xml));
+        }
+
+        [Test]
+        public void should_not_fail_on_unmatched_list_element()
+        {
+            const string xml = @"<ArrayOfGraphNode><yada><Value2>hai</Value2></yada></ArrayOfGraphNode>";
+            List<GraphNode> results = null;
+            Assert.DoesNotThrow(() => results = Deserializer.Create(x => x.IgnoreTypeElementNames()).Deserialize<List<GraphNode>>(xml));
+            results.ShouldNotBeNull();
+            results.Count.ShouldEqual(1);
+            results[0].Value2.ShouldEqual("hai");
+        }
+
+        [Test]
+        public void should_fail_on_unmatched_list_element()
+        {
+            const string xml = @"<ArrayOfGraphNode><yada><Value2>hai</Value2></yada></ArrayOfGraphNode>";
+            Assert.Throws<UnmatchedElementException>(() => Deserializer.Create().Deserialize<List<GraphNode>>(xml));
         }
 
         public class SpeedTestCollection

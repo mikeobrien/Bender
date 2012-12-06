@@ -116,6 +116,14 @@ The following are the deserialization configuration options:
     <td><code>DefaultNonNullableTypesWhenEmpty()</code></td>
     <td>Set the property to the default value when the element is empty and the type is non nullable.</td>
   </tr>
+  <tr>
+    <td><code>IgnoreUnmatchedElements()</code></td>
+    <td>Ignore elements in the source xml that don't match properties in the target object. By default an exception is thrown if unmatched elements exist.</td>
+  </tr>
+  <tr>
+    <td><code>IgnoreTypeElementNames()</code></td>
+    <td>Ignore type elements in the source xml that don't match the type xml name. This applies specifically to the root element and elements in a list. In these two cases the element name is based on the type xml name. By default an exception is thrown if the names do not match.</td>
+  </tr>
 </table>
 
 Props

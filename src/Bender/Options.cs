@@ -29,6 +29,8 @@ namespace Bender
 
         // Deserialization specific
         public bool DefaultNonNullableTypesWhenEmpty { get; set; }
+        public bool IgnoreUnmatchedElements { get; set; }
+        public bool IgnoreTypeElementNames { get; set; }
         public Dictionary<Type, Func<Options, PropertyInfo, string, object>> Readers { get; private set; }
 
         public void AddReader<T>(Func<Options, PropertyInfo, string, T> reader)

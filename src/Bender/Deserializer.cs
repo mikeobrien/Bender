@@ -7,6 +7,8 @@ using System.Xml.Serialization;
 
 namespace Bender
 {
+    public class UnmatchedElementException : Exception { public UnmatchedElementException(XElement element) : base(element.GetXPath()) {} }
+
     public class Deserializer
     {
         private readonly Options _options;
@@ -61,6 +63,7 @@ namespace Bender
         public object Deserialize(Type type, XDocument document)
         {
             var instance = Activator.CreateInstance(type);
+            ValidateTypeElementName(type, document.Root);
             Traverse(instance, document.Root);
             return instance;
         }
@@ -70,10 +73,9 @@ namespace Bender
             if (@object.GetType().IsList())
             {
                 var type = @object.GetType().GetListType();
-                foreach (var itemElement in element.Elements(
-                    type.GetXmlName(_options.DefaultGenericListNameFormat, 
-                                        _options.DefaultGenericTypeNameFormat)))
+                foreach (var itemElement in element.Elements())
                 {
+                    ValidateTypeElementName(type, itemElement);
                     var item = Activator.CreateInstance(type);
                     Traverse(item, itemElement);
                     ((IList)@object).Add(item);
@@ -84,7 +86,11 @@ namespace Bender
                 .ToDictionary(x => x.GetXmlName(), x => x);
             foreach (var propertyElement in element.Elements())
             {
-                if (!properties.ContainsKey(propertyElement.Name.LocalName)) continue;
+                if (!properties.ContainsKey(propertyElement.Name.LocalName))
+                {
+                    if (_options.IgnoreUnmatchedElements) continue;
+                    throw new UnmatchedElementException(propertyElement);
+                }
                 var property = properties[propertyElement.Name.LocalName];
                 var propertyType = property.PropertyType;
                 if (_options.ExcludedTypes.Any(x => x(propertyType)) || 
@@ -101,6 +107,14 @@ namespace Bender
                     Traverse(propertyValue, propertyElement);
                 }
             }
+        }
+
+        private void ValidateTypeElementName(Type type, XElement element)
+        {
+            if (!_options.IgnoreTypeElementNames &&
+                type.GetXmlName(_options.DefaultGenericListNameFormat,
+                        _options.DefaultGenericTypeNameFormat) != element.Name.LocalName)
+                throw new UnmatchedElementException(element);
         }
     }
 }
