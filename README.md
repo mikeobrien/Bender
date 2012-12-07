@@ -24,8 +24,10 @@ var deserializer = new Deserializer(new Options {...});
 Or you can use the configuration dsl by calling the static factory method:
 
 ```csharp
+var serializer = Serializer.Create();
 var serializer = Serializer.Create(x => x.PrettyPrint().ExcludeNullValues());
 
+var deserializer = Deserializer.Create();
 var deserializer = Deserializer.Create(x => x.ExcludeType<Token>().ExcludeType<Password>());
 ```
 
