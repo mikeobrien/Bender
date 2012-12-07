@@ -63,6 +63,7 @@ The first parameter is the `Options` object, the second parameter is the corresp
 Some additional notes:
 
 - Bender supports the `XmlTypeAttribute` and `XmlElementAttribute` to override element naming as the `XmlSerializer` does. 
+- Bender supports the `XmlIgnoreAttribute` to ignore properties as the `XmlSerializer` does. 
 - Bender will de/serialize nullable types and enumerations. 
 - Bender de/serializes the following basic types out of the box: `IList<T>`, `String`, `Char`, `Boolean`, `SByte`, `Byte`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Single`, `Double`, `Decimal`, `DateTime`, `Guid`, `TimeSpan`, `byte[]` (As base64) and `Uri`.
     
