@@ -58,7 +58,7 @@ var serializer = Serializer.Create(x => x.AddWriter<byte[]>((o, p, v) => Convert
 var deserializer = Deserializer.Create(x => x.AddReader<byte[]>((o, p, v) => Convert.FromBase64String(v)));
 ```
 
-The first parameter is the `Options` object, the second parameter is the corresponding `PropertyInfo` and the last parameter is the raw value. Simply return the value you want de/serialized. Note: the `byte[]` reader/writer shown above is automatically added by default so you get that behavior out of the box.
+The first parameter is the `Options` object, the second parameter is the corresponding `PropertyInfo` and the last parameter is the raw value. Simply return the de/serialized value. Note: the `byte[]` reader/writer shown above is automatically added by default so you get that behavior out of the box.
 
 Some additional notes:
 
