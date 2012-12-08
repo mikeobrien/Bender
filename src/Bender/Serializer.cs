@@ -86,7 +86,7 @@ namespace Bender
                 element.Add(propertyElement);
 
                 if (_options.Writers.ContainsKey(propertyType)) 
-                    propertyElement.Value = _options.Writers[propertyType](_options, property, propertyValue);
+                    propertyElement.Value = _options.Writers.Write(propertyType, _options, property, propertyValue);
                 else if (propertyType.IsPrimitive || propertyType.IsValueType || propertyType == typeof(string))
                     propertyElement.Value = propertyValue == null ? "" : propertyValue.ToString();
                 else Traverse(propertyType, propertyValue, propertyElement, node);

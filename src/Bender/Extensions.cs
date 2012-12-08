@@ -127,5 +127,29 @@ namespace Bender
             return (element.Ancestors().Any() ? "/" + element.Ancestors().Select(x => x.Name.LocalName)
                             .Aggregate((a, i) => a + "/" + i) : "") + "/" + element.Name.LocalName;
         }
+
+        public static object Read(this Dictionary<Type, Func<Options, PropertyInfo, string, object>> readers,
+            Type type, Options options, PropertyInfo property, string value)
+        {
+            return readers[type](options, property, value);
+        }
+
+        public static string Write(this Dictionary<Type, Func<Options, PropertyInfo, object, string>> writers,
+            Type type, Options options, PropertyInfo property, object value)
+        {
+            return writers[type](options, property, value);
+        }
+
+        public static T Read<T>(this Dictionary<Type, Func<Options, PropertyInfo, string, object>> readers, 
+            Options options, PropertyInfo property, string value)
+        {
+            return (T)readers.Read(typeof(T), options, property, value);
+        }
+
+        public static string Write<T>(this Dictionary<Type, Func<Options, PropertyInfo, object, string>> writers, 
+            Options options, PropertyInfo property, object value)
+        {
+            return writers.Write(typeof(T), options, property, value);
+        }
     }
 }

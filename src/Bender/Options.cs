@@ -20,7 +20,7 @@ namespace Bender
             AddWriter<byte[]>((o, p, v) => Convert.ToBase64String(v));
             AddWriter<Uri>((o, p, v) => v != null ? v.ToString() : "");
             AddWriter<bool>((o, p, v) => v.ToString().ToLower());
-            AddWriter<bool?>((o, p, v) => v.HasValue ? v.ToString().ToLower() : "");
+            AddWriter<bool?>((o, p, v) => v.HasValue ? o.Writers.Write<bool>(o, p, v) : "");
         }
         
         public List<Func<Type, bool>> ExcludedTypes { get; set; }
