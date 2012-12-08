@@ -30,6 +30,12 @@ namespace Bender
             return this;
         }
 
+        public SerializerOptions AddWriter<T>(Func<Options, PropertyInfo, T, string> writer, bool handleNullable) where T : struct
+        {
+            _options.AddWriter(writer, handleNullable);
+            return this;
+        } 
+
         public SerializerOptions ExcludeTypes(Func<Type, bool> typeFilter)
         {
             _options.ExcludedTypes.Add(typeFilter);

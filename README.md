@@ -60,6 +60,22 @@ var deserializer = Deserializer.Create(x => x.AddReader<byte[]>((o, p, v) => Con
 
 The first parameter is the `Options` object, the second parameter is the corresponding `PropertyInfo` and the last parameter is the raw value. Simply return the de/serialized value. Note: the `byte[]` reader/writer shown above is automatically added by default so you get that behavior out of the box.
 
+Bender allows you to override nullable and non-nullable type de/serialization separately if you want to have fine grained control, for example:
+
+```csharp
+var serializer = Serializer.Create(x => x
+    .AddWriter<bool>((o, p, v) => v.ToString().ToLower())
+    .AddWriter<bool?>((o, p, v) => v.HasValue ? v.Value.ToString().ToLower() ? ""));
+```
+
+But most of the time the functionality will be the same for nullable and non nullable readers and writers, save the boilerplate null checking logic. So Bender also allows you to set one reader or writer for both nullable and non-nullable types by passing true to the `handleNullable` parameter:
+
+```csharp
+var serializer = Serializer.Create(x => x.AddWriter<bool>((o, p, v) => v.ToString().ToLower(), true);
+```
+
+Note: the `bool` writer shown above is automatically added by default so you get that behavior out of the box.
+
 Some additional notes:
 
 - Bender supports the `XmlTypeAttribute` and `XmlElementAttribute` to override element naming as the `XmlSerializer` does. 

@@ -18,6 +18,12 @@ namespace Bender
             return this;
         }
 
+        public DeserializerOptions AddReader<T>(Func<Options, PropertyInfo, string, T> reader, bool handleNullable) where T : struct
+        {
+            _options.AddReader(reader, handleNullable);
+            return this;
+        }
+
         public DeserializerOptions DefaultNonNullableTypesWhenEmpty()
         {
             _options.DefaultNonNullableTypesWhenEmpty = true;

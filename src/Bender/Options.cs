@@ -19,8 +19,7 @@ namespace Bender
             Writers = new Dictionary<Type, Func<Options, PropertyInfo, object, string>>();
             AddWriter<byte[]>((o, p, v) => Convert.ToBase64String(v));
             AddWriter<Uri>((o, p, v) => v != null ? v.ToString() : "");
-            AddWriter<bool>((o, p, v) => v.ToString().ToLower());
-            AddWriter<bool?>((o, p, v) => v.HasValue ? o.Writers.Write<bool>(o, p, v) : "");
+            AddWriter<bool>((o, p, v) => v.ToString().ToLower(), true);
         }
         
         public List<Func<Type, bool>> ExcludedTypes { get; set; }
@@ -36,6 +35,12 @@ namespace Bender
         public void AddReader<T>(Func<Options, PropertyInfo, string, T> reader)
         {
             Readers.Add(typeof(T), (o, p, v) => reader(o, p, v));
+        }
+
+        public void AddReader<T>(Func<Options, PropertyInfo, string, T> reader, bool handleNullable) where T : struct
+        {
+            Readers.Add(typeof(T), (o, p, v) => reader(o, p, v));
+            if (handleNullable) Readers.Add(typeof(T?), (o, p, v) => !string.IsNullOrEmpty(v) ? reader(o, p, v) : (T?)null);
         } 
 
         // Serialization specific
@@ -46,6 +51,12 @@ namespace Bender
         public void AddWriter<T>(Func<Options, PropertyInfo, T, string> writer)
         {
             Writers.Add(typeof(T), (o, p, v) => writer(o, p, (T)v));
+        }
+
+        public void AddWriter<T>(Func<Options, PropertyInfo, T, string> writer, bool handleNullable) where T : struct
+        {
+            Writers.Add(typeof(T), (o, p, v) => writer(o, p, (T)v));
+            if (handleNullable) Writers.Add(typeof(T?), (o, p, v) => ((T?)v).HasValue ? writer(o, p, ((T?)v).Value) : "");
         } 
     }
 }
