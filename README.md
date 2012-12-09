@@ -68,7 +68,7 @@ var serializer = Serializer.Create(x => x
     .AddWriter<bool?>((o, p, v) => v.HasValue ? v.Value.ToString().ToLower() ? ""));
 ```
 
-But most of the time the functionality will be the same for nullable and non nullable readers and writers, save the boilerplate null checking logic. So Bender also allows you to set one reader or writer for both nullable and non-nullable types by passing true to the `handleNullable` parameter:
+But most of the time the functionality will be the same for nullable and non nullable readers and writers, save the boilerplate null checking logic. So Bender also allows you to set one reader or writer for both nullable and non-nullable types by passing `true` to the `handleNullable` parameter:
 
 ```csharp
 var serializer = Serializer.Create(x => x.AddWriter<bool>((o, p, v) => v.ToString().ToLower(), true);
