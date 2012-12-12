@@ -179,7 +179,7 @@ namespace Tests
         [Test]
         public void should_serialize_custom_writer()
         {
-            var xml = Serializer.Create(x => x.AddWriter<DateTime>((o, p, v) => v.ToString("hh-mm")))
+            var xml = Serializer.Create(x => x.AddWriter<DateTime>((o, p, v, e) => e.Value = v.ToString("hh-mm")))
                 .Serialize(new CustomFormat { Timestamp = DateTime.MaxValue });
             XDocument.Parse(xml).Element("CustomFormat").Element("Timestamp").Value.ShouldEqual("11-59");   
         }

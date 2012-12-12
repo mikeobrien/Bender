@@ -16,7 +16,7 @@ namespace Bender
         }
 
         private readonly Options _options;
-        private SaveOptions _saveOptions;
+        private readonly SaveOptions _saveOptions;
 
         public Serializer(Options options)
         {
@@ -88,7 +88,7 @@ namespace Bender
                 element.Add(propertyElement);
 
                 if (_options.Writers.ContainsKey(propertyType)) 
-                    propertyElement.Value = _options.Writers[propertyType](_options, property, propertyValue);
+                    _options.Writers[propertyType](_options, property, propertyValue, propertyElement);
                 else if (propertyType.IsPrimitive || propertyType.IsValueType || 
                          propertyType == typeof(string) || propertyType == typeof(object))
                     propertyElement.Value = propertyValue == null ? "" : propertyValue.ToString();

@@ -53,25 +53,28 @@ serializer.Serialize(new YadaModel {...}, @"d:\files\file.xml");
 To override de/serialization add a reader or writer:
 
 ```csharp
-var serializer = Serializer.Create(x => x.AddWriter<byte[]>((o, p, v) => Convert.ToBase64String(v)));
+var serializer = Serializer.Create(x => x
+    .AddWriter<byte[]>((options, property, value, element) => element.Value = Convert.ToBase64String(value)));
 
-var deserializer = Deserializer.Create(x => x.AddReader<byte[]>((o, p, v) => Convert.FromBase64String(v.Value)));
+var deserializer = Deserializer.Create(x => x
+    .AddReader<byte[]>((options, property, element) => Convert.FromBase64String(v.Value)));
 ```
 
-The first parameter is the `Options` object, the second parameter is the corresponding `PropertyInfo` and the last parameter is either the property value for writers or the `XElement` for readers. Simply return the de/serialized value. Note: the `byte[]` reader/writer shown above is automatically added by default so you get that behavior out of the box.
+For both readers and writers, the first parameter is the Bender `Options` object and the second parameter is the corresponding `PropertyInfo`. For writers, the last two parameters are the source property value and the target `XElement`. Here you can fully control the final xml by modifying the `XElement`. In most cases you will probably just set the value of the `XElement` to the value of the source property as demonstrated above. For readers the last parameter is the source `XElement` and the deserialized value is returned. At this point you can fully control the deserialization by reading the source `XElement`. In most cases you will probably just return the value of the element as demonstrated above. Note: the `byte[]` reader/writer shown above is automatically added by default so you get that behavior out of the box.
 
 Bender allows you to override nullable and non-nullable type de/serialization separately if you want to have fine grained control, for example:
 
 ```csharp
 var serializer = Serializer.Create(x => x
-    .AddWriter<bool>((o, p, v) => v.ToString().ToLower())
-    .AddWriter<bool?>((o, p, v) => v.HasValue ? v.Value.ToString().ToLower() ? ""));
+    .AddWriter<bool>((options, property, value, element) => element.Value = value.ToString().ToLower())
+    .AddWriter<bool?>((options, property, value, element) => element.Value = value.HasValue ? value.Value.ToString().ToLower() ? ""));
 ```
 
 But most of the time the functionality will be the same for nullable and non nullable readers and writers, save the boilerplate null checking logic. So Bender also allows you to set one reader or writer for both nullable and non-nullable types by passing `true` to the `handleNullable` parameter:
 
 ```csharp
-var serializer = Serializer.Create(x => x.AddWriter<bool>((o, p, v) => v.ToString().ToLower(), true);
+var serializer = Serializer.Create(x => x
+    .AddWriter<bool>((options, property, value, element) => element.Value = value.ToString().ToLower(), true);
 ```
 
 Note: the `bool` writer shown above is automatically added by default so you get that behavior out of the box.
@@ -81,7 +84,7 @@ Some additional notes:
 - Bender supports the `XmlTypeAttribute` and `XmlElementAttribute` to override element naming as the `XmlSerializer` does. 
 - Bender supports the `XmlIgnoreAttribute` to ignore properties as the `XmlSerializer` does. 
 - Bender will de/serialize nullable types and enumerations. 
-- Bender de/serializes the following basic types out of the box: `IList<T>`, `String`, `Char`, `Boolean`, `SByte`, `Byte`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Single`, `Double`, `Decimal`, `DateTime`, `Guid`, `TimeSpan`, `byte[]` (As base64) and `Uri`.
+- Bender de/serializes the following basic types out of the box: `IList<T>`, `Object`, `String`, `Char`, `Boolean`, `SByte`, `Byte`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Single`, `Double`, `Decimal`, `DateTime`, `Guid`, `TimeSpan`, `byte[]` (As base64) and `Uri`.
     
 Configuration
 ------------
@@ -119,11 +122,11 @@ The following are the serialization configuration options:
     <td>Do not serialize the elements of properties that are null.</td>
   </tr>
   <tr>
-    <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, string&gt; writter)</code></td>
+    <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, XElement&gt; writter)</code></td>
     <td>Allows you to override how a value is serialized.</td>
   </tr>
   <tr>
-    <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, string&gt; writter, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
+    <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, XElement&gt; writter, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
     <td>Allows you to override how both the nullable and non-nullable value is serialized.</td>
   </tr>
 </table>
