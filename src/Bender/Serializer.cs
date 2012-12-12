@@ -79,7 +79,7 @@ namespace Bender
                 if (_options.ExcludedTypes.Any(x => x(propertyType)) ||
                     property.HasCustomAttribute<XmlIgnoreAttribute>()) continue;
 
-                var propertyValue = property.GetValue(@object);
+                var propertyValue = property.GetValue(@object, null);
                 if (propertyValue == null && _options.ExcludeNullValues) continue;
 
                 var propertyElement = new XElement(property.GetXmlName());

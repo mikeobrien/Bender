@@ -21,6 +21,16 @@ namespace Bender
             }
         }
 
+        public static T GetCustomAttribute<T>(this PropertyInfo property) where T : Attribute
+        {
+            return (T)property.GetCustomAttributes(true).FirstOrDefault(x => x.GetType() == typeof(T));
+        }
+
+        public static T GetCustomAttribute<T>(this Type type) where T : Attribute
+        {
+            return (T)type.GetCustomAttributes(true).FirstOrDefault(x => x.GetType() == typeof(T));
+        }
+
         public static string GetXmlName(this PropertyInfo property)
         {
             var elementName = property.GetCustomAttribute<XmlElementAttribute>();
