@@ -15,6 +15,7 @@ namespace Tests
     public class SerializerTests
     {
         public enum Enum { Value1, Value2 }
+        public class Object {}
         public class SimpleTypes
         {
             public string String { get; set; }
@@ -35,7 +36,9 @@ namespace Tests
             public TimeSpan TimeSpan { get; set; } public TimeSpan? NullableTimeSpan { get; set; }
             public Guid Guid { get; set; } public Guid? NullableGuid { get; set; }
             public Enum Enum { get; set; } public Enum? NullableEnum { get; set; }
-            public Uri Uri { get; set; } 
+            public Uri Uri { get; set; }
+            public object Object { get; set; }
+            public object BoxedValue { get; set; }
         }
 
         [Test]
@@ -60,7 +63,9 @@ namespace Tests
                     TimeSpan = TimeSpan.MaxValue, NullableTimeSpan = TimeSpan.MaxValue,
                     Guid = Guid.Empty, NullableGuid = Guid.Empty,
                     Uri = new Uri("http://www.google.com"),
-                    Enum = Enum.Value2, NullableEnum = Enum.Value2
+                    Enum = Enum.Value2, NullableEnum = Enum.Value2,
+                    Object = new Object(),
+                    BoxedValue = Guid.Empty
                 };
 
             var xml = Serializer.Create(x => x.PrettyPrint()).Serialize(simpleTypes);
@@ -87,6 +92,8 @@ namespace Tests
             root.Element("Guid").Value.ShouldEqual(simpleTypes.Guid.ToString());
             root.Element("Enum").Value.ShouldEqual(simpleTypes.Enum.ToString());
             root.Element("Uri").Value.ShouldEqual(simpleTypes.Uri.ToString());
+            root.Element("Object").Value.ShouldBeEmpty();
+            root.Element("BoxedValue").Value.ShouldEqual(Guid.Empty.ToString());
 
             root.Element("NullableBoolean").Value.ShouldEqual(simpleTypes.NullableBoolean.ToString().ToLower());
             root.Element("NullableByte").Value.ShouldEqual(simpleTypes.NullableByte.ToString());

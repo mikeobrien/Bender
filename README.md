@@ -55,10 +55,10 @@ To override de/serialization add a reader or writer:
 ```csharp
 var serializer = Serializer.Create(x => x.AddWriter<byte[]>((o, p, v) => Convert.ToBase64String(v)));
 
-var deserializer = Deserializer.Create(x => x.AddReader<byte[]>((o, p, v) => Convert.FromBase64String(v)));
+var deserializer = Deserializer.Create(x => x.AddReader<byte[]>((o, p, v) => Convert.FromBase64String(v.Value)));
 ```
 
-The first parameter is the `Options` object, the second parameter is the corresponding `PropertyInfo` and the last parameter is the raw value. Simply return the de/serialized value. Note: the `byte[]` reader/writer shown above is automatically added by default so you get that behavior out of the box.
+The first parameter is the `Options` object, the second parameter is the corresponding `PropertyInfo` and the last parameter is either the property value for writers and the `XElement` for readers. Simply return the de/serialized value. Note: the `byte[]` reader/writer shown above is automatically added by default so you get that behavior out of the box.
 
 Bender allows you to override nullable and non-nullable type de/serialization separately if you want to have fine grained control, for example:
 
@@ -122,15 +122,15 @@ The following are the serialization configuration options:
     <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, string&gt; writter)</code></td>
     <td>Allows you to override how a value is serialized.</td>
   </tr>
+  <tr>
+    <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, string&gt; writter, <br/>&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
+    <td>Allows you to override how both the nullable and non-nullable value is serialized.</td>
+  </tr>
 </table>
 
 The following are the deserialization configuration options:
 
 <table>
-  <tr>
-    <td><code>AddReader&lt;T&gt;(Func&lt;Options, PropertyInfo, string, T&gt; reader)</code></td>
-    <td>Allows you to override how a value is deserialized.</td>
-  </tr>
   <tr>
     <td><code>DefaultNonNullableTypesWhenEmpty()</code></td>
     <td>Set the property to the default value when the element is empty and the type is non nullable.</td>
@@ -142,6 +142,14 @@ The following are the deserialization configuration options:
   <tr>
     <td><code>IgnoreTypeElementNames()</code></td>
     <td>Ignore type element names in the source xml that don't match the type xml name. This applies specifically to the root element and list elements. In these two cases the element name is based on the type xml name. By default an exception is thrown if the element name does not match the type xml name.</td>
+  </tr>
+  <tr>
+    <td><code>AddReader&lt;T&gt;(Func&lt;Options, PropertyInfo, XElement, T&gt; reader)</code></td>
+    <td>Allows you to override how a value is deserialized.</td>
+  </tr>
+  <tr>
+    <td><code>AddReader&lt;T&gt;(Func&lt;Options, PropertyInfo, XElement, T&gt; reader, <br/>&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
+    <td>Allows you to override how both the nullable and non-nullable value is deserialized.</td>
   </tr>
 </table>
 

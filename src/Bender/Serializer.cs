@@ -75,11 +75,13 @@ namespace Bender
             var properties = type.GetSerializableProperties();
             foreach (var property in properties)
             {
-                var propertyType = property.PropertyType;
+                var propertyValue = property.GetValue(@object, null);
+                var propertyType = property.PropertyType == typeof(object) && propertyValue != null ? 
+                    propertyValue.GetType() : property.PropertyType;
+
                 if (_options.ExcludedTypes.Any(x => x(propertyType)) ||
                     property.HasCustomAttribute<XmlIgnoreAttribute>()) continue;
 
-                var propertyValue = property.GetValue(@object, null);
                 if (propertyValue == null && _options.ExcludeNullValues) continue;
 
                 var propertyElement = new XElement(property.GetXmlName());
@@ -87,7 +89,8 @@ namespace Bender
 
                 if (_options.Writers.ContainsKey(propertyType)) 
                     propertyElement.Value = _options.Writers[propertyType](_options, property, propertyValue);
-                else if (propertyType.IsPrimitive || propertyType.IsValueType || propertyType == typeof(string))
+                else if (propertyType.IsPrimitive || propertyType.IsValueType || 
+                         propertyType == typeof(string) || propertyType == typeof(object))
                     propertyElement.Value = propertyValue == null ? "" : propertyValue.ToString();
                 else Traverse(propertyType, propertyValue, propertyElement, node);
             }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace Bender
 {
@@ -12,9 +13,9 @@ namespace Bender
             DefaultGenericTypeNameFormat = "{0}Of{1}";
             DefaultGenericListNameFormat = "ArrayOf{0}";
 
-            Readers = new Dictionary<Type, Func<Options, PropertyInfo, string, object>>();
-            AddReader((o, p, v) => Convert.FromBase64String(v));
-            AddReader((o, p, v) => new Uri(o.DefaultNonNullableTypesWhenEmpty && v.IsNullOrEmpty() ? "http://tempuri.org/" : v));
+            Readers = new Dictionary<Type, Func<Options, PropertyInfo, XElement, object>>();
+            AddReader((o, p, v) => Convert.FromBase64String(v.Value));
+            AddReader((o, p, v) => new Uri(o.DefaultNonNullableTypesWhenEmpty && v.Value.IsNullOrEmpty() ? "http://tempuri.org/" : v.Value));
 
             Writers = new Dictionary<Type, Func<Options, PropertyInfo, object, string>>();
             AddWriter<byte[]>((o, p, v) => Convert.ToBase64String(v));
@@ -30,17 +31,17 @@ namespace Bender
         public bool DefaultNonNullableTypesWhenEmpty { get; set; }
         public bool IgnoreUnmatchedElements { get; set; }
         public bool IgnoreTypeElementNames { get; set; }
-        public Dictionary<Type, Func<Options, PropertyInfo, string, object>> Readers { get; private set; }
+        public Dictionary<Type, Func<Options, PropertyInfo, XElement, object>> Readers { get; private set; }
 
-        public void AddReader<T>(Func<Options, PropertyInfo, string, T> reader)
+        public void AddReader<T>(Func<Options, PropertyInfo, XElement, T> reader)
         {
             Readers.Add(typeof(T), (o, p, v) => reader(o, p, v));
         }
 
-        public void AddReader<T>(Func<Options, PropertyInfo, string, T> reader, bool handleNullable) where T : struct
+        public void AddReader<T>(Func<Options, PropertyInfo, XElement, T> reader, bool handleNullable) where T : struct
         {
             Readers.Add(typeof(T), (o, p, v) => reader(o, p, v));
-            if (handleNullable) Readers.Add(typeof(T?), (o, p, v) => !string.IsNullOrEmpty(v) ? reader(o, p, v) : (T?)null);
+            if (handleNullable) Readers.Add(typeof(T?), (o, p, v) => !string.IsNullOrEmpty(v.Value) ? reader(o, p, v) : (T?)null);
         } 
 
         // Serialization specific

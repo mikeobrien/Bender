@@ -38,6 +38,8 @@ namespace Tests
             public Guid Guid { get; set; } public Guid? NullableGuid { get; set; }
             public Enum Enum { get; set; } public Enum? NullableEnum { get; set; }
             public Uri Uri { get; set; }
+            public object Object { get; set; }
+            public object BoxedValue { get; set; }
         }
 
         [Test]
@@ -64,8 +66,10 @@ namespace Tests
                       <Guid>00000000-0000-0000-0000-000000000000</Guid><NullableGuid>00000000-0000-0000-0000-000000000000</NullableGuid>
                       <Enum>Value2</Enum><NullableEnum>Value2</NullableEnum>
                       <Uri>http://www.google.com/</Uri>
+                      <Object><Enum>Value2</Enum><Enum>Value2</Enum></Object>
+                      <BoxedValue>00000000-0000-0000-0000-000000000000</BoxedValue>
                 </SimpleTypes>";
-            var result = Deserializer.Create().Deserialize<SimpleTypes>(xml);
+            var result = Deserializer.Create(x => x.IgnoreUnmatchedElements()).Deserialize<SimpleTypes>(xml);
             result.String.ShouldEqual("hai");
             result.Boolean.ShouldBeTrue();
             result.NullableBoolean.Value.ShouldBeTrue();
@@ -101,6 +105,10 @@ namespace Tests
             result.Enum.ShouldEqual(Enum.Value2);
             result.NullableEnum.Value.ShouldEqual(Enum.Value2);
             result.Uri.ShouldEqual(new Uri("http://www.google.com"));
+            result.Object.ShouldNotBeNull();
+            result.Object.ShouldBeType<XElement>();
+            result.BoxedValue.ShouldNotBeNull();
+            result.BoxedValue.ShouldBeType<XElement>();
         }
 
         [Test]
@@ -232,7 +240,7 @@ namespace Tests
         {
             const string xml = @"<CustomFormat><Timestamp>06197805</Timestamp></CustomFormat>";
             Deserializer.Create(x => x.AddReader<DateTime>(
-                    (o, p, v) => DateTime.ParseExact(v, "MMyyyydd", CultureInfo.InvariantCulture)))
+                    (o, p, v) => DateTime.ParseExact(v.Value, "MMyyyydd", CultureInfo.InvariantCulture)))
                 .Deserialize<CustomFormat>(xml).Timestamp.ShouldEqual(DateTime.Parse("6/5/1978"));
         }
 

@@ -97,9 +97,10 @@ namespace Bender
                     property.HasCustomAttribute<XmlIgnoreAttribute>()) continue;
 
                 if (_options.Readers.ContainsKey(propertyType)) 
-                    property.SetValue(@object, _options.Readers[propertyType](_options, property, propertyElement.Value), null);
+                    property.SetValue(@object, _options.Readers[propertyType](_options, property, propertyElement), null);
                 else if (propertyType.IsPrimitive || propertyType.IsValueType || propertyType == typeof(string))
                     property.SetValue(@object, propertyElement.Value.Parse(propertyType, _options.DefaultNonNullableTypesWhenEmpty), null);
+                else if (propertyType == typeof(object)) property.SetValue(@object, propertyElement, null);
                 else
                 {
                     var propertyValue = Activator.CreateInstance(propertyType);

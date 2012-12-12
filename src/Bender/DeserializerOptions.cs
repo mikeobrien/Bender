@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace Bender
 {
@@ -12,13 +13,13 @@ namespace Bender
             _options = options;
         }
 
-        public DeserializerOptions AddReader<T>(Func<Options, PropertyInfo, string, T> reader)
+        public DeserializerOptions AddReader<T>(Func<Options, PropertyInfo, XElement, T> reader)
         {
             _options.AddReader(reader);
             return this;
         }
 
-        public DeserializerOptions AddReader<T>(Func<Options, PropertyInfo, string, T> reader, bool handleNullable) where T : struct
+        public DeserializerOptions AddReader<T>(Func<Options, PropertyInfo, XElement, T> reader, bool handleNullable) where T : struct
         {
             _options.AddReader(reader, handleNullable);
             return this;
