@@ -57,7 +57,7 @@ var serializer = Serializer.Create(x => x
     .AddWriter<byte[]>((options, property, value, element) => element.Value = Convert.ToBase64String(value)));
 
 var deserializer = Deserializer.Create(x => x
-    .AddReader<byte[]>((options, property, element) => Convert.FromBase64String(v.Value)));
+    .AddReader<byte[]>((options, property, element) => Convert.FromBase64String(element.Value)));
 ```
 
 For both readers and writers, the first parameter is the Bender `Options` object and the second parameter is the corresponding `PropertyInfo`. For writers, the last two parameters are the source property value and the target `XElement`. Here you can fully control the final xml by modifying the `XElement`. In most cases you will probably just set the value of the `XElement` to the value of the source property as demonstrated above. For readers the last parameter is the source `XElement` and the deserialized value is returned. At this point you can fully control the deserialization by reading the source `XElement`. In most cases you will probably just return the value of the element as demonstrated above. Note: the `byte[]` reader/writer shown above is automatically added by default so you get that behavior out of the box.
