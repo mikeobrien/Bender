@@ -58,7 +58,7 @@ var serializer = Serializer.Create(x => x.AddWriter<byte[]>((o, p, v) => Convert
 var deserializer = Deserializer.Create(x => x.AddReader<byte[]>((o, p, v) => Convert.FromBase64String(v.Value)));
 ```
 
-The first parameter is the `Options` object, the second parameter is the corresponding `PropertyInfo` and the last parameter is either the property value for writers and the `XElement` for readers. Simply return the de/serialized value. Note: the `byte[]` reader/writer shown above is automatically added by default so you get that behavior out of the box.
+The first parameter is the `Options` object, the second parameter is the corresponding `PropertyInfo` and the last parameter is either the property value for writers or the `XElement` for readers. Simply return the de/serialized value. Note: the `byte[]` reader/writer shown above is automatically added by default so you get that behavior out of the box.
 
 Bender allows you to override nullable and non-nullable type de/serialization separately if you want to have fine grained control, for example:
 
@@ -123,7 +123,7 @@ The following are the serialization configuration options:
     <td>Allows you to override how a value is serialized.</td>
   </tr>
   <tr>
-    <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, string&gt; writter, <br/>&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
+    <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, string&gt; writter, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
     <td>Allows you to override how both the nullable and non-nullable value is serialized.</td>
   </tr>
 </table>
@@ -148,7 +148,7 @@ The following are the deserialization configuration options:
     <td>Allows you to override how a value is deserialized.</td>
   </tr>
   <tr>
-    <td><code>AddReader&lt;T&gt;(Func&lt;Options, PropertyInfo, XElement, T&gt; reader, <br/>&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
+    <td><code>AddReader&lt;T&gt;(Func&lt;Options, PropertyInfo, XElement, T&gt; reader, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
     <td>Allows you to override how both the nullable and non-nullable value is deserialized.</td>
   </tr>
 </table>
