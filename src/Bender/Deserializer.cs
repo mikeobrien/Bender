@@ -62,9 +62,19 @@ namespace Bender
 
         public object Deserialize(Type type, XDocument document)
         {
+            return Deserialize(type, document.Root);
+        }
+
+        public object Deserialize<T>(XElement element)
+        {
+            return Deserialize(typeof(T), element);
+        }
+
+        public object Deserialize(Type type, XElement element)
+        {
             var instance = Activator.CreateInstance(type);
-            ValidateTypeElementName(type, document.Root);
-            Traverse(instance, document.Root);
+            ValidateTypeElementName(type, element);
+            Traverse(instance, element);
             return instance;
         }
 

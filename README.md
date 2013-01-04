@@ -37,11 +37,13 @@ To de/serialize, call the respective methods:
 var model = deserializer.Deserialize<YadaModel>("<yada>...</yada>");
 var model = deserializer.Deserialize<YadaModel>(stream);
 var model = deserializer.Deserialize<YadaModel>(xdocument);
+var model = deserializer.Deserialize<YadaModel>(xelement);
 var model = deserializer.DeserializeFile<YadaModel>(@"d:\files\file.xml");
 
 var model = deserializer.Deserialize(typeof(YadaModel), "<yada>...</yada>");
 var model = deserializer.Deserialize(typeof(YadaModel), stream);
 var model = deserializer.Deserialize(typeof(YadaModel), xdocument);
+var model = deserializer.Deserialize(typeof(YadaModel), xelement);
 var model = deserializer.DeserializeFile(typeof(YadaModel), @"d:\files\file.xml");
 
 string xml = serializer.Serialize(new YadaModel {...});
