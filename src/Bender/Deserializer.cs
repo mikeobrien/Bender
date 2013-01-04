@@ -55,9 +55,9 @@ namespace Bender
             return Deserialize(type, XDocument.Parse(source));
         }
 
-        public object Deserialize<T>(XDocument document)
+        public T Deserialize<T>(XDocument document)
         {
-            return Deserialize(typeof (T), document);
+            return (T)Deserialize(typeof (T), document);
         }
 
         public object Deserialize(Type type, XDocument document)
@@ -65,9 +65,9 @@ namespace Bender
             return Deserialize(type, document.Root);
         }
 
-        public object Deserialize<T>(XElement element)
+        public T Deserialize<T>(XElement element)
         {
-            return Deserialize(typeof(T), element);
+            return (T)Deserialize(typeof(T), element);
         }
 
         public object Deserialize(Type type, XElement element)
