@@ -132,10 +132,29 @@ namespace Bender
             return property.GetCustomAttribute<T>() != null;
         }
 
-        public static string GetXPath(this XElement element)
+        public static string GetXPath(this XObject node)
         {
+            var attribute = node as XAttribute;
+            var element = node as XElement ?? attribute.Parent;
             return (element.Ancestors().Any() ? "/" + element.Ancestors().Select(x => x.Name.LocalName)
-                            .Aggregate((a, i) => a + "/" + i) : "") + "/" + element.Name.LocalName;
+                .Aggregate((a, i) => a + "/" + i) : "") + "/" + element.Name.LocalName + (attribute != null ? "/@" + attribute.Name : "");
+        }
+
+        public static Dictionary<string, TElement> ToDictionary<TSource, TElement>(
+            this IEnumerable<TSource> source,
+            Func<TSource, string> keySelector,
+            Func<TSource, TElement> elementSelector,
+            bool caseInsensitiveKey)
+        {
+            var result = source.ToDictionary(keySelector, elementSelector);
+            return caseInsensitiveKey ? new Dictionary<string, TElement>(result, StringComparer.OrdinalIgnoreCase) : result;
+        }
+
+        public static XElement AddElement(this XElement element, string name)
+        {
+            var childElement = new XElement(name);
+            element.Add(childElement);
+            return childElement;
         }
     }
 }

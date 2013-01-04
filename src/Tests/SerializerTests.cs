@@ -123,10 +123,19 @@ namespace Tests
         }
 
         [Test]
-        public void should_serialize_graph()
+        public void should_serialize_graph_with_element_values()
         {
-            var xml = Serializer.Create().Serialize(new Graph { Value1 = new GraphNode { Value2 = "hai" }});
+            var xml = Serializer.Create().Serialize(new Graph { Value1 = new GraphNode { Value2 = "hai" } });
+            Debug.WriteLine(xml);
             XDocument.Parse(xml).Element("Graph").Element("Value1").Element("Value2").Value.ShouldEqual("hai"); 
+        }
+
+        [Test]
+        public void should_serialize_graph_with_attribute_values()
+        {
+            var xml = Serializer.Create(x => x.ValuesIn(NodeType.Attribute)).Serialize(new Graph { Value1 = new GraphNode { Value2 = "hai" } });
+            Debug.WriteLine(xml);
+            XDocument.Parse(xml).Element("Graph").Element("Value1").Attribute("Value2").Value.ShouldEqual("hai");
         }
 
         [Test]

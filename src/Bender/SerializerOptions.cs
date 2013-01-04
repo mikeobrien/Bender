@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace Bender
 {
@@ -25,13 +24,13 @@ namespace Bender
             return this;
         }
 
-        public SerializerOptions AddWriter<T>(Action<Options, PropertyInfo, T, XElement> writter)
+        public SerializerOptions AddWriter<T>(Action<Options, PropertyInfo, T, Node> writter)
         {
             _options.AddWriter(writter);
             return this;
         }
 
-        public SerializerOptions AddWriter<T>(Action<Options, PropertyInfo, T, XElement> writer, bool handleNullable) where T : struct
+        public SerializerOptions AddWriter<T>(Action<Options, PropertyInfo, T, Node> writer, bool handleNullable) where T : struct
         {
             _options.AddWriter(writer, handleNullable);
             return this;
@@ -58,6 +57,12 @@ namespace Bender
         public SerializerOptions WithDefaultGenericListNameFormat(string listNameFormat)
         {
             _options.DefaultGenericListNameFormat = listNameFormat;
+            return this;
+        }
+
+        public SerializerOptions ValuesIn(NodeType nodeType)
+        {
+            _options.ValueNode = nodeType;
             return this;
         }
     }

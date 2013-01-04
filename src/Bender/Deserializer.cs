@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace Bender
 {
-    public class UnmatchedElementException : Exception { public UnmatchedElementException(XElement element) : base(element.GetXPath()) {} }
+    public class UnmatchedNodeException : Exception { public UnmatchedNodeException(XObject node) : base(node.GetXPath()) {} }
 
     public class Deserializer
     {
@@ -83,29 +83,29 @@ namespace Bender
                 return;
             }
             var properties = @object.GetType().GetSerializableProperties()
-                .ToDictionary(x => x.GetXmlName(), x => x);
-            foreach (var propertyElement in element.Elements())
+                .ToDictionary(x => x.GetXmlName(), x => x, _options.IgnoreCase);
+            foreach (var node in element.Elements().Cast<XObject>().Concat(element.Attributes()).Select(x => new Node(x)))
             {
-                if (!properties.ContainsKey(propertyElement.Name.LocalName))
+                if (!properties.ContainsKey(node.Name.LocalName))
                 {
                     if (_options.IgnoreUnmatchedElements) continue;
-                    throw new UnmatchedElementException(propertyElement);
+                    throw new UnmatchedNodeException(node.Object);
                 }
-                var property = properties[propertyElement.Name.LocalName];
+                var property = properties[node.Name.LocalName];
                 var propertyType = property.PropertyType;
                 if (_options.ExcludedTypes.Any(x => x(propertyType)) || 
                     property.HasCustomAttribute<XmlIgnoreAttribute>()) continue;
 
                 if (_options.Readers.ContainsKey(propertyType)) 
-                    property.SetValue(@object, _options.Readers[propertyType](_options, property, propertyElement), null);
+                    property.SetValue(@object, _options.Readers[propertyType](_options, property, node), null);
                 else if (propertyType.IsPrimitive || propertyType.IsValueType || propertyType == typeof(string))
-                    property.SetValue(@object, propertyElement.Value.Parse(propertyType, _options.DefaultNonNullableTypesWhenEmpty), null);
-                else if (propertyType == typeof(object)) property.SetValue(@object, propertyElement, null);
+                    property.SetValue(@object, node.Value.Parse(propertyType, _options.DefaultNonNullableTypesWhenEmpty), null);
+                else if (propertyType == typeof(object)) property.SetValue(@object, node.Object, null);
                 else
                 {
                     var propertyValue = Activator.CreateInstance(propertyType);
                     property.SetValue(@object, propertyValue, null);
-                    Traverse(propertyValue, propertyElement);
+                    Traverse(propertyValue, node.Element);
                 }
             }
         }
@@ -113,9 +113,10 @@ namespace Bender
         private void ValidateTypeElementName(Type type, XElement element)
         {
             if (!_options.IgnoreTypeElementNames &&
-                type.GetXmlName(_options.DefaultGenericListNameFormat,
-                        _options.DefaultGenericTypeNameFormat) != element.Name.LocalName)
-                throw new UnmatchedElementException(element);
+                !type.GetXmlName(_options.DefaultGenericListNameFormat,
+                        _options.DefaultGenericTypeNameFormat).Equals(element.Name.LocalName, 
+                            _options.IgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
+                throw new UnmatchedNodeException(element);
         }
     }
 }

@@ -9,9 +9,9 @@ namespace Bender
 {
     public class Serializer
     {
-        private class Node
+        private class NodeMap
         {
-            public Node Parent { get; set; }
+            public NodeMap Parent { get; set; }
             public object Instance { get; set; }
         }
 
@@ -52,14 +52,14 @@ namespace Bender
             var type = @object.GetType();
             document.Add(new XElement(type.GetXmlName(
                 _options.DefaultGenericListNameFormat, _options.DefaultGenericTypeNameFormat)));
-            Traverse(type, @object, document.Root, new Node());
+            Traverse(type, @object, document.Root, new NodeMap());
             return document;
         }
 
-        private void Traverse(Type type, object @object, XElement element, Node parent)
+        private void Traverse(Type type, object @object, XElement element, NodeMap parent)
         {
             if (@object == null || parent.Traverse(x => x.Parent).Any(y => y.Instance == @object)) return;
-            var node = new Node { Parent = parent, Instance = @object };
+            var nodeMap = new NodeMap { Parent = parent, Instance = @object };
             if (@object.GetType().IsList())
             {
                 foreach (var item in (IList)@object)
@@ -67,7 +67,7 @@ namespace Bender
                     var itemElement = new XElement(item.GetType()
                         .GetXmlName(_options.DefaultGenericListNameFormat, 
                                         _options.DefaultGenericTypeNameFormat));
-                    Traverse(item.GetType(), item, itemElement, node);
+                    Traverse(item.GetType(), item, itemElement, nodeMap);
                     element.Add(itemElement);
                 }
                 return;
@@ -84,15 +84,20 @@ namespace Bender
 
                 if (propertyValue == null && _options.ExcludeNullValues) continue;
 
-                var propertyElement = new XElement(property.GetXmlName());
-                element.Add(propertyElement);
+                var propertyName = property.GetXmlName();
 
-                if (_options.Writers.ContainsKey(propertyType)) 
-                    _options.Writers[propertyType](_options, property, propertyValue, propertyElement);
-                else if (propertyType.IsPrimitive || propertyType.IsValueType || 
-                         propertyType == typeof(string) || propertyType == typeof(object))
-                    propertyElement.Value = propertyValue == null ? "" : propertyValue.ToString();
-                else Traverse(propertyType, propertyValue, propertyElement, node);
+                Func<Node> createNode = () => {
+                    var node = Node.Create(propertyName, _options.ValueNode);
+                    element.Add(node.Object);
+                    return node;
+                };
+
+                if (_options.Writers.ContainsKey(propertyType))
+                    _options.Writers[propertyType](_options, property, propertyValue, createNode());
+                else if (propertyType.IsPrimitive || propertyType.IsValueType ||
+                         propertyType == typeof (string) || propertyType == typeof (object))
+                    createNode().Value = propertyValue == null ? "" : propertyValue.ToString();
+                else Traverse(propertyType, propertyValue, element.AddElement(propertyName), nodeMap);
             }
         }
     }

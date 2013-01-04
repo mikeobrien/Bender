@@ -1,7 +1,7 @@
 Bender
 =============
 
-Bender is a simple xml de/serialization library for .NET. Unlike the `XmlSerializer` and `DataContractSerializer`, Bender gives you complete control over how values are de/serialized. It is ~%15 faster than the `XmlSerializer`.
+Bender is a simple xml de/serialization library for .NET. Unlike the `XmlSerializer` and `DataContractSerializer`, Bender gives you complete control over how values are de/serialized. Bender is ~%15 faster than the `XmlSerializer`.
 
 Install
 ------------
@@ -54,27 +54,27 @@ To override de/serialization add a reader or writer:
 
 ```csharp
 var serializer = Serializer.Create(x => x
-    .AddWriter<byte[]>((options, property, value, element) => element.Value = Convert.ToBase64String(value)));
+    .AddWriter<byte[]>((options, property, value, node) => node.Value = Convert.ToBase64String(value)));
 
 var deserializer = Deserializer.Create(x => x
-    .AddReader<byte[]>((options, property, element) => Convert.FromBase64String(element.Value)));
+    .AddReader<byte[]>((options, property, node) => Convert.FromBase64String(node.Value)));
 ```
 
-For both readers and writers, the first parameter is the Bender `Options` object and the second parameter is the corresponding `PropertyInfo`. For writers, the last two parameters are the source property value and the target `XElement`. Here you can fully control the final xml by modifying the `XElement`. In most cases you will probably just set the value of the `XElement` to the value of the source property as demonstrated above. For readers the last parameter is the source `XElement` and the deserialized value is returned. At this point you can fully control the deserialization by reading the source `XElement`. In most cases you will probably just return the value of the element as demonstrated above. Note: the `byte[]` reader/writer shown above is automatically added by default so you get that behavior out of the box.
+For both readers and writers, the first parameter is the Bender `Options` object and the second parameter is the corresponding `PropertyInfo`. For writers, the last two parameters are the source property value and the target node which references a `XElement` or `XAttribute` (depending on the target node type). Here you can fully control the final xml by modifying the target `XElement` or `XAttribute` directly via the `Element` and `Attribute` properties of the `Node`. The node type is indicated by the `NodeType` property. In most cases though you will probably just set the value of the target node to the value of the source property, as demonstrated above, via the convenience `Value` property`. For readers the last parameter is the source node which references a `XElement` or `XAttribute` (depending on the source node type) and the deserialized value is returned. At this point you can fully control the deserialization by reading the source `XElement` or `XAttribute` directly via the `Element` and `Attribute` properties of the `Node'. The node type is indicated by the `NodeType` property. In most cases though you will probably just return the value of the source node, as demonstrated above, from the convenience `Value` property`. Note: the `byte[]` reader/writer shown above is automatically added by default so you get that behavior out of the box.
 
 Bender allows you to override nullable and non-nullable type de/serialization separately if you want to have fine grained control, for example:
 
 ```csharp
 var serializer = Serializer.Create(x => x
-    .AddWriter<bool>((options, property, value, element) => element.Value = value.ToString().ToLower())
-    .AddWriter<bool?>((options, property, value, element) => element.Value = value.HasValue ? value.Value.ToString().ToLower() ? ""));
+    .AddWriter<bool>((options, property, value, node) => node.Value = value.ToString().ToLower())
+    .AddWriter<bool?>((options, property, value, node) => node.Value = value.HasValue ? value.Value.ToString().ToLower() ? ""));
 ```
 
 But most of the time the functionality will be the same for nullable and non nullable readers and writers, save the boilerplate null checking logic. So Bender also allows you to set one reader or writer for both nullable and non-nullable types by passing `true` to the `handleNullable` parameter:
 
 ```csharp
 var serializer = Serializer.Create(x => x
-    .AddWriter<bool>((options, property, value, element) => element.Value = value.ToString().ToLower(), true);
+    .AddWriter<bool>((options, property, value, node) => node.Value = value.ToString().ToLower(), true);
 ```
 
 Note: the `bool` writer shown above is automatically added by default so you get that behavior out of the box.
@@ -85,6 +85,7 @@ Some additional notes:
 - Bender supports the `XmlIgnoreAttribute` to ignore properties as the `XmlSerializer` does. 
 - Bender will de/serialize nullable types and enumerations. 
 - Bender de/serializes the following basic types out of the box: `IList<T>`, `Object`, `String`, `Char`, `Boolean`, `SByte`, `Byte`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Single`, `Double`, `Decimal`, `DateTime`, `Guid`, `TimeSpan`, `byte[]` (As base64) and `Uri`.
+- Bender will automatically deserialize values in either attributes or elements. By default values are serialized as elements but this can be changed to attributes in configuration.
     
 Configuration
 ------------
@@ -122,11 +123,15 @@ The following are the serialization configuration options:
     <td>Do not serialize the elements of properties that are null.</td>
   </tr>
   <tr>
-    <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, XElement&gt; writter)</code></td>
+    <td><code>ValuesIn(Options.ValueNodeType nodeType)</code></td>
+    <td>Indicates whether values are stored in elements or attributes. Defaults to elements.</td>
+  </tr>
+  <tr>
+    <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, Node&gt; writter)</code></td>
     <td>Allows you to override how a value is serialized.</td>
   </tr>
   <tr>
-    <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, XElement&gt; writter, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
+    <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, Node&gt; writter, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
     <td>Allows you to override how both the nullable and non-nullable value is serialized.</td>
   </tr>
 </table>
@@ -147,11 +152,15 @@ The following are the deserialization configuration options:
     <td>Ignore type element names in the source xml that don't match the type xml name. This applies specifically to the root element and list elements. In these two cases the element name is based on the type xml name. By default an exception is thrown if the element name does not match the type xml name.</td>
   </tr>
   <tr>
-    <td><code>AddReader&lt;T&gt;(Func&lt;Options, PropertyInfo, XElement, T&gt; reader)</code></td>
+    <td><code>IgnoreCase()</code></td>
+    <td>Ignore the case of the element name when deserializing.</td>
+  </tr>
+  <tr>
+    <td><code>AddReader&lt;T&gt;(Func&lt;Options, PropertyInfo, Node, T&gt; reader)</code></td>
     <td>Allows you to override how a value is deserialized.</td>
   </tr>
   <tr>
-    <td><code>AddReader&lt;T&gt;(Func&lt;Options, PropertyInfo, XElement, T&gt; reader, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
+    <td><code>AddReader&lt;T&gt;(Func&lt;Options, PropertyInfo, Node, T&gt; reader, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
     <td>Allows you to override how both the nullable and non-nullable value is deserialized.</td>
   </tr>
 </table>

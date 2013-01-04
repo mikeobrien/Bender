@@ -192,10 +192,31 @@ namespace Tests
         }
 
         [Test]
-        public void should_deserialize_graph()
+        public void should_deserialize_graph_with_element_values()
         {
             const string xml = @"<Graph><Value1><Value2>hai</Value2></Value1></Graph>";
             Deserializer.Create().Deserialize<Graph>(xml).Value1.Value2.ShouldEqual("hai");
+        }
+
+        [Test]
+        public void should_deserialize_graph_with_attribute_values()
+        {
+            const string xml = @"<Graph><Value1 Value2=""hai""/></Graph>";
+            Deserializer.Create().Deserialize<Graph>(xml).Value1.Value2.ShouldEqual("hai");
+        }
+
+        [Test]
+        public void should_deserialize_graph_case_insensitively()
+        {
+            const string xml = @"<graph><value1><value2>hai</value2></value1></graph>";
+            Deserializer.Create(x => x.IgnoreCase()).Deserialize<Graph>(xml).Value1.Value2.ShouldEqual("hai");
+        }
+
+        [Test]
+        public void should_not_deserialize_graph_case_insensitively()
+        {
+            const string xml = @"<graph><value1><value2>hai</value2></value1></graph>";
+            Assert.Throws<UnmatchedNodeException>(() => Deserializer.Create().Deserialize<Graph>(xml));
         }
 
         [Test]
@@ -381,7 +402,7 @@ namespace Tests
         public void should_fail_on_unmatched_elements()
         {
             const string xml = @"<GraphNode><yada>hai</yada></GraphNode>";
-            Assert.Throws<UnmatchedElementException>(() => Deserializer.Create().Deserialize<GraphNode>(xml));
+            Assert.Throws<UnmatchedNodeException>(() => Deserializer.Create().Deserialize<GraphNode>(xml));
         }
 
         [Test]
@@ -398,7 +419,7 @@ namespace Tests
         public void should_fail_on_unmatched_root_element()
         {
             const string xml = @"<root><Value2>hai</Value2></root>";
-            Assert.Throws<UnmatchedElementException>(() => Deserializer.Create().Deserialize<GraphNode>(xml));
+            Assert.Throws<UnmatchedNodeException>(() => Deserializer.Create().Deserialize<GraphNode>(xml));
         }
 
         [Test]
@@ -416,7 +437,7 @@ namespace Tests
         public void should_fail_on_unmatched_list_element()
         {
             const string xml = @"<ArrayOfGraphNode><yada><Value2>hai</Value2></yada></ArrayOfGraphNode>";
-            Assert.Throws<UnmatchedElementException>(() => Deserializer.Create().Deserialize<List<GraphNode>>(xml));
+            Assert.Throws<UnmatchedNodeException>(() => Deserializer.Create().Deserialize<List<GraphNode>>(xml));
         }
 
         public class SpeedTestCollection
