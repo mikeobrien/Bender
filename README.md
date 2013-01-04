@@ -62,9 +62,9 @@ var deserializer = Deserializer.Create(x => x
 
 For both readers and writers, the first parameter is the Bender `Options` object and the second parameter is the corresponding `PropertyInfo`. 
 
-For writers, the last two parameters are the source property value and the target node which references a `XElement` or `XAttribute` (depending on the target node type set in the config). Here you can fully control the final xml by modifying the target `XElement` or `XAttribute` directly via the `Element` and `Attribute` properties of the `Node`. The node type is indicated by the `NodeType` property. In most cases though you will probably just set the value of the target node to the value of the source property, as demonstrated above, via the convenience `Value` property. 
+For **writers**, the last two parameters are the source property value and the target node which references a `XElement` or `XAttribute` (depending on the target node type set in the config). Here you can fully control the final xml by modifying the target `XElement` or `XAttribute` directly via the `Element` and `Attribute` properties of the `Node`. The node type is indicated by the `NodeType` property. In most cases though you will probably just set the value of the target node to the value of the source property, as demonstrated above, via the convenience `Value` property. 
 
-For readers the last parameter is the source node which references a `XElement` or `XAttribute` (depending on the source node type) and the deserialized value is returned. At this point you can fully control the deserialization by reading the source `XElement` or `XAttribute` directly via the `Element` and `Attribute` properties of the `Node`. The node type is indicated by the `NodeType` property. In most cases though you will probably just return the value of the source node, as demonstrated above, from the convenience `Value` property`. 
+For **readers** the last parameter is the source node which references a `XElement` or `XAttribute` (depending on the source node type) and the deserialized value is returned. At this point you can fully control the deserialization by reading the source `XElement` or `XAttribute` directly via the `Element` and `Attribute` properties of the `Node`. The node type is indicated by the `NodeType` property. In most cases though you will probably just return the value of the source node, as demonstrated above, from the convenience `Value` property`. 
 
 Note: the `byte[]` reader/writer shown above is automatically added by default so you get that behavior out of the box.
 
@@ -117,7 +117,7 @@ The following are the common configuration options:
   </tr>
 </table>
 
-The following are the serialization configuration options:
+The following are the **serialization** configuration options:
 
 <table>
   <tr>
@@ -142,7 +142,7 @@ The following are the serialization configuration options:
   </tr>
 </table>
 
-The following are the deserialization configuration options:
+The following are the **deserialization** configuration options:
 
 <table>
   <tr>
