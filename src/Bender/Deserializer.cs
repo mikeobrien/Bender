@@ -113,7 +113,8 @@ namespace Bender
                 else if (propertyType == typeof(object)) property.SetValue(@object, node.Object, null);
                 else
                 {
-                    var propertyValue = Activator.CreateInstance(propertyType);
+                    var propertyValue = Activator.CreateInstance(propertyType, 
+                        propertyType.GetConstructor(new [] { @object.GetType()}) != null ? new [] {@object} : null);
                     property.SetValue(@object, propertyValue, null);
                     Traverse(propertyValue, node.Element);
                 }

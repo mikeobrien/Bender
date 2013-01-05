@@ -313,6 +313,33 @@ namespace Tests
             result.Value2.ShouldEqual(67);
         }
 
+        public class ParentNode
+        {
+            public int Age { get; set; }
+            public ChildNode Child { get; set; }
+        }
+
+        public class ChildNode
+        {
+            private readonly ParentNode _parent;
+            private string _name;
+
+            public ChildNode(ParentNode parent)
+            {
+                _parent = parent;
+            }
+
+            public string Name { get { return _name + " (" + _parent.Age + ")"; } set { _name = value; } }
+        }
+
+        [Test]
+        public void should_deserialize_child_with_parent_passed_into_the_constructor()
+        {
+            const string xml = @"<ParentNode><Age>67</Age><Child><Name>Ed</Name></Child></ParentNode>";
+            var result = Deserializer.Create().Deserialize<ParentNode>(xml);
+            result.Child.Name.ShouldEqual("Ed (67)");
+        }
+
         public class SomeItemsProperty
         {
             public SomeItems Items { get; set; }
