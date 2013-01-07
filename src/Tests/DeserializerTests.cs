@@ -198,9 +198,9 @@ namespace Tests
         [Test]
         public void should_throw_set_value_exception_when_failing_to_set_type_with_reader()
         {
-            const string xml = @"<ComplexAttribute Version=""erterter""/>";
+            const string xml = @"<ComplexAttribute Complex=""erterter""/>";
             Assert.Throws<SetValueException>(() => Deserializer.Create(
-                x => x.AddReader((o, p, n) => Version.Parse(n.Value))).Deserialize<ComplexAttribute>(xml));
+                x => x.AddReader((o, p, n) => ComplexType.Parse(n.Value, true))).Deserialize<ComplexAttribute>(xml));
         }
 
         public class Graph
@@ -227,16 +227,26 @@ namespace Tests
             Deserializer.Create().Deserialize<Graph>(xml).Value1.Value2.ShouldEqual("hai");
         }
 
+        public class ComplexType
+        {
+            public static ComplexType Parse(string value, bool fail)
+            {
+                if (fail) throw new ParseException(typeof(ComplexType));
+                return new ComplexType { Value = value };
+            }
+            public string Value { get; set; }
+        }
+
         public class ComplexAttribute
         {
-            public Version Version { get; set; } 
+            public ComplexType Complex { get; set; } 
         }
 
         [Test]
         public void should_not_traverse_attribute_with_complex_type_without_a_reader()
         {
-            const string xml = @"<ComplexAttribute Version=""1.1.1.1""/>";
-            Deserializer.Create().Deserialize<ComplexAttribute>(xml).Version.ShouldBeNull();
+            const string xml = @"<ComplexAttribute Complex=""sfdasdf""/>";
+            Deserializer.Create().Deserialize<ComplexAttribute>(xml).Complex.ShouldBeNull();
         }
 
         [Test]
