@@ -2,12 +2,19 @@
 using System.Collections;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace Bender
 {
-    public class UnmatchedNodeException : Exception { public UnmatchedNodeException(XObject node) : base(node.GetXPath()) {} }
+    public class UnmatchedNodeException : Exception { public UnmatchedNodeException(XObject node) : 
+        base(string.Format("The '{0}' {1} does not correspond to a type or property.", 
+        node.GetXPath(), node is XAttribute ? "attribute" : "element")) { } }
+
+    public class SetValueException : Exception { public SetValueException(PropertyInfo property, XObject node, Exception exception) :
+        base(string.Format("Unable to set {0}.{1} to the value at '{2}': {3}", 
+        property.DeclaringType.FullName, property.Name, node.GetXPath(), exception.Message), exception) { } }
 
     public class Deserializer
     {
@@ -106,10 +113,13 @@ namespace Bender
                 if (_options.ExcludedTypes.Any(x => x(propertyType)) || 
                     property.HasCustomAttribute<XmlIgnoreAttribute>()) continue;
 
+                Action<Func<object>> setValue = x => property.SetValue(
+                    @object, x, y => new SetValueException(property, node.Object, y));
+
                 if (_options.Readers.ContainsKey(propertyType)) 
-                    property.SetValue(@object, _options.Readers[propertyType](_options, property, node), null);
-                else if (propertyType.IsPrimitive || propertyType.IsValueType || propertyType == typeof(string))
-                    property.SetValue(@object, node.Value.Parse(propertyType, _options.DefaultNonNullableTypesWhenEmpty), null);
+                    setValue(() => _options.Readers[propertyType](_options, property, node));
+                else if (propertyType.IsPrimitive || propertyType.IsValueType || propertyType == typeof (string))
+                    setValue(() => node.Value.Parse(propertyType, _options.DefaultNonNullableTypesWhenEmpty));
                 else if (propertyType == typeof(object)) property.SetValue(@object, node.Object, null);
                 else if (node.NodeType == NodeType.Element)
                 {

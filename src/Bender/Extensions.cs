@@ -156,5 +156,20 @@ namespace Bender
             element.Add(childElement);
             return childElement;
         }
+
+        public static void SetValue(
+            this PropertyInfo property, 
+            object instance, Func<object> value, 
+            Func<Exception, Exception> exception)
+        {
+            try
+            {
+                property.SetValue(instance, value(), null);
+            }
+            catch (Exception e)
+            {
+                throw exception(e);
+            }
+        }
     }
 }

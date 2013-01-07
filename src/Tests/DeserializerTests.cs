@@ -175,10 +175,32 @@ namespace Tests
         }
 
         [Test]
-        public void should_throw_format_exception_when_value_is_empty_and_not_set_to_use_default()
+        public void should_throw_set_value_exception_when_value_is_empty_and_not_set_to_use_default()
         {
             const string xml = @"<SimpleTypes><Boolean></Boolean></SimpleTypes>";
-            Assert.Throws<FormatException>(() => Deserializer.Create().Deserialize<SimpleTypes>(xml));
+            Assert.Throws<SetValueException>(() => Deserializer.Create().Deserialize<SimpleTypes>(xml));
+        }
+
+        [Test]
+        public void should_not_throw_set_value_exception_when_value_is_empty_and_set_to_use_default()
+        {
+            const string xml = @"<SimpleTypes><Boolean></Boolean></SimpleTypes>";
+            Assert.DoesNotThrow(() => Deserializer.Create(x => x.DefaultNonNullableTypesWhenEmpty()).Deserialize<SimpleTypes>(xml));
+        }
+
+        [Test]
+        public void should_throw_set_value_exception_when_failing_to_set_simple_type()
+        {
+            const string xml = @"<SimpleTypes Integer=""sdafasdf""/>";
+            Assert.Throws<SetValueException>(() => Deserializer.Create().Deserialize<SimpleTypes>(xml));
+        }
+
+        [Test]
+        public void should_throw_set_value_exception_when_failing_to_set_type_with_reader()
+        {
+            const string xml = @"<ComplexAttribute Version=""erterter""/>";
+            Assert.Throws<SetValueException>(() => Deserializer.Create(
+                x => x.AddReader((o, p, n) => Version.Parse(n.Value))).Deserialize<ComplexAttribute>(xml));
         }
 
         public class Graph
