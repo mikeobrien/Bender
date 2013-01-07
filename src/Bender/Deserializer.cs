@@ -111,7 +111,7 @@ namespace Bender
                 else if (propertyType.IsPrimitive || propertyType.IsValueType || propertyType == typeof(string))
                     property.SetValue(@object, node.Value.Parse(propertyType, _options.DefaultNonNullableTypesWhenEmpty), null);
                 else if (propertyType == typeof(object)) property.SetValue(@object, node.Object, null);
-                else
+                else if (node.NodeType == NodeType.Element)
                 {
                     var propertyValue = Activator.CreateInstance(propertyType, 
                         propertyType.GetConstructor(new [] { @object.GetType()}) != null ? new [] {@object} : null);

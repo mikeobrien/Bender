@@ -205,6 +205,25 @@ namespace Tests
             Deserializer.Create().Deserialize<Graph>(xml).Value1.Value2.ShouldEqual("hai");
         }
 
+        public class ComplexAttribute
+        {
+            public Version Version { get; set; } 
+        }
+
+        [Test]
+        public void should_not_traverse_attribute_with_complex_type_without_a_reader()
+        {
+            const string xml = @"<ComplexAttribute Version=""1.1.1.1""/>";
+            Deserializer.Create().Deserialize<ComplexAttribute>(xml).Version.ShouldBeNull();
+        }
+
+        [Test]
+        public void should_deserialize_empty_element()
+        {
+            const string xml = @"<Graph><Value1 /></Graph>";
+            Deserializer.Create().Deserialize<Graph>(xml).Value1.ShouldNotBeNull();
+        }
+
         [Test]
         public void should_deserialize_graph_case_insensitively()
         {
