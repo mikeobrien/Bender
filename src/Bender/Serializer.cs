@@ -72,15 +72,14 @@ namespace Bender
                 }
                 return;
             }
-            var properties = type.GetSerializableProperties();
+
+            var properties = type.GetSerializableProperties(_options.ExcludedTypes);
+
             foreach (var property in properties)
             {
                 var propertyValue = property.GetValue(@object, null);
                 var propertyType = property.PropertyType == typeof(object) && propertyValue != null ? 
                     propertyValue.GetType() : property.PropertyType;
-
-                if (_options.ExcludedTypes.Any(x => x(propertyType)) ||
-                    property.HasCustomAttribute<XmlIgnoreAttribute>()) continue;
 
                 if (propertyValue == null && _options.ExcludeNullValues) continue;
 

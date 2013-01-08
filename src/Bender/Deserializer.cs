@@ -99,8 +99,10 @@ namespace Bender
                 }
                 return;
             }
-            var properties = @object.GetType().GetSerializableProperties()
+
+            var properties = @object.GetType().GetSerializableProperties(_options.ExcludedTypes)
                 .ToDictionary(x => x.GetXmlName(), x => x, _options.IgnoreCase);
+            
             foreach (var node in element.Elements().Cast<XObject>().Concat(element.Attributes()).Select(x => new Node(x)))
             {
                 if (!properties.ContainsKey(node.Name.LocalName))
@@ -108,10 +110,9 @@ namespace Bender
                     if (_options.IgnoreUnmatchedElements) continue;
                     throw new UnmatchedNodeException(node.Object);
                 }
+
                 var property = properties[node.Name.LocalName];
                 var propertyType = property.PropertyType;
-                if (_options.ExcludedTypes.Any(x => x(propertyType)) || 
-                    property.HasCustomAttribute<XmlIgnoreAttribute>()) continue;
 
                 Action<Func<object>> setValue = x => property.SetValue(
                     @object, x, y => new SetValueException(property, node.Object, y));

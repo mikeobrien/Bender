@@ -274,7 +274,7 @@ namespace Tests
         public void should_exclude_types()
         {
             const string xml = @"<Graph><Value1><Value2>hai</Value2></Value1></Graph>";
-            Deserializer.Create(x => x.ExcludeType<GraphNode>()).Deserialize<Graph>(xml).Value1.ShouldBeNull();
+            Deserializer.Create(x => x.ExcludeType<GraphNode>().IgnoreUnmatchedElements()).Deserialize<Graph>(xml).Value1.ShouldBeNull();
         }
 
         public class NullValue
@@ -446,7 +446,7 @@ namespace Tests
         public void should_not_deserialize_xml_ignored_members()
         {
             const string xml = @"<SomeType><Value2>hai</Value2></SomeType>";
-            var result = Deserializer.Create().Deserialize<CustomNames>(xml);
+            var result = Deserializer.Create(x => x.IgnoreUnmatchedElements()).Deserialize<CustomNames>(xml);
             result.Value2.ShouldBeNull();
         }
 

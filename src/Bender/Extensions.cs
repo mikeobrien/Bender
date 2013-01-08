@@ -52,9 +52,11 @@ namespace Bender
             return type.Name;
         }
 
-        public static PropertyInfo[] GetSerializableProperties(this Type type)
+        public static List<PropertyInfo> GetSerializableProperties(this Type type, List<Func<Type, bool>> typeFilter)
         {
-            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty);
+            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty)
+                .Where(x => !x.HasCustomAttribute<XmlIgnoreAttribute>())
+                .Where(x => !typeFilter.Any(y => y(x.PropertyType))).ToList();
         }
 
         public static object Parse(this string value, Type type, bool defaultNonNullableTypes)
