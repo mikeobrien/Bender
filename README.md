@@ -95,6 +95,14 @@ Some additional notes:
 - Bender will pass the parent object to into the constructor of the child object on deserialization if a constructor is defined with a single argument of the parent type.
 - Bender de/serializes the following basic types out of the box: `IList<T>`, `Object`, `String`, `Char`, `Boolean`, `SByte`, `Byte`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Single`, `Double`, `Decimal`, `DateTime`, `Guid`, `TimeSpan`, `byte[]` (As base64), `MailAddress`, `Version` and `Uri`.
 - Bender will automatically deserialize values in either attributes or elements. By default values are serialized as elements but this can be changed to attributes in configuration.
+
+Bender also includes a helper for building out object graphs. This can be usefull for creating larger object graphs for tests:
+
+```csharp
+var model = Expander.Expand<Model>();
+```
+
+The expander will build out the objects and set primitive value's, `string`'s, array's, `List<T>`'s and `enum`s to a default value, either `0` or an empty instance.
     
 Configuration
 ------------

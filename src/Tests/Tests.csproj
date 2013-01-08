@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeserializerTests.cs" />
+    <Compile Include="ExpanderTests.cs" />
     <Compile Include="SerializerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -100,7 +100,7 @@ namespace Bender
                 return;
             }
 
-            var properties = @object.GetType().GetSerializableProperties(_options.ExcludedTypes)
+            var properties = @object.GetType().GetDeserializableProperties(_options.ExcludedTypes)
                 .ToDictionary(x => x.GetXmlName(), x => x, _options.IgnoreCase);
             
             foreach (var node in element.Elements().Cast<XObject>().Concat(element.Attributes()).Select(x => new Node(x)))
