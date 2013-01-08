@@ -14,16 +14,19 @@ namespace Bender
     {
         public static List<PropertyInfo> GetSerializableProperties(this Type type, List<Func<Type, bool>> typeFilter = null)
         {
-            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty)
-                .Where(x => !x.HasCustomAttribute<XmlIgnoreAttribute>() && 
-                            (typeFilter == null || !typeFilter.Any(y => y(x.PropertyType)))).ToList();
+            return type.GetProperties(typeFilter).Where(x => x.CanRead).ToList();
         }
 
         public static List<PropertyInfo> GetDeserializableProperties(this Type type, List<Func<Type, bool>> typeFilter = null)
         {
-            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty)
+            return type.GetProperties(typeFilter).Where(x => x.CanWrite).ToList();
+        }
+
+        private static IEnumerable<PropertyInfo> GetProperties(this Type type, List<Func<Type, bool>> typeFilter = null)
+        {
+            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Where(x => !x.HasCustomAttribute<XmlIgnoreAttribute>() &&
-                            (typeFilter == null || !typeFilter.Any(y => y(x.PropertyType)))).ToList();
+                            (typeFilter == null || !typeFilter.Any(y => y(x.PropertyType))));
         }
 
         public static T GetCustomAttribute<T>(this PropertyInfo property) where T : Attribute
