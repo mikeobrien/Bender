@@ -24,10 +24,8 @@ namespace Bender
             {
                 var propertyType = property.PropertyType;
 
-                if (propertyType.IsPrimitive || propertyType.IsValueType || propertyType == typeof(string) || 
-                    propertyType.IsArray || propertyType.IsList())
-                    property.SetValue(@object, propertyType.GetDefaultValue(), null);
-                else if (!propertyType.IsBclType())
+                if (propertyType.IsArray || propertyType.IsList()) property.SetValue(@object, propertyType.CreateList(), null);
+                else if (propertyType.IsClass && !propertyType.IsBclType())
                 {
                     var propertyValue = Activator.CreateInstance(propertyType,
                         propertyType.GetConstructor(new[] { @object.GetType() }) != null ? new[] { @object } : null);

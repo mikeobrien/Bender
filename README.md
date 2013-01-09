@@ -101,8 +101,6 @@ Bender also includes a helper for building out object graphs. This can be useful
 ```csharp
 var model = Expander.Expand<Model>();
 ```
-
-The expander will build out the objects and set primitive value's, `string`'s, array's, `List<T>`'s and `enum`s to a default value, either `0` or an empty instance.
     
 Configuration
 ------------

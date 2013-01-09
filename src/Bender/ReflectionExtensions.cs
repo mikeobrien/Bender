@@ -69,14 +69,9 @@ namespace Bender
             }
         }
 
-        public static object GetDefaultValue(this Type type)
+        public static object CreateList(this Type type)
         {
-            if (type.IsArray) return Activator.CreateInstance(type, new object[] {0});
-            if (type == typeof (string)) return string.Empty;
-            if (type == typeof (Guid)) return Guid.Empty;
-            if (type.IsEnumOrNullable() || type.IsPrimitive || 
-                type.IsValueType || type.IsList()) return Activator.CreateInstance(type);
-            return null;
+            return type.IsArray ? Activator.CreateInstance(type, new object[] {0}) : Activator.CreateInstance(type);
         }
 
         public static Type GetUnderlyingNullableType(this Type type)

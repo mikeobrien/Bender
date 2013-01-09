@@ -48,7 +48,7 @@ namespace Tests
             var graph = Expander.Expand<Graph>();
 
             graph.ShouldNotBeNull();
-            graph.String.ShouldNotBeNull();
+            graph.String.ShouldBeNull();
             graph.Boolean.ShouldBeFalse();
             graph.NullableBoolean.HasValue.ShouldBeFalse();
             graph.Byte.ShouldEqual((byte)0);
