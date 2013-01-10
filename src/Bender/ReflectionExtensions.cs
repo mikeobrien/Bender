@@ -1,8 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Mail;
 using System.Reflection;
 using System.Xml.Serialization;
 
@@ -39,6 +38,11 @@ namespace Bender
             return (T)type.GetCustomAttributes(true).FirstOrDefault(x => x.GetType() == typeof(T));
         }
 
+        public static bool HasCustomAttribute<T>(this PropertyInfo property) where T : Attribute
+        {
+            return property.GetCustomAttribute<T>() != null;
+        }
+
         public static object Parse(this string value, Type type, bool defaultNonNullableTypes)
         {
             if (value.IsNullOrEmpty() && type.IsNullable()) return null;
@@ -69,9 +73,16 @@ namespace Bender
             }
         }
 
-        public static object CreateList(this Type type)
+        public static void SetValue(this PropertyInfo property, object instance, Func<object> value, Func<Exception, Exception> exception)
         {
-            return type.IsArray ? Activator.CreateInstance(type, new object[] {0}) : Activator.CreateInstance(type);
+            try
+            {
+                property.SetValue(instance, value(), null);
+            }
+            catch (Exception e)
+            {
+                throw exception(e);
+            }
         }
 
         public static Type GetUnderlyingNullableType(this Type type)
@@ -99,36 +110,44 @@ namespace Bender
             return includeNullable && type.IsNullable() ? Type.GetTypeCode(Nullable.GetUnderlyingType(type)) : Type.GetTypeCode(type);
         }
 
-        public static void SetValue(this PropertyInfo property, object instance, Func<object> value, Func<Exception, Exception> exception)
-        {
-            try
-            {
-                property.SetValue(instance, value(), null);
-            }
-            catch (Exception e)
-            {
-                throw exception(e);
-            }
-        }
-
         public static bool IsBclType(this Type type)
         {
             return type.Namespace == "System" || type.Namespace.StartsWith("System.");
         }
 
+        public static bool HasParameterlessConstructor(this Type type)
+        {
+            return type.GetConstructor(Type.EmptyTypes) != null;
+        }
+
+        public static bool HasConstructor(this Type type, params Type[] arguments)
+        {
+            return type.GetConstructor(arguments) != null;
+        }
+
         public static bool IsList(this Type type)
         {
-            return type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IList<>));
+            return type.GetInterfaces().Any(x => x.IsListInterface());
+        }
+
+        public static bool IsListInterface(this Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IList<>);
+        }
+
+        public static IList CreateList(this Type type)
+        {
+            if (type.IsListInterface()) return (IList)Activator.CreateInstance(
+                typeof(List<>).MakeGenericType(type.GetGenericArguments()[0]));
+            if (type.IsList()) return (IList)Activator.CreateInstance(type);
+            throw new ArgumentException(string.Format("Type {0} is not a list type.", type), "type");
         }
 
         public static Type GetListType(this Type type)
         {
-            return type.GetInterfaces().First(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IList<>)).GetGenericArguments()[0];
-        }
-
-        public static bool HasCustomAttribute<T>(this PropertyInfo property) where T : Attribute
-        {
-            return property.GetCustomAttribute<T>() != null;
+            if (type.IsListInterface()) return type.GetGenericArguments()[0];
+            if (type.IsList()) return type.GetInterfaces().First(x => x.IsListInterface()).GetGenericArguments()[0];
+            throw new ArgumentException(string.Format("Type {0} is not a list type.", type), "type");
         }
     }
 }

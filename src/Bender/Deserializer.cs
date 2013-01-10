@@ -79,7 +79,7 @@ namespace Bender
 
         public object Deserialize(Type type, XElement element)
         {
-            var instance = Activator.CreateInstance(type);
+            var instance = type.IsListInterface() ? type.CreateList() : Activator.CreateInstance(type);
             ValidateTypeElementName(type, element);
             Traverse(instance, element);
             return instance;
@@ -122,10 +122,13 @@ namespace Bender
                 else if (propertyType.IsPrimitive || propertyType.IsValueType || propertyType == typeof (string))
                     setValue(() => node.Value.Parse(propertyType, _options.DefaultNonNullableTypesWhenEmpty));
                 else if (propertyType == typeof(object)) property.SetValue(@object, node.Object, null);
-                else if (node.NodeType == NodeType.Element)
+                else if (node.NodeType == NodeType.Element && (propertyType.IsListInterface() || 
+                    propertyType.HasParameterlessConstructor() || propertyType.HasConstructor(@object.GetType())))
                 {
-                    var propertyValue = Activator.CreateInstance(propertyType, 
-                        propertyType.GetConstructor(new [] { @object.GetType()}) != null ? new [] {@object} : null);
+                    object propertyValue;
+                    if (propertyType.IsList() || propertyType.IsListInterface()) propertyValue = propertyType.CreateList();
+                    else propertyValue = Activator.CreateInstance(propertyType, 
+                        propertyType.HasConstructor(@object.GetType()) ? new [] { @object } : null);
                     property.SetValue(@object, propertyValue, null);
                     Traverse(propertyValue, node.Element);
                 }

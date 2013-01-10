@@ -23,7 +23,7 @@ namespace Bender
             {
                 var typeDefinition = type.GetGenericTypeDefinition();
                 var typeArguments = type.GetGenericArguments().Select(x => GetXmlName(x, listNameFormat, typeNameFormat)).Aggregate((a, i) => a + i);
-                return typeDefinition == typeof(List<>) ?
+                return typeDefinition == typeof(List<>) || typeDefinition == typeof(IList<>) ?
                     string.Format(listNameFormat, typeArguments) :
                     string.Format(typeNameFormat, typeDefinition.Name.Remove(typeDefinition.Name.IndexOf('`')), typeArguments);
             }

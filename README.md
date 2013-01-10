@@ -93,7 +93,7 @@ Some additional notes:
 - Bender supports the `XmlIgnoreAttribute` to ignore properties as the `XmlSerializer` does. 
 - Bender will de/serialize nullable types and enumerations. 
 - Bender will pass the parent object to into the constructor of the child object on deserialization if a constructor is defined with a single argument of the parent type.
-- Bender de/serializes the following basic types out of the box: `IList<T>`, `Object`, `String`, `Char`, `Boolean`, `SByte`, `Byte`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Single`, `Double`, `Decimal`, `DateTime`, `Guid`, `TimeSpan`, `byte[]` (As base64), `MailAddress`, `Version` and `Uri`.
+- Bender de/serializes the following basic types out of the box: `Object`, `String`, `Char`, `Boolean`, `SByte`, `Byte`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Single`, `Double`, `Decimal`, `DateTime`, `Guid`, `TimeSpan`, `List<T>`, `IList<T>`, `byte[]` (As base64), `MailAddress`, `Version` and `Uri`.
 - Bender will automatically deserialize values in either attributes or elements. By default values are serialized as elements but this can be changed to attributes in configuration.
 
 Bender also includes a helper for building out object graphs. This can be usefull for creating larger object graphs for tests:

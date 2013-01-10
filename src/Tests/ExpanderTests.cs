@@ -13,8 +13,8 @@ namespace Tests
 
         public class Graph
         {
-            public Node Node { get; set; }
-            public List<Node> Nodes { get; set; }
+            public List<object> NodeList { get; set; }
+            public IList<object> NodeIList { get; set; }
 
             public string String { get; set; }
             public bool Boolean { get; set; } public bool? NullableBoolean { get; set; }
@@ -27,10 +27,6 @@ namespace Tests
             public uint UnsignedInteger { get; set; } public uint? NullableUnsignedInteger { get; set; }
             public long Long { get; set; } public long? NullableLong { get; set; }
             public ulong UnsignedLong { get; set; } public ulong? NullableUnsignedLong { get; set; }
-        }
-
-        public class Node
-        {
             public float Float { get; set; } public float? NullableFloat { get; set; }
             public double Double { get; set; } public double? NullableDouble { get; set; }
             public decimal Decimal { get; set; } public decimal? NullableDecimal { get; set; }
@@ -43,7 +39,7 @@ namespace Tests
         }
 
         [Test]
-        public void should_expand_graph()
+        public void should_not_expand_simple_types()
         {
             var graph = Expander.Expand<Graph>();
 
@@ -53,7 +49,7 @@ namespace Tests
             graph.NullableBoolean.HasValue.ShouldBeFalse();
             graph.Byte.ShouldEqual((byte)0);
             graph.NullableByte.HasValue.ShouldBeFalse();
-            graph.ByteArray.ShouldNotBeNull();
+            graph.ByteArray.ShouldBeNull();
             graph.UnsignedByte.ShouldEqual((sbyte)0);
             graph.NullableUnsignedByte.HasValue.ShouldBeFalse();
             graph.UnsignedShort.ShouldEqual((ushort)0);
@@ -68,28 +64,77 @@ namespace Tests
             graph.NullableUnsignedLong.HasValue.ShouldBeFalse();
             graph.Long.ShouldEqual(0);
             graph.NullableLong.HasValue.ShouldBeFalse();
+            graph.Float.ShouldEqual(0);
+            graph.NullableFloat.HasValue.ShouldBeFalse();
+            graph.Double.ShouldEqual(0);
+            graph.NullableDouble.HasValue.ShouldBeFalse();
+            graph.Decimal.ShouldEqual(0);
+            graph.NullableDecimal.HasValue.ShouldBeFalse();
+            graph.DateTime.ShouldEqual(DateTime.MinValue);
+            graph.NullableDateTime.HasValue.ShouldBeFalse();
+            graph.TimeSpan.ShouldEqual(TimeSpan.Zero);
+            graph.NullableTimeSpan.HasValue.ShouldBeFalse();
+            graph.Guid.ShouldEqual(Guid.Empty);
+            graph.NullableGuid.HasValue.ShouldBeFalse();
+            graph.Enum.ShouldEqual(Enum.Value1);
+            graph.NullableEnum.HasValue.ShouldBeFalse();
+            graph.Uri.ShouldBeNull();
+            graph.Object.ShouldBeNull();
 
-            graph.Node.ShouldNotBeNull();
+            graph.NodeList.ShouldNotBeNull();
+            graph.NodeList.ShouldBeEmpty();
+            graph.NodeIList.ShouldNotBeNull();
+            graph.NodeIList.ShouldBeEmpty();
+        }
 
-            graph.Node.Float.ShouldEqual(0);
-            graph.Node.NullableFloat.HasValue.ShouldBeFalse();
-            graph.Node.Double.ShouldEqual(0);
-            graph.Node.NullableDouble.HasValue.ShouldBeFalse();
-            graph.Node.Decimal.ShouldEqual(0);
-            graph.Node.NullableDecimal.HasValue.ShouldBeFalse();
-            graph.Node.DateTime.ShouldEqual(DateTime.MinValue);
-            graph.Node.NullableDateTime.HasValue.ShouldBeFalse();
-            graph.Node.TimeSpan.ShouldEqual(TimeSpan.Zero);
-            graph.Node.NullableTimeSpan.HasValue.ShouldBeFalse();
-            graph.Node.Guid.ShouldEqual(Guid.Empty);
-            graph.Node.NullableGuid.HasValue.ShouldBeFalse();
-            graph.Node.Enum.ShouldEqual(Enum.Value1);
-            graph.Node.NullableEnum.HasValue.ShouldBeFalse();
-            graph.Node.Uri.ShouldBeNull();
-            graph.Node.Object.ShouldBeNull();
+        public class GraphWithParameterlessNode
+        {
+            public ParameterlessNode Node { get; set; }
+        }
 
-            graph.Nodes.ShouldNotBeNull();
-            graph.Nodes.ShouldBeEmpty();
+        public class ParameterlessNode
+        {
+            public ParameterlessNode() {}
+            public ParameterlessNode(string value) { }
+        }
+
+        [Test]
+        public void should_expand_parameterless_constructor()
+        {
+            Expander.Expand<GraphWithParameterlessNode>().Node.ShouldNotBeNull();
+        }
+
+        public class GraphWithParentParameterizedNode
+        {
+            public ParentParameterizedNode Node { get; set; }
+        }
+
+        public class ParentParameterizedNode
+        {
+            public ParentParameterizedNode(GraphWithParentParameterizedNode value) { }
+            public ParentParameterizedNode(string value) { }
+        }
+
+        [Test]
+        public void should_expand_parent_parameterized_constructor()
+        {
+            Expander.Expand<GraphWithParentParameterizedNode>().Node.ShouldNotBeNull();
+        }
+
+        public class GraphWithParameterizedNode
+        {
+            public ParameterizedNode Node { get; set; }
+        }
+
+        public class ParameterizedNode
+        {
+            public ParameterizedNode(string value) { }
+        }
+
+        [Test]
+        public void should_not_expand_parameterized_constructor()
+        {
+            Expander.Expand<GraphWithParameterizedNode>().Node.ShouldBeNull();
         }
     }
 }

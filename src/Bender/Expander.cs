@@ -24,11 +24,13 @@ namespace Bender
             {
                 var propertyType = property.PropertyType;
 
-                if (propertyType.IsArray || propertyType.IsList()) property.SetValue(@object, propertyType.CreateList(), null);
-                else if (propertyType.IsClass && !propertyType.IsBclType())
+                if ((propertyType.IsList() && !propertyType.IsArray) || propertyType.IsListInterface()) 
+                    property.SetValue(@object, propertyType.CreateList(), null);
+                else if (propertyType.IsClass && !propertyType.IsBclType() && (propertyType.HasParameterlessConstructor() ||
+                    propertyType.HasConstructor(@object.GetType())))
                 {
                     var propertyValue = Activator.CreateInstance(propertyType,
-                        propertyType.GetConstructor(new[] { @object.GetType() }) != null ? new[] { @object } : null);
+                        propertyType.HasConstructor(@object.GetType()) ? new[] { @object } : null);
                     property.SetValue(@object, propertyValue, null);
                     Traverse(propertyValue);
                 }

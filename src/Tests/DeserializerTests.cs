@@ -330,6 +330,20 @@ namespace Tests
             result[1].Value1.Value2.ShouldEqual("hai2");
         }
 
+        [Test]
+        public void should_deserialize_ilist()
+        {
+            const string xml =
+                @"<ArrayOfGraph>
+                    <Graph><Value1><Value2>hai1</Value2></Value1></Graph>
+                    <Graph><Value1><Value2>hai2</Value2></Value1></Graph>
+                </ArrayOfGraph>";
+            var result = Deserializer.Create().Deserialize<IList<Graph>>(xml);
+            result.Count.ShouldEqual(2);
+            result[0].Value1.Value2.ShouldEqual("hai1");
+            result[1].Value1.Value2.ShouldEqual("hai2");
+        }
+
         public class ListProperty
         {
             public List<GraphNode> Items { get; set; }
@@ -346,6 +360,27 @@ namespace Tests
                     </Items>
                 </ListProperty>";
             var result = Deserializer.Create().Deserialize<ListProperty>(xml).Items;
+            result.Count.ShouldEqual(2);
+            result[0].Value2.ShouldEqual("hai1");
+            result[1].Value2.ShouldEqual("hai2");
+        }
+
+        public class IListProperty
+        {
+            public IList<GraphNode> Items { get; set; }
+        }
+
+        [Test]
+        public void should_deserialize_ilist_property()
+        {
+            const string xml =
+                @"<IListProperty>
+                    <Items>
+                        <GraphNode><Value2>hai1</Value2></GraphNode>
+                        <GraphNode><Value2>hai2</Value2></GraphNode>
+                    </Items>
+                </IListProperty>";
+            var result = Deserializer.Create().Deserialize<IListProperty>(xml).Items;
             result.Count.ShouldEqual(2);
             result[0].Value2.ShouldEqual("hai1");
             result[1].Value2.ShouldEqual("hai2");
@@ -389,6 +424,23 @@ namespace Tests
             const string xml = @"<ParentNode><Age>67</Age><Child><Name>Ed</Name></Child></ParentNode>";
             var result = Deserializer.Create().Deserialize<ParentNode>(xml);
             result.Child.Name.ShouldEqual("Ed (67)");
+        }
+
+        public class ParentNodeWithParameterizedChild
+        {
+            public ChildNodeParameterized Child { get; set; }
+        }
+
+        public class ChildNodeParameterized
+        {
+            public ChildNodeParameterized(string value) { }
+        }
+
+        [Test]
+        public void should_not_deserialize_child_with_parameterized_constructor()
+        {
+            const string xml = @"<ParentNodeWithParameterizedChild><Child><Name>Ed</Name></Child></ParentNodeWithParameterizedChild>";
+            Deserializer.Create().Deserialize<ParentNodeWithParameterizedChild>(xml).Child.ShouldBeNull();
         }
 
         public class SomeItemsProperty
