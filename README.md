@@ -89,7 +89,7 @@ Note: the `bool` writer shown above is automatically added by default so you get
 
 Some additional notes:
 
-- Bender supports the `XmlTypeAttribute` and `XmlElementAttribute` to override element naming as the `XmlSerializer` does. 
+- Bender supports the `XmlRootAttribute`, `XmlTypeAttribute` and `XmlElementAttribute` to override element naming as the `XmlSerializer` does. 
 - Bender supports the `XmlIgnoreAttribute` to ignore properties as the `XmlSerializer` does. 
 - Bender will de/serialize nullable types and enumerations. 
 - Bender will pass the parent object to into the constructor of the child object on deserialization if a constructor is defined with a single argument of the parent type.

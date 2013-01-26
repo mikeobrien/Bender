@@ -464,6 +464,19 @@ namespace Tests
             result[1].Value2.ShouldEqual("hai2");
         }
 
+        [XmlRoot("someName")]
+        public class CustomRootName
+        {
+            public string Value { get; set; }
+        }
+
+        [Test]
+        public void should_deserialize_graph_with_root_element_name()
+        {
+            const string xml = @"<someName><Value>hai</Value></someName>";
+            Deserializer.Create().Deserialize<CustomRootName>(xml).Value.ShouldEqual("hai");
+        }
+
         [XmlType("SomeType")]
         public class CustomNames
         {

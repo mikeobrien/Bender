@@ -3,7 +3,6 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using System.Xml.Serialization;
 
 namespace Bender
 {
@@ -51,7 +50,7 @@ namespace Bender
             var document = new XDocument();
             var type = @object.GetType();
             document.Add(new XElement(type.GetXmlName(
-                _options.DefaultGenericListNameFormat, _options.DefaultGenericTypeNameFormat)));
+                _options.DefaultGenericListNameFormat, _options.DefaultGenericTypeNameFormat, true)));
             Traverse(type, @object, document.Root, new NodeMap());
             return document;
         }

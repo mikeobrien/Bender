@@ -15,8 +15,13 @@ namespace Bender
             return elementName != null && elementName.ElementName != null ? elementName.ElementName : property.Name;
         }
 
-        public static string GetXmlName(this Type type, string listNameFormat, string typeNameFormat)
+        public static string GetXmlName(this Type type, string listNameFormat, string typeNameFormat, bool isRoot = false)
         {
+            if (isRoot)
+            {
+                var xmlRoot = type.GetCustomAttribute<XmlRootAttribute>();
+                if (xmlRoot != null && xmlRoot.ElementName != null) return xmlRoot.ElementName;
+            }
             var xmlType = type.GetCustomAttribute<XmlTypeAttribute>();
             if (xmlType != null && xmlType.TypeName != null) return xmlType.TypeName;
             if (type.IsGenericType)

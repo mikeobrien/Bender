@@ -303,6 +303,20 @@ namespace Tests
             root.Element("Value2").Value.ShouldBeEmpty();
         }
 
+        [XmlRoot("someRoot")]
+        public class CustomRootName
+        {
+            public string Value { get; set; }
+        }
+
+        [Test]
+        public void should_serialize_graph_with_root_element_name()
+        {
+            var xml = Serializer.Create().Serialize(new CustomRootName { Value = "hai" });
+            Debug.WriteLine(xml);
+            XDocument.Parse(xml).Element("someRoot").Element("Value").Value.ShouldEqual("hai");
+        }
+
         [XmlType("SomeType")]
         public class CustomNames
         {

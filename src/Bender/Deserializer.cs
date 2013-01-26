@@ -80,7 +80,7 @@ namespace Bender
         public object Deserialize(Type type, XElement element)
         {
             var instance = type.IsListInterface() ? type.CreateList() : Activator.CreateInstance(type);
-            ValidateTypeElementName(type, element);
+            ValidateTypeElementName(type, element, true);
             Traverse(instance, element);
             return instance;
         }
@@ -135,11 +135,11 @@ namespace Bender
             }
         }
 
-        private void ValidateTypeElementName(Type type, XElement element)
+        private void ValidateTypeElementName(Type type, XElement element, bool isRoot = false)
         {
             if (!_options.IgnoreTypeElementNames &&
                 !type.GetXmlName(_options.DefaultGenericListNameFormat,
-                        _options.DefaultGenericTypeNameFormat).Equals(element.Name.LocalName, 
+                        _options.DefaultGenericTypeNameFormat, isRoot).Equals(element.Name.LocalName, 
                             _options.IgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
                 throw new UnmatchedNodeException(element);
         }
