@@ -14,6 +14,7 @@ namespace Bender
             DefaultGenericTypeNameFormat = "{0}Of{1}";
             DefaultGenericListNameFormat = "ArrayOf{0}";
             ValueNode = NodeType.Element;
+            IgnoreUnmatchedAttributes = true;
 
             Readers = new Dictionary<Type, Func<Options, PropertyInfo, Node, object>>();
             AddReader((o, p, e) => Convert.FromBase64String(e.Value));
@@ -38,6 +39,7 @@ namespace Bender
         // Deserialization specific
         public bool DefaultNonNullableTypesWhenEmpty { get; set; }
         public bool IgnoreUnmatchedElements { get; set; }
+        public bool IgnoreUnmatchedAttributes { get; set; }
         public bool IgnoreTypeElementNames { get; set; }
         public bool IgnoreCase { get; set; }
 

@@ -9,6 +9,7 @@ _ReSharper.*
 aspnet_client
 *.userprefs
 *.pidb
+.DS_Store
 
 # Nuget sources
 src/packages/*/src/*

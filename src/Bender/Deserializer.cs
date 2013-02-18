@@ -107,8 +107,10 @@ namespace Bender
             {
                 if (!properties.ContainsKey(node.Name.LocalName))
                 {
-                    if (_options.IgnoreUnmatchedElements) continue;
-                    throw new UnmatchedNodeException(node.Object);
+                    if ((!_options.IgnoreUnmatchedElements && node.NodeType == NodeType.Element) || 
+                        (!_options.IgnoreUnmatchedAttributes && node.NodeType == NodeType.Attribute))
+                            throw new UnmatchedNodeException(node.Object);
+                    continue;
                 }
 
                 var property = properties[node.Name.LocalName];

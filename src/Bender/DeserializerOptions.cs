@@ -36,6 +36,12 @@ namespace Bender
             return this;
         }
 
+        public DeserializerOptions FailOnUnmatchedAttributes()
+        {
+            _options.IgnoreUnmatchedAttributes = false;
+            return this;
+        }
+
         public DeserializerOptions IgnoreTypeElementNames()
         {
             _options.IgnoreTypeElementNames = true;

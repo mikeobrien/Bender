@@ -534,7 +534,7 @@ namespace Tests
         [Test]
         public void should_not_fail_on_unmatched_elements()
         {
-            const string xml = @"<GraphNode><yada>hai</yada></GraphNode>";
+            const string xml = "<GraphNode blarg=\"hai\"><yada>hai</yada></GraphNode>";
             GraphNode result = null;
             Assert.DoesNotThrow(() => result = Deserializer.Create(x => x.IgnoreUnmatchedElements()).Deserialize<GraphNode>(xml));
             result.ShouldNotBeNull();
@@ -546,6 +546,23 @@ namespace Tests
         {
             const string xml = @"<GraphNode><yada>hai</yada></GraphNode>";
             Assert.Throws<UnmatchedNodeException>(() => Deserializer.Create().Deserialize<GraphNode>(xml));
+        }
+
+        [Test]
+        public void should_not_fail_on_unmatched_attributes()
+        {
+            const string xml = "<GraphNode blarg=\"hai\"></GraphNode>";
+            GraphNode result = null;
+            Assert.DoesNotThrow(() => result = Deserializer.Create().Deserialize<GraphNode>(xml));
+            result.ShouldNotBeNull();
+            result.Value2.ShouldBeNull();
+        }
+
+        [Test]
+        public void should_fail_on_unmatched_attributes()
+        {
+            const string xml = "<GraphNode blarg=\"hai\"></GraphNode>";
+            Assert.Throws<UnmatchedNodeException>(() => Deserializer.Create(x => x.FailOnUnmatchedAttributes()).Deserialize<GraphNode>(xml));
         }
 
         [Test]
