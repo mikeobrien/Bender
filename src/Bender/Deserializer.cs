@@ -103,12 +103,12 @@ namespace Bender
             var properties = @object.GetType().GetDeserializableProperties(_options.ExcludedTypes)
                 .ToDictionary(x => x.GetXmlName(), x => x, _options.IgnoreCase);
             
-            foreach (var node in element.Elements().Cast<XObject>().Concat(element.Attributes()).Select(x => new Node(x)))
+            foreach (var node in element.Elements().Cast<XObject>().Concat(element.Attributes()).Select(x => new ValueNode(x)))
             {
                 if (!properties.ContainsKey(node.Name.LocalName))
                 {
-                    if ((!_options.IgnoreUnmatchedElements && node.NodeType == NodeType.Element) || 
-                        (!_options.IgnoreUnmatchedAttributes && node.NodeType == NodeType.Attribute))
+                    if ((!_options.IgnoreUnmatchedElements && node.NodeType == ValueNodeType.Element) || 
+                        (!_options.IgnoreUnmatchedAttributes && node.NodeType == ValueNodeType.Attribute))
                             throw new UnmatchedNodeException(node.Object);
                     continue;
                 }
@@ -124,7 +124,7 @@ namespace Bender
                 else if (propertyType.IsPrimitive || propertyType.IsValueType || propertyType == typeof (string))
                     setValue(() => node.Value.Parse(propertyType, _options.DefaultNonNullableTypesWhenEmpty));
                 else if (propertyType == typeof(object)) property.SetValue(@object, node.Object, null);
-                else if (node.NodeType == NodeType.Element && (propertyType.IsListInterface() || 
+                else if (node.NodeType == ValueNodeType.Element && (propertyType.IsListInterface() || 
                     propertyType.HasParameterlessConstructor() || propertyType.HasConstructor(@object.GetType())))
                 {
                     object propertyValue;
@@ -140,8 +140,8 @@ namespace Bender
         private void ValidateTypeElementName(Type type, XElement element, bool isRoot = false)
         {
             if (!_options.IgnoreTypeElementNames &&
-                !type.GetXmlName(_options.DefaultGenericListNameFormat,
-                        _options.DefaultGenericTypeNameFormat, isRoot).Equals(element.Name.LocalName, 
+                !type.GetXmlName(_options.GenericTypeNameFormat, _options.GenericListNameFormat,
+                        isRoot).Equals(element.Name.LocalName, 
                             _options.IgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
                 throw new UnmatchedNodeException(element);
         }

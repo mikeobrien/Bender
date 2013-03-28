@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,19 +17,24 @@ namespace Bender
             return caseInsensitiveKey ? new Dictionary<string, TElement>(result, StringComparer.OrdinalIgnoreCase) : result;
         }
 
-        public static IEnumerable<T> Traverse<T>(this T source, Func<T, T> result) where T : class
-        {
-            var node = source;
-            while (node != null)
-            {
-                yield return node;
-                node = result(node);
-            }
-        }
-
         public static bool IsNullOrEmpty(this string value)
         {
             return string.IsNullOrEmpty(value);
+        }
+
+        public static void ForEach(this IEnumerable source, Action<object> action)
+        {
+            foreach (var item in source) action(item);
+        }
+
+        public static IEnumerable AsEnumerable(this object source)
+        {
+            return (IEnumerable) source;
+        }
+
+        public static IEnumerable Select(this IEnumerable source, Func<object, object> map)
+        {
+            return source.Cast<object>().Select<object, object>(map);
         }
     }
 }

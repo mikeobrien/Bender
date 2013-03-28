@@ -85,6 +85,13 @@ namespace Bender
             }
         }
 
+        public static bool IsSimpleType(this Type type)
+        {
+            Func<Type, bool> isSimpleType = x => x.IsPrimitive || x.IsEnum || x == typeof(string) || x == typeof(byte[]) || x == typeof(decimal) ||
+                 x == typeof(DateTime) || x == typeof(TimeSpan) || x == typeof(Guid) || x == typeof(Uri) || x == typeof(object);
+            return isSimpleType(type) || (type.IsNullable() && isSimpleType(Nullable.GetUnderlyingType(type)));
+        }
+
         public static Type GetUnderlyingNullableType(this Type type)
         {
             return type.IsNullable() ? Nullable.GetUnderlyingType(type) : type;
@@ -133,6 +140,11 @@ namespace Bender
         public static bool IsListInterface(this Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IList<>);
+        }
+
+        public static bool IsEnumerable(this Type type)
+        {
+            return type.GetInterfaces().Any(x => x == typeof(IEnumerable));
         }
 
         public static IList CreateList(this Type type)

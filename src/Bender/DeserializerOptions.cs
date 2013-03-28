@@ -12,13 +12,13 @@ namespace Bender
             _options = options;
         }
 
-        public DeserializerOptions AddReader<T>(Func<Options, PropertyInfo, Node, T> reader)
+        public DeserializerOptions AddReader<T>(Func<Options, PropertyInfo, ValueNode, T> reader)
         {
             _options.AddReader(reader);
             return this;
         }
 
-        public DeserializerOptions AddReader<T>(Func<Options, PropertyInfo, Node, T> reader, bool handleNullable) where T : struct
+        public DeserializerOptions AddReader<T>(Func<Options, PropertyInfo, ValueNode, T> reader, bool handleNullable) where T : struct
         {
             _options.AddReader(reader, handleNullable);
             return this;
@@ -68,13 +68,13 @@ namespace Bender
 
         public DeserializerOptions WithDefaultGenericTypeNameFormat(string typeNameFormat)
         {
-            _options.DefaultGenericTypeNameFormat = typeNameFormat;
+            _options.GenericTypeNameFormat = typeNameFormat;
             return this;
         }
 
         public DeserializerOptions WithDefaultGenericListNameFormat(string listNameFormat)
         {
-            _options.DefaultGenericListNameFormat = listNameFormat;
+            _options.GenericListNameFormat = listNameFormat;
             return this;
         }
     }

@@ -24,17 +24,17 @@ namespace Bender
             return this;
         }
 
-        public SerializerOptions AddWriter<T>(Action<Options, PropertyInfo, T, Node> writter)
+        public SerializerOptions AddWriter<T>(Action<Options, PropertyInfo, T, ValueNode> writter)
         {
             _options.AddWriter(writter);
             return this;
         }
 
-        public SerializerOptions AddWriter<T>(Action<Options, PropertyInfo, T, Node> writer, bool handleNullable) where T : struct
+        public SerializerOptions AddWriter<T>(Action<Options, PropertyInfo, T, ValueNode> writer, bool handleNullable) where T : struct
         {
             _options.AddWriter(writer, handleNullable);
             return this;
-        } 
+        }
 
         public SerializerOptions ExcludeTypes(Func<Type, bool> typeFilter)
         {
@@ -50,17 +50,17 @@ namespace Bender
 
         public SerializerOptions WithDefaultGenericTypeNameFormat(string typeNameFormat)
         {
-            _options.DefaultGenericTypeNameFormat = typeNameFormat;
+            _options.GenericTypeNameFormat = typeNameFormat;
             return this;
         }
 
         public SerializerOptions WithDefaultGenericListNameFormat(string listNameFormat)
         {
-            _options.DefaultGenericListNameFormat = listNameFormat;
+            _options.GenericListNameFormat = listNameFormat;
             return this;
         }
 
-        public SerializerOptions ValuesIn(NodeType nodeType)
+        public SerializerOptions ValuesIn(ValueNodeType nodeType)
         {
             _options.ValueNode = nodeType;
             return this;

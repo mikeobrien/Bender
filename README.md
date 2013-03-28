@@ -89,11 +89,11 @@ Note: the `bool` writer shown above is automatically added by default so you get
 
 Some additional notes:
 
-- Bender supports the `XmlRootAttribute`, `XmlTypeAttribute` and `XmlElementAttribute` to override element naming as the `XmlSerializer` does. 
+- Bender supports the `XmlRootAttribute`, `XmlTypeAttribute`, `XmlElementAttribute`, `XmlArrayAttribute` and `XmlArrayItemAttribute` to override element naming as the `XmlSerializer` does. 
 - Bender supports the `XmlIgnoreAttribute` to ignore properties as the `XmlSerializer` does. 
 - Bender will de/serialize nullable types and enumerations. 
 - Bender will pass the parent object to into the constructor of the child object on deserialization if a constructor is defined with a single argument of the parent type.
-- Bender de/serializes the following basic types out of the box: `Object`, `String`, `Char`, `Boolean`, `SByte`, `Byte`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Single`, `Double`, `Decimal`, `DateTime`, `Guid`, `TimeSpan`, `List<T>`, `IList<T>`, `byte[]` (As base64), `MailAddress`, `Version` and `Uri`.
+- Bender de/serializes the following basic types out of the box: `String`, `Char`, `Boolean`, `SByte`, `Byte`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Single`, `Double`, `Decimal`, `DateTime`, `Guid`, `TimeSpan`, `List<T>`, `IList<T>`, `IEnumerable` (Serialization only), `byte[]` (As base64), `MailAddress`, `Version` and `Uri`.
 - Bender will automatically deserialize values in either attributes or elements. By default values are serialized as elements but this can be changed to attributes in configuration.
 
 Bender also includes a helper for building out object graphs. This can be usefull for creating larger object graphs for tests:
@@ -138,7 +138,7 @@ The following are the **serialization** configuration options:
     <td>Do not serialize the elements of properties that are null.</td>
   </tr>
   <tr>
-    <td><code>ValuesIn(Options.ValueNodeType nodeType)</code></td>
+    <td><code>ValuesIn(ValueNodeType nodeType)</code></td>
     <td>Indicates whether values are stored in elements or attributes. Defaults to elements.</td>
   </tr>
   <tr>

@@ -11,7 +11,7 @@ using Bender;
 using NUnit.Framework;
 using Should;
 
-namespace Tests
+namespace Tests.Deserializer
 {
     [TestFixture]
     public class DeserializerTests
@@ -69,7 +69,7 @@ namespace Tests
                       <Object><Enum>Value2</Enum><Enum>Value2</Enum></Object>
                       <BoxedValue>00000000-0000-0000-0000-000000000000</BoxedValue>
                 </SimpleTypes>";
-            var result = Deserializer.Create(x => x.IgnoreUnmatchedElements()).Deserialize<SimpleTypes>(xml);
+            var result = Bender.Deserializer.Create(x => x.IgnoreUnmatchedElements()).Deserialize<SimpleTypes>(xml);
             result.String.ShouldEqual("hai");
             result.Boolean.ShouldBeTrue();
             result.NullableBoolean.Value.ShouldBeTrue();
@@ -136,7 +136,7 @@ namespace Tests
                       <Enum></Enum><NullableEnum></NullableEnum>
                       <Uri></Uri>
                 </SimpleTypes>";
-            var result = Deserializer.Create(x => x.DefaultNonNullableTypesWhenEmpty()).Deserialize<SimpleTypes>(xml);
+            var result = Bender.Deserializer.Create(x => x.DefaultNonNullableTypesWhenEmpty()).Deserialize<SimpleTypes>(xml);
             result.String.ShouldBeEmpty();
             result.Boolean.ShouldBeFalse();
             result.NullableBoolean.HasValue.ShouldBeFalse();
@@ -178,28 +178,28 @@ namespace Tests
         public void should_throw_set_value_exception_when_value_is_empty_and_not_set_to_use_default()
         {
             const string xml = @"<SimpleTypes><Boolean></Boolean></SimpleTypes>";
-            Assert.Throws<SetValueException>(() => Deserializer.Create().Deserialize<SimpleTypes>(xml));
+            Assert.Throws<SetValueException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>(xml));
         }
 
         [Test]
         public void should_not_throw_set_value_exception_when_value_is_empty_and_set_to_use_default()
         {
             const string xml = @"<SimpleTypes><Boolean></Boolean></SimpleTypes>";
-            Assert.DoesNotThrow(() => Deserializer.Create(x => x.DefaultNonNullableTypesWhenEmpty()).Deserialize<SimpleTypes>(xml));
+            Assert.DoesNotThrow(() => Bender.Deserializer.Create(x => x.DefaultNonNullableTypesWhenEmpty()).Deserialize<SimpleTypes>(xml));
         }
 
         [Test]
         public void should_throw_set_value_exception_when_failing_to_set_simple_type()
         {
             const string xml = @"<SimpleTypes Integer=""sdafasdf""/>";
-            Assert.Throws<SetValueException>(() => Deserializer.Create().Deserialize<SimpleTypes>(xml));
+            Assert.Throws<SetValueException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>(xml));
         }
 
         [Test]
         public void should_throw_set_value_exception_when_failing_to_set_type_with_reader()
         {
             const string xml = @"<ComplexAttribute Complex=""erterter""/>";
-            Assert.Throws<SetValueException>(() => Deserializer.Create(
+            Assert.Throws<SetValueException>(() => Bender.Deserializer.Create(
                 x => x.AddReader((o, p, n) => ComplexType.Parse(n.Value, true))).Deserialize<ComplexAttribute>(xml));
         }
 
@@ -217,14 +217,14 @@ namespace Tests
         public void should_deserialize_graph_with_element_values()
         {
             const string xml = @"<Graph><Value1><Value2>hai</Value2></Value1></Graph>";
-            Deserializer.Create().Deserialize<Graph>(xml).Value1.Value2.ShouldEqual("hai");
+            Bender.Deserializer.Create().Deserialize<Graph>(xml).Value1.Value2.ShouldEqual("hai");
         }
 
         [Test]
         public void should_deserialize_graph_with_attribute_values()
         {
             const string xml = @"<Graph><Value1 Value2=""hai""/></Graph>";
-            Deserializer.Create().Deserialize<Graph>(xml).Value1.Value2.ShouldEqual("hai");
+            Bender.Deserializer.Create().Deserialize<Graph>(xml).Value1.Value2.ShouldEqual("hai");
         }
 
         public class ComplexType
@@ -246,35 +246,35 @@ namespace Tests
         public void should_not_traverse_attribute_with_complex_type_without_a_reader()
         {
             const string xml = @"<ComplexAttribute Complex=""sfdasdf""/>";
-            Deserializer.Create().Deserialize<ComplexAttribute>(xml).Complex.ShouldBeNull();
+            Bender.Deserializer.Create().Deserialize<ComplexAttribute>(xml).Complex.ShouldBeNull();
         }
 
         [Test]
         public void should_deserialize_empty_element()
         {
             const string xml = @"<Graph><Value1 /></Graph>";
-            Deserializer.Create().Deserialize<Graph>(xml).Value1.ShouldNotBeNull();
+            Bender.Deserializer.Create().Deserialize<Graph>(xml).Value1.ShouldNotBeNull();
         }
 
         [Test]
         public void should_deserialize_graph_case_insensitively()
         {
             const string xml = @"<graph><value1><value2>hai</value2></value1></graph>";
-            Deserializer.Create(x => x.IgnoreCase()).Deserialize<Graph>(xml).Value1.Value2.ShouldEqual("hai");
+            Bender.Deserializer.Create(x => x.IgnoreCase()).Deserialize<Graph>(xml).Value1.Value2.ShouldEqual("hai");
         }
 
         [Test]
         public void should_not_deserialize_graph_case_insensitively()
         {
             const string xml = @"<graph><value1><value2>hai</value2></value1></graph>";
-            Assert.Throws<UnmatchedNodeException>(() => Deserializer.Create().Deserialize<Graph>(xml));
+            Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().Deserialize<Graph>(xml));
         }
 
         [Test]
         public void should_exclude_types()
         {
             const string xml = @"<Graph><Value1><Value2>hai</Value2></Value1></Graph>";
-            Deserializer.Create(x => x.ExcludeType<GraphNode>().IgnoreUnmatchedElements()).Deserialize<Graph>(xml).Value1.ShouldBeNull();
+            Bender.Deserializer.Create(x => x.ExcludeType<GraphNode>().IgnoreUnmatchedElements()).Deserialize<Graph>(xml).Value1.ShouldBeNull();
         }
 
         public class NullValue
@@ -287,19 +287,19 @@ namespace Tests
         [Test]
         public void should_set_type_with_missing_element_to_null()
         {
-            Deserializer.Create().Deserialize<NullValue>("<NullValue></NullValue>").Value2.ShouldBeNull();
+            Bender.Deserializer.Create().Deserialize<NullValue>("<NullValue></NullValue>").Value2.ShouldBeNull();
         }
 
         [Test]
         public void should_set_value_with_missing_element_to_default()
         {
-            Deserializer.Create().Deserialize<NullValue>("<NullValue></NullValue>").Value3.ShouldEqual(0);
+            Bender.Deserializer.Create().Deserialize<NullValue>("<NullValue></NullValue>").Value3.ShouldEqual(0);
         }
 
         [Test]
         public void should_set_nullable_value_with_missing_element_to_null()
         {
-            Deserializer.Create().Deserialize<NullValue>("<NullValue></NullValue>").Value1.ShouldBeNull();
+            Bender.Deserializer.Create().Deserialize<NullValue>("<NullValue></NullValue>").Value1.ShouldBeNull();
         }
 
         public class CustomFormat
@@ -311,7 +311,7 @@ namespace Tests
         public void should_deserialize_custom_reader()
         {
             const string xml = @"<CustomFormat><Timestamp>06197805</Timestamp></CustomFormat>";
-            Deserializer.Create(x => x.AddReader<DateTime>(
+            Bender.Deserializer.Create(x => x.AddReader<DateTime>(
                     (o, p, v) => DateTime.ParseExact(v.Value, "MMyyyydd", CultureInfo.InvariantCulture)))
                 .Deserialize<CustomFormat>(xml).Timestamp.ShouldEqual(DateTime.Parse("6/5/1978"));
         }
@@ -324,7 +324,7 @@ namespace Tests
                     <Graph><Value1><Value2>hai1</Value2></Value1></Graph>
                     <Graph><Value1><Value2>hai2</Value2></Value1></Graph>
                 </ArrayOfGraph>";
-            var result = Deserializer.Create().Deserialize<List<Graph>>(xml);
+            var result = Bender.Deserializer.Create().Deserialize<List<Graph>>(xml);
             result.Count.ShouldEqual(2);
             result[0].Value1.Value2.ShouldEqual("hai1");
             result[1].Value1.Value2.ShouldEqual("hai2");
@@ -338,7 +338,7 @@ namespace Tests
                     <Graph><Value1><Value2>hai1</Value2></Value1></Graph>
                     <Graph><Value1><Value2>hai2</Value2></Value1></Graph>
                 </ArrayOfGraph>";
-            var result = Deserializer.Create().Deserialize<IList<Graph>>(xml);
+            var result = Bender.Deserializer.Create().Deserialize<IList<Graph>>(xml);
             result.Count.ShouldEqual(2);
             result[0].Value1.Value2.ShouldEqual("hai1");
             result[1].Value1.Value2.ShouldEqual("hai2");
@@ -359,7 +359,7 @@ namespace Tests
                         <GraphNode><Value2>hai2</Value2></GraphNode>
                     </Items>
                 </ListProperty>";
-            var result = Deserializer.Create().Deserialize<ListProperty>(xml).Items;
+            var result = Bender.Deserializer.Create().Deserialize<ListProperty>(xml).Items;
             result.Count.ShouldEqual(2);
             result[0].Value2.ShouldEqual("hai1");
             result[1].Value2.ShouldEqual("hai2");
@@ -380,7 +380,7 @@ namespace Tests
                         <GraphNode><Value2>hai2</Value2></GraphNode>
                     </Items>
                 </IListProperty>";
-            var result = Deserializer.Create().Deserialize<IListProperty>(xml).Items;
+            var result = Bender.Deserializer.Create().Deserialize<IListProperty>(xml).Items;
             result.Count.ShouldEqual(2);
             result[0].Value2.ShouldEqual("hai1");
             result[1].Value2.ShouldEqual("hai2");
@@ -395,7 +395,7 @@ namespace Tests
         public void should_deserialize_generic_type()
         {
             const string xml = @"<GraphNodeOfInt32String><Value2>67</Value2></GraphNodeOfInt32String>";
-            var result = Deserializer.Create().Deserialize<GraphNode<int, string>>(xml);
+            var result = Bender.Deserializer.Create().Deserialize<GraphNode<int, string>>(xml);
             result.Value2.ShouldEqual(67);
         }
 
@@ -422,7 +422,7 @@ namespace Tests
         public void should_deserialize_child_with_parent_passed_into_the_constructor()
         {
             const string xml = @"<ParentNode><Age>67</Age><Child><Name>Ed</Name></Child></ParentNode>";
-            var result = Deserializer.Create().Deserialize<ParentNode>(xml);
+            var result = Bender.Deserializer.Create().Deserialize<ParentNode>(xml);
             result.Child.Name.ShouldEqual("Ed (67)");
         }
 
@@ -440,7 +440,7 @@ namespace Tests
         public void should_not_deserialize_child_with_parameterized_constructor()
         {
             const string xml = @"<ParentNodeWithParameterizedChild><Child><Name>Ed</Name></Child></ParentNodeWithParameterizedChild>";
-            Deserializer.Create().Deserialize<ParentNodeWithParameterizedChild>(xml).Child.ShouldBeNull();
+            Bender.Deserializer.Create().Deserialize<ParentNodeWithParameterizedChild>(xml).Child.ShouldBeNull();
         }
 
         public class SomeItemsProperty
@@ -458,7 +458,7 @@ namespace Tests
                         <GraphNode><Value2>hai2</Value2></GraphNode>
                     </Items>
                 </ListProperty>";
-            var result = Deserializer.Create().Deserialize<ListProperty>(xml).Items;
+            var result = Bender.Deserializer.Create().Deserialize<ListProperty>(xml).Items;
             result.Count.ShouldEqual(2);
             result[0].Value2.ShouldEqual("hai1");
             result[1].Value2.ShouldEqual("hai2");
@@ -474,7 +474,7 @@ namespace Tests
         public void should_deserialize_graph_with_root_element_name()
         {
             const string xml = @"<someName><Value>hai</Value></someName>";
-            Deserializer.Create().Deserialize<CustomRootName>(xml).Value.ShouldEqual("hai");
+            Bender.Deserializer.Create().Deserialize<CustomRootName>(xml).Value.ShouldEqual("hai");
         }
 
         [XmlType("SomeType")]
@@ -495,7 +495,7 @@ namespace Tests
                     <SomeType></SomeType>
                     <SomeType></SomeType>
                 </ArrayOfSomeType>";
-            var result = Deserializer.Create().Deserialize<List<CustomNames>>(xml);
+            var result = Bender.Deserializer.Create().Deserialize<List<CustomNames>>(xml);
             result.Count.ShouldEqual(2);
         }
 
@@ -503,7 +503,7 @@ namespace Tests
         public void should_deserialize_xml_element_name()
         {
             const string xml = @"<SomeType><SomeElement>hai</SomeElement></SomeType>";
-            var result = Deserializer.Create().Deserialize<CustomNames>(xml);
+            var result = Bender.Deserializer.Create().Deserialize<CustomNames>(xml);
             result.Value1.ShouldEqual("hai");
         }
 
@@ -511,7 +511,7 @@ namespace Tests
         public void should_not_deserialize_xml_ignored_members()
         {
             const string xml = @"<SomeType><Value2>hai</Value2></SomeType>";
-            var result = Deserializer.Create(x => x.IgnoreUnmatchedElements()).Deserialize<CustomNames>(xml);
+            var result = Bender.Deserializer.Create(x => x.IgnoreUnmatchedElements()).Deserialize<CustomNames>(xml);
             result.Value2.ShouldBeNull();
         }
 
@@ -525,7 +525,7 @@ namespace Tests
                     <GraphNode><Value2>hai1</Value2></GraphNode>
                     <GraphNode><Value2>hai2</Value2></GraphNode>
                 </SomeItems>";
-            var result = Deserializer.Create().Deserialize<SomeItems>(xml);
+            var result = Bender.Deserializer.Create().Deserialize<SomeItems>(xml);
             result.Count.ShouldEqual(2);
             result[0].Value2.ShouldEqual("hai1");
             result[1].Value2.ShouldEqual("hai2");
@@ -536,7 +536,7 @@ namespace Tests
         {
             const string xml = "<GraphNode blarg=\"hai\"><yada>hai</yada></GraphNode>";
             GraphNode result = null;
-            Assert.DoesNotThrow(() => result = Deserializer.Create(x => x.IgnoreUnmatchedElements()).Deserialize<GraphNode>(xml));
+            Assert.DoesNotThrow(() => result = Bender.Deserializer.Create(x => x.IgnoreUnmatchedElements()).Deserialize<GraphNode>(xml));
             result.ShouldNotBeNull();
             result.Value2.ShouldBeNull();
         }
@@ -545,7 +545,7 @@ namespace Tests
         public void should_fail_on_unmatched_elements()
         {
             const string xml = @"<GraphNode><yada>hai</yada></GraphNode>";
-            Assert.Throws<UnmatchedNodeException>(() => Deserializer.Create().Deserialize<GraphNode>(xml));
+            Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().Deserialize<GraphNode>(xml));
         }
 
         [Test]
@@ -553,7 +553,7 @@ namespace Tests
         {
             const string xml = "<GraphNode blarg=\"hai\"></GraphNode>";
             GraphNode result = null;
-            Assert.DoesNotThrow(() => result = Deserializer.Create().Deserialize<GraphNode>(xml));
+            Assert.DoesNotThrow(() => result = Bender.Deserializer.Create().Deserialize<GraphNode>(xml));
             result.ShouldNotBeNull();
             result.Value2.ShouldBeNull();
         }
@@ -562,7 +562,7 @@ namespace Tests
         public void should_fail_on_unmatched_attributes()
         {
             const string xml = "<GraphNode blarg=\"hai\"></GraphNode>";
-            Assert.Throws<UnmatchedNodeException>(() => Deserializer.Create(x => x.FailOnUnmatchedAttributes()).Deserialize<GraphNode>(xml));
+            Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create(x => x.FailOnUnmatchedAttributes()).Deserialize<GraphNode>(xml));
         }
 
         [Test]
@@ -570,7 +570,7 @@ namespace Tests
         {
             const string xml = @"<root><Value2>hai</Value2></root>";
             GraphNode result = null;
-            Assert.DoesNotThrow(() => result = Deserializer.Create(x => x.IgnoreTypeElementNames()).Deserialize<GraphNode>(xml));
+            Assert.DoesNotThrow(() => result = Bender.Deserializer.Create(x => x.IgnoreTypeElementNames()).Deserialize<GraphNode>(xml));
             result.ShouldNotBeNull();
             result.Value2.ShouldEqual("hai");
         }
@@ -579,7 +579,7 @@ namespace Tests
         public void should_fail_on_unmatched_root_element()
         {
             const string xml = @"<root><Value2>hai</Value2></root>";
-            Assert.Throws<UnmatchedNodeException>(() => Deserializer.Create().Deserialize<GraphNode>(xml));
+            Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().Deserialize<GraphNode>(xml));
         }
 
         [Test]
@@ -587,7 +587,7 @@ namespace Tests
         {
             const string xml = @"<ArrayOfGraphNode><yada><Value2>hai</Value2></yada></ArrayOfGraphNode>";
             List<GraphNode> results = null;
-            Assert.DoesNotThrow(() => results = Deserializer.Create(x => x.IgnoreTypeElementNames()).Deserialize<List<GraphNode>>(xml));
+            Assert.DoesNotThrow(() => results = Bender.Deserializer.Create(x => x.IgnoreTypeElementNames()).Deserialize<List<GraphNode>>(xml));
             results.ShouldNotBeNull();
             results.Count.ShouldEqual(1);
             results[0].Value2.ShouldEqual("hai");
@@ -597,7 +597,7 @@ namespace Tests
         public void should_fail_on_unmatched_list_element()
         {
             const string xml = @"<ArrayOfGraphNode><yada><Value2>hai</Value2></yada></ArrayOfGraphNode>";
-            Assert.Throws<UnmatchedNodeException>(() => Deserializer.Create().Deserialize<List<GraphNode>>(xml));
+            Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().Deserialize<List<GraphNode>>(xml));
         }
 
         public class SpeedTestCollection
@@ -636,7 +636,7 @@ namespace Tests
             var stopwatch = new Stopwatch();
 
             stopwatch.Start();
-            for (var i = 0; i < 100; i++) Deserializer.Create().Deserialize<List<SpeedTestCollection>>(xml);
+            for (var i = 0; i < 100; i++) Bender.Deserializer.Create().Deserialize<List<SpeedTestCollection>>(xml);
             stopwatch.Stop();
             var benderSpeed = stopwatch.ElapsedTicks;
 

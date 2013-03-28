@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.IO;
-using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 
 namespace Bender
 {
     public class Serializer
     {
-        private class NodeMap
-        {
-            public NodeMap Parent { get; set; }
-            public object Instance { get; set; }
-        }
-
         private readonly Options _options;
         private readonly SaveOptions _saveOptions;
 
@@ -45,58 +38,55 @@ namespace Bender
             return SerializeAsDocument(@object).ToString(_saveOptions);
         }
 
-        public XDocument SerializeAsDocument(object @object)
+        public XDocument SerializeAsDocument(object source)
         {
-            var document = new XDocument();
-            var type = @object.GetType();
-            document.Add(new XElement(type.GetXmlName(
-                _options.DefaultGenericListNameFormat, _options.DefaultGenericTypeNameFormat, true)));
-            Traverse(type, @object, document.Root, new NodeMap());
-            return document;
+            if (source == null) throw new ArgumentNullException("source", "Cannot serialize a null reference.");
+            return new XDocument(Traverse(source, LinkedNode<object>.Create(source)));
         }
 
-        private void Traverse(Type type, object @object, XElement element, NodeMap parent)
+        private XObject Traverse(object source, LinkedNode<object> ancestors, PropertyInfo sourceProperty = null, Type itemType = null)
         {
-            if (@object == null || parent.Traverse(x => x.Parent).Any(y => y.Instance == @object)) return;
-            var nodeMap = new NodeMap { Parent = parent, Instance = @object };
-            if (@object.GetType().IsList())
+            var type = itemType ?? (sourceProperty == null || sourceProperty.PropertyType == typeof(object) ? 
+                source.GetType() : sourceProperty.PropertyType);
+
+            var name = sourceProperty != null && itemType == null ? sourceProperty.GetXmlName() :
+                (sourceProperty.GetXmlArrayItemName() ?? 
+                 type.GetXmlName(_options.GenericTypeNameFormat, _options.GenericListNameFormat, !ancestors.Any()));
+
+            Func<XElement> createElement = () => new XElement(name);
+            Func<string, XObject> createValueNode = x => _options.ValueNode == ValueNodeType.Element ? 
+                (x == null ? new XElement(name) : new XElement(name, x)) : 
+                (x == null ? new XAttribute(name, "") : (XObject)new XAttribute(name, x));
+
+            if (_options.Writers.ContainsKey(type))
             {
-                foreach (var item in (IList)@object)
-                {
-                    var itemElement = new XElement(item.GetType()
-                        .GetXmlName(_options.DefaultGenericListNameFormat, 
-                                        _options.DefaultGenericTypeNameFormat));
-                    Traverse(item.GetType(), item, itemElement, nodeMap);
-                    element.Add(itemElement);
-                }
-                return;
+                var node = createValueNode(null);
+                _options.Writers[type](_options, sourceProperty, source, new ValueNode(node));
+                return node;
             }
 
-            var properties = type.GetSerializableProperties(_options.ExcludedTypes);
+            if (type.IsSimpleType()) return source == null ? createValueNode(null) : createValueNode(source.ToString());
 
+            if (type.IsEnumerable())
+            {
+                var listItemType = type.GetListType();
+                return source == null ? createElement() : createElement()
+                    .WithChildren(source.AsEnumerable().Select(x => Traverse(x, ancestors.Add(source), sourceProperty, listItemType)));
+            }
+
+            var element = createElement();
+            if (source == null) return element;
+
+            var properties = type.GetSerializableProperties(_options.ExcludedTypes); 
+            
             foreach (var property in properties)
             {
-                var propertyValue = property.GetValue(@object, null);
-                var propertyType = property.PropertyType == typeof(object) && propertyValue != null ? 
-                    propertyValue.GetType() : property.PropertyType;
-
-                if (propertyValue == null && _options.ExcludeNullValues) continue;
-
-                var propertyName = property.GetXmlName();
-
-                Func<Node> createNode = () => {
-                    var node = Node.Create(propertyName, _options.ValueNode);
-                    element.Add(node.Object);
-                    return node;
-                };
-
-                if (_options.Writers.ContainsKey(propertyType))
-                    _options.Writers[propertyType](_options, property, propertyValue, createNode());
-                else if (propertyType.IsPrimitive || propertyType.IsValueType ||
-                         propertyType == typeof (string) || propertyType == typeof (object))
-                    createNode().Value = propertyValue == null ? "" : propertyValue.ToString();
-                else Traverse(propertyType, propertyValue, element.AddElement(propertyName), nodeMap);
+                var propertyValue = property.GetValue(source, null);
+                if ((propertyValue == null && _options.ExcludeNullValues) || ancestors.Any(propertyValue)) continue;
+                element.Add(Traverse(propertyValue, ancestors.Add(propertyValue), property));
             }
+
+            return element;
         }
     }
 }
