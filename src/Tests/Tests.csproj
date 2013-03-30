@@ -48,7 +48,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Deserializer\DeserializerTests.cs" />
+    <Compile Include="Deserializer\ReaderTests.cs" />
+    <Compile Include="Deserializer\ParameterizedCtorTests.cs" />
+    <Compile Include="Deserializer\MappingTests.cs" />
+    <Compile Include="Deserializer\XmlAttributeTests.cs" />
+    <Compile Include="Deserializer\PerformanceTests.cs" />
+    <Compile Include="Deserializer\ListTests.cs" />
+    <Compile Include="Deserializer\SimpleTypeTests.cs" />
+    <Compile Include="Deserializer\TraversalTests.cs" />
     <Compile Include="ExpanderTests.cs" />
     <Compile Include="Serializer\FormattingTests.cs" />
     <Compile Include="Serializer\TraversalTests.cs" />

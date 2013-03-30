@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.IO;
 using System.Linq;
+using System.IO;
 using System.Reflection;
 using System.Xml.Linq;
-using System.Xml.Serialization;
 
 namespace Bender
 {
@@ -12,9 +10,26 @@ namespace Bender
         base(string.Format("The '{0}' {1} does not correspond to a type or property.", 
         node.GetXPath(), node is XAttribute ? "attribute" : "element")) { } }
 
-    public class SetValueException : Exception { public SetValueException(PropertyInfo property, XObject node, Exception exception) :
-        base(string.Format("Unable to set {0}.{1} to the value at '{2}': {3}", 
-        property.DeclaringType.FullName, property.Name, node.GetXPath(), exception.Message), exception) { } }
+    public class SetValueException : Exception 
+    { 
+        public SetValueException(PropertyInfo property, XObject node, Exception exception) :
+            base(GetMessage(property, node, exception.Message), exception) { }
+
+        public SetValueException(PropertyInfo property, XObject node, string message) :
+            base(GetMessage(property, node, message)) { } 
+
+        private static string GetMessage(PropertyInfo property, XObject node, string message)
+        {
+            return string.Format("Unable to set {0}.{1} to the value at '{2}': {3}",
+                property.DeclaringType.FullName, property.Name, node.GetXPath(), message);
+        }
+    }
+
+    public class DeserializeException : Exception
+    {
+        public DeserializeException(Type type, string message) :
+            base(string.Format("Unable to deserialize {0}: {1}", type.FullName, message)) { }
+    }
 
     public class Deserializer
     {
@@ -79,70 +94,71 @@ namespace Bender
 
         public object Deserialize(Type type, XElement element)
         {
-            var instance = type.IsListInterface() ? type.CreateList() : Activator.CreateInstance(type);
-            ValidateTypeElementName(type, element, true);
-            Traverse(instance, element);
-            return instance;
+            return Traverse(type, new ValueNode(element));
         }
 
-        private void Traverse(object @object, XElement element)
+        private object Traverse(Type type, ValueNode node, object parent = null, PropertyInfo sourceProperty = null)
         {
-            if (@object.GetType().IsList())
+            if (parent == null || parent.GetType().IsGenericEnumerable())
+                ValidateTypeElementName(type, node.Element, parent == null, sourceProperty);
+
+            if (_options.Readers.ContainsKey(type)) 
+                return _options.Readers[type](_options, sourceProperty, node);
+
+            if (type == typeof (object)) return node.Object;
+            if (type.IsSimpleType()) return node.Value.Parse(type, _options.DefaultNonNullableTypesWhenEmpty);
+
+            if (node.NodeType == ValueNodeType.Attribute)
+                throw new SetValueException(sourceProperty, node.Object, "Cannot deserialize attribute value as complex type.");
+
+            if (type.IsGenericEnumerable())
             {
-                var type = @object.GetType().GetListType();
-                foreach (var itemElement in element.Elements())
-                {
-                    ValidateTypeElementName(type, itemElement);
-                    var item = Activator.CreateInstance(type);
-                    Traverse(item, itemElement);
-                    ((IList)@object).Add(item);
-                }
-                return;
+                var list = type.CreateListOfEnumerableType();
+                var itemType = type.GetGenericEnumerableType();
+                node.Element.Elements().ForEach(x => list.Add(Traverse(itemType, new ValueNode(x), parent, sourceProperty)));
+                return type.IsArray ? list.ToArray(itemType) : list;
             }
 
-            var properties = @object.GetType().GetDeserializableProperties(_options.ExcludedTypes)
+            if (type.IsEnumerable())
+            {
+                if (sourceProperty != null) throw new SetValueException(sourceProperty, node.Object, "Cannot deserialize IEnumerable and ArrayList types.");
+                throw new DeserializeException(type, "Cannot deserialize IEnumerable and ArrayList types.");
+            }
+
+            var instance = Activator.CreateInstance(type, parent != null && type.HasConstructor(parent.GetType()) ? new[] { parent } : null);
+
+            var properties = type.GetDeserializableProperties(_options.ExcludedTypes)
                 .ToDictionary(x => x.GetXmlName(), x => x, _options.IgnoreCase);
             
-            foreach (var node in element.Elements().Cast<XObject>().Concat(element.Attributes()).Select(x => new ValueNode(x)))
+            foreach (var childNode in node.Element.Elements().Cast<XObject>().Concat(node.Element.Attributes()).Select(x => new ValueNode(x)))
             {
-                if (!properties.ContainsKey(node.Name.LocalName))
+                if (!properties.ContainsKey(childNode.Name.LocalName))
                 {
-                    if ((!_options.IgnoreUnmatchedElements && node.NodeType == ValueNodeType.Element) || 
-                        (!_options.IgnoreUnmatchedAttributes && node.NodeType == ValueNodeType.Attribute))
-                            throw new UnmatchedNodeException(node.Object);
+                    if ((!_options.IgnoreUnmatchedElements && childNode.NodeType == ValueNodeType.Element) || 
+                        (!_options.IgnoreUnmatchedAttributes && childNode.NodeType == ValueNodeType.Attribute))
+                            throw new UnmatchedNodeException(childNode.Object);
                     continue;
                 }
 
-                var property = properties[node.Name.LocalName];
+                var property = properties[childNode.Name.LocalName];
                 var propertyType = property.PropertyType;
 
-                Action<Func<object>> setValue = x => property.SetValue(
-                    @object, x, y => new SetValueException(property, node.Object, y));
+                if (property.IsIgnored()) continue;
 
-                if (_options.Readers.ContainsKey(propertyType)) 
-                    setValue(() => _options.Readers[propertyType](_options, property, node));
-                else if (propertyType.IsPrimitive || propertyType.IsValueType || propertyType == typeof (string))
-                    setValue(() => node.Value.Parse(propertyType, _options.DefaultNonNullableTypesWhenEmpty));
-                else if (propertyType == typeof(object)) property.SetValue(@object, node.Object, null);
-                else if (node.NodeType == ValueNodeType.Element && (propertyType.IsListInterface() || 
-                    propertyType.HasParameterlessConstructor() || propertyType.HasConstructor(@object.GetType())))
-                {
-                    object propertyValue;
-                    if (propertyType.IsList() || propertyType.IsListInterface()) propertyValue = propertyType.CreateList();
-                    else propertyValue = Activator.CreateInstance(propertyType, 
-                        propertyType.HasConstructor(@object.GetType()) ? new [] { @object } : null);
-                    property.SetValue(@object, propertyValue, null);
-                    Traverse(propertyValue, node.Element);
-                }
+                if (propertyType.IsSimpleType() || propertyType.HasParameterlessConstructor() || 
+                    propertyType.HasConstructor(instance.GetType()) || propertyType.IsEnumerable())
+                    property.SetValue(instance, () => Traverse(property.PropertyType, childNode, instance, property), 
+                        x => new SetValueException(property, childNode.Object, x));
             }
+
+            return instance;
         }
 
-        private void ValidateTypeElementName(Type type, XElement element, bool isRoot = false)
+        private void ValidateTypeElementName(Type type, XElement element, bool isRoot = false, PropertyInfo property = null)
         {
             if (!_options.IgnoreTypeElementNames &&
-                !type.GetXmlName(_options.GenericTypeNameFormat, _options.GenericListNameFormat,
-                        isRoot).Equals(element.Name.LocalName, 
-                            _options.IgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
+                !(property.GetXmlArrayItemName() ?? type.GetXmlName(_options.GenericTypeNameFormat, _options.GenericListNameFormat, isRoot))
+                     .Equals(element.Name.LocalName, _options.IgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
                 throw new UnmatchedNodeException(element);
         }
     }

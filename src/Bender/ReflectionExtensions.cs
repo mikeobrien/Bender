@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Serialization;
 
 namespace Bender
 {
@@ -21,11 +20,10 @@ namespace Bender
             return type.GetProperties(typeFilter).Where(x => x.CanWrite).ToList();
         }
 
-        private static IEnumerable<PropertyInfo> GetProperties(this Type type, List<Func<Type, bool>> typeFilter = null)
+        private static IEnumerable<PropertyInfo> GetProperties(this Type type, IEnumerable<Func<Type, bool>> typeFilter = null)
         {
             return type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Where(x => !x.HasCustomAttribute<XmlIgnoreAttribute>() &&
-                            (typeFilter == null || !typeFilter.Any(y => y(x.PropertyType))));
+                .Where(x => typeFilter == null || !typeFilter.Any(y => y(x.PropertyType)));
         }
 
         public static T GetCustomAttribute<T>(this PropertyInfo property) where T : Attribute
@@ -144,22 +142,48 @@ namespace Bender
 
         public static bool IsEnumerable(this Type type)
         {
-            return type.GetInterfaces().Any(x => x == typeof(IEnumerable));
+            return type.IsEnumerableInterface() || type.GetInterfaces().Any(x => x == typeof(IEnumerable));
         }
 
-        public static IList CreateList(this Type type)
+        public static bool IsEnumerableInterface(this Type type)
         {
-            if (type.IsListInterface()) return (IList)Activator.CreateInstance(
-                typeof(List<>).MakeGenericType(type.GetGenericArguments()[0]));
+            return type == typeof(IEnumerable);
+        }
+
+        public static bool IsGenericEnumerable(this Type type)
+        {
+            return type.IsGenericEnumerableInterface() || 
+                type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+        }
+
+        public static bool IsGenericEnumerableInterface(this Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+        }
+
+        public static Type GetGenericEnumerableType(this Type type)
+        {
+            var enumerableInterface = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>) ? type : 
+                type.GetInterfaces().FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+            return enumerableInterface == null ? null : enumerableInterface.GetGenericArguments()[0];
+        }
+
+        public static bool IsClrCollectionType(this Type type)
+        {
+            return type.Namespace.StartsWith("System.Collections.") || type.Namespace == "System.Collections";
+        }
+
+        public static IList CreateListOfEnumerableType(this Type type)
+        {
+            if (type.IsInterface)
+            {
+                var itemType = type.GetGenericEnumerableType();
+                if (itemType != null) return (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(itemType)); 
+                throw new ArgumentException(string.Format("Interface {0} does not inherit from IEnumerable<T>.", type), "type");
+            }
+            if (type.IsArray) return (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(type.GetElementType())); 
             if (type.IsList()) return (IList)Activator.CreateInstance(type);
-            throw new ArgumentException(string.Format("Type {0} is not a list type.", type), "type");
-        }
-
-        public static Type GetListType(this Type type)
-        {
-            if (type.IsListInterface()) return type.GetGenericArguments()[0];
-            if (type.IsList()) return type.GetInterfaces().First(x => x.IsListInterface()).GetGenericArguments()[0];
-            throw new ArgumentException(string.Format("Type {0} is not a list type.", type), "type");
+            throw new ArgumentException(string.Format("Type {0} does not implement IList.", type), "type");
         }
     }
 }

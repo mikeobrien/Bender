@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 
@@ -69,9 +70,9 @@ namespace Bender
 
             if (type.IsEnumerable())
             {
-                var listItemType = type.GetListType();
+                var listItemType = type.GetGenericEnumerableType();
                 return source == null ? createElement() : createElement()
-                    .WithChildren(source.AsEnumerable().Select(x => Traverse(x, ancestors.Add(source), sourceProperty, listItemType)));
+                    .WithChildren(source.AsEnumerable().Select(x => Traverse(x, ancestors.Add(source), sourceProperty, listItemType ?? x.GetType())));
             }
 
             var element = createElement();
@@ -79,7 +80,7 @@ namespace Bender
 
             var properties = type.GetSerializableProperties(_options.ExcludedTypes); 
             
-            foreach (var property in properties)
+            foreach (var property in properties.Where(x => !x.IsIgnored()))
             {
                 var propertyValue = property.GetValue(source, null);
                 if ((propertyValue == null && _options.ExcludeNullValues) || ancestors.Any(propertyValue)) continue;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
@@ -34,15 +33,22 @@ namespace Bender
             }
             var xmlType = type.GetCustomAttribute<XmlTypeAttribute>();
             if (xmlType != null && xmlType.TypeName != null) return xmlType.TypeName;
+            const string defaultArrayNameFormat = "ArrayOf{0}";
+            if (type.IsArray) return string.Format(listNameFormat ?? defaultArrayNameFormat, type.GetElementType().GetXmlName());
+            if (type.IsGenericEnumerable() && type.IsClrCollectionType()) return string.Format(listNameFormat ?? defaultArrayNameFormat, type.GetGenericEnumerableType().GetXmlName());
+            if (type.IsEnumerable() && type.IsClrCollectionType()) return string.Format(listNameFormat ?? defaultArrayNameFormat, "Object");
             if (type.IsGenericType)
             {
                 var typeDefinition = type.GetGenericTypeDefinition();
                 var typeArguments = type.GetGenericArguments().Select(x => GetXmlName(x, listNameFormat, genericTypeNameFormat)).Aggregate((a, i) => a + i);
-                return typeDefinition == typeof(List<>) || typeDefinition == typeof(IList<>) ?
-                    string.Format(listNameFormat ?? "ArrayOf{0}", typeArguments) :
-                    string.Format(genericTypeNameFormat ?? "{0}Of{1}", typeDefinition.Name.Remove(typeDefinition.Name.IndexOf('`')), typeArguments);
+                return string.Format(genericTypeNameFormat ?? "{0}Of{1}", typeDefinition.Name.Remove(typeDefinition.Name.IndexOf('`')), typeArguments);
             }
             return type.Name;
+        }
+
+        public static bool IsIgnored(this PropertyInfo property)
+        {
+            return property.HasCustomAttribute<XmlIgnoreAttribute>();
         }
 
         public static string GetXPath(this XObject node)

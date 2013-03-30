@@ -27,6 +27,11 @@ namespace Bender
             foreach (var item in source) action(item);
         }
 
+        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+        {
+            foreach (var item in source) action(item);
+        }
+
         public static IEnumerable AsEnumerable(this object source)
         {
             return (IEnumerable) source;
@@ -35,6 +40,13 @@ namespace Bender
         public static IEnumerable Select(this IEnumerable source, Func<object, object> map)
         {
             return source.Cast<object>().Select<object, object>(map);
+        }
+
+        public static Array ToArray(this IList source, Type type)
+        {
+            var array = Array.CreateInstance(type, source.Count);
+            source.CopyTo(array, 0);
+            return array;
         }
     }
 }

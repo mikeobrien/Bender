@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Xml.Linq;
 using Bender;
 using NUnit.Framework;
@@ -21,6 +19,14 @@ namespace Tests.Serializer
             var xml = Bender.Serializer.Create().Serialize(new Graph { Value1 = new GraphNode { Value2 = "hai" } });
             Debug.WriteLine(xml);
             XDocument.Parse(xml).Element("Graph").Element("Value1").Element("Value2").Value.ShouldEqual("hai"); 
+        }
+
+        [Test]
+        public void should_serialize_graph_with_attribute_values()
+        {
+            var xml = Bender.Serializer.Create(x => x.ValuesIn(ValueNodeType.Attribute)).Serialize(new Graph { Value1 = new GraphNode { Value2 = "hai" } });
+            Debug.WriteLine(xml);
+            XDocument.Parse(xml).Element("Graph").Element("Value1").Attribute("Value2").Value.ShouldEqual("hai");
         }
 
         // Exclusion
