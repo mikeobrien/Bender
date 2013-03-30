@@ -15,7 +15,6 @@ namespace Tests.Deserializer
             public string String { get; set; }
             public bool Boolean { get; set; } public bool? NullableBoolean { get; set; }
             public byte Byte { get; set; } public byte? NullableByte { get; set; }
-            public byte[] ByteArray { get; set; }
             public sbyte UnsignedByte { get; set; } public sbyte? NullableUnsignedByte { get; set; }
             public short Short { get; set; } public short? NullableShort { get; set; }
             public ushort UnsignedShort { get; set; } public ushort? NullableUnsignedShort { get; set; }
@@ -30,7 +29,6 @@ namespace Tests.Deserializer
             public TimeSpan TimeSpan { get; set; } public TimeSpan? NullableTimeSpan { get; set; }
             public Guid Guid { get; set; } public Guid? NullableGuid { get; set; }
             public Enum Enum { get; set; } public Enum? NullableEnum { get; set; }
-            public Uri Uri { get; set; }
             public object Object { get; set; }
             public object BoxedValue { get; set; }
         }
@@ -43,7 +41,6 @@ namespace Tests.Deserializer
                       <String>hai</String>
                       <Boolean>true</Boolean><NullableBoolean>true</NullableBoolean>
                       <Byte>1</Byte><NullableByte>1</NullableByte>
-                      <ByteArray>AQID</ByteArray>
                       <UnsignedByte>2</UnsignedByte><NullableUnsignedByte>2</NullableUnsignedByte>
                       <Short>3</Short><NullableShort>3</NullableShort>
                       <UnsignedShort>4</UnsignedShort><NullableUnsignedShort>4</NullableUnsignedShort>
@@ -58,7 +55,6 @@ namespace Tests.Deserializer
                       <TimeSpan>10675199.02:48:05.4775807</TimeSpan><NullableTimeSpan>10675199.02:48:05.4775807</NullableTimeSpan>
                       <Guid>00000000-0000-0000-0000-000000000000</Guid><NullableGuid>00000000-0000-0000-0000-000000000000</NullableGuid>
                       <Enum>Value2</Enum><NullableEnum>Value2</NullableEnum>
-                      <Uri>http://www.google.com/</Uri>
                       <Object><Enum>Value2</Enum><Enum>Value2</Enum></Object>
                       <BoxedValue>00000000-0000-0000-0000-000000000000</BoxedValue>
                 </SimpleTypes>";
@@ -68,7 +64,6 @@ namespace Tests.Deserializer
             result.NullableBoolean.Value.ShouldBeTrue();
             result.Byte.ShouldEqual<byte>(1);
             result.NullableByte.Value.ShouldEqual<byte>(1);
-            result.ByteArray.ShouldEqual(new byte[] { 1, 2, 3 });
             result.UnsignedByte.ShouldEqual<sbyte>(2);
             result.NullableUnsignedByte.Value.ShouldEqual<sbyte>(2);
             result.Short.ShouldEqual<short>(3);
@@ -97,7 +92,6 @@ namespace Tests.Deserializer
             result.NullableGuid.Value.ShouldEqual(Guid.Empty);
             result.Enum.ShouldEqual(Enum.Value2);
             result.NullableEnum.Value.ShouldEqual(Enum.Value2);
-            result.Uri.ShouldEqual(new Uri("http://www.google.com"));
             result.Object.ShouldNotBeNull();
             result.Object.ShouldBeType<XElement>();
             result.BoxedValue.ShouldNotBeNull();
@@ -112,7 +106,6 @@ namespace Tests.Deserializer
                       <String></String>
                       <Boolean></Boolean><NullableBoolean></NullableBoolean>
                       <Byte></Byte><NullableByte></NullableByte>
-                      <ByteArray></ByteArray>
                       <UnsignedByte></UnsignedByte><NullableUnsignedByte></NullableUnsignedByte>
                       <Short></Short><NullableShort></NullableShort>
                       <UnsignedShort></UnsignedShort><NullableUnsignedShort></NullableUnsignedShort>
@@ -127,7 +120,6 @@ namespace Tests.Deserializer
                       <TimeSpan></TimeSpan><NullableTimeSpan></NullableTimeSpan>
                       <Guid></Guid><NullableGuid></NullableGuid>
                       <Enum></Enum><NullableEnum></NullableEnum>
-                      <Uri></Uri>
                 </SimpleTypes>";
             var result = Bender.Deserializer.Create(x => x.DefaultNonNullableTypesWhenEmpty()).Deserialize<SimpleTypes>(xml);
             result.String.ShouldBeEmpty();
@@ -135,7 +127,6 @@ namespace Tests.Deserializer
             result.NullableBoolean.HasValue.ShouldBeFalse();
             result.Byte.ShouldEqual<byte>(0);
             result.NullableByte.HasValue.ShouldBeFalse();
-            result.ByteArray.ShouldEqual(new byte[] { });
             result.UnsignedByte.ShouldEqual<sbyte>(0);
             result.NullableUnsignedByte.HasValue.ShouldBeFalse();
             result.Short.ShouldEqual<short>(0);
@@ -164,7 +155,6 @@ namespace Tests.Deserializer
             result.NullableGuid.HasValue.ShouldBeFalse();
             result.Enum.ShouldEqual(Enum.Value1);
             result.NullableEnum.HasValue.ShouldBeFalse();
-            result.Uri.ShouldEqual(new Uri("http://tempuri.org/"));
         }
 
         [Test]

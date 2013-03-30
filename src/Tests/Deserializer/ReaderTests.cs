@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net;
+using System.Net.Mail;
 using Bender;
 using NUnit.Framework;
 using Should;
@@ -232,6 +234,52 @@ namespace Tests.Deserializer
         {
             const string xml = @"<ComplexAttribute Complex=""hai""/>";
             Assert.Throws<SetValueException>(() => Bender.Deserializer.Create().Deserialize<ComplexAttribute>(xml).Complex.ShouldBeNull());
+        }
+
+        // Built in readers
+
+        public class BuiltInReaders
+        {
+            public byte[] ByteArray { get; set; }
+            public Uri Uri { get; set; }
+            public Version Version { get; set; }
+            public MailAddress MailAddress { get; set; }
+            public IPAddress IpAddress { get; set; }
+        }
+
+        [Test]
+        public void should_deserialize_byte_array()
+        {
+            const string xml = @"<BuiltInReaders><ByteArray>AQID</ByteArray></BuiltInReaders>";
+            Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml).ByteArray.ShouldEqual(new byte[] { 1, 2, 3 });
+        }
+
+        [Test]
+        public void should_deserialize_uri()
+        {
+            const string xml = @"<BuiltInReaders><Uri>http://www.google.com/</Uri></BuiltInReaders>";
+            Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml).Uri.ShouldEqual(new Uri("http://www.google.com"));
+        }
+
+        [Test]
+        public void should_deserialize_mail_address()
+        {
+            const string xml = @"<BuiltInReaders><MailAddress>""Test"" &lt;test@test.com&gt;</MailAddress></BuiltInReaders>";
+            Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml).MailAddress.ShouldEqual(new MailAddress("test@test.com", "Test"));
+        }
+
+        [Test]
+        public void should_deserialize_version()
+        {
+            const string xml = @"<BuiltInReaders><Version>1.2.3.4</Version></BuiltInReaders>";
+            Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml).Version.ShouldEqual(new Version(1, 2, 3, 4));
+        }
+
+        [Test]
+        public void should_deserialize_ip_address()
+        {
+            const string xml = @"<BuiltInReaders><IpAddress>192.168.1.1</IpAddress></BuiltInReaders>";
+            Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml).IpAddress.ShouldEqual(IPAddress.Parse("192.168.1.1"));
         }
     }
 }

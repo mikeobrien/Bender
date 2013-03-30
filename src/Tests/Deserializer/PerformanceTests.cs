@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using Bender;
 using NUnit.Framework;
 using Should;
 
@@ -30,7 +31,7 @@ namespace Tests.Deserializer
         [Test]
         public void should_be_faster_than_the_fcl_xml_deserializer()
         {
-            var document = XDocument.Parse("<ArrayOfSpeedTestCollection></ArrayOfSpeedTestCollection>");
+            var document = "<ArrayOfSpeedTestCollection></ArrayOfSpeedTestCollection>".ParseXml();
             document.Root.Add(Enumerable.Range(0, 5).Select(x => new XElement("SpeedTestCollection",
                     new XElement("Value0", Enumerable.Range(0, 5).Select(y => new XElement("SpeedTestItem",
                             new XElement("Value0", "ssdfsfsfd"), new XElement("Value1", "sfdsfsdf"), new XElement("Value2", "adasd"), new XElement("Value3", "wqerqwe"), new XElement("Value4", "qwerqwer")))),

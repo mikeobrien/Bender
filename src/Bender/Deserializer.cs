@@ -74,7 +74,7 @@ namespace Bender
 
         public object Deserialize(Type type, string source)
         {
-            return Deserialize(type, XDocument.Parse(source));
+            return Deserialize(type, source.ParseXml());
         }
 
         public T Deserialize<T>(XDocument document)
@@ -146,7 +146,8 @@ namespace Bender
                 if (property.IsIgnored()) continue;
 
                 if (propertyType.IsSimpleType() || propertyType.HasParameterlessConstructor() || 
-                    propertyType.HasConstructor(instance.GetType()) || propertyType.IsEnumerable())
+                    propertyType.HasConstructor(instance.GetType()) || propertyType.IsEnumerable() ||
+                    _options.Readers.ContainsKey(propertyType))
                     property.SetValue(instance, () => Traverse(property.PropertyType, childNode, instance, property), 
                         x => new SetValueException(property, childNode.Object, x));
             }

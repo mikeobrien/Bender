@@ -77,5 +77,10 @@ namespace Bender
             children.ForEach(element.Add);
             return element;
         }
+
+        public static XDocument ParseXml(this string xml)
+        {
+            return XDocument.Parse(xml);
+        }
     }
 }

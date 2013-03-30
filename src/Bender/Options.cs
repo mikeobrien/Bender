@@ -23,11 +23,11 @@ namespace Bender
 
             Writers = new Dictionary<Type, Action<Options, PropertyInfo, object, ValueNode>>();
             AddWriter<bool>((o, p, v, e) => e.Value = v.ToString().ToLower(), true);
-            AddWriter<byte[]>((o, p, v, e) => e.Value = Convert.ToBase64String(v));
+            AddWriter<byte[]>((o, p, v, e) => e.Value = v != null ? Convert.ToBase64String(v) : "");
             AddWriter<Uri>((o, p, v, e) => e.Value = v != null ? v.ToString() : "");
-            AddWriter<Version>((o, p, v, e) => e.Value = v.ToString());
-            AddWriter<MailAddress>((o, p, v, e) => e.Value = v.ToString());
-            AddWriter<IPAddress>((o, p, v, e) => e.Value = v.ToString());
+            AddWriter<Version>((o, p, v, e) => e.Value = v != null ? v.ToString() : "");
+            AddWriter<MailAddress>((o, p, v, e) => e.Value = v != null ? v.ToString() : "");
+            AddWriter<IPAddress>((o, p, v, e) => e.Value = v != null ? v.ToString() : "");
         }
         
         public List<Func<Type, bool>> ExcludedTypes { get; set; }

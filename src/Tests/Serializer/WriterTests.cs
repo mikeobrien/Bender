@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
+using System.Net;
+using System.Net.Mail;
+using Bender;
 using NUnit.Framework;
 using Should;
 
@@ -27,7 +29,7 @@ namespace Tests.Serializer
         {
             var xml = Bender.Serializer.Create(x => x.AddWriter<DateTime>((o, p, v, e) => e.Value = v.ToString("hh-mm")))
                 .Serialize(new CustomWriter { SimpleType = DateTime.MaxValue });
-            XDocument.Parse(xml).Element("CustomWriter").Element("SimpleType").Value.ShouldEqual("11-59");   
+            xml.ParseXml().Element("CustomWriter").Element("SimpleType").Value.ShouldEqual("11-59");   
         }
 
         [Test]
@@ -35,7 +37,7 @@ namespace Tests.Serializer
         {
             var xml = Bender.Serializer.Create(x => x.AddWriter<ComplexType>((o, p, v, e) => e.Value = v.Value.ToString()))
                 .Serialize(new CustomWriter { ComplexType = new ComplexType { Value = 5 } });
-            XDocument.Parse(xml).Element("CustomWriter").Element("ComplexType").Value.ShouldEqual("5");
+            xml.ParseXml().Element("CustomWriter").Element("ComplexType").Value.ShouldEqual("5");
         }
 
         [Test]
@@ -47,7 +49,7 @@ namespace Tests.Serializer
                     {
                         new ComplexType { Value = 1 }, new ComplexType { Value = 2 }, new ComplexType { Value = 3 }
                     } });
-            XDocument.Parse(xml).Element("CustomWriter").Element("ListOfComplexTypes").Value.ShouldEqual("1,2,3");   
+            xml.ParseXml().Element("CustomWriter").Element("ListOfComplexTypes").Value.ShouldEqual("1,2,3");   
         }
 
         [Test]
@@ -56,7 +58,7 @@ namespace Tests.Serializer
             var xml = Bender.Serializer.Create(x => x.AddWriter<List<int>>((o, p, v, e) => 
                     e.Value = string.Join(",", v.Select(y => y.ToString()).ToArray())))
                 .Serialize(new CustomWriter { ListOfSimpleTypes = new List<int> { 1, 2, 3 } });
-            XDocument.Parse(xml).Element("CustomWriter").Element("ListOfSimpleTypes").Value.ShouldEqual("1,2,3"); 
+            xml.ParseXml().Element("CustomWriter").Element("ListOfSimpleTypes").Value.ShouldEqual("1,2,3"); 
         }
 
         [Test]
@@ -67,7 +69,7 @@ namespace Tests.Serializer
                     {
                         new ComplexType { Value = 1 }, new ComplexType { Value = 2 }, new ComplexType { Value = 3 }
                     } });
-            var results = XDocument.Parse(xml).Element("CustomWriter").Element("ListOfComplexTypes").Elements("ComplexType");
+            var results = xml.ParseXml().Element("CustomWriter").Element("ListOfComplexTypes").Elements("ComplexType");
             results.First().Value.ShouldEqual("[1]");
             results.Skip(1).First().Value.ShouldEqual("[2]");
             results.Skip(2).First().Value.ShouldEqual("[3]"); 
@@ -78,7 +80,7 @@ namespace Tests.Serializer
         {
             var xml = Bender.Serializer.Create(x => x.AddWriter<int>((o, p, v, e) => e.Value = string.Format("[{0}]", v)))
                 .Serialize(new CustomWriter { ListOfSimpleTypes = new List<int> { 1, 2, 3 } });
-            var results = XDocument.Parse(xml).Element("CustomWriter").Element("ListOfSimpleTypes").Elements("Int32");
+            var results = xml.ParseXml().Element("CustomWriter").Element("ListOfSimpleTypes").Elements("Int32");
             results.First().Value.ShouldEqual("[1]");
             results.Skip(1).First().Value.ShouldEqual("[2]");
             results.Skip(2).First().Value.ShouldEqual("[3]"); 
@@ -93,7 +95,7 @@ namespace Tests.Serializer
                     {
                         new ComplexType { Value = 1 }, new ComplexType { Value = 2 }, new ComplexType { Value = 3 }
                     } });
-            XDocument.Parse(xml).Element("CustomWriter").Element("ListInterfaceOfComplexTypes").Value.ShouldEqual("1,2,3");   
+            xml.ParseXml().Element("CustomWriter").Element("ListInterfaceOfComplexTypes").Value.ShouldEqual("1,2,3");   
         }
 
         [Test]
@@ -102,7 +104,7 @@ namespace Tests.Serializer
             var xml = Bender.Serializer.Create(x => x.AddWriter<IList<int>>((o, p, v, e) =>
                     e.Value = string.Join(",", v.Select(y => y.ToString()).ToArray())))
                 .Serialize(new CustomWriter { ListInterfaceOfSimpleTypes = new List<int> { 1, 2, 3 } });
-            XDocument.Parse(xml).Element("CustomWriter").Element("ListInterfaceOfSimpleTypes").Value.ShouldEqual("1,2,3"); 
+            xml.ParseXml().Element("CustomWriter").Element("ListInterfaceOfSimpleTypes").Value.ShouldEqual("1,2,3"); 
         }
 
         [Test]
@@ -113,7 +115,7 @@ namespace Tests.Serializer
                     {
                         new ComplexType { Value = 1 }, new ComplexType { Value = 2 }, new ComplexType { Value = 3 }
                     } });
-            var results = XDocument.Parse(xml).Element("CustomWriter").Element("ListInterfaceOfComplexTypes").Elements("ComplexType");
+            var results = xml.ParseXml().Element("CustomWriter").Element("ListInterfaceOfComplexTypes").Elements("ComplexType");
             results.First().Value.ShouldEqual("[1]");
             results.Skip(1).First().Value.ShouldEqual("[2]");
             results.Skip(2).First().Value.ShouldEqual("[3]"); 
@@ -124,10 +126,61 @@ namespace Tests.Serializer
         {
             var xml = Bender.Serializer.Create(x => x.AddWriter<int>((o, p, v, e) => e.Value = string.Format("[{0}]", v)))
                 .Serialize(new CustomWriter { ListInterfaceOfSimpleTypes = new List<int> { 1, 2, 3 } });
-            var results = XDocument.Parse(xml).Element("CustomWriter").Element("ListInterfaceOfSimpleTypes").Elements("Int32");
+            var results = xml.ParseXml().Element("CustomWriter").Element("ListInterfaceOfSimpleTypes").Elements("Int32");
             results.First().Value.ShouldEqual("[1]");
             results.Skip(1).First().Value.ShouldEqual("[2]");
             results.Skip(2).First().Value.ShouldEqual("[3]"); 
+        }
+
+        // Built in writers
+
+        public class BuiltInWriters
+        {
+            public byte[] ByteArray { get; set; }
+            public Uri Uri { get; set; }
+            public Version Version { get; set; }
+            public MailAddress MailAddress { get; set; }
+            public IPAddress IpAddress { get; set; }
+        }
+
+        [Test]
+        public void should_serialize_byte_array()
+        {
+            var bytes = new byte[] { 1, 2, 3 };
+            Bender.Serializer.Create().Serialize(new BuiltInWriters { ByteArray = bytes }).ParseXml()
+                .Element("BuiltInWriters").Element("ByteArray").Value.ShouldEqual(Convert.ToBase64String(bytes));
+        }
+
+        [Test]
+        public void should_serialize_uri()
+        {
+            var uri = new Uri("http://www.google.com");
+            Bender.Serializer.Create().Serialize(new BuiltInWriters { Uri = uri }).ParseXml()
+                .Element("BuiltInWriters").Element("Uri").Value.ShouldEqual(uri.ToString());
+        }
+
+        [Test]
+        public void should_serialize_mail_address()
+        {
+            var email = new MailAddress("test@test.com", "Test");
+            Bender.Serializer.Create().Serialize(new BuiltInWriters { MailAddress = email }).ParseXml()
+                .Element("BuiltInWriters").Element("MailAddress").Value.ShouldEqual(email.ToString());
+        }
+
+        [Test]
+        public void should_serialize_version()
+        {
+            var version = new Version(1, 2, 3, 4);
+            Bender.Serializer.Create().Serialize(new BuiltInWriters { Version = version }).ParseXml()
+                .Element("BuiltInWriters").Element("Version").Value.ShouldEqual(version.ToString());
+        }
+
+        [Test]
+        public void should_serialize_ip_address()
+        {
+            var ip = IPAddress.Parse("192.168.1.1");
+            Bender.Serializer.Create().Serialize(new BuiltInWriters { IpAddress = ip }).ParseXml()
+                .Element("BuiltInWriters").Element("IpAddress").Value.ShouldEqual(ip.ToString());
         }
     }
 }
