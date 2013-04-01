@@ -87,6 +87,16 @@ var serializer = Serializer.Create(x => x
 
 Note: the `bool` writer shown above is automatically added by default so you get that behavior out of the box.
 
+Writers can also be used to further process the xml that is produced. Two overloads of `AddWriter`, without the generic type specification, allow you to operate on all elements and attributes. These writers are run after the value writers mentioned above and more than one can be specified. The following example demonstrates how to add a null attribute to elements that have a null value:
+
+```csharp
+
+var serializer = Bender.Serializer.Create(x => x
+    .AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
+    .AddWriter((o, p, v, e) => e.NodeType == ValueNodeType.Element && v == null,
+               (o, p, v, e) => e.Element.Add(new XAttribute(o.Namespaces["xsi"] + "nil", "true"))));
+```
+
 Some additional notes:
 
 - Bender supports the `XmlRootAttribute`, `XmlTypeAttribute`, `XmlElementAttribute`, `XmlAttributeAttribute`, `XmlArrayAttribute` and `XmlArrayItemAttribute` to override element naming as the `XmlSerializer` does. 
@@ -162,7 +172,7 @@ The following are the **serialization** configuration options:
     <td>Allows you to override elements and attributes.</td>
   </tr>
   <tr>
-    <td><code>AddWriter(Func&lt;Options, PropertyInfo, object, ValueNode, bool&gt; predicate, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Action&lt;Options, PropertyInfo, object, ValueNode&gt; writter)</code></td>
+    <td><code>AddWriter(Func&lt;Options, PropertyInfo, object, ValueNode, bool&gt; predicate, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Action&lt;Options, PropertyInfo, object, ValueNode&gt; writter)</code></td>
     <td>Allows you to override elements and attributes that match the specified criteria.</td>
   </tr>
 </table>
