@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Xml.Linq;
 using Bender;
 using NUnit.Framework;
 using Should;
@@ -23,6 +24,8 @@ namespace Tests.Serializer
             public IList<int> ListInterfaceOfSimpleTypes { get; set; }
             public IList<ComplexType> ListInterfaceOfComplexTypes { get; set; }
         }
+
+        // Value writers
 
         [Test]
         public void should_serialize_simple_type_with_custom_writer()
@@ -130,6 +133,38 @@ namespace Tests.Serializer
             results.First().Value.ShouldEqual("[1]");
             results.Skip(1).First().Value.ShouldEqual("[2]");
             results.Skip(2).First().Value.ShouldEqual("[3]"); 
+        }
+
+        // Node writers
+
+        [Test]
+        public void should_apply_node_writer_to_elements()
+        {
+            var xml = Bender.Serializer.Create(x => x
+                .AddWriter((o, p, v, e) => v == null, (o, p, v, e) => e.Name = "Null" + e.Name)).Serialize(new CustomWriter());
+            var results = xml.ParseXml().Element("CustomWriter");
+            results.Element("SimpleType").ShouldNotBeNull();
+            results.Element("NullComplexType").ShouldNotBeNull();
+            results.Element("NullListOfSimpleTypes").ShouldNotBeNull();
+            results.Element("NullListOfComplexTypes").ShouldNotBeNull();
+            results.Element("NullListInterfaceOfSimpleTypes").ShouldNotBeNull();
+            results.Element("NullListInterfaceOfComplexTypes").ShouldNotBeNull();
+        }
+
+        public class AttributeComplexType
+        {
+            public int Value1 { get; set; }
+            public string Value2 { get; set; }
+        }
+
+        [Test]
+        public void should_apply_node_writer_to_attributes()
+        {
+            var xml = Bender.Serializer.Create(x => x.ValuesAsAttributes()
+                .AddWriter((o, p, v, e) => v == null, (o, p, v, e) => e.Name = "Null" + e.Name)).Serialize(new AttributeComplexType());
+            var results = xml.ParseXml().Element("AttributeComplexType");
+            results.Attribute("Value1").ShouldNotBeNull();
+            results.Attribute("NullValue2").ShouldNotBeNull();
         }
 
         // Built in writers

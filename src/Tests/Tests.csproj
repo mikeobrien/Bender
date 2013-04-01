@@ -57,6 +57,7 @@
     <Compile Include="Deserializer\SimpleTypeTests.cs" />
     <Compile Include="Deserializer\TraversalTests.cs" />
     <Compile Include="ExpanderTests.cs" />
+    <Compile Include="Serializer\NamespaceTests.cs" />
     <Compile Include="Serializer\FormattingTests.cs" />
     <Compile Include="Serializer\TraversalTests.cs" />
     <Compile Include="Serializer\ListTests.cs" />

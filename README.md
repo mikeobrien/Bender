@@ -89,7 +89,7 @@ Note: the `bool` writer shown above is automatically added by default so you get
 
 Some additional notes:
 
-- Bender supports the `XmlRootAttribute`, `XmlTypeAttribute`, `XmlElementAttribute`, `XmlArrayAttribute` and `XmlArrayItemAttribute` to override element naming as the `XmlSerializer` does. 
+- Bender supports the `XmlRootAttribute`, `XmlTypeAttribute`, `XmlElementAttribute`, `XmlAttributeAttribute`, `XmlArrayAttribute` and `XmlArrayItemAttribute` to override element naming as the `XmlSerializer` does. 
 - Bender supports the `XmlIgnoreAttribute` to ignore properties as the `XmlSerializer` does. 
 - Bender will de/serialize nullable types and enumerations. 
 - Bender will pass the parent object to into the constructor of the child object on deserialization if a constructor is defined with a single argument of the parent type.
@@ -138,16 +138,32 @@ The following are the **serialization** configuration options:
     <td>Do not serialize the elements of properties that are null.</td>
   </tr>
   <tr>
-    <td><code>ValuesIn(ValueNodeType nodeType)</code></td>
-    <td>Indicates whether values are stored in elements or attributes. Defaults to elements.</td>
+    <td><code>ValuesAsAttributes()</code></td>
+    <td>Specifies that values are serialized as attributes instead of elements.</td>
+  </tr>
+  <tr>
+    <td><code>WithDefaultNamespace(string namespace)</code></td>
+    <td>Specifies the default namespace.</td>
+  </tr>
+  <tr>
+    <td><code>AddNamespace(string prefix, string namespace)</code></td>
+    <td>Adds a namespace and prefix.</td>
   </tr>
   <tr>
     <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, Node&gt; writter)</code></td>
-    <td>Allows you to override how a value is serialized.</td>
+    <td>Allows you to override how a value of a specific type is serialized.</td>
   </tr>
   <tr>
     <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, Node&gt; writter, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
-    <td>Allows you to override how both the nullable and non-nullable value is serialized.</td>
+    <td>Allows you to override how both the nullable and non-nullable value of a specific type is serialized.</td>
+  </tr>
+  <tr>
+    <td><code>AddWriter(Action&lt;Options, PropertyInfo, object, ValueNode&gt; writter)</code></td>
+    <td>Allows you to override elements and attributes.</td>
+  </tr>
+  <tr>
+    <td><code>AddWriter(Func&lt;Options, PropertyInfo, object, ValueNode, bool&gt; predicate, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Action&lt;Options, PropertyInfo, object, ValueNode&gt; writter)</code></td>
+    <td>Allows you to override elements and attributes that match the specified criteria.</td>
   </tr>
 </table>
 

@@ -273,5 +273,25 @@ namespace Tests.Serializer
             xml.ParseXml().Element("IgnoreProperty").Element("Value1").Value.ShouldEqual("oh");
             xml.ParseXml().Element("IgnoreProperty").Element("Value2").ShouldBeNull();
         }
+
+        // XmlAttribute
+
+        public class AttributeProperty
+        {
+            public string Value1 { get; set; }
+            [XmlAttribute]
+            public string Value2 { get; set; }
+            [XmlAttribute("SomeValue")]
+            public string Value3 { get; set; }
+        }
+
+        [Test]
+        public void should_serialize_members_marked_as_attributes()
+        {
+            var xml = Bender.Serializer.Create().Serialize(new AttributeProperty { Value1 = "oh", Value2 = "hai", Value3 = "there"});
+            xml.ParseXml().Element("AttributeProperty").Element("Value1").Value.ShouldEqual("oh");
+            xml.ParseXml().Element("AttributeProperty").Attribute("Value2").Value.ShouldEqual("hai");
+            xml.ParseXml().Element("AttributeProperty").Attribute("SomeValue").Value.ShouldEqual("there");
+        }
     }
 }

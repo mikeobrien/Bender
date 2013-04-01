@@ -313,5 +313,27 @@ namespace Tests.Deserializer
             result.Value1.ShouldEqual("oh");
             result.Value2.ShouldBeNull();
         }
+
+        // XmlAttribute
+
+        public class AttributeProperty
+        {
+            public string Value1 { get; set; }
+            [XmlAttribute]
+            public string Value2 { get; set; }
+            [XmlAttribute("SomeValue")]
+            public string Value3 { get; set; }
+        }
+
+        [Test]
+        public void should_serialize_members_marked_as_attributes()
+        {
+            const string xml =
+                "<AttributeProperty Value2=\"hai\" SomeValue=\"there\"><Value1>oh</Value1></AttributeProperty>";
+            var result = Bender.Deserializer.Create().Deserialize<AttributeProperty>(xml);
+            result.Value1.ShouldEqual("oh");
+            result.Value2.ShouldEqual("hai");
+            result.Value3.ShouldEqual("there");
+        }
     }
 }

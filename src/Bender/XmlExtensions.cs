@@ -11,10 +11,13 @@ namespace Bender
     {
         public static string GetXmlName(this PropertyInfo property)
         {
+            var attributeName = property.GetCustomAttribute<XmlAttributeAttribute>();
+            if (attributeName != null && !string.IsNullOrEmpty(attributeName.AttributeName)) return attributeName.AttributeName;
             var elementName = property.GetCustomAttribute<XmlElementAttribute>();
-            if (elementName != null && elementName.ElementName != null) return elementName.ElementName;
+            if (elementName != null && !string.IsNullOrEmpty(elementName.ElementName)) return elementName.ElementName;
             var arrayName = property.GetCustomAttribute<XmlArrayAttribute>();
-            return arrayName != null && arrayName.ElementName != null && property.PropertyType.IsEnumerable() ? arrayName.ElementName : property.Name;
+            return arrayName != null && !string.IsNullOrEmpty(arrayName.ElementName) && property.PropertyType.IsEnumerable() ? 
+                arrayName.ElementName : property.Name;
         }
 
         public static string GetXmlArrayItemName(this PropertyInfo property)

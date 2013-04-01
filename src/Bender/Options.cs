@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace Bender
 {
@@ -21,7 +22,9 @@ namespace Bender
             AddReader((o, p, e) => new MailAddress(e.Value));
             AddReader((o, p, e) => IPAddress.Parse(e.Value));
 
-            Writers = new Dictionary<Type, Action<Options, PropertyInfo, object, ValueNode>>();
+            Namespaces = new Dictionary<string, XNamespace>();
+            NodeWriters = new List<Action<Options, PropertyInfo, object, ValueNode>>();
+            ValueWriters = new Dictionary<Type, Action<Options, PropertyInfo, object, ValueNode>>();
             AddWriter<bool>((o, p, v, e) => e.Value = v.ToString().ToLower(), true);
             AddWriter<byte[]>((o, p, v, e) => e.Value = v != null ? Convert.ToBase64String(v) : "");
             AddWriter<Uri>((o, p, v, e) => e.Value = v != null ? v.ToString() : "");
@@ -58,17 +61,30 @@ namespace Bender
         public bool PrettyPrint { get; set; }
         public bool ExcludeNullValues { get; set; }
         public ValueNodeType ValueNode { get; set; }
-        public Dictionary<Type, Action<Options, PropertyInfo, object, ValueNode>> Writers { get; private set; }
+        public Dictionary<Type, Action<Options, PropertyInfo, object, ValueNode>> ValueWriters { get; private set; }
+        public List<Action<Options, PropertyInfo, object, ValueNode>> NodeWriters { get; private set; }
+        public XNamespace DefaultNamespace { get; set; }
+        public Dictionary<string, XNamespace> Namespaces { get; set; } 
+
+        public void AddWriter(Action<Options, PropertyInfo, object, ValueNode> writer)
+        {
+            NodeWriters.Add(writer);
+        }
+
+        public void AddWriter(Func<Options, PropertyInfo, object, ValueNode, bool> predicate, Action<Options, PropertyInfo, object, ValueNode> writer)
+        {
+            NodeWriters.Add((o, p, v, e) => { if (predicate(o, p, v, e)) writer(o, p, v, e); });
+        }
 
         public void AddWriter<T>(Action<Options, PropertyInfo, T, ValueNode> writer)
         {
-            Writers[typeof(T)] = (o, p, v, e) => writer(o, p, (T)v, e);
+            ValueWriters[typeof(T)] = (o, p, v, e) => writer(o, p, (T)v, e);
         }
 
         public void AddWriter<T>(Action<Options, PropertyInfo, T, ValueNode> writer, bool handleNullable) where T : struct
         {
             AddWriter(writer);
-            if (handleNullable) Writers[typeof(T?)] = (o, p, v, e) => { if (((T?)v).HasValue) writer(o, p, ((T?)v).Value, e); };
+            if (handleNullable) ValueWriters[typeof(T?)] = (o, p, v, e) => { if (((T?)v).HasValue) writer(o, p, ((T?)v).Value, e); };
         } 
     }
 }

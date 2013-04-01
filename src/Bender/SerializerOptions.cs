@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace Bender
 {
@@ -21,6 +22,19 @@ namespace Bender
         public SerializerOptions ExcludeNullValues()
         {
             _options.ExcludeNullValues = true;
+            return this;
+        }
+
+        public SerializerOptions AddWriter(Action<Options, PropertyInfo, object, ValueNode> writter)
+        {
+            _options.AddWriter(writter);
+            return this;
+        }
+
+        public SerializerOptions AddWriter(Func<Options, PropertyInfo, object, ValueNode, bool> predicate, 
+            Action<Options, PropertyInfo, object, ValueNode> writter)
+        {
+            _options.AddWriter(predicate, writter);
             return this;
         }
 
@@ -60,9 +74,21 @@ namespace Bender
             return this;
         }
 
-        public SerializerOptions ValuesIn(ValueNodeType nodeType)
+        public SerializerOptions ValuesAsAttributes()
         {
-            _options.ValueNode = nodeType;
+            _options.ValueNode = ValueNodeType.Attribute;
+            return this;
+        }
+
+        public SerializerOptions WithDefaultNamespace(string @namespace)
+        {
+            _options.DefaultNamespace = XNamespace.Get(@namespace);
+            return this;
+        }
+
+        public SerializerOptions AddNamespace(string prefix, string @namespace)
+        {
+            _options.Namespaces.Add(prefix, XNamespace.Get(@namespace));
             return this;
         }
     }
