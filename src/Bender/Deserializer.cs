@@ -6,31 +6,6 @@ using System.Xml.Linq;
 
 namespace Bender
 {
-    public class UnmatchedNodeException : Exception { public UnmatchedNodeException(XObject node) : 
-        base(string.Format("The '{0}' {1} does not correspond to a type or property.", 
-        node.GetXPath(), node is XAttribute ? "attribute" : "element")) { } }
-
-    public class SetValueException : Exception 
-    { 
-        public SetValueException(PropertyInfo property, XObject node, Exception exception) :
-            base(GetMessage(property, node, exception.Message), exception) { }
-
-        public SetValueException(PropertyInfo property, XObject node, string message) :
-            base(GetMessage(property, node, message)) { } 
-
-        private static string GetMessage(PropertyInfo property, XObject node, string message)
-        {
-            return string.Format("Unable to set {0}.{1} to the value at '{2}': {3}",
-                property.DeclaringType.FullName, property.Name, node.GetXPath(), message);
-        }
-    }
-
-    public class DeserializeException : Exception
-    {
-        public DeserializeException(Type type, string message) :
-            base(string.Format("Unable to deserialize {0}: {1}", type.FullName, message)) { }
-    }
-
     public class Deserializer
     {
         private readonly Options _options;
@@ -149,7 +124,7 @@ namespace Bender
                     propertyType.HasConstructor(instance.GetType()) || propertyType.IsEnumerable() ||
                     _options.Readers.ContainsKey(propertyType))
                     property.SetValue(instance, () => Traverse(property.PropertyType, childNode, instance, property), 
-                        x => new SetValueException(property, childNode.Object, x));
+                        e => new SetValueException(property, childNode.Object, childNode.Value, e));
             }
 
             return instance;

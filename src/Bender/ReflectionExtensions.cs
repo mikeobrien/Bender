@@ -71,15 +71,15 @@ namespace Bender
             }
         }
 
-        public static void SetValue(this PropertyInfo property, object instance, Func<object> value, Func<Exception, Exception> exception)
+        public static void SetValue(this PropertyInfo property, object instance, Func<object> getValue, Func<Exception, Exception> exception)
         {
             try
             {
-                property.SetValue(instance, value(), null);
+                property.SetValue(instance, getValue(), null);
             }
             catch (Exception e)
             {
-                throw exception(e);
+                throw (e is BenderException ? e : exception(e));
             }
         }
 

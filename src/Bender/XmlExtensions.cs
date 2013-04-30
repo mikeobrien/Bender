@@ -49,6 +49,11 @@ namespace Bender
             return type.Name;
         }
 
+        public static string ObjectType(this XObject node)
+        {
+            return node is XAttribute ? "attribute" : (node is XElement ? "element" : "object");
+        }
+
         public static bool IsIgnored(this PropertyInfo property)
         {
             return property.HasCustomAttribute<XmlIgnoreAttribute>();
@@ -58,7 +63,7 @@ namespace Bender
         {
             var attribute = node as XAttribute;
             var element = node as XElement ?? attribute.Parent;
-            return (element.Ancestors().Any() ? "/" + element.Ancestors().Select(x => x.Name.LocalName)
+            return (element.Ancestors().Any() ? "/" + element.Ancestors().Select(x => x.Name.LocalName).Reverse()
                 .Aggregate((a, i) => a + "/" + i) : "") + "/" + element.Name.LocalName + (attribute != null ? "/@" + attribute.Name : "");
         }
 

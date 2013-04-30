@@ -48,5 +48,10 @@ namespace Bender
             source.CopyTo(array, 0);
             return array;
         }
+
+        public static string TruncateAt(this string value, int length)
+        {
+            return !string.IsNullOrEmpty(value) && length > 0 && value.Length > length ? value.Substring(0, length) + "..." : value;
+        }
     }
 }
