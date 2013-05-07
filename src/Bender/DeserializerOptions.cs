@@ -77,5 +77,11 @@ namespace Bender
             _options.GenericListNameFormat = listNameFormat;
             return this;
         }
+
+        public DeserializerOptions WithFriendlyParseErrorMessage<T>(string message)
+        {
+            _options.FriendlyParseErrorMessages[typeof (T)] = message;
+            return this;
+        }
     }
 }

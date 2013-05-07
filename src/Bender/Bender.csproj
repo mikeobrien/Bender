@@ -40,8 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BenderException.cs" />
-    <Compile Include="DeserializerExceptions.cs" />
+    <Compile Include="DeserializerSourceExceptions.cs" />
     <Compile Include="DeserializerOptions.cs" />
     <Compile Include="Expander.cs" />
     <Compile Include="LinkedNode.cs" />

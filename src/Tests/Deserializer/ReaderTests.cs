@@ -201,7 +201,7 @@ namespace Tests.Deserializer
         {
             public static AttributeComplexType Parse(string value, bool fail)
             {
-                if (fail) throw new ParseException(typeof(AttributeComplexType));
+                if (fail) throw new InvalidOperationException();
                 return new AttributeComplexType { Value = value };
             }
             public string Value { get; set; }
@@ -222,18 +222,18 @@ namespace Tests.Deserializer
         }
 
         [Test]
-        public void should_throw_set_value_exception_when_failing_to_set_complex_attribute_type_with_reader()
+        public void should_throw_deserialize_exception_when_failing_to_set_complex_attribute_type_with_reader()
         {
             const string xml = @"<ComplexAttribute Complex=""hai""/>";
-            Assert.Throws<SetValueException>(() => Bender.Deserializer.Create(
+            Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create(
                 x => x.AddReader((o, p, n) => AttributeComplexType.Parse(n.Value, true))).Deserialize<ComplexAttribute>(xml));
         }
 
         [Test]
-        public void should_throw_set_value_exception_when_deserializing_complex_attribute_type_without_a_reader()
+        public void should_throw_deserialize_exception_when_deserializing_complex_attribute_type_without_a_reader()
         {
             const string xml = @"<ComplexAttribute Complex=""hai""/>";
-            Assert.Throws<SetValueException>(() => Bender.Deserializer.Create().Deserialize<ComplexAttribute>(xml).Complex.ShouldBeNull());
+            Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create().Deserialize<ComplexAttribute>(xml).Complex.ShouldBeNull());
         }
 
         // Built in readers
@@ -255,10 +255,26 @@ namespace Tests.Deserializer
         }
 
         [Test]
+        public void should_not_deserialize_improperly_formated_byte_array()
+        {
+            const string xml = @"<BuiltInReaders><ByteArray>56y45u456u</ByteArray></BuiltInReaders>";
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml)).FriendlyMessage
+                .ShouldEqual("Unable to parse the value '56y45u456u' in the '/BuiltInReaders/ByteArray' element as a Byte[]: Not formatted correctly, must be formatted as base64 string.");
+        }
+
+        [Test]
         public void should_deserialize_uri()
         {
             const string xml = @"<BuiltInReaders><Uri>http://www.google.com/</Uri></BuiltInReaders>";
             Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml).Uri.ShouldEqual(new Uri("http://www.google.com"));
+        }
+
+        [Test]
+        public void should_not_deserialize_improperly_formated_uri()
+        {
+            const string xml = @"<BuiltInReaders><Uri>46b464646436</Uri></BuiltInReaders>";
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml)).FriendlyMessage
+                .ShouldEqual("Unable to parse the value '46b464646436' in the '/BuiltInReaders/Uri' element as a Uri: Not formatted correctly, must be formatted as 'http://domain.com'.");
         }
 
         [Test]
@@ -269,6 +285,14 @@ namespace Tests.Deserializer
         }
 
         [Test]
+        public void should_not_deserialize_improperly_formated_mail_address()
+        {
+            const string xml = @"<BuiltInReaders><MailAddress>34b64634b643b6</MailAddress></BuiltInReaders>";
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml)).FriendlyMessage
+                .ShouldEqual("Unable to parse the value '34b64634b643b6' in the '/BuiltInReaders/MailAddress' element as a MailAddress: Not formatted correctly, must be formatted as 'username@domain.com'.");
+        }
+
+        [Test]
         public void should_deserialize_version()
         {
             const string xml = @"<BuiltInReaders><Version>1.2.3.4</Version></BuiltInReaders>";
@@ -276,10 +300,26 @@ namespace Tests.Deserializer
         }
 
         [Test]
+        public void should_not_deserialize_improperly_formated_version()
+        {
+            const string xml = @"<BuiltInReaders><Version>4b6345b6345b634</Version></BuiltInReaders>";
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml)).FriendlyMessage
+                .ShouldEqual("Unable to parse the value '4b6345b6345b634' in the '/BuiltInReaders/Version' element as a Version: Not formatted correctly, must be formatted as '1.2.3.4'.");
+        }
+
+        [Test]
         public void should_deserialize_ip_address()
         {
             const string xml = @"<BuiltInReaders><IpAddress>192.168.1.1</IpAddress></BuiltInReaders>";
             Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml).IpAddress.ShouldEqual(IPAddress.Parse("192.168.1.1"));
+        }
+
+        [Test]
+        public void should_not_deserialize_improperly_formated_ip_address()
+        {
+            const string xml = @"<BuiltInReaders><IpAddress>45b634b6345b6345</IpAddress></BuiltInReaders>";
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml)).FriendlyMessage
+                .ShouldEqual("Unable to parse the value '45b634b6345b6345' in the '/BuiltInReaders/IpAddress' element as a IPAddress: Not formatted correctly, must be formatted as '1.2.3.4'.");
         }
     }
 }

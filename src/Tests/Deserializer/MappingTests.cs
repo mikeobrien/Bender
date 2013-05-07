@@ -31,7 +31,8 @@ namespace Tests.Deserializer
         public void should_not_map_elements_and_values_case_insensitively()
         {
             const string xml = @"<graph><value1><value2>hai</value2></value1></graph>";
-            Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().Deserialize<Graph>(xml));
+            Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().Deserialize<Graph>(xml))
+                .FriendlyMessage.ShouldEqual("The '/graph' element is not recognized.");
         }
 
         // Empty elements
@@ -47,17 +48,17 @@ namespace Tests.Deserializer
         }
 
         [Test]
-        public void should_throw_set_value_exception_when_simple_type_is_empty_and_not_set_to_use_default()
+        public void should_throw_value_parse_exception_when_simple_type_is_empty_and_not_set_to_use_default()
         {
             var xml = @"<ComplexType><IntegerValue></IntegerValue></ComplexType>";
-            Assert.Throws<SetValueException>(() => Bender.Deserializer.Create().Deserialize<ComplexType>(xml));
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<ComplexType>(xml));
 
             xml = @"<ComplexType><IntegerValue/></ComplexType>";
-            Assert.Throws<SetValueException>(() => Bender.Deserializer.Create().Deserialize<ComplexType>(xml));
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<ComplexType>(xml));
         }
 
         [Test]
-        public void should_not_throw_set_value_exception_when_simple_type_is_empty_and_set_to_use_default()
+        public void should_not_throw_value_parse_exception_when_simple_type_is_empty_and_set_to_use_default()
         {
             var xml = @"<ComplexType><StringValue></StringValue></ComplexType>";
             Assert.DoesNotThrow(() => Bender.Deserializer.Create(x => x.DefaultNonNullableTypesWhenEmpty()).Deserialize<ComplexType>(xml));
@@ -109,7 +110,8 @@ namespace Tests.Deserializer
         public void should_fail_on_unmapped_elements()
         {
             const string xml = @"<ComplexType><yada>hai</yada></ComplexType>";
-            Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().Deserialize<ComplexType>(xml));
+            Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().Deserialize<ComplexType>(xml))
+                .FriendlyMessage.ShouldEqual("The '/ComplexType/yada' element is not recognized.");
         }
 
         [Test]
@@ -126,7 +128,8 @@ namespace Tests.Deserializer
         public void should_fail_on_unmapped_attributes()
         {
             const string xml = "<ComplexType blarg=\"hai\"></ComplexType>";
-            Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create(x => x.FailOnUnmatchedAttributes()).Deserialize<ComplexType>(xml));
+            Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create(x => x.FailOnUnmatchedAttributes()).Deserialize<ComplexType>(xml))
+                .FriendlyMessage.ShouldEqual("The '/ComplexType/@blarg' attribute is not recognized.");
         }
 
         [Test]
@@ -143,7 +146,8 @@ namespace Tests.Deserializer
         public void should_fail_on_unmapped_root_element()
         {
             const string xml = @"<root><Value>hai</Value></root>";
-            Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().Deserialize<ComplexType>(xml));
+            Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().Deserialize<ComplexType>(xml))
+                .FriendlyMessage.ShouldEqual("The '/root' element is not recognized.");
         }
 
         [Test]
@@ -161,7 +165,8 @@ namespace Tests.Deserializer
         public void should_fail_on_unmapped_list_element()
         {
             const string xml = @"<ArrayOfComplexType><yada><Value>hai</Value></yada></ArrayOfComplexType>";
-            Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().Deserialize<List<ComplexType>>(xml));
+            Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().Deserialize<List<ComplexType>>(xml))
+                .FriendlyMessage.ShouldEqual("The '/ArrayOfComplexType/yada' element is not recognized.");
         }
     }
 }

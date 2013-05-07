@@ -37,14 +37,14 @@ namespace Bender
             var xmlType = type.GetCustomAttribute<XmlTypeAttribute>();
             if (xmlType != null && xmlType.TypeName != null) return xmlType.TypeName;
             const string defaultArrayNameFormat = "ArrayOf{0}";
-            if (type.IsArray) return string.Format(listNameFormat ?? defaultArrayNameFormat, type.GetElementType().GetXmlName());
-            if (type.IsGenericEnumerable() && type.IsClrCollectionType()) return string.Format(listNameFormat ?? defaultArrayNameFormat, type.GetGenericEnumerableType().GetXmlName());
-            if (type.IsEnumerable() && type.IsClrCollectionType()) return string.Format(listNameFormat ?? defaultArrayNameFormat, "Object");
+            if (type.IsArray) return (listNameFormat ?? defaultArrayNameFormat).ToFormat(type.GetElementType().GetXmlName());
+            if (type.IsGenericEnumerable() && type.IsClrCollectionType()) return (listNameFormat ?? defaultArrayNameFormat).ToFormat(type.GetGenericEnumerableType().GetXmlName());
+            if (type.IsEnumerable() && type.IsClrCollectionType()) return (listNameFormat ?? defaultArrayNameFormat).ToFormat("Object");
             if (type.IsGenericType)
             {
                 var typeDefinition = type.GetGenericTypeDefinition();
                 var typeArguments = type.GetGenericArguments().Select(x => GetXmlName(x, listNameFormat, genericTypeNameFormat)).Aggregate((a, i) => a + i);
-                return string.Format(genericTypeNameFormat ?? "{0}Of{1}", typeDefinition.Name.Remove(typeDefinition.Name.IndexOf('`')), typeArguments);
+                return (genericTypeNameFormat ?? "{0}Of{1}").ToFormat(typeDefinition.Name.Remove(typeDefinition.Name.IndexOf('`')), typeArguments);
             }
             return type.Name;
         }

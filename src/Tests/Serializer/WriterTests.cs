@@ -67,7 +67,7 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_complex_type_list_property_item_with_custom_writer()
         {
-            var xml = Bender.Serializer.Create(x => x.AddWriter<ComplexType>((o, p, v, e) => { if (v != null) e.Value = string.Format("[{0}]", v.Value); }))
+            var xml = Bender.Serializer.Create(x => x.AddWriter<ComplexType>((o, p, v, e) => { if (v != null) e.Value = "[{0}]".ToFormat(v.Value); }))
                 .Serialize(new CustomWriter { ListOfComplexTypes = new List<ComplexType>
                     {
                         new ComplexType { Value = 1 }, new ComplexType { Value = 2 }, new ComplexType { Value = 3 }
@@ -81,7 +81,7 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_simple_type_list_property_item_with_custom_writer()
         {
-            var xml = Bender.Serializer.Create(x => x.AddWriter<int>((o, p, v, e) => e.Value = string.Format("[{0}]", v)))
+            var xml = Bender.Serializer.Create(x => x.AddWriter<int>((o, p, v, e) => e.Value = "[{0}]".ToFormat(v)))
                 .Serialize(new CustomWriter { ListOfSimpleTypes = new List<int> { 1, 2, 3 } });
             var results = xml.ParseXml().Element("CustomWriter").Element("ListOfSimpleTypes").Elements("Int32");
             results.First().Value.ShouldEqual("[1]");
@@ -113,7 +113,7 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_complex_type_list_interface_property_item_with_custom_writer()
         {
-            var xml = Bender.Serializer.Create(x => x.AddWriter<ComplexType>((o, p, v, e) => { if (v != null) e.Value = string.Format("[{0}]", v.Value); }))
+            var xml = Bender.Serializer.Create(x => x.AddWriter<ComplexType>((o, p, v, e) => { if (v != null) e.Value = "[{0}]".ToFormat(v.Value); }))
                 .Serialize(new CustomWriter { ListInterfaceOfComplexTypes = new List<ComplexType>
                     {
                         new ComplexType { Value = 1 }, new ComplexType { Value = 2 }, new ComplexType { Value = 3 }
@@ -127,7 +127,7 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_simple_type_list_interface_property_item_with_custom_writer()
         {
-            var xml = Bender.Serializer.Create(x => x.AddWriter<int>((o, p, v, e) => e.Value = string.Format("[{0}]", v)))
+            var xml = Bender.Serializer.Create(x => x.AddWriter<int>((o, p, v, e) => e.Value = "[{0}]".ToFormat(v)))
                 .Serialize(new CustomWriter { ListInterfaceOfSimpleTypes = new List<int> { 1, 2, 3 } });
             var results = xml.ParseXml().Element("CustomWriter").Element("ListInterfaceOfSimpleTypes").Elements("Int32");
             results.First().Value.ShouldEqual("[1]");

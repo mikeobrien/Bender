@@ -52,6 +52,8 @@ serializer.Serialize(new YadaModel {...}, stream);
 serializer.Serialize(new YadaModel {...}, @"d:\files\file.xml");
 ```
 
+#### Overriding de/serialization
+
 To override de/serialization add a reader or writer:
 
 ```csharp
@@ -97,7 +99,11 @@ var serializer = Bender.Serializer.Create(x => x
                (o, p, v, e) => e.Element.Add(new XAttribute(o.Namespaces["xsi"] + "nil", "true"))));
 ```
 
-Some additional notes:
+#### Deserialization errors
+
+Errors during deserialization can result from either the source xml or from issues with your code and configuration. In a web service or application the former can likely be addressed by your end users. With that in mind, all Bender deserialization exceptions that are a result of the source xml inherit from `SourceException`. This exception has a property called `FriendlyMessage` which can be displayed to end users and give them information to help them resolve the problem. There are three exceptions that inherit from `SourceException`: `UnmatchedNodeException`, `XmlParseException` and `ValueParseException`. An `UnmatchedNodeException` occurs when an element or attribute does not match a property in the target type (This behavior can be turned off in the deserialization options). An `XmlParseException` occurs when the xml is malformed. And finally a `ValueParseException` occurs when a simple type cannot be parsed because it is not formatted properly. Bender has default friendly messages for simple types and these can be overriden by calling the `WithFriendlyParseErrorMessage<T>(string message)` method in the deserialization options.
+
+#### Miscellania
 
 - Bender supports the `XmlRootAttribute`, `XmlTypeAttribute`, `XmlElementAttribute`, `XmlAttributeAttribute`, `XmlArrayAttribute` and `XmlArrayItemAttribute` to override element naming as the `XmlSerializer` does. 
 - Bender supports the `XmlIgnoreAttribute` to ignore properties as the `XmlSerializer` does. 
@@ -203,6 +209,10 @@ The following are the **deserialization** configuration options:
   <tr>
     <td><code>AddReader&lt;T&gt;(Func&lt;Options, PropertyInfo, Node, T&gt; reader, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
     <td>Allows you to override how both the nullable and non-nullable value is deserialized.</td>
+  </tr>
+  <tr>
+    <td><code>WithFriendlyParseErrorMessage&lt;T&gt;(string message)</code></td>
+    <td>Allows you to override friendly error messages returned when a value cannot be parsed.</td>
   </tr>
 </table>
 

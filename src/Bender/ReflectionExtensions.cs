@@ -6,7 +6,14 @@ using System.Reflection;
 
 namespace Bender
 {
-    public class ParseException : Exception { public ParseException(Type type) : base("Unable to parse " + type) { } }
+    public class ParseException : FormatException
+    {
+        public ParseException(string friendlyMessage) : base(friendlyMessage)
+        { FriendlyMessage = friendlyMessage; }
+        public ParseException(Exception exception, string friendlyMessage) : base(exception.Message, exception)
+        { FriendlyMessage = friendlyMessage; }
+        public string FriendlyMessage { get; private set; }
+    }
 
     public static class ReflectionExtensions
     {
@@ -41,45 +48,62 @@ namespace Bender
             return property.GetCustomAttribute<T>() != null;
         }
 
-        public static object Parse(this string value, Type type, bool defaultNonNullableTypes)
+        public static object ParseSimpleType(this string value, Type type, bool defaultNonNullableTypes, Dictionary<Type, string> parseErrorMesages)
         {
             if (value.IsNullOrEmpty() && type.IsNullable()) return null;
             var returnDefault = value.IsNullOrEmpty() && defaultNonNullableTypes;
-            if (type.IsEnumOrNullable()) return returnDefault ?
-                Activator.CreateInstance(type) : Enum.Parse(type.GetUnderlyingNullableType(), value);
+            if (type.IsEnumOrNullable())
+                return returnDefault ? Activator.CreateInstance(type) : Exceptions.Wrap(() => Enum.Parse(type.GetUnderlyingNullableType(), value),
+                                                    x => new ParseException(x, parseErrorMesages[typeof(Enum)]));
+
             switch (type.GetTypeCode(true))
             {
                 case TypeCode.String: return value;
-                case TypeCode.Char: return value.First();
-                case TypeCode.Boolean: return !returnDefault && Boolean.Parse(value);
-                case TypeCode.SByte: return returnDefault ? (sbyte)0 : SByte.Parse(value);
-                case TypeCode.Byte: return returnDefault ? (byte)0 : Byte.Parse(value);
-                case TypeCode.Int16: return returnDefault ? (short)0 : Int16.Parse(value);
-                case TypeCode.UInt16: return returnDefault ? (ushort)0 : UInt16.Parse(value);
-                case TypeCode.Int32: return returnDefault ? 0 : Int32.Parse(value);
-                case TypeCode.UInt32: return returnDefault ? (uint)0 : UInt32.Parse(value);
-                case TypeCode.Int64: return returnDefault ? (long)0 : Int64.Parse(value);
-                case TypeCode.UInt64: return returnDefault ? (ulong)0 : UInt64.Parse(value);
-                case TypeCode.Single: return returnDefault ? (float)0 : Single.Parse(value);
-                case TypeCode.Double: return returnDefault ? (double)0 : Double.Parse(value);
-                case TypeCode.Decimal: return returnDefault ? (decimal)0 : Decimal.Parse(value);
-                case TypeCode.DateTime: return returnDefault ? DateTime.MinValue : DateTime.Parse(value);
+                case TypeCode.Char: if (value.Length == 1) return value.First(); throw new ParseException(parseErrorMesages[typeof(char)]);
+                case TypeCode.Boolean: return !returnDefault && Exceptions.Wrap(() => Boolean.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(bool)]));
+                case TypeCode.SByte: return returnDefault ? (sbyte)0 : Exceptions.Wrap(() => SByte.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(sbyte)]));
+                case TypeCode.Byte: return returnDefault ? (byte)0 : Exceptions.Wrap(() => Byte.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(byte)]));
+                case TypeCode.Int16: return returnDefault ? (short)0 : Exceptions.Wrap(() => Int16.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(short)]));
+                case TypeCode.UInt16: return returnDefault ? (ushort)0 : Exceptions.Wrap(() => UInt16.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(ushort)]));
+                case TypeCode.Int32: return returnDefault ? 0 : Exceptions.Wrap(() => Int32.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(int)]));
+                case TypeCode.UInt32: return returnDefault ? (uint)0 : Exceptions.Wrap(() => UInt32.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(uint)]));
+                case TypeCode.Int64: return returnDefault ? (long)0 : Exceptions.Wrap(() => Int64.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(long)]));
+                case TypeCode.UInt64: return returnDefault ? (ulong)0 : Exceptions.Wrap(() => UInt64.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(ulong)]));
+                case TypeCode.Single: return returnDefault ? (float)0 : Exceptions.Wrap(() => Single.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(float)]));
+                case TypeCode.Double: return returnDefault ? (double)0 : Exceptions.Wrap(() => Double.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(double)]));
+                case TypeCode.Decimal: return returnDefault ? (decimal)0 : Exceptions.Wrap(() => Decimal.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(decimal)]));
+                case TypeCode.DateTime: return returnDefault ? DateTime.MinValue : Exceptions.Wrap(() => DateTime.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(DateTime)]));
                 default:
-                    if (type.IsTypeOrNullable<Guid>()) return returnDefault ? Guid.Empty : Guid.Parse(value);
-                    if (type.IsTypeOrNullable<TimeSpan>()) return returnDefault ? TimeSpan.MinValue : TimeSpan.Parse(value);
-                    throw new ParseException(type);
+                    if (type.IsTypeOrNullable<Guid>()) return returnDefault ? Guid.Empty : Exceptions.Wrap(() => Guid.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(Guid)]));
+                    if (type.IsTypeOrNullable<TimeSpan>()) return returnDefault ? TimeSpan.MinValue : Exceptions.Wrap(() => TimeSpan.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(TimeSpan)]));
+                    throw new InvalidOperationException("Could not parse type {0}.".ToFormat(type));
             }
         }
 
-        public static void SetValue(this PropertyInfo property, object instance, Func<object> getValue, Func<Exception, Exception> exception)
+        public static string ToFriendlyType(this Type type)
         {
-            try
+            if (type.IsEnumOrNullable()) return "enumeration";
+            switch (type.GetTypeCode(true))
             {
-                property.SetValue(instance, getValue(), null);
-            }
-            catch (Exception e)
-            {
-                throw (e is BenderException ? e : exception(e));
+                case TypeCode.String: return "string";
+                case TypeCode.Char: return "char";
+                case TypeCode.Boolean: return "boolean";
+                case TypeCode.SByte: return "signedByte";
+                case TypeCode.Byte: return "byte";
+                case TypeCode.Int16: return "word";
+                case TypeCode.UInt16: return "usignedWord";
+                case TypeCode.Int32: return "integer";
+                case TypeCode.UInt32: return "usignedInteger";
+                case TypeCode.Int64: return "long";
+                case TypeCode.UInt64: return "usignedLong";
+                case TypeCode.Single: return "singleFloat";
+                case TypeCode.Double: return "doubleFloat";
+                case TypeCode.Decimal: return "decimal";
+                case TypeCode.DateTime: return "datetime";
+                default:
+                    if (type.IsTypeOrNullable<Guid>()) return "guid";
+                    if (type.IsTypeOrNullable<TimeSpan>()) return "duration";
+                    return type.Name;
             }
         }
 
@@ -178,12 +202,12 @@ namespace Bender
             if (type.IsInterface)
             {
                 var itemType = type.GetGenericEnumerableType();
-                if (itemType != null) return (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(itemType)); 
-                throw new ArgumentException(string.Format("Interface {0} does not inherit from IEnumerable<T>.", type), "type");
+                if (itemType != null) return (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(itemType));
+                throw new ArgumentException("Interface {0} does not inherit from IEnumerable<T>.".ToFormat(type), "type");
             }
             if (type.IsArray) return (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(type.GetElementType())); 
             if (type.IsList()) return (IList)Activator.CreateInstance(type);
-            throw new ArgumentException(string.Format("Type {0} does not implement IList.", type), "type");
+            throw new ArgumentException("Type {0} does not implement IList.".ToFormat(type), "type");
         }
     }
 }

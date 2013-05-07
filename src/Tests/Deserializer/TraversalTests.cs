@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Bender;
+using NUnit.Framework;
 using Should;
 
 namespace Tests.Deserializer
@@ -11,6 +12,20 @@ namespace Tests.Deserializer
         {
             public string Value2 { get; set; }
             public string Value3 { get; set; }
+        }
+
+        [Test]
+        public void should_fail_when_xml_is_not_valid()
+        {
+            Assert.Throws<XmlParseException>(() => Bender.Deserializer.Create().Deserialize<Graph>("<yada><sdfsdf></yada>"))
+                .FriendlyMessage.ShouldEqual("Unable to parse xml: The 'sdfsdf' start tag on line 1 position 8 does not match the end tag of 'yada'. Line 1, position 17.");
+        }
+
+        [Test]
+        public void should_fail_when_there_are_multiple_root_elements()
+        {
+            Assert.Throws<XmlParseException>(() => Bender.Deserializer.Create().Deserialize<Graph>("<oh></oh><hai></hai>"))
+                .FriendlyMessage.ShouldEqual("Unable to parse xml: There are multiple root elements. Line 1, position 11.");
         }
 
         [Test]

@@ -5,6 +5,24 @@ using System.Linq;
 
 namespace Bender
 {
+    public static class Exceptions
+    {
+        public static TResult Wrap<T, TResult>(Func<TResult> action, Func<T, Exception> wrapper) where T : Exception
+        {
+            try { return action(); } catch (T exception) { throw wrapper(exception); }
+        }
+
+        public static object Wrap<T>(Func<object> action, Func<T, Exception> wrapper) where T : Exception
+        {
+            try { return action(); } catch (T exception) { throw wrapper(exception); }
+        }
+
+        public static TResult Wrap<TResult>(Func<TResult> action, Func<Exception, Exception> wrapper)
+        {
+            try { return action(); } catch (Exception exception) { throw wrapper(exception); }
+        }
+    }
+
     public static class Extensions
     {
         public static Dictionary<string, TElement> ToDictionary<TSource, TElement>(
@@ -52,6 +70,11 @@ namespace Bender
         public static string TruncateAt(this string value, int length)
         {
             return !string.IsNullOrEmpty(value) && length > 0 && value.Length > length ? value.Substring(0, length) + "..." : value;
+        }
+
+        public static string ToFormat(this string value, params object[] args)
+        {
+            return string.Format(value, args);
         }
     }
 }

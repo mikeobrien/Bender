@@ -290,17 +290,17 @@ namespace Tests.Deserializer
         }
 
         [Test]
-        public void should_deserialize_simple_type_enumerable_property()
+        public void should_not_deserialize_simple_type_enumerable_property()
         {
             const string xml = @"<ListProperty><EnumerableItems><Int32>3</Int32></EnumerableItems></ListProperty>";
-            Assert.Throws<SetValueException>(() => Bender.Deserializer.Create().Deserialize<ListProperty>(xml));
+            Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create().Deserialize<ListProperty>(xml));
         }
 
         [Test]
-        public void should_deserialize_simple_type_array_list_property()
+        public void should_not_deserialize_simple_type_array_list_property()
         {
             const string xml = @"<ListProperty><ArrayListItems><Int32>1</Int32></ArrayListItems></ListProperty>";
-            Assert.Throws<SetValueException>(() => Bender.Deserializer.Create().Deserialize<ListProperty>(xml));
+            Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create().Deserialize<ListProperty>(xml));
         }
 
         [Test]

@@ -1,29 +1,28 @@
 ﻿using System;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace Bender
 {
-    public enum ValueNodeType { Element, Attribute }
-
     public class ValueNode
     {
         public ValueNode(XObject node)
         {
-            if (!(node is XElement) && !(node is XAttribute)) 
+            if (node.NodeType != XmlNodeType.Attribute && node.NodeType != XmlNodeType.Element) 
                 throw new ArgumentException("XObject must be an XElement or XAttribute.", "node");
             Object = node;
         }
 
-        public ValueNodeType NodeType { get { return Object is XElement ? ValueNodeType.Element : ValueNodeType.Attribute ; } }
+        public XmlNodeType NodeType { get { return Object.NodeType; } }
         public XObject Object { get; set; }
         public XElement Element { get { return (XElement)Object; } }
         public XAttribute Attribute { get { return (XAttribute)Object; } }
 
-        public XName Name { 
-            get { return NodeType == ValueNodeType.Attribute ? Attribute.Name : Element.Name; }
+        public XName Name {
+            get { return NodeType == XmlNodeType.Attribute ? Attribute.Name : Element.Name; }
             set
             {
-                if (NodeType == ValueNodeType.Attribute)
+                if (NodeType == XmlNodeType.Attribute)
                 {
                     var attribute = new XAttribute(value, Attribute.Value);
                     if (Attribute.Parent != null)
@@ -39,8 +38,8 @@ namespace Bender
 
         public string Value
         {
-            get { return NodeType == ValueNodeType.Attribute ? Attribute.Value : Element.Value; }
-            set { if (NodeType == ValueNodeType.Attribute) Attribute.Value = value; else Element.Value = value; }
+            get { return NodeType == XmlNodeType.Attribute ? Attribute.Value : Element.Value; }
+            set { if (NodeType == XmlNodeType.Attribute) Attribute.Value = value; else Element.Value = value; }
         }
     }
 }
