@@ -64,6 +64,12 @@ namespace Bender
         public Type ClrType { get; private set; }
         public string FriendlyType { get; private set; }
 
+        public static T Wrap<T>(Options options, PropertyInfo property, ValueNode node, Func<T> parse, string friendlyErrorMessage = null)
+        {
+            return Exceptions.Wrap(parse, x => new ValueParseException(property, node.Object, node.Value,
+                new ParseException(x, friendlyErrorMessage ?? options.FriendlyParseErrorMessages[typeof(T)])));
+        }
+
         private static string GetFriendlyValue(string value)
         {
             return value != null ? "'" + value.TruncateAt(50) + "'" : "<null>";

@@ -217,9 +217,9 @@ namespace Tests.Deserializer
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableUnsignedLong' element as a usignedLong: Not formatted correctly, must be an integer between 0 and 18,446,744,073,709,551,615.");
             
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><Float>sfsfdds</Float></SimpleTypes>"))
-                .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Float' element as a singleFloat: Not formatted correctly, must be a single-precision 32 bit float between -3.402823e38 and 3.402823e38");
+                .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Float' element as a singleFloat: Not formatted correctly, must be a single-precision 32 bit float between -3.402823e38 and 3.402823e38.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableFloat>sfsfdds</NullableFloat></SimpleTypes>"))
-                .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableFloat' element as a singleFloat: Not formatted correctly, must be a single-precision 32 bit float between -3.402823e38 and 3.402823e38");
+                .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableFloat' element as a singleFloat: Not formatted correctly, must be a single-precision 32 bit float between -3.402823e38 and 3.402823e38.");
             
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><Double>sfsfdds</Double></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Double' element as a doubleFloat: Not formatted correctly, must be a double-precision 64-bit float between -1.79769313486232e308 and 1.79769313486232e308.");

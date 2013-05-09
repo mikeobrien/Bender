@@ -28,7 +28,7 @@ namespace Bender
             FriendlyParseErrorMessages[typeof(uint)] = "Not formatted correctly, must be an integer between 0 and 4,294,967,295.";
             FriendlyParseErrorMessages[typeof(long)] = "Not formatted correctly, must be an integer between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807.";
             FriendlyParseErrorMessages[typeof(ulong)] = "Not formatted correctly, must be an integer between 0 and 18,446,744,073,709,551,615.";
-            FriendlyParseErrorMessages[typeof(float)] = "Not formatted correctly, must be a single-precision 32 bit float between -3.402823e38 and 3.402823e38";
+            FriendlyParseErrorMessages[typeof(float)] = "Not formatted correctly, must be a single-precision 32 bit float between -3.402823e38 and 3.402823e38.";
             FriendlyParseErrorMessages[typeof(double)] = "Not formatted correctly, must be a double-precision 64-bit float between -1.79769313486232e308 and 1.79769313486232e308.";
             FriendlyParseErrorMessages[typeof(decimal)] = "Not formatted correctly, must be a decimal number between -79,228,162,514,264,337,593,543,950,335 and 79,228,162,514,264,337,593,543,950,335.";
             FriendlyParseErrorMessages[typeof(DateTime)] = "Not formatted correctly, must be formatted as m/d/yyy h:m:s AM.";
@@ -41,16 +41,11 @@ namespace Bender
             FriendlyParseErrorMessages[typeof(IPAddress)] = "Not formatted correctly, must be formatted as '1.2.3.4'.";
 
             Readers = new Dictionary<Type, Func<Options, PropertyInfo, ValueNode, object>>();
-            AddReader((o, p, e) => Exceptions.Wrap(() => Convert.FromBase64String(e.Value), x => 
-                new ValueParseException(p, e.Object, e.Value, new ParseException(x, o.FriendlyParseErrorMessages[typeof(byte[])]))));
-            AddReader((o, p, e) => Exceptions.Wrap(() => new Uri(o.DefaultNonNullableTypesWhenEmpty && e.Value.IsNullOrEmpty() ? "http://tempuri.org/" : e.Value), x => 
-                new ValueParseException(p, e.Object, e.Value, new ParseException(x, o.FriendlyParseErrorMessages[typeof(Uri)]))));
-            AddReader((o, p, e) => Exceptions.Wrap(() => Version.Parse(e.Value), x => 
-                new ValueParseException(p, e.Object, e.Value, new ParseException(x, o.FriendlyParseErrorMessages[typeof(Version)]))));
-            AddReader((o, p, e) => Exceptions.Wrap(() => new MailAddress(e.Value), x => 
-                new ValueParseException(p, e.Object, e.Value, new ParseException(x, o.FriendlyParseErrorMessages[typeof(MailAddress)]))));
-            AddReader((o, p, e) => Exceptions.Wrap(() => IPAddress.Parse(e.Value), x => 
-                new ValueParseException(p, e.Object, e.Value, new ParseException(x, o.FriendlyParseErrorMessages[typeof(IPAddress)]))));
+            AddReader((o, p, n) => ValueParseException.Wrap(o, p, n, () => Convert.FromBase64String(n.Value)));
+            AddReader((o, p, n) => ValueParseException.Wrap(o, p, n, () => new Uri(o.DefaultNonNullableTypesWhenEmpty && n.Value.IsNullOrEmpty() ? "http://tempuri.org/" : n.Value)));
+            AddReader((o, p, n) => ValueParseException.Wrap(o, p, n, () => Version.Parse(n.Value)));
+            AddReader((o, p, n) => ValueParseException.Wrap(o, p, n, () => new MailAddress(n.Value)));
+            AddReader((o, p, n) => ValueParseException.Wrap(o, p, n, () => IPAddress.Parse(n.Value)));
 
             Namespaces = new Dictionary<string, XNamespace>();
             NodeWriters = new List<Action<Options, PropertyInfo, object, ValueNode>>();

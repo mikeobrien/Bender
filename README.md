@@ -103,6 +103,15 @@ var serializer = Bender.Serializer.Create(x => x
 
 Errors during deserialization can result from either the source xml or from issues with your code and configuration. In a web service or application the former can likely be addressed by your end users. With that in mind, all Bender deserialization exceptions that are a result of the source xml inherit from `SourceException`. This exception has a property called `FriendlyMessage` which can be displayed to end users and give them information to help them resolve the problem. There are three exceptions that inherit from `SourceException`: `XmlParseException`, `UnmatchedNodeException` and `ValueParseException`. An `XmlParseException` occurs when the xml is malformed. An `UnmatchedNodeException` occurs when an element or attribute does not match a property in the target type (This behavior can be configured in the deserialization options). And finally a `ValueParseException` occurs when a simple type cannot be parsed because it is not formatted properly. Bender has default friendly messages for simple types and these can be overriden by calling the `WithFriendlyParseErrorMessage<T>(string message)` method in the deserialization options.
 
+When creating your own custom readers you can make use of the `ValueParseException` to provide friendly error messages and handle exceptions like other simple types. The following example illustrates this using the `ValueParseException.Wrap()` method:
+
+```csharp
+var deserializer = Deserializer.Create(x => x
+	.AddReader((o, p, n) => ValueParseException.Wrap(o, p, n, () => IPAddress.Parse(n.Value), "Not formatted correctly, must be formatted as '1.2.3.4'.")));
+```
+
+Any errors resulting from the parse will be wrapped in a `ValueParseException` with the friendly error specified.
+
 #### Miscellania
 
 - Bender supports the `XmlRootAttribute`, `XmlTypeAttribute`, `XmlElementAttribute`, `XmlAttributeAttribute`, `XmlArrayAttribute` and `XmlArrayItemAttribute` to override element naming as the `XmlSerializer` does. 
