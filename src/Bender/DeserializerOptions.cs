@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 
 namespace Bender
 {
@@ -12,13 +11,13 @@ namespace Bender
             _options = options;
         }
 
-        public DeserializerOptions AddReader<T>(Func<Options, PropertyInfo, ValueNode, T> reader)
+        public DeserializerOptions AddReader<T>(Func<ReaderContext, T> reader)
         {
             _options.AddReader(reader);
             return this;
         }
 
-        public DeserializerOptions AddReader<T>(Func<Options, PropertyInfo, ValueNode, T> reader, bool handleNullable) where T : struct
+        public DeserializerOptions AddReader<T>(Func<ReaderContext, T> reader, bool handleNullable) where T : struct
         {
             _options.AddReader(reader, handleNullable);
             return this;
@@ -30,21 +29,21 @@ namespace Bender
             return this;
         }
 
-        public DeserializerOptions IgnoreUnmatchedElements()
+        public DeserializerOptions IgnoreUnmatchedNodes()
         {
-            _options.IgnoreUnmatchedElements = true;
+            _options.IgnoreUnmatchedNodes = true;
             return this;
         }
 
-        public DeserializerOptions FailOnUnmatchedAttributes()
+        public DeserializerOptions FailOnUnmatchedXmlAttributes()
         {
-            _options.IgnoreUnmatchedAttributes = false;
+            _options.IgnoreUnmatchedXmlAttributes = false;
             return this;
         }
 
-        public DeserializerOptions IgnoreTypeElementNames()
+        public DeserializerOptions IgnoreTypeXmlElementNames()
         {
-            _options.IgnoreTypeElementNames = true;
+            _options.IgnoreTypeXmlElementNames = true;
             return this;
         }
 
@@ -66,15 +65,15 @@ namespace Bender
             return this;
         }
 
-        public DeserializerOptions WithDefaultGenericTypeNameFormat(string typeNameFormat)
+        public DeserializerOptions WithDefaultGenericTypeXmlNameFormat(string typeNameFormat)
         {
-            _options.GenericTypeNameFormat = typeNameFormat;
+            _options.GenericTypeXmlNameFormat = typeNameFormat;
             return this;
         }
 
-        public DeserializerOptions WithDefaultGenericListNameFormat(string listNameFormat)
+        public DeserializerOptions WithDefaultGenericListXmlNameFormat(string listNameFormat)
         {
-            _options.GenericListNameFormat = listNameFormat;
+            _options.GenericListXmlNameFormat = listNameFormat;
             return this;
         }
 

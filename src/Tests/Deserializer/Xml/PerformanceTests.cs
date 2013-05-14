@@ -9,7 +9,7 @@ using Bender;
 using NUnit.Framework;
 using Should;
 
-namespace Tests.Deserializer
+namespace Tests.Deserializer.Xml
 {
     [TestFixture]
     public class PerformanceTests
@@ -50,7 +50,7 @@ namespace Tests.Deserializer
             var stopwatch = new Stopwatch();
 
             stopwatch.Start();
-            for (var i = 0; i < 100; i++) Bender.Deserializer.Create().Deserialize<List<SpeedTestCollection>>(xml);
+            for (var i = 0; i < 100; i++) Bender.Deserializer.Create().DeserializeXml<List<SpeedTestCollection>>(xml);
             stopwatch.Stop();
             var benderSpeed = stopwatch.ElapsedTicks;
 

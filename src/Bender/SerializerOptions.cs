@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Xml.Linq;
 
 namespace Bender
@@ -25,26 +24,26 @@ namespace Bender
             return this;
         }
 
-        public SerializerOptions AddWriter(Action<Options, PropertyInfo, object, ValueNode> writter)
+        public SerializerOptions AddWriter(Action<WriterContext> writter)
         {
             _options.AddWriter(writter);
             return this;
         }
 
-        public SerializerOptions AddWriter(Func<Options, PropertyInfo, object, ValueNode, bool> predicate, 
-            Action<Options, PropertyInfo, object, ValueNode> writter)
+        public SerializerOptions AddWriter(Func<WriterContext, bool> predicate,
+            Action<WriterContext> writter)
         {
             _options.AddWriter(predicate, writter);
             return this;
         }
 
-        public SerializerOptions AddWriter<T>(Action<Options, PropertyInfo, T, ValueNode> writter)
+        public SerializerOptions AddWriter<T>(Action<WriterContext<T>> writter)
         {
             _options.AddWriter(writter);
             return this;
         }
 
-        public SerializerOptions AddWriter<T>(Action<Options, PropertyInfo, T, ValueNode> writer, bool handleNullable) where T : struct
+        public SerializerOptions AddWriter<T>(Action<WriterContext<T>> writer, bool handleNullable) where T : struct
         {
             _options.AddWriter(writer, handleNullable);
             return this;
@@ -62,31 +61,31 @@ namespace Bender
             return this;
         }
 
-        public SerializerOptions WithDefaultGenericTypeNameFormat(string typeNameFormat)
+        public SerializerOptions WithDefaultGenericTypeXmlNameFormat(string typeNameFormat)
         {
-            _options.GenericTypeNameFormat = typeNameFormat;
+            _options.GenericTypeXmlNameFormat = typeNameFormat;
             return this;
         }
 
-        public SerializerOptions WithDefaultGenericListNameFormat(string listNameFormat)
+        public SerializerOptions WithDefaultGenericListXmlNameFormat(string listNameFormat)
         {
-            _options.GenericListNameFormat = listNameFormat;
+            _options.GenericListXmlNameFormat = listNameFormat;
             return this;
         }
 
-        public SerializerOptions ValuesAsAttributes()
+        public SerializerOptions XmlValuesAsAttributes()
         {
-            _options.ValueNode = ValueNodeType.Attribute;
+            _options.XmlValueNode = XmlValueNodeType.Attribute;
             return this;
         }
 
-        public SerializerOptions WithDefaultNamespace(string @namespace)
+        public SerializerOptions WithDefaultXmlNamespace(string @namespace)
         {
             _options.DefaultNamespace = XNamespace.Get(@namespace);
             return this;
         }
 
-        public SerializerOptions AddNamespace(string prefix, string @namespace)
+        public SerializerOptions AddXmlNamespace(string prefix, string @namespace)
         {
             _options.Namespaces.Add(prefix, XNamespace.Get(@namespace));
             return this;

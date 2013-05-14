@@ -1,0 +1,109 @@
+﻿using System;
+using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
+
+namespace Bender
+{
+    public class DeserializeException : Exception
+    {
+        public DeserializeException(PropertyInfo property, XObject node, Format format, string message, params object[] args) :
+            base(propertyMessage(property, node, message, args, format)) { }
+        public DeserializeException(PropertyInfo property, XObject node, Format format, Exception exception, string message, params object[] args) :
+            base(propertyMessage(property, node, message, args, format), exception) { }
+        public DeserializeException(Type type, string message) :
+            base("Unable to deserialize type {0}: {1}".ToFormat(type, message)) { }
+
+        private static readonly Func<PropertyInfo, XObject, string, object[], Format, string> propertyMessage = (p, n, m, a, f) =>
+            "Unable to set {0}.{1} to the value in the '{2}' {3}: {4}".ToFormat(
+                 p.DeclaringType.FullName, p.Name, n.GetPath(f), n.ObjectType(), m.ToFormat(a));
+    }
+
+    public abstract class SourceException : Exception
+    {
+        protected SourceException(string debugMessage, string friendlyMessage, Exception innerException)
+            : base(debugMessage, innerException)
+        {
+            FriendlyMessage = friendlyMessage;
+        }
+
+        protected SourceException(string debugMessage, string friendlyMessage)
+            : base(debugMessage)
+        {
+            FriendlyMessage = friendlyMessage;
+        }
+
+        public string FriendlyMessage { get; private set; }
+    }
+
+    public class UnmatchedNodeException : SourceException
+    {
+        public UnmatchedNodeException(ValueNode node) :
+            base("The '{0}' {1} does not correspond to a type or property.".ToFormat(
+                    node.Object.GetPath(node.Format), node.NodeType.ToFriendlyNodeType()),
+                 "The '{0}' {1} is not recognized.".ToFormat(
+                    node.Object.GetPath(node.Format), node.NodeType.ToFriendlyNodeType())) { }
+    }
+
+    public class SourceParseException : SourceException
+    {
+        public SourceParseException(XmlException exception, Format format) :
+            base(exception.Message, "Unable to parse {0}: {1}".ToFormat(format.ToString().ToLower(), exception.Message), exception) { }
+
+        public XmlException ParseException { get { return (XmlException) InnerException; } }
+    }
+
+    public class ValueParseException : SourceException
+    {
+        public ValueParseException(ReaderContext context, ParseException exception) :
+            this(context.Property, context.Node, context.Format, exception) { }
+
+        public ValueParseException(PropertyInfo property, ValueNode node, Format format, ParseException exception) :
+            base("Unable to parse the value {0} in the '{1}' {2} as a {3} into {4}.{5}: {6}".ToFormat(
+                               GetFriendlyValue(node.Value), node.Object.GetPath(format), node.NodeType.ToFriendlyNodeType(), property.PropertyType.Name,
+                               property.DeclaringType.FullName, property.Name, exception.Message),
+                 "Unable to parse the value {0} in the '{1}' {2} as a {3}: {4}".ToFormat(
+                               GetFriendlyValue(node.Value), node.Object.GetPath(format), node.NodeType.ToFriendlyNodeType(), 
+                               property.PropertyType.ToFriendlyType(), exception.FriendlyMessage),
+                 exception)
+        {
+            Value = node.Value;
+            XPath = node.Object.GetPath(format);
+            Node = node;
+            ParseErrorMessage = exception.FriendlyMessage;
+            ClrType = property.PropertyType;
+            FriendlyType = property.PropertyType.ToFriendlyType();
+        }
+
+        public string Value { get; private set; }
+        public string XPath { get; private set; }
+        public ValueNode Node { get; private set; }
+        public string ParseErrorMessage { get; private set; }
+        public Type ClrType { get; private set; }
+        public string FriendlyType { get; private set; }
+
+        public static T Wrap<T>(ReaderContext context, Func<T> parse, string friendlyErrorMessage = null)
+        {
+            return Exceptions.Wrap(parse, x => new ValueParseException(context,
+                new ParseException(x, friendlyErrorMessage ?? context.Options.FriendlyParseErrorMessages[typeof(T)])));
+        }
+
+        private static string GetFriendlyValue(string value)
+        {
+            return value != null ? "'" + value.TruncateAt(50) + "'" : "<null>";
+        }
+    }
+
+    public static class NodeTypeExtensions
+    {
+        public static string ToFriendlyNodeType(this NodeType nodeType)
+        {
+            switch (nodeType)
+            {
+                case NodeType.JsonField: return "field";
+                case NodeType.XmlAttribute: return "attribute";
+                default: return "element";
+            }
+        }
+    }
+}

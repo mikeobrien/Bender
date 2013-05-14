@@ -4,7 +4,7 @@ using Bender;
 using NUnit.Framework;
 using Should;
 
-namespace Tests.Deserializer
+namespace Tests.Deserializer.Xml
 {
     [TestFixture]
     public class SimpleTypeTests
@@ -60,7 +60,7 @@ namespace Tests.Deserializer
                       <Object><Enum>Value2</Enum><Enum>Value2</Enum></Object>
                       <BoxedValue>00000000-0000-0000-0000-000000000000</BoxedValue>
                 </SimpleTypes>";
-            var result = Bender.Deserializer.Create(x => x.IgnoreUnmatchedElements()).Deserialize<SimpleTypes>(xml);
+            var result = Bender.Deserializer.Create(x => x.IgnoreUnmatchedNodes()).DeserializeXml<SimpleTypes>(xml);
             result.String.ShouldEqual("hai");
             result.Char.ShouldEqual('A');
             result.NullableChar.Value.ShouldEqual('A');
@@ -126,7 +126,7 @@ namespace Tests.Deserializer
                       <Guid></Guid><NullableGuid></NullableGuid>
                       <Enum></Enum><NullableEnum></NullableEnum>
                 </SimpleTypes>";
-            var result = Bender.Deserializer.Create(x => x.DefaultNonNullableTypesWhenEmpty()).Deserialize<SimpleTypes>(xml);
+            var result = Bender.Deserializer.Create(x => x.DefaultNonNullableTypesWhenEmpty()).DeserializeXml<SimpleTypes>(xml);
             result.String.ShouldBeEmpty();
             result.NullableChar.HasValue.ShouldBeFalse();
             result.Boolean.ShouldBeFalse();
@@ -166,89 +166,89 @@ namespace Tests.Deserializer
         [Test]
         public void should_throw_value_parse_exception_when_failing_to_set_simple_type()
         {
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><Char>sfsfdds</Char></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><Char>sfsfdds</Char></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Char' element as a char: Length not valid, must be one character.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableChar>sfsfdds</NullableChar></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableChar>sfsfdds</NullableChar></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableChar' element as a char: Length not valid, must be one character.");
 
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><Boolean>sfsfdds</Boolean></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><Boolean>sfsfdds</Boolean></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Boolean' element as a boolean: Not formatted correctly, must be 'true' or 'false'.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableBoolean>sfsfdds</NullableBoolean></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableBoolean>sfsfdds</NullableBoolean></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableBoolean' element as a boolean: Not formatted correctly, must be 'true' or 'false'.");
             
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><Byte>sfsfdds</Byte></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><Byte>sfsfdds</Byte></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Byte' element as a byte: Not formatted correctly, must be an integer between 0 and 255.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableByte>sfsfdds</NullableByte></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableByte>sfsfdds</NullableByte></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableByte' element as a byte: Not formatted correctly, must be an integer between 0 and 255.");
            
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><SignedByte>sfsfdds</SignedByte></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><SignedByte>sfsfdds</SignedByte></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/SignedByte' element as a signedByte: Not formatted correctly, must be an integer between -128 and 127.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableSignedByte>sfsfdds</NullableSignedByte></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableSignedByte>sfsfdds</NullableSignedByte></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableSignedByte' element as a signedByte: Not formatted correctly, must be an integer between -128 and 127.");
             
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><Short>sfsfdds</Short></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><Short>sfsfdds</Short></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Short' element as a word: Not formatted correctly, must be an integer between -32,768 and 32,767.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableShort>sfsfdds</NullableShort></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableShort>sfsfdds</NullableShort></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableShort' element as a word: Not formatted correctly, must be an integer between -32,768 and 32,767.");
             
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><UnsignedShort>sfsfdds</UnsignedShort></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><UnsignedShort>sfsfdds</UnsignedShort></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/UnsignedShort' element as a usignedWord: Not formatted correctly, must be an integer between 0 and 65,535.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableUnsignedShort>sfsfdds</NullableUnsignedShort></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableUnsignedShort>sfsfdds</NullableUnsignedShort></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableUnsignedShort' element as a usignedWord: Not formatted correctly, must be an integer between 0 and 65,535.");
             
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><Integer>sfsfdds</Integer></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><Integer>sfsfdds</Integer></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Integer' element as a integer: Not formatted correctly, must be an integer between -2,147,483,648 and 2,147,483,647.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableInteger>sfsfdds</NullableInteger></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableInteger>sfsfdds</NullableInteger></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableInteger' element as a integer: Not formatted correctly, must be an integer between -2,147,483,648 and 2,147,483,647.");
             
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><UnsignedInteger>sfsfdds</UnsignedInteger></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><UnsignedInteger>sfsfdds</UnsignedInteger></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/UnsignedInteger' element as a usignedInteger: Not formatted correctly, must be an integer between 0 and 4,294,967,295.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableUnsignedInteger>sfsfdds</NullableUnsignedInteger></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableUnsignedInteger>sfsfdds</NullableUnsignedInteger></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableUnsignedInteger' element as a usignedInteger: Not formatted correctly, must be an integer between 0 and 4,294,967,295.");
             
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><Long>sfsfdds</Long></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><Long>sfsfdds</Long></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Long' element as a long: Not formatted correctly, must be an integer between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableLong>sfsfdds</NullableLong></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableLong>sfsfdds</NullableLong></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableLong' element as a long: Not formatted correctly, must be an integer between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807.");
             
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><UnsignedLong>sfsfdds</UnsignedLong></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><UnsignedLong>sfsfdds</UnsignedLong></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/UnsignedLong' element as a usignedLong: Not formatted correctly, must be an integer between 0 and 18,446,744,073,709,551,615.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableUnsignedLong>sfsfdds</NullableUnsignedLong></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableUnsignedLong>sfsfdds</NullableUnsignedLong></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableUnsignedLong' element as a usignedLong: Not formatted correctly, must be an integer between 0 and 18,446,744,073,709,551,615.");
             
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><Float>sfsfdds</Float></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><Float>sfsfdds</Float></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Float' element as a singleFloat: Not formatted correctly, must be a single-precision 32 bit float between -3.402823e38 and 3.402823e38.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableFloat>sfsfdds</NullableFloat></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableFloat>sfsfdds</NullableFloat></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableFloat' element as a singleFloat: Not formatted correctly, must be a single-precision 32 bit float between -3.402823e38 and 3.402823e38.");
             
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><Double>sfsfdds</Double></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><Double>sfsfdds</Double></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Double' element as a doubleFloat: Not formatted correctly, must be a double-precision 64-bit float between -1.79769313486232e308 and 1.79769313486232e308.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableDouble>sfsfdds</NullableDouble></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableDouble>sfsfdds</NullableDouble></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableDouble' element as a doubleFloat: Not formatted correctly, must be a double-precision 64-bit float between -1.79769313486232e308 and 1.79769313486232e308.");
             
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><Decimal>sfsfdds</Decimal></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><Decimal>sfsfdds</Decimal></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Decimal' element as a decimal: Not formatted correctly, must be a decimal number between -79,228,162,514,264,337,593,543,950,335 and 79,228,162,514,264,337,593,543,950,335.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableDecimal>sfsfdds</NullableDecimal></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableDecimal>sfsfdds</NullableDecimal></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableDecimal' element as a decimal: Not formatted correctly, must be a decimal number between -79,228,162,514,264,337,593,543,950,335 and 79,228,162,514,264,337,593,543,950,335.");
 
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><DateTime>sfsfdds</DateTime></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><DateTime>sfsfdds</DateTime></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/DateTime' element as a datetime: Not formatted correctly, must be formatted as m/d/yyy h:m:s AM.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableDateTime>sfsfdds</NullableDateTime></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableDateTime>sfsfdds</NullableDateTime></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableDateTime' element as a datetime: Not formatted correctly, must be formatted as m/d/yyy h:m:s AM.");
 
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><TimeSpan>sfsfdds</TimeSpan></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><TimeSpan>sfsfdds</TimeSpan></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/TimeSpan' element as a duration: Not formatted correctly, must be formatted as d.h:m:s.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableTimeSpan>sfsfdds</NullableTimeSpan></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableTimeSpan>sfsfdds</NullableTimeSpan></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableTimeSpan' element as a duration: Not formatted correctly, must be formatted as d.h:m:s.");
             
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><Guid>sfsfdds</Guid></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><Guid>sfsfdds</Guid></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Guid' element as a guid: Not formatted correctly, should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableGuid>sfsfdds</NullableGuid></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableGuid>sfsfdds</NullableGuid></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableGuid' element as a guid: Not formatted correctly, should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).");
             
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><Enum>sfsfdds</Enum></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><Enum>sfsfdds</Enum></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Enum' element as a enumeration: Not a valid option.");
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<SimpleTypes>("<SimpleTypes><NullableEnum>sfsfdds</NullableEnum></SimpleTypes>"))
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<SimpleTypes>("<SimpleTypes><NullableEnum>sfsfdds</NullableEnum></SimpleTypes>"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableEnum' element as a enumeration: Not a valid option.");
         }
 
@@ -256,89 +256,89 @@ namespace Tests.Deserializer
         public void should_throw_value_parse_exception_with_custom_parse_message_when_failing_to_set_simple_type()
         {
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<char>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><Char>sfsfdds</Char></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Char' element as a char: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><Char>sfsfdds</Char></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Char' element as a char: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<char>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableChar>sfsfdds</NullableChar></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableChar' element as a char: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableChar>sfsfdds</NullableChar></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableChar' element as a char: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<bool>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><Boolean>sfsfdds</Boolean></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Boolean' element as a boolean: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><Boolean>sfsfdds</Boolean></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Boolean' element as a boolean: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<bool>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableBoolean>sfsfdds</NullableBoolean></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableBoolean' element as a boolean: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableBoolean>sfsfdds</NullableBoolean></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableBoolean' element as a boolean: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<byte>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><Byte>sfsfdds</Byte></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Byte' element as a byte: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><Byte>sfsfdds</Byte></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Byte' element as a byte: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<byte>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableByte>sfsfdds</NullableByte></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableByte' element as a byte: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableByte>sfsfdds</NullableByte></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableByte' element as a byte: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<sbyte>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><SignedByte>sfsfdds</SignedByte></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/SignedByte' element as a signedByte: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><SignedByte>sfsfdds</SignedByte></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/SignedByte' element as a signedByte: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<sbyte>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableSignedByte>sfsfdds</NullableSignedByte></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableSignedByte' element as a signedByte: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableSignedByte>sfsfdds</NullableSignedByte></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableSignedByte' element as a signedByte: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<short>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><Short>sfsfdds</Short></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Short' element as a word: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><Short>sfsfdds</Short></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Short' element as a word: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<short>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableShort>sfsfdds</NullableShort></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableShort' element as a word: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableShort>sfsfdds</NullableShort></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableShort' element as a word: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<ushort>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><UnsignedShort>sfsfdds</UnsignedShort></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/UnsignedShort' element as a usignedWord: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><UnsignedShort>sfsfdds</UnsignedShort></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/UnsignedShort' element as a usignedWord: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<ushort>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableUnsignedShort>sfsfdds</NullableUnsignedShort></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableUnsignedShort' element as a usignedWord: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableUnsignedShort>sfsfdds</NullableUnsignedShort></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableUnsignedShort' element as a usignedWord: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<int>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><Integer>sfsfdds</Integer></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Integer' element as a integer: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><Integer>sfsfdds</Integer></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Integer' element as a integer: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<int>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableInteger>sfsfdds</NullableInteger></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableInteger' element as a integer: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableInteger>sfsfdds</NullableInteger></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableInteger' element as a integer: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<uint>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><UnsignedInteger>sfsfdds</UnsignedInteger></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/UnsignedInteger' element as a usignedInteger: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><UnsignedInteger>sfsfdds</UnsignedInteger></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/UnsignedInteger' element as a usignedInteger: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<uint>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableUnsignedInteger>sfsfdds</NullableUnsignedInteger></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableUnsignedInteger' element as a usignedInteger: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableUnsignedInteger>sfsfdds</NullableUnsignedInteger></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableUnsignedInteger' element as a usignedInteger: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<long>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><Long>sfsfdds</Long></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Long' element as a long: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><Long>sfsfdds</Long></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Long' element as a long: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<long>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableLong>sfsfdds</NullableLong></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableLong' element as a long: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableLong>sfsfdds</NullableLong></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableLong' element as a long: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<ulong>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><UnsignedLong>sfsfdds</UnsignedLong></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/UnsignedLong' element as a usignedLong: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><UnsignedLong>sfsfdds</UnsignedLong></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/UnsignedLong' element as a usignedLong: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<ulong>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableUnsignedLong>sfsfdds</NullableUnsignedLong></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableUnsignedLong' element as a usignedLong: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableUnsignedLong>sfsfdds</NullableUnsignedLong></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableUnsignedLong' element as a usignedLong: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<float>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><Float>sfsfdds</Float></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Float' element as a singleFloat: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><Float>sfsfdds</Float></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Float' element as a singleFloat: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<float>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableFloat>sfsfdds</NullableFloat></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableFloat' element as a singleFloat: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableFloat>sfsfdds</NullableFloat></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableFloat' element as a singleFloat: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<double>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><Double>sfsfdds</Double></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Double' element as a doubleFloat: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><Double>sfsfdds</Double></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Double' element as a doubleFloat: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<double>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableDouble>sfsfdds</NullableDouble></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableDouble' element as a doubleFloat: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableDouble>sfsfdds</NullableDouble></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableDouble' element as a doubleFloat: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<decimal>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><Decimal>sfsfdds</Decimal></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Decimal' element as a decimal: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><Decimal>sfsfdds</Decimal></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Decimal' element as a decimal: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<decimal>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableDecimal>sfsfdds</NullableDecimal></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableDecimal' element as a decimal: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableDecimal>sfsfdds</NullableDecimal></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableDecimal' element as a decimal: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<DateTime>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><DateTime>sfsfdds</DateTime></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/DateTime' element as a datetime: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><DateTime>sfsfdds</DateTime></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/DateTime' element as a datetime: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<DateTime>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableDateTime>sfsfdds</NullableDateTime></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableDateTime' element as a datetime: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableDateTime>sfsfdds</NullableDateTime></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableDateTime' element as a datetime: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<TimeSpan>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><TimeSpan>sfsfdds</TimeSpan></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/TimeSpan' element as a duration: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><TimeSpan>sfsfdds</TimeSpan></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/TimeSpan' element as a duration: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<TimeSpan>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableTimeSpan>sfsfdds</NullableTimeSpan></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableTimeSpan' element as a duration: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableTimeSpan>sfsfdds</NullableTimeSpan></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableTimeSpan' element as a duration: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<Guid>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><Guid>sfsfdds</Guid></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Guid' element as a guid: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><Guid>sfsfdds</Guid></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Guid' element as a guid: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<Guid>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableGuid>sfsfdds</NullableGuid></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableGuid' element as a guid: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableGuid>sfsfdds</NullableGuid></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableGuid' element as a guid: yada");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<System.Enum>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><Enum>sfsfdds</Enum></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Enum' element as a enumeration: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><Enum>sfsfdds</Enum></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/Enum' element as a enumeration: yada");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(x => x.WithFriendlyParseErrorMessage<System.Enum>("yada").WithFriendlyParseErrorMessage<string>("ohhai"))
-                .Deserialize<SimpleTypes>("<SimpleTypes><NullableEnum>sfsfdds</NullableEnum></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableEnum' element as a enumeration: yada");
+                .DeserializeXml<SimpleTypes>("<SimpleTypes><NullableEnum>sfsfdds</NullableEnum></SimpleTypes>")).FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the '/SimpleTypes/NullableEnum' element as a enumeration: yada");
         }
     }
 }

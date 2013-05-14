@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,10 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DeserializerSourceExceptions.cs" />
+    <Compile Include="DeserializeExceptions.cs" />
     <Compile Include="DeserializerOptions.cs" />
     <Compile Include="Expander.cs" />
     <Compile Include="LinkedNode.cs" />
+    <Compile Include="ReaderContext.cs" />
     <Compile Include="ValueNode.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Deserializer.cs" />
@@ -52,6 +54,7 @@
     <Compile Include="Serializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializerOptions.cs" />
+    <Compile Include="WriterContext.cs" />
     <Compile Include="XmlExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

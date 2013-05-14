@@ -4,25 +4,31 @@ using System.Xml.Linq;
 
 namespace Bender
 {
+    public enum NodeType { XmlElement, XmlAttribute, JsonField }
+
     public class ValueNode
     {
-        public ValueNode(XObject node)
+        public ValueNode(XObject node, Format format)
         {
             if (node.NodeType != XmlNodeType.Attribute && node.NodeType != XmlNodeType.Element) 
                 throw new ArgumentException("XObject must be an XElement or XAttribute.", "node");
             Object = node;
+            Format = format;
+            NodeType = format == Format.Json ? NodeType.JsonField : 
+                (node.NodeType == XmlNodeType.Attribute ? NodeType.XmlAttribute : NodeType.XmlElement);
         }
 
-        public XmlNodeType NodeType { get { return Object.NodeType; } }
+        public NodeType NodeType { get; private set; }
         public XObject Object { get; set; }
         public XElement Element { get { return (XElement)Object; } }
         public XAttribute Attribute { get { return (XAttribute)Object; } }
+        public Format Format { get; private set; }
 
         public XName Name {
-            get { return NodeType == XmlNodeType.Attribute ? Attribute.Name : Element.Name; }
+            get { return Object.NodeType == XmlNodeType.Attribute ? Attribute.Name : Element.Name; }
             set
             {
-                if (NodeType == XmlNodeType.Attribute)
+                if (Object.NodeType == XmlNodeType.Attribute)
                 {
                     var attribute = new XAttribute(value, Attribute.Value);
                     if (Attribute.Parent != null)
@@ -38,8 +44,8 @@ namespace Bender
 
         public string Value
         {
-            get { return NodeType == XmlNodeType.Attribute ? Attribute.Value : Element.Value; }
-            set { if (NodeType == XmlNodeType.Attribute) Attribute.Value = value; else Element.Value = value; }
+            get { return Object.NodeType == XmlNodeType.Attribute ? Attribute.Value : Element.Value; }
+            set { if (Object.NodeType == XmlNodeType.Attribute) Attribute.Value = value; else Element.Value = value; }
         }
     }
 }

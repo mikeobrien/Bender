@@ -8,7 +8,7 @@ using Bender;
 using NUnit.Framework;
 using Should;
 
-namespace Tests.Deserializer
+namespace Tests.Deserializer.Xml
 {
     [TestFixture]
     public class ReaderTests
@@ -33,7 +33,7 @@ namespace Tests.Deserializer
                     <SimpleType>11-59</SimpleType>
                 </CustomReader>";
             var result = Bender.Deserializer.Create(
-                x => x.AddReader<DateTime>((o, p, n) => DateTime.ParseExact(n.Element.Value, "hh-mm", CultureInfo.InvariantCulture))).Deserialize<CustomReader>(xml);
+                x => x.AddReader<DateTime>(y => DateTime.ParseExact(y.Node.Value, "hh-mm", CultureInfo.InvariantCulture))).DeserializeXml<CustomReader>(xml);
 
             result.SimpleType.ShouldEqual(DateTime.ParseExact("11-59", "hh-mm", CultureInfo.InvariantCulture));
         }
@@ -46,7 +46,7 @@ namespace Tests.Deserializer
                     <ComplexType>5</ComplexType>
                 </CustomReader>";
             var result = Bender.Deserializer.Create(
-                x => x.AddReader<ComplexType>((o, p, n) => new ComplexType { Value = int.Parse(n.Element.Value)})).Deserialize<CustomReader>(xml);
+                x => x.AddReader<ComplexType>(y => new ComplexType { Value = int.Parse(y.Node.Value)})).DeserializeXml<CustomReader>(xml);
 
             result.ComplexType.Value.ShouldEqual(5);
         }
@@ -59,7 +59,7 @@ namespace Tests.Deserializer
                     <ListOfComplexTypes>1,2,3</ListOfComplexTypes>
                 </CustomReader>";
             var result = Bender.Deserializer.Create(
-                x => x.AddReader<List<ComplexType>>((o, p, n) => n.Element.Value.Split(',').Select(y => new ComplexType { Value = int.Parse(y)}).ToList())).Deserialize<CustomReader>(xml);
+                x => x.AddReader<List<ComplexType>>(y => y.Node.Value.Split(',').Select(z => new ComplexType { Value = int.Parse(z)}).ToList())).DeserializeXml<CustomReader>(xml);
             
             result.ListOfComplexTypes.Count.ShouldEqual(3);
             result.ListOfComplexTypes[0].Value.ShouldEqual(1);
@@ -75,7 +75,7 @@ namespace Tests.Deserializer
                     <ListOfSimpleTypes>1,2,3</ListOfSimpleTypes>
                 </CustomReader>";
             var result = Bender.Deserializer.Create(
-                x => x.AddReader<List<int>>((o, p, n) => n.Element.Value.Split(',').Select(int.Parse).ToList())).Deserialize<CustomReader>(xml);
+                x => x.AddReader<List<int>>(y => y.Node.Value.Split(',').Select(int.Parse).ToList())).DeserializeXml<CustomReader>(xml);
 
             result.ListOfSimpleTypes.Count.ShouldEqual(3);
             result.ListOfSimpleTypes[0].ShouldEqual(1);
@@ -95,7 +95,7 @@ namespace Tests.Deserializer
                     </ListOfComplexTypes>
                 </CustomReader>";
             var result = Bender.Deserializer.Create(
-                x => x.AddReader<ComplexType>((o, p, n) => new ComplexType { Value = int.Parse(n.Element.Value.Replace("[", "").Replace("]", "")) })).Deserialize<CustomReader>(xml);
+                x => x.AddReader<ComplexType>(y => new ComplexType { Value = int.Parse(y.Node.Value.Replace("[", "").Replace("]", "")) })).DeserializeXml<CustomReader>(xml);
 
             result.ListOfComplexTypes.Count.ShouldEqual(3);
             result.ListOfComplexTypes[0].Value.ShouldEqual(1);
@@ -115,7 +115,7 @@ namespace Tests.Deserializer
                     </ListOfSimpleTypes>
                 </CustomReader>";
             var result = Bender.Deserializer.Create(
-                x => x.AddReader<int>((o, p, n) => int.Parse(n.Element.Value.Replace("[", "").Replace("]", "")))).Deserialize<CustomReader>(xml);
+                x => x.AddReader<int>(y => int.Parse(y.Node.Value.Replace("[", "").Replace("]", "")))).DeserializeXml<CustomReader>(xml);
 
             result.ListOfSimpleTypes.Count.ShouldEqual(3);
             result.ListOfSimpleTypes[0].ShouldEqual(1);
@@ -131,7 +131,7 @@ namespace Tests.Deserializer
                     <ListInterfaceOfComplexTypes>1,2,3</ListInterfaceOfComplexTypes>
                 </CustomReader>";
             var result = Bender.Deserializer.Create(
-                x => x.AddReader<IList<ComplexType>>((o, p, n) => n.Element.Value.Split(',').Select(y => new ComplexType { Value = int.Parse(y) }).ToList())).Deserialize<CustomReader>(xml);
+                x => x.AddReader<IList<ComplexType>>(y => y.Node.Value.Split(',').Select(z => new ComplexType { Value = int.Parse(z) }).ToList())).DeserializeXml<CustomReader>(xml);
 
             result.ListInterfaceOfComplexTypes.Count.ShouldEqual(3);
             result.ListInterfaceOfComplexTypes[0].Value.ShouldEqual(1);
@@ -147,7 +147,7 @@ namespace Tests.Deserializer
                     <ListInterfaceOfSimpleTypes>1,2,3</ListInterfaceOfSimpleTypes>
                 </CustomReader>";
             var result = Bender.Deserializer.Create(
-                x => x.AddReader<IList<int>>((o, p, n) => n.Element.Value.Split(',').Select(int.Parse).ToList())).Deserialize<CustomReader>(xml);
+                x => x.AddReader<IList<int>>(y => y.Node.Value.Split(',').Select(int.Parse).ToList())).DeserializeXml<CustomReader>(xml);
 
             result.ListInterfaceOfSimpleTypes.Count.ShouldEqual(3);
             result.ListInterfaceOfSimpleTypes[0].ShouldEqual(1);
@@ -167,7 +167,7 @@ namespace Tests.Deserializer
                     </ListInterfaceOfComplexTypes>
                 </CustomReader>";
             var result = Bender.Deserializer.Create(
-                x => x.AddReader<ComplexType>((o, p, n) => new ComplexType { Value = int.Parse(n.Element.Value.Replace("[", "").Replace("]", "")) })).Deserialize<CustomReader>(xml);
+                x => x.AddReader<ComplexType>(y => new ComplexType { Value = int.Parse(y.Node.Value.Replace("[", "").Replace("]", "")) })).DeserializeXml<CustomReader>(xml);
 
             result.ListInterfaceOfComplexTypes.Count.ShouldEqual(3);
             result.ListInterfaceOfComplexTypes[0].Value.ShouldEqual(1);
@@ -187,7 +187,7 @@ namespace Tests.Deserializer
                     </ListInterfaceOfSimpleTypes>
                 </CustomReader>";
             var result = Bender.Deserializer.Create(
-                x => x.AddReader<int>((o, p, n) => int.Parse(n.Element.Value.Replace("[", "").Replace("]", "")))).Deserialize<CustomReader>(xml);
+                x => x.AddReader<int>(y => int.Parse(y.Node.Value.Replace("[", "").Replace("]", "")))).DeserializeXml<CustomReader>(xml);
 
             result.ListInterfaceOfSimpleTypes.Count.ShouldEqual(3);
             result.ListInterfaceOfSimpleTypes[0].ShouldEqual(1);
@@ -217,7 +217,7 @@ namespace Tests.Deserializer
         {
             const string xml = @"<ComplexAttribute Complex=""hai""/>";
             var result = Bender.Deserializer.Create(
-                x => x.AddReader((o, p, n) => AttributeComplexType.Parse(n.Value, false))).Deserialize<ComplexAttribute>(xml);
+                x => x.AddReader(y => AttributeComplexType.Parse(y.Node.Value, false))).DeserializeXml<ComplexAttribute>(xml);
             result.Complex.Value.ShouldEqual("hai");
         }
 
@@ -226,14 +226,14 @@ namespace Tests.Deserializer
         {
             const string xml = @"<ComplexAttribute Complex=""hai""/>";
             Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create(
-                x => x.AddReader((o, p, n) => AttributeComplexType.Parse(n.Value, true))).Deserialize<ComplexAttribute>(xml));
+                x => x.AddReader(y => AttributeComplexType.Parse(y.Node.Value, true))).DeserializeXml<ComplexAttribute>(xml));
         }
 
         [Test]
         public void should_throw_deserialize_exception_when_deserializing_complex_attribute_type_without_a_reader()
         {
             const string xml = @"<ComplexAttribute Complex=""hai""/>";
-            Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create().Deserialize<ComplexAttribute>(xml).Complex.ShouldBeNull());
+            Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create().DeserializeXml<ComplexAttribute>(xml).Complex.ShouldBeNull());
         }
 
         // Built in readers
@@ -251,14 +251,14 @@ namespace Tests.Deserializer
         public void should_deserialize_byte_array()
         {
             const string xml = @"<BuiltInReaders><ByteArray>AQID</ByteArray></BuiltInReaders>";
-            Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml).ByteArray.ShouldEqual(new byte[] { 1, 2, 3 });
+            Bender.Deserializer.Create().DeserializeXml<BuiltInReaders>(xml).ByteArray.ShouldEqual(new byte[] { 1, 2, 3 });
         }
 
         [Test]
         public void should_not_deserialize_improperly_formated_byte_array()
         {
             const string xml = @"<BuiltInReaders><ByteArray>56y45u456u</ByteArray></BuiltInReaders>";
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml)).FriendlyMessage
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<BuiltInReaders>(xml)).FriendlyMessage
                 .ShouldEqual("Unable to parse the value '56y45u456u' in the '/BuiltInReaders/ByteArray' element as a Byte[]: Not formatted correctly, must be formatted as base64 string.");
         }
 
@@ -266,14 +266,14 @@ namespace Tests.Deserializer
         public void should_deserialize_uri()
         {
             const string xml = @"<BuiltInReaders><Uri>http://www.google.com/</Uri></BuiltInReaders>";
-            Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml).Uri.ShouldEqual(new Uri("http://www.google.com"));
+            Bender.Deserializer.Create().DeserializeXml<BuiltInReaders>(xml).Uri.ShouldEqual(new Uri("http://www.google.com"));
         }
 
         [Test]
         public void should_not_deserialize_improperly_formated_uri()
         {
             const string xml = @"<BuiltInReaders><Uri>46b464646436</Uri></BuiltInReaders>";
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml)).FriendlyMessage
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<BuiltInReaders>(xml)).FriendlyMessage
                 .ShouldEqual("Unable to parse the value '46b464646436' in the '/BuiltInReaders/Uri' element as a Uri: Not formatted correctly, must be formatted as 'http://domain.com'.");
         }
 
@@ -281,14 +281,14 @@ namespace Tests.Deserializer
         public void should_deserialize_mail_address()
         {
             const string xml = @"<BuiltInReaders><MailAddress>""Test"" &lt;test@test.com&gt;</MailAddress></BuiltInReaders>";
-            Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml).MailAddress.ShouldEqual(new MailAddress("test@test.com", "Test"));
+            Bender.Deserializer.Create().DeserializeXml<BuiltInReaders>(xml).MailAddress.ShouldEqual(new MailAddress("test@test.com", "Test"));
         }
 
         [Test]
         public void should_not_deserialize_improperly_formated_mail_address()
         {
             const string xml = @"<BuiltInReaders><MailAddress>34b64634b643b6</MailAddress></BuiltInReaders>";
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml)).FriendlyMessage
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<BuiltInReaders>(xml)).FriendlyMessage
                 .ShouldEqual("Unable to parse the value '34b64634b643b6' in the '/BuiltInReaders/MailAddress' element as a MailAddress: Not formatted correctly, must be formatted as 'username@domain.com'.");
         }
 
@@ -296,14 +296,14 @@ namespace Tests.Deserializer
         public void should_deserialize_version()
         {
             const string xml = @"<BuiltInReaders><Version>1.2.3.4</Version></BuiltInReaders>";
-            Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml).Version.ShouldEqual(new Version(1, 2, 3, 4));
+            Bender.Deserializer.Create().DeserializeXml<BuiltInReaders>(xml).Version.ShouldEqual(new Version(1, 2, 3, 4));
         }
 
         [Test]
         public void should_not_deserialize_improperly_formated_version()
         {
             const string xml = @"<BuiltInReaders><Version>4b6345b6345b634</Version></BuiltInReaders>";
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml)).FriendlyMessage
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<BuiltInReaders>(xml)).FriendlyMessage
                 .ShouldEqual("Unable to parse the value '4b6345b6345b634' in the '/BuiltInReaders/Version' element as a Version: Not formatted correctly, must be formatted as '1.2.3.4'.");
         }
 
@@ -311,14 +311,14 @@ namespace Tests.Deserializer
         public void should_deserialize_ip_address()
         {
             const string xml = @"<BuiltInReaders><IpAddress>192.168.1.1</IpAddress></BuiltInReaders>";
-            Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml).IpAddress.ShouldEqual(IPAddress.Parse("192.168.1.1"));
+            Bender.Deserializer.Create().DeserializeXml<BuiltInReaders>(xml).IpAddress.ShouldEqual(IPAddress.Parse("192.168.1.1"));
         }
 
         [Test]
         public void should_not_deserialize_improperly_formated_ip_address()
         {
             const string xml = @"<BuiltInReaders><IpAddress>45b634b6345b6345</IpAddress></BuiltInReaders>";
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().Deserialize<BuiltInReaders>(xml)).FriendlyMessage
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<BuiltInReaders>(xml)).FriendlyMessage
                 .ShouldEqual("Unable to parse the value '45b634b6345b6345' in the '/BuiltInReaders/IpAddress' element as a IPAddress: Not formatted correctly, must be formatted as '1.2.3.4'.");
         }
     }

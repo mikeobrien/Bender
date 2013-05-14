@@ -19,7 +19,7 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_list_with_custom_name_format()
         {
-            var xml = Bender.Serializer.Create(x => x.WithDefaultGenericListNameFormat("{0}s"))
+            var xml = Bender.Serializer.Create(x => x.WithDefaultGenericListXmlNameFormat("{0}s"))
                 .Serialize(new List<ComplexType> { new ComplexType { Value = 1 }, new ComplexType { Value = 2 } });
             var root = xml.ParseXml().Element("ComplexTypes").Elements("ComplexType");
             root.ShouldNotBeNull();

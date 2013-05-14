@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
-using System.Reflection;
 using System.Xml.Linq;
 
 namespace Bender
 {
-    public enum ValueNodeType { Attribute, Element }
+    public enum XmlValueNodeType { Attribute, Element }
+    public enum Format { Xml, Json }
 
     public class Options
     {
         public Options()
         {
             ExcludedTypes = new List<Func<Type, bool>>();
-            ValueNode = ValueNodeType.Element;
-            IgnoreUnmatchedAttributes = true;
+            XmlValueNode = XmlValueNodeType.Element;
+            IgnoreUnmatchedXmlAttributes = true;
             FriendlyParseErrorMessages = new Dictionary<Type, string>();
             FriendlyParseErrorMessages[typeof(Enum)] = "Not a valid option.";
             FriendlyParseErrorMessages[typeof(char)] = "Length not valid, must be one character.";
@@ -40,77 +40,78 @@ namespace Bender
             FriendlyParseErrorMessages[typeof(MailAddress)] = "Not formatted correctly, must be formatted as 'username@domain.com'.";
             FriendlyParseErrorMessages[typeof(IPAddress)] = "Not formatted correctly, must be formatted as '1.2.3.4'.";
 
-            Readers = new Dictionary<Type, Func<Options, PropertyInfo, ValueNode, object>>();
-            AddReader((o, p, n) => ValueParseException.Wrap(o, p, n, () => Convert.FromBase64String(n.Value)));
-            AddReader((o, p, n) => ValueParseException.Wrap(o, p, n, () => new Uri(o.DefaultNonNullableTypesWhenEmpty && n.Value.IsNullOrEmpty() ? "http://tempuri.org/" : n.Value)));
-            AddReader((o, p, n) => ValueParseException.Wrap(o, p, n, () => Version.Parse(n.Value)));
-            AddReader((o, p, n) => ValueParseException.Wrap(o, p, n, () => new MailAddress(n.Value)));
-            AddReader((o, p, n) => ValueParseException.Wrap(o, p, n, () => IPAddress.Parse(n.Value)));
+            Readers = new Dictionary<Type, Func<ReaderContext, object>>();
+            AddReader(x => ValueParseException.Wrap(x, () => Convert.FromBase64String(x.Node.Value)));
+            AddReader(x => ValueParseException.Wrap(x, () => new Uri(x.Options.DefaultNonNullableTypesWhenEmpty && 
+                x.Node.Value.IsNullOrEmpty() ? "http://tempuri.org/" : x.Node.Value)));
+            AddReader(x => ValueParseException.Wrap(x, () => Version.Parse(x.Node.Value)));
+            AddReader(x => ValueParseException.Wrap(x, () => new MailAddress(x.Node.Value)));
+            AddReader(x => ValueParseException.Wrap(x, () => IPAddress.Parse(x.Node.Value)));
 
             Namespaces = new Dictionary<string, XNamespace>();
-            NodeWriters = new List<Action<Options, PropertyInfo, object, ValueNode>>();
-            ValueWriters = new Dictionary<Type, Action<Options, PropertyInfo, object, ValueNode>>();
-            AddWriter<bool>((o, p, v, e) => e.Value = v.ToString().ToLower(), true);
-            AddWriter<byte[]>((o, p, v, e) => e.Value = v != null ? Convert.ToBase64String(v) : "");
-            AddWriter<Uri>((o, p, v, e) => e.Value = v != null ? v.ToString() : "");
-            AddWriter<Version>((o, p, v, e) => e.Value = v != null ? v.ToString() : "");
-            AddWriter<MailAddress>((o, p, v, e) => e.Value = v != null ? v.ToString() : "");
-            AddWriter<IPAddress>((o, p, v, e) => e.Value = v != null ? v.ToString() : "");
+            NodeWriters = new List<Action<WriterContext>>();
+            ValueWriters = new Dictionary<Type, Action<WriterContext>>();
+            AddWriter<bool>(x => x.Node.Value = x.Value.ToString().ToLower(), true);
+            AddWriter<byte[]>(x => x.Node.Value = x.Value != null ? Convert.ToBase64String(x.Value) : "");
+            AddWriter<Uri>(x => x.Node.Value = x.Value != null ? x.Value.ToString() : "");
+            AddWriter<Version>(x => x.Node.Value = x.Value != null ? x.Value.ToString() : "");
+            AddWriter<MailAddress>(x => x.Node.Value = x.Value != null ? x.Value.ToString() : "");
+            AddWriter<IPAddress>(x => x.Node.Value = x.Value != null ? x.Value.ToString() : "");
         }
         
         public List<Func<Type, bool>> ExcludedTypes { get; set; }
-        public string GenericTypeNameFormat { get; set; }
-        public string GenericListNameFormat { get; set; }
+        public string GenericTypeXmlNameFormat { get; set; }
+        public string GenericListXmlNameFormat { get; set; }
 
         // Deserialization specific
         public bool DefaultNonNullableTypesWhenEmpty { get; set; }
-        public bool IgnoreUnmatchedElements { get; set; }
-        public bool IgnoreUnmatchedAttributes { get; set; }
-        public bool IgnoreTypeElementNames { get; set; }
+        public bool IgnoreUnmatchedNodes { get; set; }
+        public bool IgnoreUnmatchedXmlAttributes { get; set; }
+        public bool IgnoreTypeXmlElementNames { get; set; }
         public bool IgnoreCase { get; set; }
-        public Dictionary<Type, string> FriendlyParseErrorMessages { get; set; } 
+        public Dictionary<Type, string> FriendlyParseErrorMessages { get; set; }
 
-        public Dictionary<Type, Func<Options, PropertyInfo, ValueNode, object>> Readers { get; private set; }
+        public Dictionary<Type, Func<ReaderContext, object>> Readers { get; private set; }
 
-        public void AddReader<T>(Func<Options, PropertyInfo, ValueNode, T> reader)
+        public void AddReader<T>(Func<ReaderContext, T> reader)
         {
-            Readers[typeof(T)] = (o, p, e) => reader(o, p, e);
+            Readers[typeof(T)] = x => reader(x);
         }
 
-        public void AddReader<T>(Func<Options, PropertyInfo, ValueNode, T> reader, bool handleNullable) where T : struct
+        public void AddReader<T>(Func<ReaderContext, T> reader, bool handleNullable) where T : struct
         {
             AddReader(reader);
-            if (handleNullable) Readers[typeof(T?)] = (o, p, e) => !string.IsNullOrEmpty(e.Value) ? reader(o, p, e) : (T?)null;
+            if (handleNullable) Readers[typeof(T?)] = x => !string.IsNullOrEmpty(x.Node.Value) ? reader(x) : (T?)null;
         } 
 
         // Serialization specific
         public bool PrettyPrint { get; set; }
         public bool ExcludeNullValues { get; set; }
-        public ValueNodeType ValueNode { get; set; }
-        public Dictionary<Type, Action<Options, PropertyInfo, object, ValueNode>> ValueWriters { get; private set; }
-        public List<Action<Options, PropertyInfo, object, ValueNode>> NodeWriters { get; private set; }
+        public XmlValueNodeType XmlValueNode { get; set; }
+        public Dictionary<Type, Action<WriterContext>> ValueWriters { get; private set; }
+        public List<Action<WriterContext>> NodeWriters { get; private set; }
         public XNamespace DefaultNamespace { get; set; }
-        public Dictionary<string, XNamespace> Namespaces { get; set; } 
+        public Dictionary<string, XNamespace> Namespaces { get; set; }
 
-        public void AddWriter(Action<Options, PropertyInfo, object, ValueNode> writer)
+        public void AddWriter(Action<WriterContext> writer)
         {
             NodeWriters.Add(writer);
         }
 
-        public void AddWriter(Func<Options, PropertyInfo, object, ValueNode, bool> predicate, Action<Options, PropertyInfo, object, ValueNode> writer)
+        public void AddWriter(Func<WriterContext, bool> predicate, Action<WriterContext> writer)
         {
-            NodeWriters.Add((o, p, v, e) => { if (predicate(o, p, v, e)) writer(o, p, v, e); });
+            NodeWriters.Add(x => { if (predicate(x)) writer(x); });
         }
 
-        public void AddWriter<T>(Action<Options, PropertyInfo, T, ValueNode> writer)
+        public void AddWriter<T>(Action<WriterContext<T>> writer)
         {
-            ValueWriters[typeof(T)] = (o, p, v, e) => writer(o, p, (T)v, e);
+            ValueWriters[typeof(T)] = x => writer(new WriterContext<T>(x));
         }
 
-        public void AddWriter<T>(Action<Options, PropertyInfo, T, ValueNode> writer, bool handleNullable) where T : struct
+        public void AddWriter<T>(Action<WriterContext<T>> writer, bool handleNullable) where T : struct
         {
             AddWriter(writer);
-            if (handleNullable) ValueWriters[typeof(T?)] = (o, p, v, e) => { if (((T?)v).HasValue) writer(o, p, ((T?)v).Value, e); };
+            if (handleNullable) ValueWriters[typeof(T?)] = x => { if (((T?)x.Value).HasValue) writer(new WriterContext<T>(x)); };
         } 
     }
 }

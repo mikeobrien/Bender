@@ -24,7 +24,7 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_graph_with_attribute_values()
         {
-            var xml = Bender.Serializer.Create(x => x.ValuesAsAttributes()).Serialize(new Graph { Value1 = new GraphNode { Value2 = "hai" } });
+            var xml = Bender.Serializer.Create(x => x.XmlValuesAsAttributes()).Serialize(new Graph { Value1 = new GraphNode { Value2 = "hai" } });
             Debug.WriteLine(xml);
             xml.ParseXml().Element("Graph").Element("Value1").Attribute("Value2").Value.ShouldEqual("hai");
         }

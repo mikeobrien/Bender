@@ -59,12 +59,27 @@ namespace Bender
             return property.HasCustomAttribute<XmlIgnoreAttribute>();
         }
 
-        public static string GetXPath(this XObject node)
+        public static string GetPath(this XObject node, Format format)
+        {
+            return format == Format.Xml ? GetXmlPath(node): GetJsonPath((XElement)node);
+        }
+
+        private static string GetXmlPath(this XObject node)
         {
             var attribute = node as XAttribute;
             var element = node as XElement ?? attribute.Parent;
-            return (element.Ancestors().Any() ? "/" + element.Ancestors().Select(x => x.Name.LocalName).Reverse()
+            var ancestors = element.Ancestors();
+            return (ancestors.Any() ? "/" + ancestors.Select(x => x.Name.LocalName).Reverse()
                 .Aggregate((a, i) => a + "/" + i) : "") + "/" + element.Name.LocalName + (attribute != null ? "/@" + attribute.Name : "");
+        }
+
+        private static string GetJsonPath(this XElement element)
+        {
+            Func<XElement, bool> isArray = x => x.Parent.Attribute("type") != null && x.Parent.Attribute("type").Value == "array";
+            Func<XElement, string> arrayIndex = x => "[{0}]".ToFormat(x.ElementsBeforeSelf().Count() + 1);
+            var nodes = element.Ancestors().Where(x => x.Parent != null).Reverse().Concat(new [] { element });
+            return nodes.Select(x => isArray(x) ? arrayIndex(x) : (x.Parent.Parent != null ? "." : "") + x.Name.LocalName)
+                        .Aggregate((a, i) => a + i);
         }
 
         public static XElement AddElement(this XElement element, string name)

@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using Should;
 
-namespace Tests.Deserializer
+namespace Tests.Deserializer.Xml
 {
     [TestFixture]
     public class ParameterizedCtorTests
@@ -29,7 +29,7 @@ namespace Tests.Deserializer
         public void should_deserialize_child_with_parent_passed_into_the_constructor()
         {
             const string xml = @"<ParentNode><Age>67</Age><Child><Name>Ed</Name></Child></ParentNode>";
-            var result = Bender.Deserializer.Create().Deserialize<ParentNode>(xml);
+            var result = Bender.Deserializer.Create().DeserializeXml<ParentNode>(xml);
             result.Child.Name.ShouldEqual("Ed (67)");
         }
 
@@ -47,7 +47,7 @@ namespace Tests.Deserializer
         public void should_not_deserialize_child_with_parameterized_constructor()
         {
             const string xml = @"<ParentNodeWithParameterizedChild><Child><Name>Ed</Name></Child></ParentNodeWithParameterizedChild>";
-            Bender.Deserializer.Create().Deserialize<ParentNodeWithParameterizedChild>(xml).Child.ShouldBeNull();
+            Bender.Deserializer.Create().DeserializeXml<ParentNodeWithParameterizedChild>(xml).Child.ShouldBeNull();
         }
     }
 }

@@ -5,7 +5,7 @@ using Bender;
 using NUnit.Framework;
 using Should;
 
-namespace Tests.Deserializer
+namespace Tests.Deserializer.Xml
 {
     [TestFixture]
     public class ListTests
@@ -23,8 +23,8 @@ namespace Tests.Deserializer
                     <ComplexType><Value>1</Value></ComplexType>
                     <ComplexType><Value>2</Value></ComplexType>
                 </ComplexTypes>";
-            var result = Bender.Deserializer.Create(x => x.WithDefaultGenericListNameFormat("{0}s"))
-                .Deserialize<List<ComplexType>>(xml);
+            var result = Bender.Deserializer.Create(x => x.WithDefaultGenericListXmlNameFormat("{0}s"))
+                .DeserializeXml<List<ComplexType>>(xml);
             result.Count.ShouldEqual(2);
             result[0].Value.ShouldEqual(1);
             result[1].Value.ShouldEqual(2);
@@ -40,7 +40,7 @@ namespace Tests.Deserializer
                     <ComplexType><Value>1</Value></ComplexType>
                     <ComplexType><Value>2</Value></ComplexType>
                 </ArrayOfComplexType>";
-            var result = Bender.Deserializer.Create().Deserialize<List<ComplexType>>(xml);
+            var result = Bender.Deserializer.Create().DeserializeXml<List<ComplexType>>(xml);
             result.Count.ShouldEqual(2);
             result[0].Value.ShouldEqual(1);
             result[1].Value.ShouldEqual(2);
@@ -55,7 +55,7 @@ namespace Tests.Deserializer
                     <ComplexType><Value>2</Value></ComplexType>
                     <ComplexType><Value>3</Value></ComplexType>
                 </InheritedListOfComplexTypes>";
-            var result = Bender.Deserializer.Create().Deserialize<InheritedListOfComplexTypes>(xml);
+            var result = Bender.Deserializer.Create().DeserializeXml<InheritedListOfComplexTypes>(xml);
             result.Count.ShouldEqual(3);
             result[0].Value.ShouldEqual(1);
             result[1].Value.ShouldEqual(2);
@@ -70,7 +70,7 @@ namespace Tests.Deserializer
                     <ComplexType><Value>1</Value></ComplexType>
                     <ComplexType><Value>2</Value></ComplexType>
                 </ArrayOfComplexType>";
-            var result = Bender.Deserializer.Create().Deserialize<IList<ComplexType>>(xml);
+            var result = Bender.Deserializer.Create().DeserializeXml<IList<ComplexType>>(xml);
             result.Count.ShouldEqual(2);
             result[0].Value.ShouldEqual(1);
             result[1].Value.ShouldEqual(2);
@@ -84,7 +84,7 @@ namespace Tests.Deserializer
                     <Int32>1</Int32>
                     <Int32>2</Int32>
                 </ArrayOfInt32>";
-            var result = Bender.Deserializer.Create().Deserialize<List<int>>(xml);
+            var result = Bender.Deserializer.Create().DeserializeXml<List<int>>(xml);
             result.Count.ShouldEqual(2);
             result[0].ShouldEqual(1);
             result[1].ShouldEqual(2);
@@ -98,7 +98,7 @@ namespace Tests.Deserializer
                     <Int32>1</Int32>
                     <Int32>2</Int32>
                 </ArrayOfInt32>";
-            var result = Bender.Deserializer.Create().Deserialize<IList<int>>(xml);
+            var result = Bender.Deserializer.Create().DeserializeXml<IList<int>>(xml);
             result.Count.ShouldEqual(2);
             result[0].ShouldEqual(1);
             result[1].ShouldEqual(2);
@@ -113,7 +113,7 @@ namespace Tests.Deserializer
                     <Int32>2</Int32>
                     <Int32>3</Int32>
                 </InheritedListOfSimpleTypes>";
-            var result = Bender.Deserializer.Create().Deserialize<InheritedListOfSimpleTypes>(xml);
+            var result = Bender.Deserializer.Create().DeserializeXml<InheritedListOfSimpleTypes>(xml);
             result.Count.ShouldEqual(3);
             result[0].ShouldEqual(1);
             result[1].ShouldEqual(2);
@@ -129,7 +129,7 @@ namespace Tests.Deserializer
                     <Int32>2</Int32>
                     <Int32>3</Int32>
                 </ArrayOfInt32>";
-            var result = Bender.Deserializer.Create().Deserialize<IEnumerable<int>>(xml);
+            var result = Bender.Deserializer.Create().DeserializeXml<IEnumerable<int>>(xml);
             result.Count().ShouldEqual(3);
             result.First().ShouldEqual(1);
             result.Skip(1).First().ShouldEqual(2);
@@ -140,14 +140,14 @@ namespace Tests.Deserializer
         public void should_serialize_simple_type_enumerable()
         {
             const string xml = @"<ArrayOfObject><Int32>1</Int32></ArrayOfObject>";
-            Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create().Deserialize<IEnumerable>(xml));
+            Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create().DeserializeXml<IEnumerable>(xml));
         }
 
         [Test]
         public void should_serialize_simple_type_array_list()
         {
             const string xml = @"<ArrayOfObject><Int32>1</Int32></ArrayOfObject>";
-            Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create().Deserialize<ArrayList>(xml));
+            Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create().DeserializeXml<ArrayList>(xml));
         }
 
         [Test]
@@ -159,7 +159,7 @@ namespace Tests.Deserializer
                     <Int32>2</Int32>
                     <Int32>3</Int32>
                 </ArrayOfInt32>";
-            var result = Bender.Deserializer.Create().Deserialize<int[]>(xml);
+            var result = Bender.Deserializer.Create().DeserializeXml<int[]>(xml);
             result.Length.ShouldEqual(3);
             result[0].ShouldEqual(1);
             result[1].ShouldEqual(2);
@@ -192,7 +192,7 @@ namespace Tests.Deserializer
                         <ComplexType><Value>3</Value></ComplexType>
                     </ComplexItems>
                 </ListProperty>";
-            var result = Bender.Deserializer.Create().Deserialize<ListProperty>(xml).ComplexItems;
+            var result = Bender.Deserializer.Create().DeserializeXml<ListProperty>(xml).ComplexItems;
             result.Count.ShouldEqual(3);
             result[0].Value.ShouldEqual(1);
             result[1].Value.ShouldEqual(2);
@@ -210,7 +210,7 @@ namespace Tests.Deserializer
                         <Int32>3</Int32>
                     </SimpleItems>
                 </ListProperty>";
-            var result = Bender.Deserializer.Create().Deserialize<ListProperty>(xml).SimpleItems;
+            var result = Bender.Deserializer.Create().DeserializeXml<ListProperty>(xml).SimpleItems;
             result.Count.ShouldEqual(3);
             result[0].ShouldEqual(1);
             result[1].ShouldEqual(2);
@@ -228,7 +228,7 @@ namespace Tests.Deserializer
                         <Int32>3</Int32>
                     </InheritedSimpleItems>
                 </ListProperty>";
-            var result = Bender.Deserializer.Create().Deserialize<ListProperty>(xml).InheritedSimpleItems;
+            var result = Bender.Deserializer.Create().DeserializeXml<ListProperty>(xml).InheritedSimpleItems;
             result.Count.ShouldEqual(3);
             result[0].ShouldEqual(1);
             result[1].ShouldEqual(2);
@@ -246,7 +246,7 @@ namespace Tests.Deserializer
                         <ComplexType><Value>3</Value></ComplexType>
                     </InheritedComplexItems>
                 </ListProperty>";
-            var result = Bender.Deserializer.Create().Deserialize<ListProperty>(xml).InheritedComplexItems;
+            var result = Bender.Deserializer.Create().DeserializeXml<ListProperty>(xml).InheritedComplexItems;
             result.Count.ShouldEqual(3);
             result[0].Value.ShouldEqual(1);
             result[1].Value.ShouldEqual(2);
@@ -264,7 +264,7 @@ namespace Tests.Deserializer
                         <ComplexType><Value>3</Value></ComplexType>
                     </InterfaceComplexItems>
                 </ListProperty>";
-            var result = Bender.Deserializer.Create().Deserialize<ListProperty>(xml).InterfaceComplexItems;
+            var result = Bender.Deserializer.Create().DeserializeXml<ListProperty>(xml).InterfaceComplexItems;
             result.Count.ShouldEqual(3);
             result[0].Value.ShouldEqual(1);
             result[1].Value.ShouldEqual(2);
@@ -282,7 +282,7 @@ namespace Tests.Deserializer
                         <Int32>3</Int32>
                     </GenericEnumerableItems>
                 </ListProperty>";
-            var result = Bender.Deserializer.Create().Deserialize<ListProperty>(xml).GenericEnumerableItems;
+            var result = Bender.Deserializer.Create().DeserializeXml<ListProperty>(xml).GenericEnumerableItems;
             result.Count().ShouldEqual(3);
             result.First().ShouldEqual(1);
             result.Skip(1).First().ShouldEqual(2);
@@ -293,14 +293,14 @@ namespace Tests.Deserializer
         public void should_not_deserialize_simple_type_enumerable_property()
         {
             const string xml = @"<ListProperty><EnumerableItems><Int32>3</Int32></EnumerableItems></ListProperty>";
-            Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create().Deserialize<ListProperty>(xml));
+            Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create().DeserializeXml<ListProperty>(xml));
         }
 
         [Test]
         public void should_not_deserialize_simple_type_array_list_property()
         {
             const string xml = @"<ListProperty><ArrayListItems><Int32>1</Int32></ArrayListItems></ListProperty>";
-            Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create().Deserialize<ListProperty>(xml));
+            Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create().DeserializeXml<ListProperty>(xml));
         }
 
         [Test]
@@ -314,7 +314,7 @@ namespace Tests.Deserializer
                         <Int32>3</Int32>
                     </ArrayItems>
                 </ListProperty>";
-            var result = Bender.Deserializer.Create().Deserialize<ListProperty>(xml).ArrayItems;
+            var result = Bender.Deserializer.Create().DeserializeXml<ListProperty>(xml).ArrayItems;
             result.Length.ShouldEqual(3);
             result[0].ShouldEqual(1);
             result[1].ShouldEqual(2);
@@ -344,7 +344,7 @@ namespace Tests.Deserializer
                         <ComplexGenericTypeOfStringInt32><Value1>hai</Value1><Value2>6</Value2></ComplexGenericTypeOfStringInt32>
                     </Items>
                 </ComplexGenericTypeProperty>";
-            var result = Bender.Deserializer.Create().Deserialize<ComplexGenericTypeProperty>(xml).Items;
+            var result = Bender.Deserializer.Create().DeserializeXml<ComplexGenericTypeProperty>(xml).Items;
             result.Count.ShouldEqual(2);
             result[0].Value1.ShouldEqual("oh");
             result[0].Value2.ShouldEqual(5);
@@ -360,7 +360,7 @@ namespace Tests.Deserializer
                     <ComplexGenericTypeOfStringInt32><Value1>oh</Value1><Value2>5</Value2></ComplexGenericTypeOfStringInt32>
                     <ComplexGenericTypeOfStringInt32><Value1>hai</Value1><Value2>6</Value2></ComplexGenericTypeOfStringInt32>
                 </ArrayOfComplexGenericTypeOfStringInt32>";
-            var result = Bender.Deserializer.Create().Deserialize<List<ComplexGenericType<string, int>>>(xml);
+            var result = Bender.Deserializer.Create().DeserializeXml<List<ComplexGenericType<string, int>>>(xml);
             result.Count.ShouldEqual(2);
             result[0].Value1.ShouldEqual("oh");
             result[0].Value2.ShouldEqual(5);

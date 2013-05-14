@@ -41,6 +41,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,15 +49,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Deserializer\ReaderTests.cs" />
-    <Compile Include="Deserializer\ParameterizedCtorTests.cs" />
-    <Compile Include="Deserializer\MappingTests.cs" />
-    <Compile Include="Deserializer\XmlAttributeTests.cs" />
-    <Compile Include="Deserializer\PerformanceTests.cs" />
-    <Compile Include="Deserializer\ListTests.cs" />
-    <Compile Include="Deserializer\SimpleTypeTests.cs" />
-    <Compile Include="Deserializer\TraversalTests.cs" />
+    <Compile Include="Deserializer\Json\ListTests.cs" />
+    <Compile Include="Deserializer\Json\MappingTests.cs" />
+    <Compile Include="Deserializer\Json\ParameterizedCtorTests.cs" />
+    <Compile Include="Deserializer\Json\TraversalTests.cs" />
+    <Compile Include="Deserializer\Xml\ReaderTests.cs" />
+    <Compile Include="Deserializer\Xml\ParameterizedCtorTests.cs" />
+    <Compile Include="Deserializer\Xml\MappingTests.cs" />
+    <Compile Include="Deserializer\Xml\XmlAttributeTests.cs" />
+    <Compile Include="Deserializer\Xml\PerformanceTests.cs" />
+    <Compile Include="Deserializer\Xml\ListTests.cs" />
+    <Compile Include="Deserializer\Xml\SimpleTypeTests.cs" />
+    <Compile Include="Deserializer\Xml\TraversalTests.cs" />
     <Compile Include="ExpanderTests.cs" />
+    <Compile Include="ExtensionTests.cs" />
     <Compile Include="Serializer\NamespaceTests.cs" />
     <Compile Include="Serializer\FormattingTests.cs" />
     <Compile Include="Serializer\TraversalTests.cs" />
@@ -76,6 +82,7 @@
       <Name>Bender</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

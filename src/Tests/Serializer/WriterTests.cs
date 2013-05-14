@@ -30,7 +30,7 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_simple_type_with_custom_writer()
         {
-            var xml = Bender.Serializer.Create(x => x.AddWriter<DateTime>((o, p, v, e) => e.Value = v.ToString("hh-mm")))
+            var xml = Bender.Serializer.Create(x => x.AddWriter<DateTime>(y => y.Node.Value = y.Value.ToString("hh-mm")))
                 .Serialize(new CustomWriter { SimpleType = DateTime.MaxValue });
             xml.ParseXml().Element("CustomWriter").Element("SimpleType").Value.ShouldEqual("11-59");   
         }
@@ -38,7 +38,7 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_complex_type_with_custom_writer()
         {
-            var xml = Bender.Serializer.Create(x => x.AddWriter<ComplexType>((o, p, v, e) => e.Value = v.Value.ToString()))
+            var xml = Bender.Serializer.Create(x => x.AddWriter<ComplexType>(y => y.Node.Value = y.Value.Value.ToString()))
                 .Serialize(new CustomWriter { ComplexType = new ComplexType { Value = 5 } });
             xml.ParseXml().Element("CustomWriter").Element("ComplexType").Value.ShouldEqual("5");
         }
@@ -46,8 +46,8 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_complex_type_list_property_with_custom_writer()
         {
-            var xml = Bender.Serializer.Create(x => x.AddWriter<List<ComplexType>>((o, p, v, e) => 
-                    e.Value = string.Join(",", v.Select(y => y.Value.ToString()).ToArray())))
+            var xml = Bender.Serializer.Create(x => x.AddWriter<List<ComplexType>>(y => 
+                    y.Node.Value = string.Join(",", y.Value.Select(z => z.Value.ToString()).ToArray())))
                 .Serialize(new CustomWriter { ListOfComplexTypes = new List<ComplexType>
                     {
                         new ComplexType { Value = 1 }, new ComplexType { Value = 2 }, new ComplexType { Value = 3 }
@@ -58,8 +58,8 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_simple_type_list_property_with_custom_writer()
         {
-            var xml = Bender.Serializer.Create(x => x.AddWriter<List<int>>((o, p, v, e) => 
-                    e.Value = string.Join(",", v.Select(y => y.ToString()).ToArray())))
+            var xml = Bender.Serializer.Create(x => x.AddWriter<List<int>>(y => 
+                    y.Node.Value = string.Join(",", y.Value.Select(z => z.ToString()).ToArray())))
                 .Serialize(new CustomWriter { ListOfSimpleTypes = new List<int> { 1, 2, 3 } });
             xml.ParseXml().Element("CustomWriter").Element("ListOfSimpleTypes").Value.ShouldEqual("1,2,3"); 
         }
@@ -67,7 +67,7 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_complex_type_list_property_item_with_custom_writer()
         {
-            var xml = Bender.Serializer.Create(x => x.AddWriter<ComplexType>((o, p, v, e) => { if (v != null) e.Value = "[{0}]".ToFormat(v.Value); }))
+            var xml = Bender.Serializer.Create(x => x.AddWriter<ComplexType>(y => { if (y.Value != null) y.Node.Value = "[{0}]".ToFormat(y.Value.Value); }))
                 .Serialize(new CustomWriter { ListOfComplexTypes = new List<ComplexType>
                     {
                         new ComplexType { Value = 1 }, new ComplexType { Value = 2 }, new ComplexType { Value = 3 }
@@ -81,7 +81,7 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_simple_type_list_property_item_with_custom_writer()
         {
-            var xml = Bender.Serializer.Create(x => x.AddWriter<int>((o, p, v, e) => e.Value = "[{0}]".ToFormat(v)))
+            var xml = Bender.Serializer.Create(x => x.AddWriter<int>(y => y.Node.Value = "[{0}]".ToFormat(y.Value)))
                 .Serialize(new CustomWriter { ListOfSimpleTypes = new List<int> { 1, 2, 3 } });
             var results = xml.ParseXml().Element("CustomWriter").Element("ListOfSimpleTypes").Elements("Int32");
             results.First().Value.ShouldEqual("[1]");
@@ -92,8 +92,8 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_complex_type_list_interface_property_with_custom_writer()
         {
-            var xml = Bender.Serializer.Create(x => x.AddWriter<IList<ComplexType>>((o, p, v, e) => 
-                    e.Value = string.Join(",", v.Select(y => y.Value.ToString()).ToArray())))
+            var xml = Bender.Serializer.Create(x => x.AddWriter<IList<ComplexType>>(y => 
+                    y.Node.Value = string.Join(",", y.Value.Select(z => z.Value.ToString()).ToArray())))
                 .Serialize(new CustomWriter { ListInterfaceOfComplexTypes = new List<ComplexType>
                     {
                         new ComplexType { Value = 1 }, new ComplexType { Value = 2 }, new ComplexType { Value = 3 }
@@ -104,8 +104,8 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_simple_type_list_interface_property_with_custom_writer()
         {
-            var xml = Bender.Serializer.Create(x => x.AddWriter<IList<int>>((o, p, v, e) =>
-                    e.Value = string.Join(",", v.Select(y => y.ToString()).ToArray())))
+            var xml = Bender.Serializer.Create(x => x.AddWriter<IList<int>>(y =>
+                    y.Node.Value = string.Join(",", y.Value.Select(z => z.ToString()).ToArray())))
                 .Serialize(new CustomWriter { ListInterfaceOfSimpleTypes = new List<int> { 1, 2, 3 } });
             xml.ParseXml().Element("CustomWriter").Element("ListInterfaceOfSimpleTypes").Value.ShouldEqual("1,2,3"); 
         }
@@ -113,7 +113,7 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_complex_type_list_interface_property_item_with_custom_writer()
         {
-            var xml = Bender.Serializer.Create(x => x.AddWriter<ComplexType>((o, p, v, e) => { if (v != null) e.Value = "[{0}]".ToFormat(v.Value); }))
+            var xml = Bender.Serializer.Create(x => x.AddWriter<ComplexType>(y => { if (y.Value != null) y.Node.Value = "[{0}]".ToFormat(y.Value.Value); }))
                 .Serialize(new CustomWriter { ListInterfaceOfComplexTypes = new List<ComplexType>
                     {
                         new ComplexType { Value = 1 }, new ComplexType { Value = 2 }, new ComplexType { Value = 3 }
@@ -127,7 +127,7 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_simple_type_list_interface_property_item_with_custom_writer()
         {
-            var xml = Bender.Serializer.Create(x => x.AddWriter<int>((o, p, v, e) => e.Value = "[{0}]".ToFormat(v)))
+            var xml = Bender.Serializer.Create(x => x.AddWriter<int>(y => y.Node.Value = "[{0}]".ToFormat(y.Value)))
                 .Serialize(new CustomWriter { ListInterfaceOfSimpleTypes = new List<int> { 1, 2, 3 } });
             var results = xml.ParseXml().Element("CustomWriter").Element("ListInterfaceOfSimpleTypes").Elements("Int32");
             results.First().Value.ShouldEqual("[1]");
@@ -141,7 +141,7 @@ namespace Tests.Serializer
         public void should_apply_node_writer_to_elements()
         {
             var xml = Bender.Serializer.Create(x => x
-                .AddWriter((o, p, v, e) => v == null, (o, p, v, e) => e.Name = "Null" + e.Name)).Serialize(new CustomWriter());
+                .AddWriter(y => y.Value == null, y => y.Node.Name = "Null" + y.Node.Name)).Serialize(new CustomWriter());
             var results = xml.ParseXml().Element("CustomWriter");
             results.Element("SimpleType").ShouldNotBeNull();
             results.Element("NullComplexType").ShouldNotBeNull();
@@ -160,8 +160,8 @@ namespace Tests.Serializer
         [Test]
         public void should_apply_node_writer_to_attributes()
         {
-            var xml = Bender.Serializer.Create(x => x.ValuesAsAttributes()
-                .AddWriter((o, p, v, e) => v == null, (o, p, v, e) => e.Name = "Null" + e.Name)).Serialize(new AttributeComplexType());
+            var xml = Bender.Serializer.Create(x => x.XmlValuesAsAttributes()
+                .AddWriter(y => y.Value == null, y => y.Node.Name = "Null" + y.Node.Name)).Serialize(new AttributeComplexType());
             var results = xml.ParseXml().Element("AttributeComplexType");
             results.Attribute("Value1").ShouldNotBeNull();
             results.Attribute("NullValue2").ShouldNotBeNull();
