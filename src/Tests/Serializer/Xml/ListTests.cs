@@ -1,12 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 using Bender;
 using NUnit.Framework;
 using Should;
 
-namespace Tests.Serializer
+namespace Tests.Serializer.Xml
 {
     [TestFixture]
     public class ListTests

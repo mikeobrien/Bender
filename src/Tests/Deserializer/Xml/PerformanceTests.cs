@@ -16,15 +16,19 @@ namespace Tests.Deserializer.Xml
     {
         public class SpeedTestCollection
         {
-            public List<SpeedTestItem> Value0 { get; set; } public List<SpeedTestItem> Value1 { get; set; }
-            public List<SpeedTestItem> Value2 { get; set; } public List<SpeedTestItem> Value3 { get; set; }
+            public List<SpeedTestItem> Value0 { get; set; } 
+            public List<SpeedTestItem> Value1 { get; set; }
+            public List<SpeedTestItem> Value2 { get; set; } 
+            public List<SpeedTestItem> Value3 { get; set; }
             public List<SpeedTestItem> Value4 { get; set; }
         }
 
         public class SpeedTestItem
         {
-            public string Value0 { get; set; } public string Value1 { get; set; }
-            public string Value2 { get; set; } public string Value3 { get; set; }
+            public string Value0 { get; set; } 
+            public string Value1 { get; set; }
+            public string Value2 { get; set; } 
+            public string Value3 { get; set; }
             public string Value4 { get; set; }
         }
 
@@ -63,11 +67,11 @@ namespace Tests.Deserializer.Xml
                 xmlSerializer.Deserialize(stream);
             }
             stopwatch.Stop();
-            var xmlSerializerSpeed = stopwatch.ElapsedTicks;
+            var serializerSpeed = stopwatch.ElapsedTicks;
 
             Debug.WriteLine("Bender speed (ticks): {0:#,##0}", benderSpeed);
-            Debug.WriteLine("XmlSerializer speed (ticks): {0:#,##0}", xmlSerializerSpeed);
-            (benderSpeed < xmlSerializerSpeed).ShouldBeTrue();
+            Debug.WriteLine("XmlSerializer speed (ticks): {0:#,##0}", serializerSpeed);
+            (benderSpeed < serializerSpeed).ShouldBeTrue();
         }
     }
 }

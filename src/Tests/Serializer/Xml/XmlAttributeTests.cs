@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 using Bender;
 using NUnit.Framework;
 using Should;
 
-namespace Tests.Serializer
+namespace Tests.Serializer.Xml
 {
     [TestFixture]
     public class XmlAttributeTests

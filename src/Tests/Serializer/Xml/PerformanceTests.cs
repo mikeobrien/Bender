@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 using NUnit.Framework;
 using Should;
 
-namespace Tests.Serializer
+namespace Tests.Serializer.Xml
 {
     [TestFixture]
     public class PerformanceTests

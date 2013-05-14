@@ -42,6 +42,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,7 +53,11 @@
     <Compile Include="Deserializer\Json\ListTests.cs" />
     <Compile Include="Deserializer\Json\MappingTests.cs" />
     <Compile Include="Deserializer\Json\ParameterizedCtorTests.cs" />
+    <Compile Include="Deserializer\Json\PerformanceTests.cs" />
+    <Compile Include="Deserializer\Json\ReaderTests.cs" />
+    <Compile Include="Deserializer\Json\SimpleTypeTests.cs" />
     <Compile Include="Deserializer\Json\TraversalTests.cs" />
+    <Compile Include="Deserializer\Json\XmlAttributeTests.cs" />
     <Compile Include="Deserializer\Xml\ReaderTests.cs" />
     <Compile Include="Deserializer\Xml\ParameterizedCtorTests.cs" />
     <Compile Include="Deserializer\Xml\MappingTests.cs" />
@@ -63,14 +68,14 @@
     <Compile Include="Deserializer\Xml\TraversalTests.cs" />
     <Compile Include="ExpanderTests.cs" />
     <Compile Include="ExtensionTests.cs" />
-    <Compile Include="Serializer\NamespaceTests.cs" />
-    <Compile Include="Serializer\FormattingTests.cs" />
-    <Compile Include="Serializer\TraversalTests.cs" />
-    <Compile Include="Serializer\ListTests.cs" />
-    <Compile Include="Serializer\XmlAttributeTests.cs" />
-    <Compile Include="Serializer\SimpleTypeTests.cs" />
-    <Compile Include="Serializer\PerformanceTests.cs" />
-    <Compile Include="Serializer\WriterTests.cs" />
+    <Compile Include="Serializer\Xml\NamespaceTests.cs" />
+    <Compile Include="Serializer\Xml\FormattingTests.cs" />
+    <Compile Include="Serializer\Xml\TraversalTests.cs" />
+    <Compile Include="Serializer\Xml\ListTests.cs" />
+    <Compile Include="Serializer\Xml\XmlAttributeTests.cs" />
+    <Compile Include="Serializer\Xml\SimpleTypeTests.cs" />
+    <Compile Include="Serializer\Xml\PerformanceTests.cs" />
+    <Compile Include="Serializer\Xml\WriterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -82,7 +87,9 @@
       <Name>Bender</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Serializer\Json\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
