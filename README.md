@@ -13,15 +13,17 @@ Bender can be found on nuget:
 Usage
 ------------
 
-The serializer and deserializer can be instantiated by passing in an options object:
+There are a number of ways to use Bender. The simplest is to use the convenience methods which can be optionally configured, for example:
 
 ```csharp
-var serializer = new Serializer(new Options {...});
+var model = Deserialize.Json<Model>("{ ... }");
+var model = Deserialize.Xml(typeof(Model), "<Model>...</Model>");
 
-var deserializer = new Deserializer(new Options {...});
+var json = Serialize.Json(model);
+var xml = Serialize.Xml(model, x => x.PrettyPrintXml());
 ```
 
-Or you can use the configuration DSL by calling the static factory method:
+The serializer and deserializer can also be created with the static factory methods which can be optionally configured, for example:
 
 ```csharp
 var serializer = Serializer.Create();
@@ -31,37 +33,12 @@ var deserializer = Deserializer.Create();
 var deserializer = Deserializer.Create(x => x.ExcludeType<Token>().ExcludeType<Password>());
 ```
 
-To de/serialize, use one of the following methods:
+Finally a serializer and deserializer can also be instantiated directly and an options object can be passed in:
 
 ```csharp
-Model model = deserializer.DeserializeXml<Model>("<yada>...</yada>");
-Model model = deserializer.DeserializeXml<Model>(Stream);
-Model model = deserializer.DeserializeXml<Model>(XDocument);
-Model model = deserializer.DeserializeXml<Model>(XElement);
-Model model = deserializer.DeserializeXmlFile<Model>(@"d:\files\file.xml");
+var serializer = new Serializer(new Options {...});
 
-object model = deserializer.DeserializeXml(typeof(Model), "<yada>...</yada>");
-object model = deserializer.DeserializeXml(typeof(Model), Stream);
-object model = deserializer.DeserializeXml(typeof(Model), XDocument);
-object model = deserializer.DeserializeXml(typeof(Model), XElement);
-object model = deserializer.DeserializeXmlFile(typeof(Model), @"d:\files\file.xml");
-
-Model model = deserializer.DeserializeJsonFile<Model>(@"d:\files\file.json")
-Model model = deserializer.DeserializeJson<Model>("{ ... }")
-Model model = deserializer.DeserializeJson<Model>(Stream)
-
-object model = deserializer.DeserializeJson(typeof(Model), "{ ... }")
-object model = deserializer.DeserializeJson(typeof(Model), Stream)
-object model = deserializer.DeserializeJsonFile(typeof(Model), @"d:\files\file.json")
-
-string xml = serializer.SerializeXml(new Model {...});
-serializer.SerializeXml(new Model {...}, Stream);
-serializer.SerializeXml(new Model {...}, @"d:\files\file.xml");
-XDocument document = serializer.SerializeXmlAsDocument(new Model {...});
-
-string json = serializer.SerializeJson(new Model {...});
-serializer.SerializeJson(new Model {...}, Stream);
-serializer.SerializeJson(new Model {...}, @"d:\files\file.json");
+var deserializer = new Deserializer(new Options {...});
 ```
 
 #### Overriding de/serialization
