@@ -13,7 +13,7 @@ assemblyinfo :assemblyInfo do |asm|
     asm.company_name = "Ultraviolet Catastrophe"
     asm.product_name = "Bender"
     asm.title = "Bender"
-    asm.description = "Xml De/Serialization for .NET"
+    asm.description = "Xml and json de/serialization for .NET"
     asm.copyright = "Copyright (c) #{Time.now.year} Ultraviolet Catastrophe"
     asm.output_file = "src/Bender/Properties/AssemblyInfo.cs"
 end
@@ -68,15 +68,15 @@ nuspec :createSpec => :prepPackage do |nuspec|
    nuspec.authors = "Mike O'Brien"
    nuspec.owners = "Mike O'Brien"
    nuspec.title = "Bender"
-   nuspec.description = "Xml De/Serialization for .NET"
-   nuspec.summary = "Xml De/Serialization for .NET"
+   nuspec.description = "Xml and json de/serialization for .NET"
+   nuspec.summary = "Xml and json de/serialization for .NET"
    nuspec.language = "en-US"
    nuspec.licenseUrl = "https://github.com/mikeobrien/Bender/blob/master/LICENSE"
    nuspec.projectUrl = "https://github.com/mikeobrien/Bender"
    nuspec.iconUrl = "https://github.com/mikeobrien/Bender/raw/master/misc/logo.png"
    nuspec.working_directory = packagePath
    nuspec.output_file = nuspecFilename
-   nuspec.tags = "xml serialization deserialization deserializer serializer"
+   nuspec.tags = "xml json serialization deserialization deserializer serializer"
 end
 
 nugetpack :createPackage => :createSpec do |nugetpack|
