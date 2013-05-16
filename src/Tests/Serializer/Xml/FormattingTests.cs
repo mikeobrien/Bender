@@ -14,14 +14,14 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_pretty_format()
         {
-            var xml = Bender.Serializer.Create(x => x.PrettyPrint()).Serialize(new PrettyPrint { Value = "hai" });
+            var xml = Bender.Serializer.Create(x => x.PrettyPrintXml()).SerializeXml(new PrettyPrint { Value = "hai" });
             xml.ShouldEqual("<PrettyPrint>\r\n  <Value>hai</Value>\r\n</PrettyPrint>");
         }
 
         [Test]
         public void should_not_pretty_format()
         {
-            var xml = Bender.Serializer.Create().Serialize(new PrettyPrint { Value = "hai" });
+            var xml = Bender.Serializer.Create().SerializeXml(new PrettyPrint { Value = "hai" });
             xml.ShouldEqual("<PrettyPrint><Value>hai</Value></PrettyPrint>");
         }
     }

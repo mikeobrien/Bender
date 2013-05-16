@@ -61,7 +61,7 @@ namespace Tests.Serializer.Xml
                     BoxedValue = Guid.Empty
                 };
 
-            var xml = Bender.Serializer.Create(x => x.PrettyPrint()).Serialize(simpleTypes);
+            var xml = Bender.Serializer.Create(x => x.PrettyPrintXml()).SerializeXml(simpleTypes);
             Debug.WriteLine(xml);
 
             xml.ShouldNotBeNull();

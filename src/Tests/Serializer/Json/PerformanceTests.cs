@@ -2,11 +2,12 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Web.Script.Serialization;
 using System.Xml.Serialization;
 using NUnit.Framework;
 using Should;
 
-namespace Tests.Serializer.Xml
+namespace Tests.Serializer.Json
 {
     [TestFixture]
     public class PerformanceTests
@@ -46,19 +47,19 @@ namespace Tests.Serializer.Xml
             var stopwatch = new Stopwatch();
 
             stopwatch.Start();
-            for (var i = 0; i < 100; i++) Bender.Serializer.Create().SerializeXml(collection);
+            for (var i = 0; i < 100; i++) Bender.Serializer.Create().SerializeJson(collection);
             stopwatch.Stop();
             var benderSpeed = stopwatch.ElapsedTicks;
 
-            var xmlSerializer = new XmlSerializer(typeof(List<SpeedTestCollection>));
+            var javascriptSerializer = new JavaScriptSerializer();
             stopwatch.Start();
-            for (var i = 0; i < 100; i++) xmlSerializer.Serialize(new MemoryStream(), collection);
+            for (var i = 0; i < 100; i++) javascriptSerializer.Serialize(collection);
             stopwatch.Stop();
-            var xmlSerializerSpeed = stopwatch.ElapsedTicks;
+            var javascriptSerializerSpeed = stopwatch.ElapsedTicks;
 
             Debug.WriteLine("Bender speed (ticks): {0:#,##0}", benderSpeed);
-            Debug.WriteLine("XmlSerializer speed (ticks): {0:#,##0}", xmlSerializerSpeed);
-            (benderSpeed < xmlSerializerSpeed).ShouldBeTrue();
+            Debug.WriteLine("JavaScriptSerializer speed (ticks): {0:#,##0}", javascriptSerializerSpeed);
+            (benderSpeed < javascriptSerializerSpeed).ShouldBeTrue();
         }
     }
 }

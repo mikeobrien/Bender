@@ -11,41 +11,43 @@ namespace Bender
         public ValueNode(XObject node, Format format)
         {
             if (node.NodeType != XmlNodeType.Attribute && node.NodeType != XmlNodeType.Element) 
-                throw new ArgumentException("XObject must be an XElement or XAttribute.", "node");
+                throw new ArgumentException("Node must be an XElement or XAttribute.", "node");
             Object = node;
             Format = format;
             NodeType = format == Format.Json ? NodeType.JsonField : 
                 (node.NodeType == XmlNodeType.Attribute ? NodeType.XmlAttribute : NodeType.XmlElement);
+            if (format == Format.Json) JsonField = new JsonField((XElement)node);
         }
 
         public NodeType NodeType { get; private set; }
         public XObject Object { get; set; }
-        public XElement Element { get { return (XElement)Object; } }
-        public XAttribute Attribute { get { return (XAttribute)Object; } }
+        public XElement XmlElement { get { return (XElement)Object; } }
+        public XAttribute XmlAttribute { get { return (XAttribute)Object; } }
+        public JsonField JsonField { get; private set; }
         public Format Format { get; private set; }
 
         public XName Name {
-            get { return Object.NodeType == XmlNodeType.Attribute ? Attribute.Name : Element.Name; }
+            get { return Object.NodeType == XmlNodeType.Attribute ? XmlAttribute.Name : XmlElement.Name; }
             set
             {
                 if (Object.NodeType == XmlNodeType.Attribute)
                 {
-                    var attribute = new XAttribute(value, Attribute.Value);
-                    if (Attribute.Parent != null)
+                    var attribute = new XAttribute(value, XmlAttribute.Value);
+                    if (XmlAttribute.Parent != null)
                     {
-                        var parent = Attribute.Parent;
-                        Attribute.Remove();
+                        var parent = XmlAttribute.Parent;
+                        XmlAttribute.Remove();
                         parent.Add(attribute);
                     }
                     Object = attribute;
-                } else Element.Name = value;
+                } else XmlElement.Name = value;
             } 
         }
 
         public string Value
         {
-            get { return Object.NodeType == XmlNodeType.Attribute ? Attribute.Value : Element.Value; }
-            set { if (Object.NodeType == XmlNodeType.Attribute) Attribute.Value = value; else Element.Value = value; }
+            get { return Object.NodeType == XmlNodeType.Attribute ? XmlAttribute.Value : XmlElement.Value; }
+            set { if (Object.NodeType == XmlNodeType.Attribute) XmlAttribute.Value = value; else XmlElement.Value = value; }
         }
     }
 }

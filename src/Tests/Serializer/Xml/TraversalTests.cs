@@ -15,7 +15,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_graph_with_element_values()
         {
-            var xml = Bender.Serializer.Create().Serialize(new Graph { Value1 = new GraphNode { Value2 = "hai" } });
+            var xml = Bender.Serializer.Create().SerializeXml(new Graph { Value1 = new GraphNode { Value2 = "hai" } });
             Debug.WriteLine(xml);
             xml.ParseXml().Element("Graph").Element("Value1").Element("Value2").Value.ShouldEqual("hai"); 
         }
@@ -23,7 +23,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_graph_with_attribute_values()
         {
-            var xml = Bender.Serializer.Create(x => x.XmlValuesAsAttributes()).Serialize(new Graph { Value1 = new GraphNode { Value2 = "hai" } });
+            var xml = Bender.Serializer.Create(x => x.XmlValuesAsAttributes()).SerializeXml(new Graph { Value1 = new GraphNode { Value2 = "hai" } });
             Debug.WriteLine(xml);
             xml.ParseXml().Element("Graph").Element("Value1").Attribute("Value2").Value.ShouldEqual("hai");
         }
@@ -34,7 +34,7 @@ namespace Tests.Serializer.Xml
         public void should_exclude_types()
         {
             var xml = Bender.Serializer.Create(x => x.ExcludeType<GraphNode>())
-                .Serialize(new Graph { Value1 = new GraphNode { Value2 = "hai" } });
+                .SerializeXml(new Graph { Value1 = new GraphNode { Value2 = "hai" } });
             xml.ParseXml().Element("Graph").Element("Value1").ShouldBeNull();
         }
 
@@ -49,28 +49,28 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_empty_value_when_null()
         {
-            var xml = Bender.Serializer.Create().Serialize(new NullValue());
+            var xml = Bender.Serializer.Create().SerializeXml(new NullValue());
             xml.ParseXml().Element("NullValue").Element("Value1").Value.ShouldBeEmpty(); 
         }
 
         [Test]
         public void should_exclude_element_when_null()
         {
-            var xml = Bender.Serializer.Create(x => x.ExcludeNullValues()).Serialize(new NullValue());
+            var xml = Bender.Serializer.Create(x => x.ExcludeNullValues()).SerializeXml(new NullValue());
             xml.ParseXml().Element("NullValue").Element("Value1").ShouldBeNull();
         }
 
         [Test]
         public void should_serialize_empty_type_when_null()
         {
-            var xml = Bender.Serializer.Create().Serialize(new NullValue());
+            var xml = Bender.Serializer.Create().SerializeXml(new NullValue());
             xml.ParseXml().Element("NullValue").Element("Value2").Value.ShouldBeEmpty();
         }
 
         [Test]
         public void should_exclude_element_when_type_is_null()
         {
-            var xml = Bender.Serializer.Create(x => x.ExcludeNullValues()).Serialize(new NullValue());
+            var xml = Bender.Serializer.Create(x => x.ExcludeNullValues()).SerializeXml(new NullValue());
             xml.ParseXml().Element("NullValue").Element("Value2").ShouldBeNull();
         }
 
@@ -92,7 +92,7 @@ namespace Tests.Serializer.Xml
         {
             var graph = new CircularReference { Value = new CircularReferenceNode { Value1 = "hai" } };
             graph.Value.Value2 = graph;
-            var xml = Bender.Serializer.Create().Serialize(graph);
+            var xml = Bender.Serializer.Create().SerializeXml(graph);
             var root = xml.ParseXml().Element("CircularReference").Element("Value");
             root.Element("Value1").Value.ShouldEqual("hai");
             root.Element("Value2").ShouldBeNull();

@@ -35,7 +35,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_simple_type_list_property_with_custom_element_and_item_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new CustomElementAndItemNameListProperty { SimpleItems = new List<int> { 1, 2, 3 } });
+            var xml = Bender.Serializer.Create().SerializeXml(new CustomElementAndItemNameListProperty { SimpleItems = new List<int> { 1, 2, 3 } });
             var root = xml.ParseXml().Element("CustomElementAndItemNameListProperty").Element("Simple").Elements("Item");
             root.ShouldNotBeNull();
             root.First().Value.ShouldEqual("1");
@@ -46,7 +46,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_complex_type_list_property_with_custom_element_and_item_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new CustomElementAndItemNameListProperty
+            var xml = Bender.Serializer.Create().SerializeXml(new CustomElementAndItemNameListProperty
             {
                 ComplexItems = new List<ComplexType> { 
                     new ComplexType { Value = 1 },
@@ -63,7 +63,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_complex_type_list_interface_property_with_custom_element_and_item_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new CustomElementAndItemNameListProperty
+            var xml = Bender.Serializer.Create().SerializeXml(new CustomElementAndItemNameListProperty
             {
                 InterfaceComplexItems = new List<ComplexType> { 
                     new ComplexType { Value = 1 },
@@ -81,7 +81,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_complex_type_inherited_list_property_with_custom_element_and_item_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new CustomElementAndItemNameListProperty
+            var xml = Bender.Serializer.Create().SerializeXml(new CustomElementAndItemNameListProperty
             {
                 InheritedComplexItems = new InheritedComplexTypeList { 
                     new ComplexType { Value = 1 },
@@ -107,7 +107,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_complex_type_custom_type_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ComplexTypeCustomTypeName { Value = 5 });
+            var xml = Bender.Serializer.Create().SerializeXml(new ComplexTypeCustomTypeName { Value = 5 });
             Debug.WriteLine(xml);
             xml.ParseXml().Element("Type").Element("Value").Value.ShouldEqual("5");
         }
@@ -115,7 +115,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_list_of_complex_type_custom_type_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new List<ComplexTypeCustomTypeName> { new ComplexTypeCustomTypeName { Value = 5 }});
+            var xml = Bender.Serializer.Create().SerializeXml(new List<ComplexTypeCustomTypeName> { new ComplexTypeCustomTypeName { Value = 5 }});
             Debug.WriteLine(xml);
             xml.ParseXml().Element("ArrayOfType").Element("Type").Element("Value").Value.ShouldEqual("5");
         }
@@ -126,7 +126,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_inherited_list_type_with_custom_type_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ComplexTypeCustomTypeNameList {
+            var xml = Bender.Serializer.Create().SerializeXml(new ComplexTypeCustomTypeNameList {
                 new ComplexType { Value = 1 },
                 new ComplexType { Value = 2 }});
             var root = xml.ParseXml().Element("Type").Elements("ComplexType");
@@ -146,7 +146,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_complex_type_list_property_with_custom_item_type_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ComplexTypeCustomItemTypeNameListProperty {
+            var xml = Bender.Serializer.Create().SerializeXml(new ComplexTypeCustomItemTypeNameListProperty {
                 Items = new List<ComplexTypeCustomItemTypeName> { 
                     new ComplexTypeCustomItemTypeName { Value = 1 },
                     new ComplexTypeCustomItemTypeName { Value = 2 },
@@ -162,7 +162,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_complex_type_list_with_custom_item_type_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new List<ComplexTypeCustomItemTypeName> { 
+            var xml = Bender.Serializer.Create().SerializeXml(new List<ComplexTypeCustomItemTypeName> { 
                     new ComplexTypeCustomItemTypeName { Value = 1 },
                     new ComplexTypeCustomItemTypeName { Value = 2 },
                     new ComplexTypeCustomItemTypeName { Value = 3 }
@@ -185,7 +185,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_complex_type_custom_root_element_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ComplexTypeCustomRootName { Value = 5 });
+            var xml = Bender.Serializer.Create().SerializeXml(new ComplexTypeCustomRootName { Value = 5 });
             Debug.WriteLine(xml);
             xml.ParseXml().Element("Root").Element("Value").Value.ShouldEqual("5");
         }
@@ -196,7 +196,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_inherited_list_type_with_custom_root_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ComplexTypeCustomRootNameList {
+            var xml = Bender.Serializer.Create().SerializeXml(new ComplexTypeCustomRootNameList {
                 new ComplexType { Value = 1 },
                 new ComplexType { Value = 2 }});
             var root = xml.ParseXml().Element("Root").Elements("ComplexType");
@@ -227,21 +227,21 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_simple_type_property_element_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ComplexTypePropertyCustomElementName { Value = 5 });
+            var xml = Bender.Serializer.Create().SerializeXml(new ComplexTypePropertyCustomElementName { Value = 5 });
             xml.ParseXml().Element("ComplexTypePropertyCustomElementName").Element("SomeValue").Value.ShouldEqual("5");
         }
 
         [Test]
         public void should_serialize_complex_type_property_element_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ComplexTypePropertyCustomElementName { Item = new ComplexType { Value = 5 } });
+            var xml = Bender.Serializer.Create().SerializeXml(new ComplexTypePropertyCustomElementName { Item = new ComplexType { Value = 5 } });
             xml.ParseXml().Element("ComplexTypePropertyCustomElementName").Element("SomeItem").Element("Value").Value.ShouldEqual("5");
         }
 
         [Test]
         public void should_serialize_complex_type_list_property_element_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ComplexTypePropertyCustomElementName 
+            var xml = Bender.Serializer.Create().SerializeXml(new ComplexTypePropertyCustomElementName 
                 { ComplexItems = new List<ComplexType> { new ComplexType { Value = 5 } } });
             xml.ParseXml().Element("ComplexTypePropertyCustomElementName").Element("SomeComplexItems")
                 .Elements("ComplexType").Single().Element("Value").Value.ShouldEqual("5");
@@ -250,7 +250,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_complex_type_inherited_list_property_element_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ComplexTypePropertyCustomElementName
+            var xml = Bender.Serializer.Create().SerializeXml(new ComplexTypePropertyCustomElementName
                 { InheritedListItems = new InheritedListOfComplexType { new ComplexType { Value = 5 } } });
             xml.ParseXml().Element("ComplexTypePropertyCustomElementName").Element("SomeInheritedItems")
                 .Elements("ComplexType").Single().Element("Value").Value.ShouldEqual("5");
@@ -268,7 +268,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_not_serialize_ignored_members()
         {
-            var xml = Bender.Serializer.Create().Serialize(new IgnoreProperty { Value1 = "oh", Value2 = "hai" });
+            var xml = Bender.Serializer.Create().SerializeXml(new IgnoreProperty { Value1 = "oh", Value2 = "hai" });
             xml.ParseXml().Element("IgnoreProperty").Element("Value1").Value.ShouldEqual("oh");
             xml.ParseXml().Element("IgnoreProperty").Element("Value2").ShouldBeNull();
         }
@@ -287,7 +287,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_members_marked_as_attributes()
         {
-            var xml = Bender.Serializer.Create().Serialize(new AttributeProperty { Value1 = "oh", Value2 = "hai", Value3 = "there"});
+            var xml = Bender.Serializer.Create().SerializeXml(new AttributeProperty { Value1 = "oh", Value2 = "hai", Value3 = "there"});
             xml.ParseXml().Element("AttributeProperty").Element("Value1").Value.ShouldEqual("oh");
             xml.ParseXml().Element("AttributeProperty").Attribute("Value2").Value.ShouldEqual("hai");
             xml.ParseXml().Element("AttributeProperty").Attribute("SomeValue").Value.ShouldEqual("there");

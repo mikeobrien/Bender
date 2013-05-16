@@ -19,7 +19,7 @@ namespace Tests.Serializer.Xml
         public void should_serialize_list_with_custom_name_format()
         {
             var xml = Bender.Serializer.Create(x => x.WithDefaultGenericListXmlNameFormat("{0}s"))
-                .Serialize(new List<ComplexType> { new ComplexType { Value = 1 }, new ComplexType { Value = 2 } });
+                .SerializeXml(new List<ComplexType> { new ComplexType { Value = 1 }, new ComplexType { Value = 2 } });
             var root = xml.ParseXml().Element("ComplexTypes").Elements("ComplexType");
             root.ShouldNotBeNull();
             root.Count().ShouldEqual(2);
@@ -32,7 +32,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_list_of_complex_types()
         {
-            var xml = Bender.Serializer.Create().Serialize(new List<ComplexType> {
+            var xml = Bender.Serializer.Create().SerializeXml(new List<ComplexType> {
                 new ComplexType { Value = 1 },
                 new ComplexType { Value = 2 }});
             var root = xml.ParseXml().Element("ArrayOfComplexType").Elements("ComplexType");
@@ -45,7 +45,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_inherited_list_of_complex_types()
         {
-            var xml = Bender.Serializer.Create().Serialize(new InheritedListOfComplexTypes
+            var xml = Bender.Serializer.Create().SerializeXml(new InheritedListOfComplexTypes
                 {
                     new ComplexType { Value = 1 }, new ComplexType { Value = 2 }, new ComplexType { Value = 3 }
                 });
@@ -59,7 +59,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_list_interface_of_complex_types()
         {
-            var xml = Bender.Serializer.Create().Serialize((IList<ComplexType>)new List<ComplexType> {
+            var xml = Bender.Serializer.Create().SerializeXml((IList<ComplexType>)new List<ComplexType> {
                 new ComplexType { Value = 1 },
                 new ComplexType { Value = 2 }});
             var root = xml.ParseXml().Element("ArrayOfComplexType").Elements("ComplexType");
@@ -72,7 +72,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_list_of_simple_types()
         {
-            var xml = Bender.Serializer.Create().Serialize(new List<int> { 1, 2 });
+            var xml = Bender.Serializer.Create().SerializeXml(new List<int> { 1, 2 });
             var root = xml.ParseXml().Element("ArrayOfInt32").Elements("Int32");
             root.ShouldNotBeNull();
             root.Count().ShouldEqual(2);
@@ -83,7 +83,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_list_interface_of_simple_types()
         {
-            var xml = Bender.Serializer.Create().Serialize((IList<int>)new List<int> { 1, 2 });
+            var xml = Bender.Serializer.Create().SerializeXml((IList<int>)new List<int> { 1, 2 });
             var root = xml.ParseXml().Element("ArrayOfInt32").Elements("Int32");
             root.ShouldNotBeNull();
             root.Count().ShouldEqual(2);
@@ -94,7 +94,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_inherited_list_of_simple_types()
         {
-            var xml = Bender.Serializer.Create().Serialize(new InheritedListOfSimpleTypes { 1, 2, 3 });
+            var xml = Bender.Serializer.Create().SerializeXml(new InheritedListOfSimpleTypes { 1, 2, 3 });
             var root = xml.ParseXml().Element("InheritedListOfSimpleTypes").Elements("Int32");
             root.ShouldNotBeNull();
             root.First().Value.ShouldEqual("1");
@@ -105,7 +105,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_simple_type_generic_enumerable()
         {
-            var xml = Bender.Serializer.Create().Serialize((IEnumerable<int>)new List<int> { 1, 2, 3 });
+            var xml = Bender.Serializer.Create().SerializeXml((IEnumerable<int>)new List<int> { 1, 2, 3 });
             var root = xml.ParseXml().Element("ArrayOfInt32").Elements("Int32");
             root.ShouldNotBeNull();
             root.First().Value.ShouldEqual("1");
@@ -116,7 +116,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_simple_type_enumerable()
         {
-            var xml = Bender.Serializer.Create().Serialize((IEnumerable)new List<int> { 1, 2, 3 });
+            var xml = Bender.Serializer.Create().SerializeXml((IEnumerable)new List<int> { 1, 2, 3 });
             var root = xml.ParseXml().Element("ArrayOfInt32").Elements("Int32");
             root.ShouldNotBeNull();
             root.First().Value.ShouldEqual("1");
@@ -127,7 +127,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_simple_type_array_list()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ArrayList { 1, 2, 3 });
+            var xml = Bender.Serializer.Create().SerializeXml(new ArrayList { 1, 2, 3 });
             var root = xml.ParseXml().Element("ArrayOfObject").Elements("Int32");
             root.ShouldNotBeNull();
             root.First().Value.ShouldEqual("1");
@@ -138,7 +138,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_simple_type_array()
         {
-            var xml = Bender.Serializer.Create().Serialize(new List<int> { 1, 2, 3 }.ToArray());
+            var xml = Bender.Serializer.Create().SerializeXml(new List<int> { 1, 2, 3 }.ToArray());
             var root = xml.ParseXml().Element("ArrayOfInt32").Elements("Int32");
             root.ShouldNotBeNull();
             root.First().Value.ShouldEqual("1");
@@ -165,7 +165,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_complex_type_list_property()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ListProperty {
+            var xml = Bender.Serializer.Create().SerializeXml(new ListProperty {
                 ComplexItems = new List<ComplexType> {
                     new ComplexType { Value = 1 },
                     new ComplexType { Value = 2 },
@@ -181,7 +181,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_simple_type_list_property()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ListProperty { SimpleItems = new List<int> { 1, 2, 3 } });
+            var xml = Bender.Serializer.Create().SerializeXml(new ListProperty { SimpleItems = new List<int> { 1, 2, 3 } });
             var root = xml.ParseXml().Element("ListProperty").Element("SimpleItems").Elements("Int32");
             root.ShouldNotBeNull();
             root.First().Value.ShouldEqual("1");
@@ -192,7 +192,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_inherited_list_of_simple_types_property()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ListProperty
+            var xml = Bender.Serializer.Create().SerializeXml(new ListProperty
             {
                 InheritedSimpleItems = new InheritedListOfSimpleTypes { 1, 2, 3 }
             });
@@ -206,7 +206,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_inherited_list_of_complex_types_property()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ListProperty
+            var xml = Bender.Serializer.Create().SerializeXml(new ListProperty
             {
                 InheritedComplexItems = new InheritedListOfComplexTypes { new ComplexType { Value = 1 }, new ComplexType { Value = 2 }, new ComplexType { Value = 3 } }
             });
@@ -220,7 +220,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_complex_type_list_interface_property()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ListProperty
+            var xml = Bender.Serializer.Create().SerializeXml(new ListProperty
             {
                 InterfaceComplexItems = new List<ComplexType> {
                     new ComplexType { Value = 1 },
@@ -237,7 +237,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_simple_type_generic_enumerable_property()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ListProperty { GenericEnumerableItems = new List<int> { 1, 2, 3 } });
+            var xml = Bender.Serializer.Create().SerializeXml(new ListProperty { GenericEnumerableItems = new List<int> { 1, 2, 3 } });
             var root = xml.ParseXml().Element("ListProperty").Element("GenericEnumerableItems").Elements("Int32");
             root.ShouldNotBeNull();
             root.First().Value.ShouldEqual("1");
@@ -248,7 +248,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_simple_type_enumerable_property()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ListProperty { EnumerableItems = new List<int> { 1, 2, 3 } });
+            var xml = Bender.Serializer.Create().SerializeXml(new ListProperty { EnumerableItems = new List<int> { 1, 2, 3 } });
             var root = xml.ParseXml().Element("ListProperty").Element("EnumerableItems").Elements("Int32");
             root.ShouldNotBeNull();
             root.First().Value.ShouldEqual("1");
@@ -259,7 +259,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_simple_type_array_list_property()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ListProperty { ArrayListItems = new ArrayList { 1, 2, 3 } });
+            var xml = Bender.Serializer.Create().SerializeXml(new ListProperty { ArrayListItems = new ArrayList { 1, 2, 3 } });
             var root = xml.ParseXml().Element("ListProperty").Element("ArrayListItems").Elements("Int32");
             root.ShouldNotBeNull();
             root.First().Value.ShouldEqual("1");
@@ -270,7 +270,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_simple_type_array_property()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ListProperty { ArrayItems = new List<int> { 1, 2, 3 }.ToArray() });
+            var xml = Bender.Serializer.Create().SerializeXml(new ListProperty { ArrayItems = new List<int> { 1, 2, 3 }.ToArray() });
             var root = xml.ParseXml().Element("ListProperty").Element("ArrayItems").Elements("Int32");
             root.ShouldNotBeNull();
             root.First().Value.ShouldEqual("1");
@@ -294,7 +294,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_complex_generic_type_list_property_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new ComplexGenericTypeProperty
+            var xml = Bender.Serializer.Create().SerializeXml(new ComplexGenericTypeProperty
             {
                 Items = new List<ComplexGenericType<string, int>> {
                     new ComplexGenericType<string, int> { Value1 = "oh", Value2 = 5 },
@@ -310,7 +310,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_complex_generic_type_list_name()
         {
-            var xml = Bender.Serializer.Create().Serialize(new List<ComplexGenericType<string, int>> {
+            var xml = Bender.Serializer.Create().SerializeXml(new List<ComplexGenericType<string, int>> {
                     new ComplexGenericType<string, int> { Value1 = "oh", Value2 = 5 },
                     new ComplexGenericType<string, int> { Value1 = "hai", Value2 = 6 } });
             var root = xml.ParseXml().Element("ArrayOfComplexGenericTypeOfStringInt32").Elements("ComplexGenericTypeOfStringInt32");

@@ -50,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Deserializer\Xml\LoadTests.cs" />
+    <Compile Include="Deserializer\Json\LoadTests.cs" />
     <Compile Include="Deserializer\Json\ListTests.cs" />
     <Compile Include="Deserializer\Json\MappingTests.cs" />
     <Compile Include="Deserializer\Json\ParameterizedCtorTests.cs" />
@@ -67,7 +69,16 @@
     <Compile Include="Deserializer\Xml\SimpleTypeTests.cs" />
     <Compile Include="Deserializer\Xml\TraversalTests.cs" />
     <Compile Include="ExpanderTests.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="ExtensionTests.cs" />
+    <Compile Include="Serializer\Json\ListTests.cs" />
+    <Compile Include="Serializer\Json\PerformanceTests.cs" />
+    <Compile Include="Serializer\Json\SaveTests.cs" />
+    <Compile Include="Serializer\Json\SimpleTypeTests.cs" />
+    <Compile Include="Serializer\Json\TraversalTests.cs" />
+    <Compile Include="Serializer\Json\WriterTests.cs" />
+    <Compile Include="Serializer\Json\XmlAttributeTests.cs" />
+    <Compile Include="Serializer\Xml\SaveTests.cs" />
     <Compile Include="Serializer\Xml\NamespaceTests.cs" />
     <Compile Include="Serializer\Xml\FormattingTests.cs" />
     <Compile Include="Serializer\Xml\TraversalTests.cs" />
@@ -87,9 +98,7 @@
       <Name>Bender</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Serializer\Json\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

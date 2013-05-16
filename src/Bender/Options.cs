@@ -14,7 +14,7 @@ namespace Bender
         public Options()
         {
             ExcludedTypes = new List<Func<Type, bool>>();
-            XmlValueNode = XmlValueNodeType.Element;
+            XmlValueNodeType = XmlValueNodeType.Element;
             IgnoreUnmatchedXmlAttributes = true;
             FriendlyParseErrorMessages = new Dictionary<Type, string>();
             FriendlyParseErrorMessages[typeof(Enum)] = "Not a valid option.";
@@ -41,22 +41,21 @@ namespace Bender
             FriendlyParseErrorMessages[typeof(IPAddress)] = "Not formatted correctly, must be formatted as '1.2.3.4'.";
 
             Readers = new Dictionary<Type, Func<ReaderContext, object>>();
-            AddReader(x => ValueParseException.Wrap(x, () => Convert.FromBase64String(x.Node.Value)));
-            AddReader(x => ValueParseException.Wrap(x, () => new Uri(x.Options.DefaultNonNullableTypesWhenEmpty && 
-                x.Node.Value.IsNullOrEmpty() ? "http://tempuri.org/" : x.Node.Value)));
-            AddReader(x => ValueParseException.Wrap(x, () => Version.Parse(x.Node.Value)));
-            AddReader(x => ValueParseException.Wrap(x, () => new MailAddress(x.Node.Value)));
-            AddReader(x => ValueParseException.Wrap(x, () => IPAddress.Parse(x.Node.Value)));
+            AddReader(x => Convert.FromBase64String(x.Node.Value));
+            AddReader(x => new Uri(x.Options.DefaultNonNullableTypesWhenEmpty && x.Node.Value.IsNullOrEmpty() ? "http://tempuri.org/" : x.Node.Value));
+            AddReader(x => Version.Parse(x.Node.Value));
+            AddReader(x => new MailAddress(x.Node.Value));
+            AddReader(x => IPAddress.Parse(x.Node.Value));
 
-            Namespaces = new Dictionary<string, XNamespace>();
+            XmlNamespaces = new Dictionary<string, XNamespace>();
             NodeWriters = new List<Action<WriterContext>>();
             ValueWriters = new Dictionary<Type, Action<WriterContext>>();
             AddWriter<bool>(x => x.Node.Value = x.Value.ToString().ToLower(), true);
-            AddWriter<byte[]>(x => x.Node.Value = x.Value != null ? Convert.ToBase64String(x.Value) : "");
-            AddWriter<Uri>(x => x.Node.Value = x.Value != null ? x.Value.ToString() : "");
-            AddWriter<Version>(x => x.Node.Value = x.Value != null ? x.Value.ToString() : "");
-            AddWriter<MailAddress>(x => x.Node.Value = x.Value != null ? x.Value.ToString() : "");
-            AddWriter<IPAddress>(x => x.Node.Value = x.Value != null ? x.Value.ToString() : "");
+            AddWriter<byte[]>(x => { if (x.Value != null) x.Node.Value = Convert.ToBase64String(x.Value); });
+            AddWriter<Uri>(x => { if (x.Value != null) x.Node.Value = x.Value.ToString(); });
+            AddWriter<Version>(x => { if (x.Value != null) x.Node.Value = x.Value.ToString(); });
+            AddWriter<MailAddress>(x => { if (x.Value != null) x.Node.Value = x.Value.ToString(); });
+            AddWriter<IPAddress>(x => { if (x.Value != null) x.Node.Value = x.Value.ToString(); });
         }
         
         public List<Func<Type, bool>> ExcludedTypes { get; set; }
@@ -85,13 +84,13 @@ namespace Bender
         } 
 
         // Serialization specific
-        public bool PrettyPrint { get; set; }
+        public bool PrettyPrintXml { get; set; }
         public bool ExcludeNullValues { get; set; }
-        public XmlValueNodeType XmlValueNode { get; set; }
+        public XmlValueNodeType XmlValueNodeType { get; set; }
         public Dictionary<Type, Action<WriterContext>> ValueWriters { get; private set; }
         public List<Action<WriterContext>> NodeWriters { get; private set; }
         public XNamespace DefaultNamespace { get; set; }
-        public Dictionary<string, XNamespace> Namespaces { get; set; }
+        public Dictionary<string, XNamespace> XmlNamespaces { get; set; }
 
         public void AddWriter(Action<WriterContext> writer)
         {

@@ -12,9 +12,9 @@ namespace Bender
             _options = options;
         }
 
-        public SerializerOptions PrettyPrint()
+        public SerializerOptions PrettyPrintXml()
         {
-            _options.PrettyPrint = true;
+            _options.PrettyPrintXml = true;
             return this;
         }
 
@@ -75,7 +75,7 @@ namespace Bender
 
         public SerializerOptions XmlValuesAsAttributes()
         {
-            _options.XmlValueNode = XmlValueNodeType.Attribute;
+            _options.XmlValueNodeType = XmlValueNodeType.Attribute;
             return this;
         }
 
@@ -87,7 +87,7 @@ namespace Bender
 
         public SerializerOptions AddXmlNamespace(string prefix, string @namespace)
         {
-            _options.Namespaces.Add(prefix, XNamespace.Get(@namespace));
+            _options.XmlNamespaces.Add(prefix, XNamespace.Get(@namespace));
             return this;
         }
     }

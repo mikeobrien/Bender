@@ -58,19 +58,25 @@ namespace Bender
         public ValueParseException(ReaderContext context, ParseException exception) :
             this(context.Property, context.Node, context.Format, exception) { }
 
+        public ValueParseException(ReaderContext context, string friendlyMessage, Exception exception) :
+            this(context.Property, context.Node, context.Format, friendlyMessage, exception) { }
+        
         public ValueParseException(PropertyInfo property, ValueNode node, Format format, ParseException exception) :
+            this(property, node, format, exception.FriendlyMessage, exception) { }
+
+        public ValueParseException(PropertyInfo property, ValueNode node, Format format, string friendlyMessage, Exception exception) :
             base("Unable to parse the value {0} in the '{1}' {2} as a {3} into {4}.{5}: {6}".ToFormat(
                                GetFriendlyValue(node.Value), node.Object.GetPath(format), node.NodeType.ToFriendlyNodeType(), property.PropertyType.Name,
                                property.DeclaringType.FullName, property.Name, exception.Message),
                  "Unable to parse the value {0} in the '{1}' {2} as a {3}: {4}".ToFormat(
                                GetFriendlyValue(node.Value), node.Object.GetPath(format), node.NodeType.ToFriendlyNodeType(), 
-                               property.PropertyType.ToFriendlyType(), exception.FriendlyMessage),
+                               property.PropertyType.ToFriendlyType(), friendlyMessage),
                  exception)
         {
             Value = node.Value;
             XPath = node.Object.GetPath(format);
             Node = node;
-            ParseErrorMessage = exception.FriendlyMessage;
+            ParseErrorMessage = friendlyMessage;
             ClrType = property.PropertyType;
             FriendlyType = property.PropertyType.ToFriendlyType();
         }
@@ -81,12 +87,6 @@ namespace Bender
         public string ParseErrorMessage { get; private set; }
         public Type ClrType { get; private set; }
         public string FriendlyType { get; private set; }
-
-        public static T Wrap<T>(ReaderContext context, Func<T> parse, string friendlyErrorMessage = null)
-        {
-            return Exceptions.Wrap(parse, x => new ValueParseException(context,
-                new ParseException(x, friendlyErrorMessage ?? context.Options.FriendlyParseErrorMessages[typeof(T)])));
-        }
 
         private static string GetFriendlyValue(string value)
         {

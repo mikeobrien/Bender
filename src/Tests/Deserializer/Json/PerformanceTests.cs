@@ -50,11 +50,11 @@ namespace Tests.Deserializer.Json
             stopwatch.Start();
             for (var i = 0; i < 100; i++) jsonSerializer.Deserialize<List<SpeedTestCollection>>(json);
             stopwatch.Stop();
-            var serializerSpeed = stopwatch.ElapsedTicks;
+            var javascriptSerializerSpeed = stopwatch.ElapsedTicks;
 
             Debug.WriteLine("Bender speed (ticks): {0:#,##0}", benderSpeed);
-            Debug.WriteLine("JavaScriptSerializer speed (ticks): {0:#,##0}", serializerSpeed);
-            (benderSpeed < serializerSpeed).ShouldBeTrue();
+            Debug.WriteLine("JavaScriptSerializer speed (ticks): {0:#,##0}", javascriptSerializerSpeed);
+            (benderSpeed < javascriptSerializerSpeed).ShouldBeTrue();
         }
     }
 }

@@ -44,6 +44,7 @@
     <Compile Include="DeserializeExceptions.cs" />
     <Compile Include="DeserializerOptions.cs" />
     <Compile Include="Expander.cs" />
+    <Compile Include="JsonField.cs" />
     <Compile Include="LinkedNode.cs" />
     <Compile Include="ReaderContext.cs" />
     <Compile Include="ValueNode.cs" />

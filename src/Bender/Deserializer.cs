@@ -109,18 +109,20 @@ namespace Bender
         private object Traverse(Format format, Type type, ValueNode node, object parent = null, PropertyInfo sourceProperty = null)
         {
             if (format == Format.Xml && (parent == null || parent.GetType().IsGenericEnumerable()))
-                ValidateTypeElementName(type, node.Element, parent == null, sourceProperty);
+                ValidateTypeElementName(type, node.XmlElement, parent == null, sourceProperty);
 
-            if (_options.Readers.ContainsKey(type)) 
+            if (_options.Readers.ContainsKey(type))
             {
+                var readerContext = new ReaderContext(_options, sourceProperty, format, node);
                 try
                 {
-                    return _options.Readers[type](new ReaderContext(_options, sourceProperty, format, node));
+                    return _options.Readers[type](readerContext);
                 }
                 catch (Exception exception)
                 {
                     if (exception is SourceException) throw;
-                    throw new DeserializeException(sourceProperty, node.Object, format, exception, "Reader for type {0} failed: {1}", type.FullName, exception.Message);
+                    throw new ValueParseException(readerContext, _options.FriendlyParseErrorMessages.ContainsKey(type) ? 
+                        _options.FriendlyParseErrorMessages[type] : "Parse error.", exception);
                 }
             }
 
@@ -134,7 +136,7 @@ namespace Bender
             {
                 var list = type.CreateListOfEnumerableType();
                 var itemType = type.GetGenericEnumerableType();
-                node.Element.Elements().ForEach(x => list.Add(Traverse(format, itemType, new ValueNode(x, format), parent, sourceProperty)));
+                node.XmlElement.Elements().ForEach(x => list.Add(Traverse(format, itemType, new ValueNode(x, format), parent, sourceProperty)));
                 return type.IsArray ? list.ToArray(itemType) : list;
             }
 
@@ -150,7 +152,9 @@ namespace Bender
             var properties = type.GetDeserializableProperties(_options.ExcludedTypes)
                 .ToDictionary(x => x.GetXmlName(), x => x, _options.IgnoreCase);
             
-            foreach (var childNode in node.Element.Elements().Cast<XObject>().Concat(node.Element.Attributes()).Select(x => new ValueNode(x, format)))
+            foreach (var childNode in node.XmlElement.Elements().Cast<XObject>()
+                .ConcatIf(format == Format.Xml, node.XmlElement.Attributes())
+                .Select(x => new ValueNode(x, format)))
             {
                 if (!properties.ContainsKey(childNode.Name.LocalName))
                 {

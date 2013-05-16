@@ -60,6 +60,11 @@ namespace Bender
             return source.Cast<object>().Select<object, object>(map);
         }
 
+        public static IEnumerable<T> ConcatIf<T>(this IEnumerable<T> source1, bool shouldConcat, IEnumerable<T> source2)
+        {
+            return shouldConcat ? source1.Concat(source2) : source1;
+        }
+
         public static Array ToArray(this IList source, Type type)
         {
             var array = Array.CreateInstance(type, source.Count);

@@ -1,7 +1,7 @@
 Bender
 =============
 
-Bender is a simple xml de/serialization library for .NET. Unlike the `XmlSerializer` and `DataContractSerializer`, Bender gives you complete control over how values are de/serialized. Bender is ~%15 faster than the `XmlSerializer`.
+Bender is a simple xml and json de/serialization library for .NET. Unlike the `JavaScriptSerializer`, `XmlSerializer` and `DataContractSerializer`, Bender gives you complete control over how values are de/serialized. Bender is ~%10 faster than the `XmlSerializer` and `JavaScriptSerializer`.
 
 Install
 ------------
@@ -25,31 +25,43 @@ Or you can use the configuration dsl by calling the static factory method:
 
 ```csharp
 var serializer = Serializer.Create();
-var serializer = Serializer.Create(x => x.PrettyPrint().ExcludeNullValues());
+var serializer = Serializer.Create(x => x.PrettyPrintXml().ExcludeNullValues());
 
 var deserializer = Deserializer.Create();
 var deserializer = Deserializer.Create(x => x.ExcludeType<Token>().ExcludeType<Password>());
 ```
 
-To de/serialize, call the respective methods:
+To de/serialize, :
 
 ```csharp
-var model = deserializer.Deserialize<YadaModel>("<yada>...</yada>");
-var model = deserializer.Deserialize<YadaModel>(stream);
-var model = deserializer.Deserialize<YadaModel>(xdocument);
-var model = deserializer.Deserialize<YadaModel>(xelement);
-var model = deserializer.DeserializeFile<YadaModel>(@"d:\files\file.xml");
+Model model = deserializer.DeserializeXml<Model>("<yada>...</yada>");
+Model model = deserializer.DeserializeXml<Model>(Stream);
+Model model = deserializer.DeserializeXml<Model>(XDocument);
+Model model = deserializer.DeserializeXml<Model>(XElement);
+Model model = deserializer.DeserializeXmlFile<Model>(@"d:\files\file.xml");
 
-var model = deserializer.Deserialize(typeof(YadaModel), "<yada>...</yada>");
-var model = deserializer.Deserialize(typeof(YadaModel), stream);
-var model = deserializer.Deserialize(typeof(YadaModel), xdocument);
-var model = deserializer.Deserialize(typeof(YadaModel), xelement);
-var model = deserializer.DeserializeFile(typeof(YadaModel), @"d:\files\file.xml");
+object model = deserializer.DeserializeXml(typeof(Model), "<yada>...</yada>");
+object model = deserializer.DeserializeXml(typeof(Model), Stream);
+object model = deserializer.DeserializeXml(typeof(Model), XDocument);
+object model = deserializer.DeserializeXml(typeof(Model), XElement);
+object model = deserializer.DeserializeXmlFile(typeof(Model), @"d:\files\file.xml");
 
-string xml = serializer.Serialize(new YadaModel {...});
-XDocument document = serializer.SerializeAsDocument(new YadaModel {...});
-serializer.Serialize(new YadaModel {...}, stream);
-serializer.Serialize(new YadaModel {...}, @"d:\files\file.xml");
+Model model = deserializer.DeserializeJsonFile<Model>(@"d:\files\file.json")
+Model model = deserializer.DeserializeJson<Model>("{ ... }")
+Model model = deserializer.DeserializeJson<Model>(Stream)
+
+object model = deserializer.DeserializeJsonFile(typeof(Model), @"d:\files\file.json")
+object model = deserializer.DeserializeJson(typeof(Model), "{ ... }")
+object model = deserializer.DeserializeJson(typeof(Model), Stream)
+
+string xml = serializer.SerializeXml(new Model {...});
+serializer.SerializeXml(new Model {...}, Stream);
+serializer.SerializeXml(new Model {...}, @"d:\files\file.xml");
+XDocument document = serializer.SerializeXmlAsDocument(new Model {...});
+
+string json = serializer.SerializeJson(new Model {...});
+serializer.SerializeJson(new Model {...}, Stream);
+serializer.SerializeJson(new Model {...}, @"d:\files\file.json");
 ```
 
 #### Overriding de/serialization
@@ -58,17 +70,13 @@ To override de/serialization add a reader or writer:
 
 ```csharp
 var serializer = Serializer.Create(x => x
-    .AddWriter<byte[]>((options, property, value, node) => node.Value = Convert.ToBase64String(value)));
+    .AddWriter<byte[]>(x => { if (x.Value != null) x.Node.Value = Convert.ToBase64String(x.Value); });
 
 var deserializer = Deserializer.Create(x => x
-    .AddReader<byte[]>((options, property, node) => Convert.FromBase64String(node.Value)));
+    .AddReader(x => Convert.FromBase64String(x.Node.Value));
 ```
 
-For both readers and writers, the first parameter is the Bender `Options` object and the second parameter is the corresponding `PropertyInfo`. 
-
-For **writers**, the last two parameters are the source property value and the target node which references a `XElement` or `XAttribute` (depending on the target node type set in the config). Here you can fully control the final xml by modifying the target `XElement` or `XAttribute` directly via the `Element` and `Attribute` properties of the `Node`. The node type is indicated by the `NodeType` property. In most cases though you will probably just set the value of the target node to the value of the source property, as demonstrated above, via the convenience `Value` property. 
-
-For **readers** the last parameter is the source node which references a `XElement` or `XAttribute` (depending on the source node type) and the deserialized value is returned. At this point you can fully control the deserialization by reading the source `XElement` or `XAttribute` directly via the `Element` and `Attribute` properties of the `Node`. The node type is indicated by the `NodeType` property. In most cases though you will probably just return the value of the source node, as demonstrated above, from the convenience `Value` property`. 
+Both readers and writers are passed a context that contains the current `Options`, `PropertyInfo`, source/target value and `ValueNode`. Here you can fully control the reading and rendering of the node. The `Value` property gives you access to the source or target property value. The `Node` property gives you generic `Name` and `Value` access to xml attributes, xml elements and json fields. You can use the `NodeType` property to determine the exact type of node and then access it directly via the `XmlAttribute`, `XmlElement` and `JsonField` properties if you need work with node specific properties. In most cases though you will just return or set the `Value` of the node, as demonstrated above. 
 
 Note: the `byte[]` reader/writer shown above is automatically added by default so you get that behavior out of the box.
 
@@ -76,15 +84,15 @@ Bender allows you to override nullable and non-nullable type de/serialization se
 
 ```csharp
 var serializer = Serializer.Create(x => x
-    .AddWriter<bool>((options, property, value, node) => node.Value = value.ToString().ToLower())
-    .AddWriter<bool?>((options, property, value, node) => node.Value = value.HasValue ? value.Value.ToString().ToLower() ? ""));
+    .AddWriter<bool>(x => x.Node.Value = x.Value.ToString().ToLower())
+    .AddWriter<bool?>(x => x.Node.Value = x.Value.HasValue ? x.Value.ToString().ToLower() ? ""));
 ```
 
 But most of the time the functionality will be the same for nullable and non nullable readers and writers, save the boilerplate null checking logic. So Bender also allows you to set one reader or writer for both nullable and non-nullable types by passing `true` to the `handleNullable` parameter:
 
 ```csharp
 var serializer = Serializer.Create(x => x
-    .AddWriter<bool>((options, property, value, node) => node.Value = value.ToString().ToLower(), true);
+    .AddWriter<bool>(x => x.Node.Value = x.Value.ToString().ToLower(), true);
 ```
 
 Note: the `bool` writer shown above is automatically added by default so you get that behavior out of the box.
@@ -94,23 +102,24 @@ Writers can also be used to further process the xml that is produced. Two overlo
 ```csharp
 
 var serializer = Bender.Serializer.Create(x => x
-    .AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
-    .AddWriter((o, p, v, e) => e.NodeType == ValueNodeType.Element && v == null,
-               (o, p, v, e) => e.Element.Add(new XAttribute(o.Namespaces["xsi"] + "nil", "true"))));
+    .AddXmlNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
+    .AddWriter(x => x.Node.NodeType == ValueNodeType.Element && x.Value == null,
+               x => x.Node.XmlElement.Add(new XAttribute(x.Options.Namespaces["xsi"] + "nil", "true"))));
 ```
 
 #### Deserialization errors
 
 Errors during deserialization can result from either the source xml or from issues with your code and configuration. In a web service or application the former can likely be addressed by your end users. With that in mind, all Bender deserialization exceptions that are a result of the source xml inherit from `SourceException`. This exception has a property called `FriendlyMessage` which can be displayed to end users and give them information to help them resolve the problem. There are three exceptions that inherit from `SourceException`: `XmlParseException`, `UnmatchedNodeException` and `ValueParseException`. An `XmlParseException` occurs when the xml is malformed. An `UnmatchedNodeException` occurs when an element or attribute does not match a property in the target type (This behavior can be configured in the deserialization options). And finally a `ValueParseException` occurs when a simple type cannot be parsed because it is not formatted properly. Bender has default friendly messages for simple types and these can be overriden by calling the `WithFriendlyParseErrorMessage<T>(string message)` method in the deserialization options.
 
-When creating your own custom readers you can make use of the `ValueParseException` to provide friendly error messages and handle exceptions like other simple types. The following example illustrates this using the `ValueParseException.Wrap()` method:
+When creating your own custom readers you can make use of friendly error messages by specifying one for the type your reader handles:
 
 ```csharp
 var deserializer = Deserializer.Create(x => x
-	.AddReader((o, p, n) => ValueParseException.Wrap(o, p, n, () => IPAddress.Parse(n.Value), "Not formatted correctly, must be formatted as '1.2.3.4'.")));
+  .WithFriendlyParseErrorMessage<IPAddress>("Not formatted correctly, must be formatted as '1.2.3.4'.")
+	.AddReader<IPAddress>(x => IPAddress.Parse(n.Value));
 ```
 
-Any errors resulting from the parse will be wrapped in a `ValueParseException` with the friendly error specified.
+Any errors resulting from the reader will be wrapped in a `ValueParseException` with the friendly error specified.
 
 #### Miscellania
 
@@ -142,11 +151,11 @@ The following are the common configuration options:
     <td>Exclude a particular type.</td>
   </tr>
   <tr>
-    <td><code>WithDefaultGenericTypeNameFormat(string typeNameFormat)</code></td>
+    <td><code>WithDefaultGenericTypeXmlNameFormat(string typeNameFormat)</code></td>
     <td>This is the format of generic xml type element names that haven't been decorated with the <code>XmlTypeAttribute</code>. The default is the same as the <code>XmlSerializer</code> (<code>&lt;[TypeName]Of[GenericTypeArgs]/&gt;</code>).</td>
   </tr>
   <tr>
-    <td><code>WithDefaultGenericListNameFormat(string listNameFormat)</code></td>
+    <td><code>WithDefaultGenericListXmlNameFormat(string listNameFormat)</code></td>
     <td>This is the format of generic xml list element names. The default is the same as the <code>XmlSerializer</code> (<code>&lt;ArrayOf[GenericTypeArgs]/&gt;</code>).</td>
   </tr>
 </table>
@@ -155,40 +164,40 @@ The following are the **serialization** configuration options:
 
 <table>
   <tr>
-    <td><code>PrettyPrint()</code></td>
+    <td><code>PrettyPrintXml()</code></td>
     <td>Indent the xml and make it readable.</td>
   </tr>
   <tr>
     <td><code>ExcludeNullValues()</code></td>
-    <td>Do not serialize the elements of properties that are null.</td>
+    <td>Do not serialize the nodes of properties that are null.</td>
   </tr>
   <tr>
-    <td><code>ValuesAsAttributes()</code></td>
-    <td>Specifies that values are serialized as attributes instead of elements.</td>
+    <td><code>XmlValuesAsAttributes()</code></td>
+    <td>Specifies that values are serialized as xml attributes instead of elements.</td>
   </tr>
   <tr>
-    <td><code>WithDefaultNamespace(string namespace)</code></td>
-    <td>Specifies the default namespace.</td>
+    <td><code>WithDefaultXmlNamespace(string namespace)</code></td>
+    <td>Specifies the default xml namespace.</td>
   </tr>
   <tr>
-    <td><code>AddNamespace(string prefix, string namespace)</code></td>
-    <td>Adds a namespace and prefix.</td>
+    <td><code>AddXmlNamespace(string prefix, string namespace)</code></td>
+    <td>Adds an xml namespace and prefix.</td>
   </tr>
   <tr>
-    <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, Node&gt; writter)</code></td>
+    <td><code>AddWriter&lt;T&gt;(Func&lt;WriterContext&lt;T&gt;&gt; writter)</code></td>
     <td>Allows you to override how a value of a specific type is serialized.</td>
   </tr>
   <tr>
-    <td><code>AddWriter&lt;T&gt;(Func&lt;Options, PropertyInfo, T, Node&gt; writter, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
+    <td><code>AddWriter&lt;T&gt;(Func&lt;WriterContext&lt;T&gt;&gt; writter, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
     <td>Allows you to override how both the nullable and non-nullable value of a specific type is serialized.</td>
   </tr>
   <tr>
-    <td><code>AddWriter(Action&lt;Options, PropertyInfo, object, ValueNode&gt; writter)</code></td>
-    <td>Allows you to override elements and attributes.</td>
+    <td><code>AddWriter(Action&lt;WriterContext&gt; writter)</code></td>
+    <td>Allows you to override xml elements, xml attributes and json fields.</td>
   </tr>
   <tr>
-    <td><code>AddWriter(Func&lt;Options, PropertyInfo, object, ValueNode, bool&gt; predicate, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Action&lt;Options, PropertyInfo, object, ValueNode&gt; writter)</code></td>
-    <td>Allows you to override elements and attributes that match the specified criteria.</td>
+    <td><code>AddWriter(Func&lt;WriterContext, bool&gt; predicate, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Action&lt;WriterContext&gt; writter)</code></td>
+    <td>Allows you to override xml elements, xml attributes and json fields that match the specified criteria.</td>
   </tr>
 </table>
 
@@ -200,23 +209,23 @@ The following are the **deserialization** configuration options:
     <td>Set the property to the default value when the element is empty and the type is non nullable.</td>
   </tr>
   <tr>
-    <td><code>IgnoreUnmatchedElements()</code></td>
-    <td>Ignore elements in the source xml that don't match properties in the target object. By default an exception is thrown if unmatched elements exist.</td>
+    <td><code>IgnoreUnmatchedNodes()</code></td>
+    <td>Ignore elements in the source xml or json that don't match properties in the target object. By default an exception is thrown if unmatched nodes exist.</td>
   </tr>
   <tr>
-    <td><code>IgnoreTypeElementNames()</code></td>
-    <td>Ignore type element names in the source xml that don't match the type xml name. This applies specifically to the root element and list elements. In these two cases the element name is based on the type xml name. By default an exception is thrown if the element name does not match the type xml name.</td>
+    <td><code>IgnoreTypeXmlElementNames()</code></td>
+    <td>Ignore type xml element names in the source xml that don't match the type xml name. This applies specifically to the root element and list elements. In these two cases the element name is based on the type xml name. By default an exception is thrown if the element name does not match the type xml name.</td>
   </tr>
   <tr>
     <td><code>IgnoreCase()</code></td>
-    <td>Ignore the case of the element name when deserializing.</td>
+    <td>Ignore the case of the node name when deserializing.</td>
   </tr>
   <tr>
-    <td><code>AddReader&lt;T&gt;(Func&lt;Options, PropertyInfo, Node, T&gt; reader)</code></td>
+    <td><code>AddReader&lt;T&gt;(Func&lt;ReaderContext, T&gt; reader)</code></td>
     <td>Allows you to override how a value is deserialized.</td>
   </tr>
   <tr>
-    <td><code>AddReader&lt;T&gt;(Func&lt;Options, PropertyInfo, Node, T&gt; reader, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
+    <td><code>AddReader&lt;T&gt;(Func&lt;ReaderContext, T&gt; reader, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
     <td>Allows you to override how both the nullable and non-nullable value is deserialized.</td>
   </tr>
   <tr>

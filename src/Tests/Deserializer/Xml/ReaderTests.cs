@@ -225,7 +225,7 @@ namespace Tests.Deserializer.Xml
         public void should_throw_deserialize_exception_when_failing_to_set_complex_attribute_type_with_reader()
         {
             const string xml = @"<ComplexAttribute Complex=""hai""/>";
-            Assert.Throws<DeserializeException>(() => Bender.Deserializer.Create(
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create(
                 x => x.AddReader(y => AttributeComplexType.Parse(y.Node.Value, true))).DeserializeXml<ComplexAttribute>(xml));
         }
 

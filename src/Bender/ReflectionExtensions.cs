@@ -209,5 +209,10 @@ namespace Bender
             if (type.IsList()) return (IList)Activator.CreateInstance(type);
             throw new ArgumentException("Type {0} does not implement IList.".ToFormat(type), "type");
         }
+
+        public static T ParseEnum<T>(this string value) where T : struct
+        {
+            return (T)Enum.Parse(typeof (T), value, true);
+        }
     }
 }
