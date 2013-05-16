@@ -21,7 +21,7 @@ var serializer = new Serializer(new Options {...});
 var deserializer = new Deserializer(new Options {...});
 ```
 
-Or you can use the configuration dsl by calling the static factory method:
+Or you can use the configuration DSL by calling the static factory method:
 
 ```csharp
 var serializer = Serializer.Create();
@@ -31,7 +31,7 @@ var deserializer = Deserializer.Create();
 var deserializer = Deserializer.Create(x => x.ExcludeType<Token>().ExcludeType<Password>());
 ```
 
-To de/serialize, :
+To de/serialize, use one of the following methods:
 
 ```csharp
 Model model = deserializer.DeserializeXml<Model>("<yada>...</yada>");
@@ -50,9 +50,9 @@ Model model = deserializer.DeserializeJsonFile<Model>(@"d:\files\file.json")
 Model model = deserializer.DeserializeJson<Model>("{ ... }")
 Model model = deserializer.DeserializeJson<Model>(Stream)
 
-object model = deserializer.DeserializeJsonFile(typeof(Model), @"d:\files\file.json")
 object model = deserializer.DeserializeJson(typeof(Model), "{ ... }")
 object model = deserializer.DeserializeJson(typeof(Model), Stream)
+object model = deserializer.DeserializeJsonFile(typeof(Model), @"d:\files\file.json")
 
 string xml = serializer.SerializeXml(new Model {...});
 serializer.SerializeXml(new Model {...}, Stream);
@@ -109,14 +109,14 @@ var serializer = Bender.Serializer.Create(x => x
 
 #### Deserialization errors
 
-Errors during deserialization can result from either the source xml or from issues with your code and configuration. In a web service or application the former can likely be addressed by your end users. With that in mind, all Bender deserialization exceptions that are a result of the source xml inherit from `SourceException`. This exception has a property called `FriendlyMessage` which can be displayed to end users and give them information to help them resolve the problem. There are three exceptions that inherit from `SourceException`: `XmlParseException`, `UnmatchedNodeException` and `ValueParseException`. An `XmlParseException` occurs when the xml is malformed. An `UnmatchedNodeException` occurs when an element or attribute does not match a property in the target type (This behavior can be configured in the deserialization options). And finally a `ValueParseException` occurs when a simple type cannot be parsed because it is not formatted properly. Bender has default friendly messages for simple types and these can be overriden by calling the `WithFriendlyParseErrorMessage<T>(string message)` method in the deserialization options.
+Errors during deserialization can result from either the source xml or from issues with your code and configuration. In a web service or application the former can likely be addressed by your end users. With that in mind, all Bender deserialization exceptions that are a result of the source xml or json inherit from `SourceException`. This exception has a property called `FriendlyMessage` which can be displayed to end users and give them information to help them resolve the problem. There are three exceptions that inherit from `SourceException`: `SourceParseException`, `UnmatchedNodeException` and `ValueParseException`. An `SourceParseException` occurs when the xml or json is malformed. An `UnmatchedNodeException` occurs when an element or attribute does not match a property in the target type (This behavior can be configured in the deserialization options). And finally a `ValueParseException` occurs when a simple type cannot be parsed because it is not formatted properly. Bender has default friendly messages for simple types and these can be overriden by calling the `WithFriendlyParseErrorMessage<T>(string message)` method in the deserialization options.
 
 When creating your own custom readers you can make use of friendly error messages by specifying one for the type your reader handles:
 
 ```csharp
 var deserializer = Deserializer.Create(x => x
   .WithFriendlyParseErrorMessage<IPAddress>("Not formatted correctly, must be formatted as '1.2.3.4'.")
-	.AddReader<IPAddress>(x => IPAddress.Parse(n.Value));
+  .AddReader<IPAddress>(x => IPAddress.Parse(n.Value));
 ```
 
 Any errors resulting from the reader will be wrapped in a `ValueParseException` with the friendly error specified.
@@ -196,7 +196,7 @@ The following are the **serialization** configuration options:
     <td>Allows you to override xml elements, xml attributes and json fields.</td>
   </tr>
   <tr>
-    <td><code>AddWriter(Func&lt;WriterContext, bool&gt; predicate, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Action&lt;WriterContext&gt; writter)</code></td>
+    <td><code>AddWriter(Func&lt;WriterContext, bool&gt; predicate, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Action&lt;WriterContext&gt; writter)</code></td>
     <td>Allows you to override xml elements, xml attributes and json fields that match the specified criteria.</td>
   </tr>
 </table>
@@ -225,7 +225,7 @@ The following are the **deserialization** configuration options:
     <td>Allows you to override how a value is deserialized.</td>
   </tr>
   <tr>
-    <td><code>AddReader&lt;T&gt;(Func&lt;ReaderContext, T&gt; reader, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
+    <td><code>AddReader&lt;T&gt;(Func&lt;ReaderContext, T&gt; reader, <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool handleNullable) where T : struct</code></td>
     <td>Allows you to override how both the nullable and non-nullable value is deserialized.</td>
   </tr>
   <tr>
