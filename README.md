@@ -23,7 +23,7 @@ var json = Serialize.Json(model);
 var xml = Serialize.Xml(model, x => x.PrettyPrintXml());
 ```
 
-The serializer and deserializer can also be created with the static factory methods which can be optionally configured, for example:
+The serializer and deserializer can also be created with static factory methods that can be optionally configured, for example:
 
 ```csharp
 var serializer = Serializer.Create();
