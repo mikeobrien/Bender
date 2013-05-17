@@ -122,7 +122,7 @@ namespace Bender
                 {
                     if (exception is SourceException) throw;
                     throw new ValueParseException(readerContext, _options.FriendlyParseErrorMessages.ContainsKey(type) ? 
-                        _options.FriendlyParseErrorMessages[type] : "Parse error.", exception);
+                        _options.FriendlyParseErrorMessages[type.GetUnderlyingNullableType()] : "Parse error.", exception);
                 }
             }
 

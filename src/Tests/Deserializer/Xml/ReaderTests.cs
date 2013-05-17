@@ -18,6 +18,7 @@ namespace Tests.Deserializer.Xml
         public class CustomReader
         {
             public DateTime SimpleType { get; set; }
+            public DateTime? SimpleNullableType { get; set; }
             public ComplexType ComplexType { get; set; }
             public List<int> ListOfSimpleTypes { get; set; }
             public List<ComplexType> ListOfComplexTypes { get; set; }
@@ -31,11 +32,38 @@ namespace Tests.Deserializer.Xml
             const string xml = @"
                 <CustomReader>
                     <SimpleType>11-59</SimpleType>
+                    <SimpleNullableType>10-49</SimpleNullableType>
                 </CustomReader>";
             var result = Bender.Deserializer.Create(
-                x => x.AddReader<DateTime>(y => DateTime.ParseExact(y.Node.Value, "hh-mm", CultureInfo.InvariantCulture))).DeserializeXml<CustomReader>(xml);
+                x => x.AddReader<DateTime>(y => DateTime.ParseExact(y.Node.Value, "hh-mm", CultureInfo.InvariantCulture), true)).DeserializeXml<CustomReader>(xml);
 
             result.SimpleType.ShouldEqual(DateTime.ParseExact("11-59", "hh-mm", CultureInfo.InvariantCulture));
+            result.SimpleNullableType.ShouldEqual(DateTime.ParseExact("10-49", "hh-mm", CultureInfo.InvariantCulture));
+        }
+
+        [Test]
+        public void should_return_parse_error_when_reader_fails()
+        {
+            var deserializer = Bender.Deserializer.Create(
+                x => x.AddReader<DateTime>(y => DateTime.ParseExact(y.Node.Value, "h:m:s", CultureInfo.InvariantCulture)));
+
+            Assert.Throws<ValueParseException>(() => deserializer.DeserializeXml<CustomReader>("<CustomReader><SimpleType>11-59</SimpleType></CustomReader>"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '11-59' in the '/CustomReader/SimpleType' element as a datetime: Not formatted correctly, must be formatted as m/d/yyy h:m:s AM.");
+            Assert.Throws<ValueParseException>(() => deserializer.DeserializeXml<CustomReader>("<CustomReader><SimpleNullableType>10-49</SimpleNullableType></CustomReader>"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '10-49' in the '/CustomReader/SimpleNullableType' element as a datetime: Not formatted correctly, must be formatted as m/d/yyy h:m:s AM.");
+        }
+
+        [Test]
+        public void should_return_parse_error_with_custom_message_when_reader_fails()
+        {
+            var deserializer = Bender.Deserializer.Create(x => x
+                    .WithFriendlyParseErrorMessage<DateTime>("Frog is wrong.")
+                    .AddReader<DateTime>(y => DateTime.ParseExact(y.Node.Value, "h:m:s", CultureInfo.InvariantCulture)));
+
+            Assert.Throws<ValueParseException>(() => deserializer.DeserializeXml<CustomReader>("<CustomReader><SimpleType>11-59</SimpleType></CustomReader>"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '11-59' in the '/CustomReader/SimpleType' element as a datetime: Frog is wrong.");
+            Assert.Throws<ValueParseException>(() => deserializer.DeserializeXml<CustomReader>("<CustomReader><SimpleNullableType>10-49</SimpleNullableType></CustomReader>"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '10-49' in the '/CustomReader/SimpleNullableType' element as a datetime: Frog is wrong.");
         }
 
         [Test]

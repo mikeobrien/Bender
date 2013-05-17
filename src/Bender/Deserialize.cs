@@ -6,7 +6,6 @@ namespace Bender
 {
     public static class Deserialize
     {
-
         public static T JsonFile<T>(string path, Action<DeserializerOptions> configure = null)
         {
             return Deserializer.Create(configure).DeserializeJsonFile<T>(path);

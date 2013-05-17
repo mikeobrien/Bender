@@ -32,7 +32,7 @@ namespace Tests.Deserializer.Xml
         {
             const string xml = @"<graph><value1><value2>hai</value2></value1></graph>";
             Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().DeserializeXml<Graph>(xml))
-                .FriendlyMessage.ShouldEqual("The '/graph' element is not recognized.");
+                .FriendlyMessage.ShouldEqual("Unable to read xml: The '/graph' element is not recognized.");
         }
 
         // Empty elements
@@ -111,7 +111,7 @@ namespace Tests.Deserializer.Xml
         {
             const string xml = @"<ComplexType><yada>hai</yada></ComplexType>";
             Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().DeserializeXml<ComplexType>(xml))
-                .FriendlyMessage.ShouldEqual("The '/ComplexType/yada' element is not recognized.");
+                .FriendlyMessage.ShouldEqual("Unable to read xml: The '/ComplexType/yada' element is not recognized.");
         }
 
         [Test]
@@ -129,7 +129,7 @@ namespace Tests.Deserializer.Xml
         {
             const string xml = "<ComplexType blarg=\"hai\"></ComplexType>";
             Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create(x => x.FailOnUnmatchedXmlAttributes()).DeserializeXml<ComplexType>(xml))
-                .FriendlyMessage.ShouldEqual("The '/ComplexType/@blarg' attribute is not recognized.");
+                .FriendlyMessage.ShouldEqual("Unable to read xml: The '/ComplexType/@blarg' attribute is not recognized.");
         }
 
         [Test]
@@ -147,7 +147,7 @@ namespace Tests.Deserializer.Xml
         {
             const string xml = @"<root><Value>hai</Value></root>";
             Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().DeserializeXml<ComplexType>(xml))
-                .FriendlyMessage.ShouldEqual("The '/root' element is not recognized.");
+                .FriendlyMessage.ShouldEqual("Unable to read xml: The '/root' element is not recognized.");
         }
 
         [Test]
@@ -166,7 +166,7 @@ namespace Tests.Deserializer.Xml
         {
             const string xml = @"<ArrayOfComplexType><yada><Value>hai</Value></yada></ArrayOfComplexType>";
             Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().DeserializeXml<List<ComplexType>>(xml))
-                .FriendlyMessage.ShouldEqual("The '/ArrayOfComplexType/yada' element is not recognized.");
+                .FriendlyMessage.ShouldEqual("Unable to read xml: The '/ArrayOfComplexType/yada' element is not recognized.");
         }
     }
 }

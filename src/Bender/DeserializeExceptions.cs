@@ -41,7 +41,7 @@ namespace Bender
         public UnmatchedNodeException(ValueNode node) :
             base("The '{0}' {1} does not correspond to a type or property.".ToFormat(
                     node.Object.GetPath(node.Format), node.NodeType.ToFriendlyNodeType()),
-                 "The '{0}' {1} is not recognized.".ToFormat(
+                 "Unable to read {0}: The '{1}' {2} is not recognized.".ToFormat(node.Format.ToString().ToLower(),
                     node.Object.GetPath(node.Format), node.NodeType.ToFriendlyNodeType())) { }
     }
 

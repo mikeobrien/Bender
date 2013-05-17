@@ -31,7 +31,7 @@ namespace Tests.Deserializer.Json
         {
             const string json = @"{ ""value1"": { ""value2"": ""hai"" } }";
             Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().DeserializeJson<Graph>(json))
-                .FriendlyMessage.ShouldEqual("The 'value1' field is not recognized.");
+                .FriendlyMessage.ShouldEqual("Unable to read json: The 'value1' field is not recognized.");
         }
 
         // Empty elements
@@ -101,7 +101,7 @@ namespace Tests.Deserializer.Json
         {
             const string json = "{ \"yada\": \"hai\" }";
             Assert.Throws<UnmatchedNodeException>(() => Bender.Deserializer.Create().DeserializeJson<ComplexType>(json))
-                .FriendlyMessage.ShouldEqual("The 'yada' field is not recognized.");
+                .FriendlyMessage.ShouldEqual("Unable to read json: The 'yada' field is not recognized.");
         }
     }
 }
