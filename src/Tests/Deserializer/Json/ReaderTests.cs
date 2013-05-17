@@ -41,7 +41,7 @@ namespace Tests.Deserializer.Json
         public void should_return_parse_error_when_reader_fails()
         {
             var deserializer = Bender.Deserializer.Create(
-                x => x.AddReader<DateTime>(y => DateTime.ParseExact(y.Node.Value, "h:m:s", CultureInfo.InvariantCulture)));
+                x => x.AddReader<DateTime>(y => DateTime.ParseExact(y.Node.Value, "h:m:s", CultureInfo.InvariantCulture), true));
 
             Assert.Throws<ValueParseException>(() => deserializer.DeserializeJson<CustomReader>("{ \"SimpleType\": \"11-59\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value '11-59' in the 'SimpleType' field as a datetime: Not formatted correctly, must be formatted as m/d/yyy h:m:s AM.");
@@ -54,7 +54,7 @@ namespace Tests.Deserializer.Json
         {
             var deserializer = Bender.Deserializer.Create(x => x
                     .WithFriendlyParseErrorMessage<DateTime>("Frog is wrong.")
-                    .AddReader<DateTime>(y => DateTime.ParseExact(y.Node.Value, "h:m:s", CultureInfo.InvariantCulture)));
+                    .AddReader<DateTime>(y => DateTime.ParseExact(y.Node.Value, "h:m:s", CultureInfo.InvariantCulture), true));
 
             Assert.Throws<ValueParseException>(() => deserializer.DeserializeJson<CustomReader>("{ \"SimpleType\": \"11-59\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value '11-59' in the 'SimpleType' field as a datetime: Frog is wrong.");

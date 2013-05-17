@@ -121,8 +121,9 @@ namespace Bender
                 catch (Exception exception)
                 {
                     if (exception is SourceException) throw;
-                    throw new ValueParseException(readerContext, _options.FriendlyParseErrorMessages.ContainsKey(type) ? 
-                        _options.FriendlyParseErrorMessages[type.GetUnderlyingNullableType()] : "Parse error.", exception);
+                    var messageType = type.GetUnderlyingNullableType();
+                    throw new ValueParseException(readerContext, _options.FriendlyParseErrorMessages.ContainsKey(messageType) ?
+                        _options.FriendlyParseErrorMessages[messageType] : "Parse error.", exception);
                 }
             }
 
