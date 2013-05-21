@@ -1,4 +1,5 @@
-﻿using Bender;
+﻿using System;
+using Bender;
 using NUnit.Framework;
 using Should;
 
@@ -43,6 +44,28 @@ namespace Tests.Deserializer.Json
         {
             const string json = "{ \"Value1\": { \"Value2\": \"hai\" } }";
             Bender.Deserializer.Create(x => x.ExcludeType<GraphNode>().IgnoreUnmatchedNodes()).DeserializeJson<Graph>(json).Value1.ShouldBeNull();
+        }
+
+        // Null handling
+
+        public class NullValue
+        {
+            public DateTime? Value1 { get; set; }
+            public GraphNode Value2 { get; set; }
+        }
+
+        [Test]
+        public void should_deserialize_empty_nullable_value_when_null()
+        {
+            const string json = "{ \"Value1\": null }";
+            Bender.Deserializer.Create().DeserializeJson<NullValue>(json).Value1.ShouldBeNull();
+        }
+
+        [Test]
+        public void should_deserialize_empty_type_when_null()
+        {
+            const string json = "{ \"Value2\": null }";
+            Bender.Deserializer.Create().DeserializeJson<NullValue>(json).Value2.ShouldBeNull();
         }
 
         // Generic types

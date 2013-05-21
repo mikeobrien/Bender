@@ -56,25 +56,25 @@ namespace Bender
     public class ValueParseException : SourceException
     {
         public ValueParseException(ReaderContext context, ParseException exception) :
-            this(context.Property, context.Node, context.Format, exception) { }
+            this(context.Property, context.Node, exception) { }
 
         public ValueParseException(ReaderContext context, string friendlyMessage, Exception exception) :
-            this(context.Property, context.Node, context.Format, friendlyMessage, exception) { }
+            this(context.Property, context.Node, friendlyMessage, exception) { }
         
-        public ValueParseException(PropertyInfo property, ValueNode node, Format format, ParseException exception) :
-            this(property, node, format, exception.FriendlyMessage, exception) { }
+        public ValueParseException(PropertyInfo property, ValueNode node, ParseException exception) :
+            this(property, node, exception.FriendlyMessage, exception) { }
 
-        public ValueParseException(PropertyInfo property, ValueNode node, Format format, string friendlyMessage, Exception exception) :
+        public ValueParseException(PropertyInfo property, ValueNode node, string friendlyMessage, Exception exception) :
             base("Unable to parse the value {0} in the '{1}' {2} as a {3} into {4}.{5}: {6}".ToFormat(
-                               GetFriendlyValue(node.Value), node.Object.GetPath(format), node.NodeType.ToFriendlyNodeType(), property.PropertyType.Name,
+                               GetFriendlyValue(node), node.Object.GetPath(node.Format), node.NodeType.ToFriendlyNodeType(), property.PropertyType.Name,
                                property.DeclaringType.FullName, property.Name, exception.Message),
                  "Unable to parse the value {0} in the '{1}' {2} as a {3}: {4}".ToFormat(
-                               GetFriendlyValue(node.Value), node.Object.GetPath(format), node.NodeType.ToFriendlyNodeType(), 
+                               GetFriendlyValue(node), node.Object.GetPath(node.Format), node.NodeType.ToFriendlyNodeType(), 
                                property.PropertyType.ToFriendlyType(), friendlyMessage),
                  exception)
         {
             Value = node.Value;
-            XPath = node.Object.GetPath(format);
+            XPath = node.Object.GetPath(node.Format);
             Node = node;
             ParseErrorMessage = friendlyMessage;
             ClrType = property.PropertyType;
@@ -88,9 +88,9 @@ namespace Bender
         public Type ClrType { get; private set; }
         public string FriendlyType { get; private set; }
 
-        private static string GetFriendlyValue(string value)
+        private static string GetFriendlyValue(ValueNode node)
         {
-            return value != null ? "'" + value.TruncateAt(50) + "'" : "<null>";
+            return node.Value == null ? "<null>"  : "'" + node.Value.TruncateAt(50) + "'";
         }
     }
 

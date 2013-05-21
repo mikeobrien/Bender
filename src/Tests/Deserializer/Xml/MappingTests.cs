@@ -35,38 +35,6 @@ namespace Tests.Deserializer.Xml
                 .FriendlyMessage.ShouldEqual("Unable to read xml: The '/graph' element is not recognized.");
         }
 
-        // Empty elements
-
-        [Test]
-        public void should_deserialize_empty_complex_type_element()
-        {
-            var xml = @"<Graph><Value1></Value1></Graph>";
-            Bender.Deserializer.Create().DeserializeXml<Graph>(xml).Value1.ShouldNotBeNull();
-
-            xml = @"<Graph><Value1 /></Graph>";
-            Bender.Deserializer.Create().DeserializeXml<Graph>(xml).Value1.ShouldNotBeNull();
-        }
-
-        [Test]
-        public void should_throw_value_parse_exception_when_simple_type_is_empty_and_not_set_to_use_default()
-        {
-            var xml = @"<ComplexType><IntegerValue></IntegerValue></ComplexType>";
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<ComplexType>(xml));
-
-            xml = @"<ComplexType><IntegerValue/></ComplexType>";
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeXml<ComplexType>(xml));
-        }
-
-        [Test]
-        public void should_not_throw_value_parse_exception_when_simple_type_is_empty_and_set_to_use_default()
-        {
-            var xml = @"<ComplexType><StringValue></StringValue></ComplexType>";
-            Assert.DoesNotThrow(() => Bender.Deserializer.Create(x => x.DefaultNonNullableTypesWhenEmpty()).DeserializeXml<ComplexType>(xml));
-
-            xml = @"<ComplexType><StringValue/></ComplexType>";
-            Assert.DoesNotThrow(() => Bender.Deserializer.Create(x => x.DefaultNonNullableTypesWhenEmpty()).DeserializeXml<ComplexType>(xml));
-        }
-
         // Missing elements
 
         public class NullValue
@@ -74,6 +42,13 @@ namespace Tests.Deserializer.Xml
             public DateTime? Value1 { get; set; }
             public TraversalTests.GraphNode Value2 { get; set; }
             public int Value3 { get; set; }
+        }
+
+        [Test]
+        public void should_deserialize_empty_complex_type_element_with_missing_child_elements()
+        {
+            const string xml = @"<Graph><Value1></Value1></Graph>";
+            Bender.Deserializer.Create().DeserializeXml<Graph>(xml).Value1.ShouldNotBeNull();
         }
 
         [Test]

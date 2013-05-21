@@ -32,7 +32,6 @@ namespace Tests.Serializer.Json
             public TimeSpan TimeSpan { get; set; } public TimeSpan? NullableTimeSpan { get; set; }
             public Guid Guid { get; set; } public Guid? NullableGuid { get; set; }
             public Enum Enum { get; set; } public Enum? NullableEnum { get; set; }
-            public object Object { get; set; }
             public object BoxedValue { get; set; }
         }
 
@@ -57,7 +56,6 @@ namespace Tests.Serializer.Json
                     TimeSpan = TimeSpan.MaxValue, NullableTimeSpan = TimeSpan.MaxValue,
                     Guid = Guid.Empty, NullableGuid = Guid.Empty,
                     Enum = Enum.Value2, NullableEnum = Enum.Value2,
-                    Object = new Object(),
                     BoxedValue = Guid.Empty
                 };
 
@@ -83,7 +81,6 @@ namespace Tests.Serializer.Json
             types.JsonStringField("TimeSpan").Value.ShouldEqual(simpleTypes.TimeSpan.ToString());
             types.JsonStringField("Guid").Value.ShouldEqual(simpleTypes.Guid.ToString());
             types.JsonStringField("Enum").Value.ShouldEqual(simpleTypes.Enum.ToString());
-            types.JsonObjectField("Object").Value.ShouldBeEmpty();
             types.JsonStringField("BoxedValue").Value.ShouldEqual(Guid.Empty.ToString());
 
             types.JsonBooleanField("NullableBoolean").Value.ShouldEqual(simpleTypes.NullableBoolean.ToString().ToLower());
@@ -101,6 +98,54 @@ namespace Tests.Serializer.Json
             types.JsonStringField("NullableTimeSpan").Value.ShouldEqual(simpleTypes.NullableTimeSpan.ToString());
             types.JsonStringField("NullableGuid").Value.ShouldEqual(simpleTypes.NullableGuid.ToString());
             types.JsonStringField("NullableEnum").Value.ShouldEqual(simpleTypes.NullableEnum.ToString());
+        }
+
+        [Test]
+        public void should_serialize_simple_nullable_type_properties()
+        {
+            var simpleTypes = new SimpleTypeProperties
+            {
+                String = null,
+                NullableBoolean = null,
+                NullableByte = null,
+                NullableUnsignedByte = null,
+                NullableShort = null,
+                NullableUnsignedShort = null,
+                NullableInteger = null,
+                NullableUnsignedInteger = null,
+                NullableLong = null,
+                NullableUnsignedLong = null,
+                NullableFloat = null,
+                NullableDouble = null,
+                NullableDecimal = null,
+                NullableDateTime = null,
+                NullableTimeSpan = null,
+                NullableGuid = null,
+                NullableEnum = null
+            };
+
+            var json = Bender.Serializer.Create().SerializeJson(simpleTypes);
+            Debug.WriteLine(json);
+
+            json.ShouldNotBeNull();
+            var types = json.ParseJson().JsonRoot();
+            types.ShouldNotBeNull();
+            types.JsonNullField("String").Value.ShouldBeEmpty();
+            types.JsonNullField("NullableBoolean").Value.ShouldBeEmpty();
+            types.JsonNullField("NullableByte").Value.ShouldBeEmpty();
+            types.JsonNullField("NullableUnsignedByte").Value.ShouldBeEmpty();
+            types.JsonNullField("NullableShort").Value.ShouldBeEmpty();
+            types.JsonNullField("NullableUnsignedShort").Value.ShouldBeEmpty();
+            types.JsonNullField("NullableUnsignedInteger").Value.ShouldBeEmpty();
+            types.JsonNullField("NullableLong").Value.ShouldBeEmpty();
+            types.JsonNullField("NullableUnsignedLong").Value.ShouldBeEmpty();
+            types.JsonNullField("NullableFloat").Value.ShouldBeEmpty();
+            types.JsonNullField("NullableDouble").Value.ShouldBeEmpty();
+            types.JsonNullField("NullableDecimal").Value.ShouldBeEmpty();
+            types.JsonNullField("NullableDateTime").Value.ShouldBeEmpty();
+            types.JsonNullField("NullableTimeSpan").Value.ShouldBeEmpty();
+            types.JsonNullField("NullableGuid").Value.ShouldBeEmpty();
+            types.JsonNullField("NullableEnum").Value.ShouldBeEmpty();
         }
     }
 }

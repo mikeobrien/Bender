@@ -42,7 +42,7 @@ namespace Tests.Serializer.Json
         public void should_serialize_empty_value_when_null()
         {
             var json = Bender.Serializer.Create().SerializeJson(new NullValue());
-            json.ParseJson().JsonRoot().JsonNullField("Value1").Value.ShouldBeEmpty(); 
+            json.ParseJson().JsonRoot().IsJsonNullField("Value1").ShouldBeTrue();
         }
 
         [Test]
@@ -56,7 +56,7 @@ namespace Tests.Serializer.Json
         public void should_serialize_empty_type_when_null()
         {
             var json = Bender.Serializer.Create().SerializeJson(new NullValue());
-            json.ParseJson().JsonRoot().JsonFieldExists("Value2").ShouldBeTrue();
+            json.ParseJson().JsonRoot().IsJsonNullField("Value2").ShouldBeTrue();
         }
 
         [Test]

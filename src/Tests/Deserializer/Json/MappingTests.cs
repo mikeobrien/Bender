@@ -34,29 +34,6 @@ namespace Tests.Deserializer.Json
                 .FriendlyMessage.ShouldEqual("Unable to read json: The 'value1' field is not recognized.");
         }
 
-        // Empty elements
-
-        [Test]
-        public void should_deserialize_empty_complex_type_element()
-        {
-            const string json = @"{ ""Value1"": """" }";
-            Bender.Deserializer.Create().DeserializeJson<Graph>(json).Value1.ShouldNotBeNull();
-        }
-
-        [Test]
-        public void should_throw_value_parse_exception_when_simple_type_is_empty_and_not_set_to_use_default()
-        {
-            const string json = @"{ ""IntegerValue"": """" }";
-            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<ComplexType>(json));
-        }
-
-        [Test]
-        public void should_not_throw_value_parse_exception_when_simple_type_is_empty_and_set_to_use_default()
-        {
-            const string json = @"{ ""StringValue"": """" }";
-            Assert.DoesNotThrow(() => Bender.Deserializer.Create(x => x.DefaultNonNullableTypesWhenEmpty()).DeserializeJson<ComplexType>(json));
-        }
-
         // Missing elements
 
         public class NullValue

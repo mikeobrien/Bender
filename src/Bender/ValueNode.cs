@@ -46,7 +46,12 @@ namespace Bender
 
         public string Value
         {
-            get { return Object.NodeType == XmlNodeType.Attribute ? XmlAttribute.Value : XmlElement.Value; }
+            get {
+                if (Object.NodeType == XmlNodeType.Attribute) return XmlAttribute.Value;
+                if ((NodeType == NodeType.XmlElement && XmlElement.IsEmpty) ||
+                    (NodeType == NodeType.JsonField && JsonField.DataType == JsonDataType.Null)) return null;
+                return XmlElement.Value;
+            }
             set { if (Object.NodeType == XmlNodeType.Attribute) XmlAttribute.Value = value; else XmlElement.Value = value; }
         }
     }

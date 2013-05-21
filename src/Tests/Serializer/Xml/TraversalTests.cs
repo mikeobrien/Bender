@@ -50,7 +50,7 @@ namespace Tests.Serializer.Xml
         public void should_serialize_empty_value_when_null()
         {
             var xml = Bender.Serializer.Create().SerializeXml(new NullValue());
-            xml.ParseXml().Element("NullValue").Element("Value1").Value.ShouldBeEmpty(); 
+            xml.ParseXml().Element("NullValue").Element("Value1").IsEmpty.ShouldBeTrue(); 
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace Tests.Serializer.Xml
         public void should_serialize_empty_type_when_null()
         {
             var xml = Bender.Serializer.Create().SerializeXml(new NullValue());
-            xml.ParseXml().Element("NullValue").Element("Value2").Value.ShouldBeEmpty();
+            xml.ParseXml().Element("NullValue").Element("Value2").IsEmpty.ShouldBeTrue();
         }
 
         [Test]

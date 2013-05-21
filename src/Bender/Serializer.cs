@@ -78,8 +78,7 @@ namespace Bender
 
         private XObject Traverse(Format format, object source, LinkedNode<object> ancestors, PropertyInfo sourceProperty = null, Type itemType = null)
         {
-            var type = itemType ?? (sourceProperty == null || sourceProperty.PropertyType == typeof(object) ? 
-                source.GetType() : sourceProperty.PropertyType);
+            var type = itemType ?? (sourceProperty == null ? source.GetType() : sourceProperty.PropertyType);
 
             var name = format == Format.Xml ? GetXmlNodeName(type, ancestors, sourceProperty, itemType) :
                 GetJsonNodeName(ancestors, sourceProperty, itemType);
@@ -99,7 +98,7 @@ namespace Bender
                 node = createValueNode(null);
                 valueNode = new ValueNode(node, format);
                 if (format == Format.Json) valueNode.JsonField.DataType = source.ToJsonValueType();
-                _options.ValueWriters[type](new WriterContext(_options, sourceProperty, format, source, valueNode));
+                _options.ValueWriters[type](new WriterContext(_options, sourceProperty, source, valueNode));
             }
             else if (type.IsSimpleType())
             {
@@ -107,7 +106,12 @@ namespace Bender
                 valueNode = new ValueNode(node, format);
                 if (format == Format.Json) valueNode.JsonField.DataType = source.ToJsonValueType();
             }
-            else if (source == null) node = createElement(null);
+            else if (source == null)
+            {
+                node = createElement(null);
+                valueNode = new ValueNode(node, format);
+                if (format == Format.Json) valueNode.JsonField.DataType = JsonDataType.Null;
+            }
             else if (type.IsEnumerable())
             {
                 var listItemType = type.GetGenericEnumerableType();
@@ -133,7 +137,7 @@ namespace Bender
             
             AddNamespaces(format, ancestors, valueNode);
 
-            _options.NodeWriters.ForEach(x => x(new WriterContext(_options, sourceProperty, format, source, valueNode)));
+            _options.NodeWriters.ForEach(x => x(new WriterContext(_options, sourceProperty, source, valueNode)));
 
             return valueNode.Object;
         }

@@ -32,7 +32,6 @@ namespace Tests.Serializer.Xml
             public TimeSpan TimeSpan { get; set; } public TimeSpan? NullableTimeSpan { get; set; }
             public Guid Guid { get; set; } public Guid? NullableGuid { get; set; }
             public Enum Enum { get; set; } public Enum? NullableEnum { get; set; }
-            public object Object { get; set; }
             public object BoxedValue { get; set; }
         }
 
@@ -57,7 +56,6 @@ namespace Tests.Serializer.Xml
                     TimeSpan = TimeSpan.MaxValue, NullableTimeSpan = TimeSpan.MaxValue,
                     Guid = Guid.Empty, NullableGuid = Guid.Empty,
                     Enum = Enum.Value2, NullableEnum = Enum.Value2,
-                    Object = new Object(),
                     BoxedValue = Guid.Empty
                 };
 
@@ -83,7 +81,6 @@ namespace Tests.Serializer.Xml
             root.Element("TimeSpan").Value.ShouldEqual(simpleTypes.TimeSpan.ToString());
             root.Element("Guid").Value.ShouldEqual(simpleTypes.Guid.ToString());
             root.Element("Enum").Value.ShouldEqual(simpleTypes.Enum.ToString());
-            root.Element("Object").Value.ShouldBeEmpty();
             root.Element("BoxedValue").Value.ShouldEqual(Guid.Empty.ToString());
 
             root.Element("NullableBoolean").Value.ShouldEqual(simpleTypes.NullableBoolean.ToString().ToLower());
@@ -101,6 +98,54 @@ namespace Tests.Serializer.Xml
             root.Element("NullableTimeSpan").Value.ShouldEqual(simpleTypes.NullableTimeSpan.ToString());
             root.Element("NullableGuid").Value.ShouldEqual(simpleTypes.NullableGuid.ToString());
             root.Element("NullableEnum").Value.ShouldEqual(simpleTypes.NullableEnum.ToString());
+        }
+
+        [Test]
+        public void should_serialize_simple_nullable_type_properties()
+        {
+            var simpleTypes = new SimpleTypeProperties
+            {
+                String = null,
+                NullableBoolean = null,
+                NullableByte = null,
+                NullableUnsignedByte = null,
+                NullableShort = null,
+                NullableUnsignedShort = null,
+                NullableInteger = null,
+                NullableUnsignedInteger = null,
+                NullableLong = null,
+                NullableUnsignedLong = null,
+                NullableFloat = null,
+                NullableDouble = null,
+                NullableDecimal = null,
+                NullableDateTime = null,
+                NullableTimeSpan = null,
+                NullableGuid = null,
+                NullableEnum = null
+            };
+
+            var xml = Bender.Serializer.Create(x => x.PrettyPrintXml()).SerializeXml(simpleTypes);
+            Debug.WriteLine(xml);
+
+            xml.ShouldNotBeNull();
+            var root = xml.ParseXml().Element("SimpleTypeProperties");
+            root.ShouldNotBeNull();
+            root.Element("String").IsEmpty.ShouldBeTrue();
+            root.Element("NullableBoolean").IsEmpty.ShouldBeTrue();
+            root.Element("NullableByte").IsEmpty.ShouldBeTrue();
+            root.Element("NullableUnsignedByte").IsEmpty.ShouldBeTrue();
+            root.Element("NullableShort").IsEmpty.ShouldBeTrue();
+            root.Element("NullableUnsignedShort").IsEmpty.ShouldBeTrue();
+            root.Element("NullableUnsignedInteger").IsEmpty.ShouldBeTrue();
+            root.Element("NullableLong").IsEmpty.ShouldBeTrue();
+            root.Element("NullableUnsignedLong").IsEmpty.ShouldBeTrue();
+            root.Element("NullableFloat").IsEmpty.ShouldBeTrue();
+            root.Element("NullableDouble").IsEmpty.ShouldBeTrue();
+            root.Element("NullableDecimal").IsEmpty.ShouldBeTrue();
+            root.Element("NullableDateTime").IsEmpty.ShouldBeTrue();
+            root.Element("NullableTimeSpan").IsEmpty.ShouldBeTrue();
+            root.Element("NullableGuid").IsEmpty.ShouldBeTrue();
+            root.Element("NullableEnum").IsEmpty.ShouldBeTrue();
         }
     }
 }

@@ -103,7 +103,7 @@ namespace Tests.Deserializer.Json
         }
 
         [Test]
-        public void should_deserialize_simple_empty_types()
+        public void should_deserialize_simple_empty_types_and_default_non_nullable_types()
         {
             const string json =
                 @"{
@@ -155,7 +155,7 @@ namespace Tests.Deserializer.Json
             result.NullableDecimal.HasValue.ShouldBeFalse();
             result.DateTime.ShouldEqual(DateTime.MinValue);
             result.NullableDateTime.HasValue.ShouldBeFalse();
-            result.TimeSpan.ShouldEqual(TimeSpan.MinValue);
+            result.TimeSpan.ShouldEqual(TimeSpan.Zero);
             result.NullableTimeSpan.HasValue.ShouldBeFalse();
             result.Guid.ShouldEqual(Guid.Empty);
             result.NullableGuid.HasValue.ShouldBeFalse();
@@ -164,90 +164,309 @@ namespace Tests.Deserializer.Json
         }
 
         [Test]
+        public void should_deserialize_simple_nullable_empty_types()
+        {
+            const string json =
+                @"{
+                      ""String"": """",
+                      ""NullableChar"": """", 
+                      ""NullableBoolean"": """",
+                      ""NullableByte"": """",
+                      ""NullableSignedByte"": """",
+                      ""NullableShort"": """",
+                      ""NullableUnsignedShort"": """",
+                      ""NullableInteger"": """",
+                      ""NullableUnsignedInteger"": """",
+                      ""NullableLong"": """",
+                      ""NullableUnsignedLong"": """",
+                      ""NullableFloat"": """",
+                      ""NullableDouble"": """",
+                      ""NullableDecimal"": """",
+                      ""NullableDateTime"": """", 
+                      ""NullableTimeSpan"": """", 
+                      ""NullableGuid"": """", 
+                      ""NullableEnum"": """"
+                }";
+            var result = Bender.Deserializer.Create().DeserializeJson<SimpleTypes>(json);
+            result.String.ShouldBeEmpty();
+            result.NullableChar.HasValue.ShouldBeFalse();
+            result.NullableBoolean.HasValue.ShouldBeFalse();
+            result.NullableByte.HasValue.ShouldBeFalse();
+            result.NullableSignedByte.HasValue.ShouldBeFalse();
+            result.NullableShort.HasValue.ShouldBeFalse();
+            result.NullableUnsignedShort.HasValue.ShouldBeFalse();
+            result.NullableInteger.HasValue.ShouldBeFalse();
+            result.NullableUnsignedInteger.HasValue.ShouldBeFalse();
+            result.NullableLong.HasValue.ShouldBeFalse();
+            result.NullableUnsignedLong.HasValue.ShouldBeFalse();
+            result.NullableFloat.HasValue.ShouldBeFalse();
+            result.NullableDouble.HasValue.ShouldBeFalse();
+            result.NullableDecimal.HasValue.ShouldBeFalse();
+            result.NullableDateTime.HasValue.ShouldBeFalse();
+            result.NullableTimeSpan.HasValue.ShouldBeFalse();
+            result.NullableGuid.HasValue.ShouldBeFalse();
+            result.NullableEnum.HasValue.ShouldBeFalse();
+        }
+
+        [Test]
+        public void should_deserialize_simple_null_types_and_default_non_nullable_types()
+        {
+            const string json =
+                @"{
+                      ""String"": null,
+                      ""NullableChar"": null, 
+                      ""Boolean"": null, ""NullableBoolean"": null,
+                      ""Byte"": null, ""NullableByte"": null,
+                      ""SignedByte"": null, ""NullableSignedByte"": null,
+                      ""Short"": null, ""NullableShort"": null,
+                      ""UnsignedShort"": null, ""NullableUnsignedShort"": null,
+                      ""Integer"": null, ""NullableInteger"": null,
+                      ""UnsignedInteger"": null, ""NullableUnsignedInteger"": null,
+                      ""Long"": null, ""NullableLong"": null,
+                      ""UnsignedLong"": null, ""NullableUnsignedLong"": null,
+                      ""Float"": null, ""NullableFloat"": null,
+                      ""Double"": null, ""NullableDouble"": null,
+                      ""Decimal"": null, ""NullableDecimal"": null,
+                      ""DateTime"": null, ""NullableDateTime"": null, 
+                      ""TimeSpan"": null, ""NullableTimeSpan"": null, 
+                      ""Guid"": null, ""NullableGuid"": null, 
+                      ""Enum"": null, ""NullableEnum"": null
+                }";
+            var result = Bender.Deserializer.Create(x => x.DefaultNonNullableTypesWhenEmpty()).DeserializeJson<SimpleTypes>(json);
+            result.String.ShouldBeNull();
+            result.NullableChar.HasValue.ShouldBeFalse();
+            result.Boolean.ShouldBeFalse();
+            result.NullableBoolean.HasValue.ShouldBeFalse();
+            result.Byte.ShouldEqual<byte>(0);
+            result.NullableByte.HasValue.ShouldBeFalse();
+            result.SignedByte.ShouldEqual<sbyte>(0);
+            result.NullableSignedByte.HasValue.ShouldBeFalse();
+            result.Short.ShouldEqual<short>(0);
+            result.NullableShort.HasValue.ShouldBeFalse();
+            result.UnsignedShort.ShouldEqual<ushort>(0);
+            result.NullableUnsignedShort.HasValue.ShouldBeFalse();
+            result.Integer.ShouldEqual(0);
+            result.NullableInteger.HasValue.ShouldBeFalse();
+            result.UnsignedInteger.ShouldEqual<uint>(0);
+            result.NullableUnsignedInteger.HasValue.ShouldBeFalse();
+            result.Long.ShouldEqual(0);
+            result.NullableLong.HasValue.ShouldBeFalse();
+            result.UnsignedLong.ShouldEqual<ulong>(0);
+            result.NullableUnsignedLong.HasValue.ShouldBeFalse();
+            result.Float.ShouldEqual(0);
+            result.NullableFloat.HasValue.ShouldBeFalse();
+            result.Double.ShouldEqual(0);
+            result.NullableDouble.HasValue.ShouldBeFalse();
+            result.Decimal.ShouldEqual(0);
+            result.NullableDecimal.HasValue.ShouldBeFalse();
+            result.DateTime.ShouldEqual(DateTime.MinValue);
+            result.NullableDateTime.HasValue.ShouldBeFalse();
+            result.TimeSpan.ShouldEqual(TimeSpan.Zero);
+            result.NullableTimeSpan.HasValue.ShouldBeFalse();
+            result.Guid.ShouldEqual(Guid.Empty);
+            result.NullableGuid.HasValue.ShouldBeFalse();
+            result.Enum.ShouldEqual(Enum.Value1);
+            result.NullableEnum.HasValue.ShouldBeFalse();
+        }
+
+        [Test]
+        public void should_deserialize_simple_nullable_types()
+        {
+            const string json =
+                @"{
+                      ""String"": null,
+                      ""NullableChar"": null, 
+                      ""NullableBoolean"": null,
+                      ""NullableByte"": null,
+                      ""NullableSignedByte"": null,
+                      ""NullableShort"": null,
+                      ""NullableUnsignedShort"": null,
+                      ""NullableInteger"": null,
+                      ""NullableUnsignedInteger"": null,
+                      ""NullableLong"": null,
+                      ""NullableUnsignedLong"": null,
+                      ""NullableFloat"": null,
+                      ""NullableDouble"": null,
+                      ""NullableDecimal"": null,
+                      ""NullableDateTime"": null, 
+                      ""NullableTimeSpan"": null, 
+                      ""NullableGuid"": null, 
+                      ""NullableEnum"": null
+                }";
+            var result = Bender.Deserializer.Create().DeserializeJson<SimpleTypes>(json);
+            result.String.ShouldBeNull();
+            result.NullableChar.HasValue.ShouldBeFalse();
+            result.NullableBoolean.HasValue.ShouldBeFalse();
+            result.NullableByte.HasValue.ShouldBeFalse();
+            result.NullableSignedByte.HasValue.ShouldBeFalse();
+            result.NullableShort.HasValue.ShouldBeFalse();
+            result.NullableUnsignedShort.HasValue.ShouldBeFalse();
+            result.NullableInteger.HasValue.ShouldBeFalse();
+            result.NullableUnsignedInteger.HasValue.ShouldBeFalse();
+            result.NullableLong.HasValue.ShouldBeFalse();
+            result.NullableUnsignedLong.HasValue.ShouldBeFalse();
+            result.NullableFloat.HasValue.ShouldBeFalse();
+            result.NullableDouble.HasValue.ShouldBeFalse();
+            result.NullableDecimal.HasValue.ShouldBeFalse();
+            result.NullableDateTime.HasValue.ShouldBeFalse();
+            result.NullableTimeSpan.HasValue.ShouldBeFalse();
+            result.NullableGuid.HasValue.ShouldBeFalse();
+            result.NullableEnum.HasValue.ShouldBeFalse();
+        }
+
+        [Test]
         public void should_throw_value_parse_exception_when_failing_to_set_simple_type()
         {
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Char\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'Char' field as a char: Length not valid, must be one character.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Char\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'Char' field as a char: Length not valid, must be one character.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Char\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'Char' field as a char: Length not valid, must be one character.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableChar\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableChar' field as a char: Length not valid, must be one character.");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Boolean\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'Boolean' field as a boolean: Not formatted correctly, must be 'true' or 'false'.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Boolean\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'Boolean' field as a boolean: Not formatted correctly, must be 'true' or 'false'.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Boolean\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'Boolean' field as a boolean: Not formatted correctly, must be 'true' or 'false'.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableBoolean\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableBoolean' field as a boolean: Not formatted correctly, must be 'true' or 'false'.");
-            
+
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Byte\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'Byte' field as a byte: Not formatted correctly, must be an integer between 0 and 255.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Byte\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'Byte' field as a byte: Not formatted correctly, must be an integer between 0 and 255.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Byte\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'Byte' field as a byte: Not formatted correctly, must be an integer between 0 and 255.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableByte\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableByte' field as a byte: Not formatted correctly, must be an integer between 0 and 255.");
-           
+
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"SignedByte\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'SignedByte' field as a signedByte: Not formatted correctly, must be an integer between -128 and 127.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"SignedByte\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'SignedByte' field as a signedByte: Not formatted correctly, must be an integer between -128 and 127.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"SignedByte\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'SignedByte' field as a signedByte: Not formatted correctly, must be an integer between -128 and 127.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableSignedByte\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableSignedByte' field as a signedByte: Not formatted correctly, must be an integer between -128 and 127.");
-            
+
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Short\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'Short' field as a word: Not formatted correctly, must be an integer between -32,768 and 32,767.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Short\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'Short' field as a word: Not formatted correctly, must be an integer between -32,768 and 32,767.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Short\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'Short' field as a word: Not formatted correctly, must be an integer between -32,768 and 32,767.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableShort\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableShort' field as a word: Not formatted correctly, must be an integer between -32,768 and 32,767.");
-            
+
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"UnsignedShort\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'UnsignedShort' field as a usignedWord: Not formatted correctly, must be an integer between 0 and 65,535.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"UnsignedShort\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'UnsignedShort' field as a usignedWord: Not formatted correctly, must be an integer between 0 and 65,535.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"UnsignedShort\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'UnsignedShort' field as a usignedWord: Not formatted correctly, must be an integer between 0 and 65,535.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableUnsignedShort\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableUnsignedShort' field as a usignedWord: Not formatted correctly, must be an integer between 0 and 65,535.");
-            
+
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Integer\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'Integer' field as a integer: Not formatted correctly, must be an integer between -2,147,483,648 and 2,147,483,647.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Integer\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'Integer' field as a integer: Not formatted correctly, must be an integer between -2,147,483,648 and 2,147,483,647.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Integer\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'Integer' field as a integer: Not formatted correctly, must be an integer between -2,147,483,648 and 2,147,483,647.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableInteger\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableInteger' field as a integer: Not formatted correctly, must be an integer between -2,147,483,648 and 2,147,483,647.");
-            
+
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"UnsignedInteger\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'UnsignedInteger' field as a usignedInteger: Not formatted correctly, must be an integer between 0 and 4,294,967,295.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"UnsignedInteger\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'UnsignedInteger' field as a usignedInteger: Not formatted correctly, must be an integer between 0 and 4,294,967,295.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"UnsignedInteger\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'UnsignedInteger' field as a usignedInteger: Not formatted correctly, must be an integer between 0 and 4,294,967,295.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableUnsignedInteger\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableUnsignedInteger' field as a usignedInteger: Not formatted correctly, must be an integer between 0 and 4,294,967,295.");
-            
+
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Long\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'Long' field as a long: Not formatted correctly, must be an integer between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Long\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'Long' field as a long: Not formatted correctly, must be an integer between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Long\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'Long' field as a long: Not formatted correctly, must be an integer between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableLong\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableLong' field as a long: Not formatted correctly, must be an integer between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807.");
-            
+
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"UnsignedLong\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'UnsignedLong' field as a usignedLong: Not formatted correctly, must be an integer between 0 and 18,446,744,073,709,551,615.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"UnsignedLong\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'UnsignedLong' field as a usignedLong: Not formatted correctly, must be an integer between 0 and 18,446,744,073,709,551,615.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"UnsignedLong\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'UnsignedLong' field as a usignedLong: Not formatted correctly, must be an integer between 0 and 18,446,744,073,709,551,615.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableUnsignedLong\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableUnsignedLong' field as a usignedLong: Not formatted correctly, must be an integer between 0 and 18,446,744,073,709,551,615.");
-            
+
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Float\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'Float' field as a singleFloat: Not formatted correctly, must be a single-precision 32 bit float between -3.402823e38 and 3.402823e38.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Float\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'Float' field as a singleFloat: Not formatted correctly, must be a single-precision 32 bit float between -3.402823e38 and 3.402823e38.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Float\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'Float' field as a singleFloat: Not formatted correctly, must be a single-precision 32 bit float between -3.402823e38 and 3.402823e38.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableFloat\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableFloat' field as a singleFloat: Not formatted correctly, must be a single-precision 32 bit float between -3.402823e38 and 3.402823e38.");
-            
+
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Double\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'Double' field as a doubleFloat: Not formatted correctly, must be a double-precision 64-bit float between -1.79769313486232e308 and 1.79769313486232e308.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Double\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'Double' field as a doubleFloat: Not formatted correctly, must be a double-precision 64-bit float between -1.79769313486232e308 and 1.79769313486232e308.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Double\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'Double' field as a doubleFloat: Not formatted correctly, must be a double-precision 64-bit float between -1.79769313486232e308 and 1.79769313486232e308.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableDouble\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableDouble' field as a doubleFloat: Not formatted correctly, must be a double-precision 64-bit float between -1.79769313486232e308 and 1.79769313486232e308.");
-            
+
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Decimal\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'Decimal' field as a decimal: Not formatted correctly, must be a decimal number between -79,228,162,514,264,337,593,543,950,335 and 79,228,162,514,264,337,593,543,950,335.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Decimal\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'Decimal' field as a decimal: Not formatted correctly, must be a decimal number between -79,228,162,514,264,337,593,543,950,335 and 79,228,162,514,264,337,593,543,950,335.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Decimal\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'Decimal' field as a decimal: Not formatted correctly, must be a decimal number between -79,228,162,514,264,337,593,543,950,335 and 79,228,162,514,264,337,593,543,950,335.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableDecimal\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableDecimal' field as a decimal: Not formatted correctly, must be a decimal number between -79,228,162,514,264,337,593,543,950,335 and 79,228,162,514,264,337,593,543,950,335.");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"DateTime\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'DateTime' field as a datetime: Not formatted correctly, must be formatted as m/d/yyy h:m:s AM.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"DateTime\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'DateTime' field as a datetime: Not formatted correctly, must be formatted as m/d/yyy h:m:s AM.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"DateTime\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'DateTime' field as a datetime: Not formatted correctly, must be formatted as m/d/yyy h:m:s AM.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableDateTime\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableDateTime' field as a datetime: Not formatted correctly, must be formatted as m/d/yyy h:m:s AM.");
 
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"TimeSpan\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'TimeSpan' field as a duration: Not formatted correctly, must be formatted as d.h:m:s.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"TimeSpan\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'TimeSpan' field as a duration: Not formatted correctly, must be formatted as d.h:m:s.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"TimeSpan\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'TimeSpan' field as a duration: Not formatted correctly, must be formatted as d.h:m:s.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableTimeSpan\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableTimeSpan' field as a duration: Not formatted correctly, must be formatted as d.h:m:s.");
-            
+
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Guid\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'Guid' field as a guid: Not formatted correctly, should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Guid\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'Guid' field as a guid: Not formatted correctly, should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Guid\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'Guid' field as a guid: Not formatted correctly, should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableGuid\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableGuid' field as a guid: Not formatted correctly, should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).");
-            
+
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Enum\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'Enum' field as a enumeration: Not a valid option.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Enum\": \"\" }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value '' in the 'Enum' field as a enumeration: Not a valid option.");
+            Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"Enum\": null }"))
+                .FriendlyMessage.ShouldEqual("Unable to parse the value <null> in the 'Enum' field as a enumeration: Not a valid option.");
             Assert.Throws<ValueParseException>(() => Bender.Deserializer.Create().DeserializeJson<SimpleTypes>("{ \"NullableEnum\": \"sfsfdds\" }"))
                 .FriendlyMessage.ShouldEqual("Unable to parse the value 'sfsfdds' in the 'NullableEnum' field as a enumeration: Not a valid option.");
         }

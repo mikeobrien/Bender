@@ -113,7 +113,7 @@ namespace Bender
 
             if (_options.Readers.ContainsKey(type))
             {
-                var readerContext = new ReaderContext(_options, sourceProperty, format, node);
+                var readerContext = new ReaderContext(_options, sourceProperty, node);
                 try
                 {
                     return _options.Readers[type](readerContext);
@@ -129,6 +129,9 @@ namespace Bender
 
             if (type == typeof (object)) return node.Object;
             if (type.IsSimpleType()) return node.Value.ParseSimpleType(type, _options.DefaultNonNullableTypesWhenEmpty, _options.FriendlyParseErrorMessages);
+
+            if ((node.NodeType == NodeType.JsonField && node.JsonField.DataType == JsonDataType.Null) ||
+                (node.NodeType == NodeType.XmlElement && node.XmlElement.IsEmpty && !node.XmlElement.Attributes().Any())) return null;
 
             if (node.NodeType == NodeType.XmlAttribute)
                 throw new DeserializeException(sourceProperty, node.Object, format, "Cannot deserialize attribute value as complex type.");
@@ -175,7 +178,7 @@ namespace Bender
                     _options.Readers.ContainsKey(propertyType))
                 {
                     var value = Exceptions.Wrap<ParseException>(() => Traverse(format, property.PropertyType, childNode, instance, property), 
-                        x => new ValueParseException(property, childNode, format, x));
+                        x => new ValueParseException(property, childNode, x));
                     property.SetValue(instance, value, null);
                 }
             }

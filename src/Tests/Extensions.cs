@@ -79,6 +79,37 @@ namespace Tests
             return elements;
         }
 
+        public static bool IsJsonNullField(this XElement element, string name)
+        {
+            return element.IsJsonField(name, "null");
+        }
+
+        public static bool IsJsonObjectField(this XElement element, string name)
+        {
+            return element.IsJsonField(name, "object");
+        }
+
+        public static bool IsJsonStringField(this XElement element, string name)
+        {
+            return element.IsJsonField(name, "string");
+        }
+
+        public static bool IsJsonBooleanField(this XElement element, string name)
+        {
+            return element.IsJsonField(name, "boolean");
+        }
+
+        public static bool IsJsonNumberField(this XElement element, string name)
+        {
+            return element.IsJsonField(name, "number");
+        }
+
+        private static bool IsJsonField(this XElement element, string name, string type)
+        {
+            var child = element.Element(name);
+            return child.Attribute("type").Value == type;
+        }
+
         public static XElement JsonNullField(this XElement element, string name)
         {
             return element.JsonField(name, "null");

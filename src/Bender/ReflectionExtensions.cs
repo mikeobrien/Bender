@@ -59,7 +59,7 @@ namespace Bender
             switch (type.GetTypeCode(true))
             {
                 case TypeCode.String: return value;
-                case TypeCode.Char: if (value.Length == 1) return value.First(); throw new ParseException(parseErrorMesages[typeof(char)]);
+                case TypeCode.Char: if (value != null && value.Length == 1) return value.First(); throw new ParseException(parseErrorMesages[typeof(char)]);
                 case TypeCode.Boolean: return !returnDefault && Exceptions.Wrap(() => Boolean.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(bool)]));
                 case TypeCode.SByte: return returnDefault ? (sbyte)0 : Exceptions.Wrap(() => SByte.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(sbyte)]));
                 case TypeCode.Byte: return returnDefault ? (byte)0 : Exceptions.Wrap(() => Byte.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(byte)]));
@@ -75,7 +75,7 @@ namespace Bender
                 case TypeCode.DateTime: return returnDefault ? DateTime.MinValue : Exceptions.Wrap(() => DateTime.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(DateTime)]));
                 default:
                     if (type.IsTypeOrNullable<Guid>()) return returnDefault ? Guid.Empty : Exceptions.Wrap(() => Guid.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(Guid)]));
-                    if (type.IsTypeOrNullable<TimeSpan>()) return returnDefault ? TimeSpan.MinValue : Exceptions.Wrap(() => TimeSpan.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(TimeSpan)]));
+                    if (type.IsTypeOrNullable<TimeSpan>()) return returnDefault ? TimeSpan.Zero : Exceptions.Wrap(() => TimeSpan.Parse(value), x => new ParseException(x, parseErrorMesages[typeof(TimeSpan)]));
                     throw new InvalidOperationException("Could not parse type {0}.".ToFormat(type));
             }
         }
