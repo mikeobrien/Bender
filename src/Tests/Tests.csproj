@@ -71,6 +71,7 @@
     <Compile Include="ExpanderTests.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ExtensionTests.cs" />
+    <Compile Include="Serializer\Json\DictionaryTests.cs" />
     <Compile Include="Serializer\Json\ListTests.cs" />
     <Compile Include="Serializer\Json\PerformanceTests.cs" />
     <Compile Include="Serializer\Json\SaveTests.cs" />

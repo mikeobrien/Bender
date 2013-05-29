@@ -8,11 +8,13 @@ namespace Bender
 {
     public enum XmlValueNodeType { Attribute, Element }
     public enum Format { Xml, Json }
+    public enum DictionaryItemFormat { KeyValueStructure, NameValuePair }
 
     public class Options
     {
         public Options()
         {
+            DictionaryItemFormat = DictionaryItemFormat.NameValuePair;
             ExcludedTypes = new List<Func<Type, bool>>();
             XmlValueNodeType = XmlValueNodeType.Element;
             IgnoreUnmatchedXmlAttributes = true;
@@ -61,6 +63,7 @@ namespace Bender
         public List<Func<Type, bool>> ExcludedTypes { get; set; }
         public string GenericTypeXmlNameFormat { get; set; }
         public string GenericListXmlNameFormat { get; set; }
+        public DictionaryItemFormat DictionaryItemFormat { get; set; }
 
         // Deserialization specific
         public bool DefaultNonNullableTypesWhenEmpty { get; set; }

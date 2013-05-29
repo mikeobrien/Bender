@@ -1,0 +1,8 @@
+language: c
+ 
+install:
+  - sudo apt-get install mono-devel mono-gmcs nunit-console
+ 
+script:
+  - xbuild Bender.xbuild
+  - nunit-console ./src/Tests/bin/Debug/Tests.dll

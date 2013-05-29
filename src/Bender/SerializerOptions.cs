@@ -12,6 +12,12 @@ namespace Bender
             _options = options;
         }
 
+        public SerializerOptions WithDictionaryItemFormat(DictionaryItemFormat format)
+        {
+            _options.DictionaryItemFormat = format;
+            return this;
+        }
+
         public SerializerOptions PrettyPrintXml()
         {
             _options.PrettyPrintXml = true;

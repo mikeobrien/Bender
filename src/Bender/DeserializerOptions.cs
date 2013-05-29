@@ -11,6 +11,12 @@ namespace Bender
             _options = options;
         }
 
+        public DeserializerOptions WithDictionaryItemFormat(DictionaryItemFormat format)
+        {
+            _options.DictionaryItemFormat = format;
+            return this;
+        }
+
         public DeserializerOptions AddReader<T>(Func<ReaderContext, T> reader)
         {
             _options.AddReader(reader);
