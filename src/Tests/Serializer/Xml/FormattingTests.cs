@@ -16,7 +16,7 @@ namespace Tests.Serializer.Xml
         public void should_pretty_format()
         {
             var xml = Bender.Serializer.Create(x => x.PrettyPrintXml()).SerializeXml(new PrettyPrint { Value = "hai" });
-            xml.ShouldEqual("<PrettyPrint>" + Environment.NewLine + "<Value>hai</Value>" + Environment.NewLine + "</PrettyPrint>");
+            xml.ShouldEqual("<PrettyPrint>" + Environment.NewLine + "  <Value>hai</Value>" + Environment.NewLine + "</PrettyPrint>");
         }
 
         [Test]

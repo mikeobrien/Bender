@@ -40,7 +40,7 @@ namespace Tests.Serializer.Xml
                 .SerializeXml(new ComplexType { Value = 5 });
             
             #if __MonoCS__
-            // This output is ugly. Not sure how to make it use the existing namespace declaration.
+            // This looks right locally but not on travis-ci. Different version of mono maybe?
             xml.ShouldEqual("<ComplexType d1p1:Value=\"5\" xmlns:abc=\"http://abc.org\" xmlns:d1p1=\"http://abc.org\" />");
             #else 
             xml.ShouldEqual("<ComplexType abc:Value=\"5\" xmlns:abc=\"http://abc.org\" />");
