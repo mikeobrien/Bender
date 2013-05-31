@@ -24,7 +24,7 @@ namespace Tests.Serializer.Xml
         }
 
         [Test]
-        public void should_apply_default_namespace_to_element()
+        public void should_apply_namespace_to_element()
         {
             var xml = Bender.Serializer.Create(x => x.AddXmlNamespace("abc", "http://abc.org")
                 .AddWriter(y => y.Node.Name == "Value", y => y.Node.Name = y.Options.XmlNamespaces["abc"] + y.Node.Name.LocalName))
@@ -33,12 +33,18 @@ namespace Tests.Serializer.Xml
         }
 
         [Test]
-        public void should_apply_default_namespace_to_attribute()
+        public void should_apply_namespace_to_attribute()
         {
             var xml = Bender.Serializer.Create(x => x.AddXmlNamespace("abc", "http://abc.org").XmlValuesAsAttributes()
                 .AddWriter(y => y.Node.Name == "Value", y => y.Node.Name = y.Options.XmlNamespaces["abc"] + y.Node.Name.LocalName))
                 .SerializeXml(new ComplexType { Value = 5 });
+            
+            #if __MonoCS__
+            // This output is ugly. Not sure how to make it use the existing namespace declaration.
+            xml.ShouldEqual("<ComplexType d1p1:Value=\"5\" xmlns:abc=\"http://abc.org\" xmlns:d1p1=\"http://abc.org\" />");
+            #else 
             xml.ShouldEqual("<ComplexType abc:Value=\"5\" xmlns:abc=\"http://abc.org\" />");
+            #endif
         }
     }
 }

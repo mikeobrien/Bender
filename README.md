@@ -1,7 +1,5 @@
-Bender
+Bender [![Build Status](https://travis-ci.org/mikeobrien/Bender.png)](https://travis-ci.org/mikeobrien/Bender)
 =============
-
-[![Build Status](https://travis-ci.org/mikeobrien/Bender.png)](https://travis-ci.org/mikeobrien/Bender)
 
 Bender is a simple xml and json de/serialization library for .NET. Unlike the `JavaScriptSerializer`, `XmlSerializer` and `DataContractSerializer`, Bender gives you complete control over how values are de/serialized. Bender is ~%10 faster than the `XmlSerializer` and `JavaScriptSerializer`.
 

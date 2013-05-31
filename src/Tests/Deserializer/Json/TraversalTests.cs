@@ -18,17 +18,41 @@ namespace Tests.Deserializer.Json
         [Test]
         public void should_fail_when_xml_is_not_valid()
         {
-            Assert.Throws<SourceParseException>(() => Bender.Deserializer.Create().DeserializeJson<Graph>("{ \"sdfsdf\" }"))
-                .FriendlyMessage.ShouldEqual("Unable to parse json: The token ':' was expected but found '}'.");
-
-            Assert.Throws<SourceParseException>(() => Bender.Deserializer.Create().DeserializeJson<Graph>("{ \"sdfsdf\": }"))
-                .FriendlyMessage.ShouldEqual("Unable to parse json: Encountered unexpected character '}'.");
-
-            Assert.Throws<SourceParseException>(() => Bender.Deserializer.Create().DeserializeJson<Graph>("{ \"sdfsdf\": { }"))
-                .FriendlyMessage.ShouldEqual("Unable to parse json: Unexpected end of file. Following elements are not closed: sdfsdf, root.");
-
-            Assert.Throws<SourceParseException>(() => Bender.Deserializer.Create().DeserializeJson<Graph>("{ \"sdfsdf\": werwer }"))
-                .FriendlyMessage.ShouldEqual("Unable to parse json: Encountered unexpected character 'w'.");
+            var message = Assert.Throws<SourceParseException>(() => Bender.Deserializer.Create()
+                .DeserializeJson<Graph>("{ \"sdfsdf\" }")).FriendlyMessage;
+            
+            #if __MonoCS__
+            message.ShouldEqual("Unable to parse json: ':' is expected after a name of an object content (1,12)");
+            #else 
+            message.ShouldEqual("Unable to parse json: The token ':' was expected but found '}'.");
+            #endif
+            
+            message = Assert.Throws<SourceParseException>(() => Bender.Deserializer.Create()
+                .DeserializeJson<Graph>("{ \"sdfsdf\": }")).FriendlyMessage;
+            
+            #if __MonoCS__
+            message.ShouldEqual("Unable to parse json: Invalid end of object as an object content (1,13)");
+            #else 
+            message.ShouldEqual("Unable to parse json: Encountered unexpected character '}'.");
+            #endif
+            
+            message = Assert.Throws<SourceParseException>(() => Bender.Deserializer.Create()
+                .DeserializeJson<Graph>("{ \"sdfsdf\": { }")).FriendlyMessage;
+            
+            #if __MonoCS__
+            message.ShouldEqual("Unable to parse json: 1 missing end of arrays or objects (1,16)");
+            #else 
+            message.ShouldEqual("Unable to parse json: Unexpected end of file. Following elements are not closed: sdfsdf, root.");
+            #endif
+            
+            message = Assert.Throws<SourceParseException>(() => Bender.Deserializer.Create()
+                .DeserializeJson<Graph>("{ \"sdfsdf\": werwer }")).FriendlyMessage;
+            
+            #if __MonoCS__
+            message.ShouldEqual("Unable to parse json: Unexpected token: 'w' (0077) (1,13)");
+            #else 
+            message.ShouldEqual("Unable to parse json: Encountered unexpected character 'w'.");
+            #endif
         }
 
         [Test]

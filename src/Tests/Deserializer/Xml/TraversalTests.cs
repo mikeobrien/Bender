@@ -18,15 +18,27 @@ namespace Tests.Deserializer.Xml
         [Test]
         public void should_fail_when_xml_is_not_valid()
         {
-            Assert.Throws<SourceParseException>(() => Bender.Deserializer.Create().DeserializeXml<Graph>("<yada><sdfsdf></yada>"))
-                .FriendlyMessage.ShouldEqual("Unable to parse xml: The 'sdfsdf' start tag on line 1 position 8 does not match the end tag of 'yada'. Line 1, position 17.");
+            var message = Assert.Throws<SourceParseException>(() => Bender.Deserializer.Create()
+                .DeserializeXml<Graph>("<yada><sdfsdf></yada>")).FriendlyMessage;
+            
+            #if __MonoCS__
+            message.ShouldEqual("Unable to parse xml: 'sdfsdf' is expected  Line 1, position 18.");
+            #else 
+            message.ShouldEqual("Unable to parse xml: The 'sdfsdf' start tag on line 1 position 8 does not match the end tag of 'yada'. Line 1, position 17.");
+            #endif
         }
 
         [Test]
         public void should_fail_when_there_are_multiple_root_elements()
         {
-            Assert.Throws<SourceParseException>(() => Bender.Deserializer.Create().DeserializeXml<Graph>("<oh></oh><hai></hai>"))
-                .FriendlyMessage.ShouldEqual("Unable to parse xml: There are multiple root elements. Line 1, position 11.");
+            var message = Assert.Throws<SourceParseException>(() => Bender.Deserializer.Create()
+                .DeserializeXml<Graph>("<oh></oh><hai></hai>")).FriendlyMessage;
+            
+            #if __MonoCS__
+            message.ShouldEqual("Unable to parse xml: Multiple document element was detected.  Line 1, position 11.");
+            #else 
+            message.ShouldEqual("Unable to parse xml: There are multiple root elements. Line 1, position 11.");
+            #endif
         }
 
         [Test]
