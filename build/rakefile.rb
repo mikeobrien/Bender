@@ -1,4 +1,4 @@
-require "albacore"
+require "albacore" 
 require_relative "filesystem"
 require_relative "gallio-task"
 
