@@ -52,7 +52,7 @@ var serializer = Serializer.Create(x => x
     .AddWriter<byte[]>(x => { if (x.Value != null) x.Node.Value = Convert.ToBase64String(x.Value); });
 
 var deserializer = Deserializer.Create(x => x
-    .AddReader(x => Convert.FromBase64String(x.Node.Value));
+    .AddReader<byte[]>(x => Convert.FromBase64String(x.Node.Value));
 ```
 
 Both readers and writers are passed a context that contains the current `Options`, `PropertyInfo`, source/target value and `ValueNode`. Here you can fully control the reading and rendering of the node. The `Value` property gives you access to the source or target property value. The `Node` property gives you generic `Name` and `Value` access to xml attributes, xml elements and json fields. You can use the `NodeType` property to determine the exact type of node and then access it directly via the `XmlAttribute`, `XmlElement` and `JsonField` properties if you need work with node specific properties. In most cases though you will just return or set the `Value` of the node, as demonstrated above. 
