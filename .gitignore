@@ -10,6 +10,8 @@ aspnet_client
 *.userprefs
 *.pidb
 .DS_Store
+node_modules
+Thumbs.db
 
 # Nuget sources
 src/packages/*/src/*
