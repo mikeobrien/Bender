@@ -15,6 +15,9 @@
       <summary>Xml and json serializer for .NET and Mono.</summary>
       <iconUrl>https://github.com/mikeobrien/Bender/raw/master/misc/logo.png</iconUrl>
       <tags>xml json serialization deserialization deserializer serializer</tags>
+      <dependencies>
+         <dependency id="flexo" version="1.0.0" />
+      </dependencies>
    </metadata>
    <files>
       <file src="src\Bender\bin\Release\Bender.*" target="lib" />

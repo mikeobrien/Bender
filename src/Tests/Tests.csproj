@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8472478F-EE7E-480C-9886-517375569BB5}</ProjectGuid>
+    <ProjectGuid>{4DC6BF27-4E72-48F0-AE1D-4E89D5D513C6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Tests</RootNamespace>
@@ -12,8 +12,6 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <ProductVersion>12.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,19 +31,45 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NSubstitute">
-      <HintPath>..\packages\NSubstitute.1.4.3.0\lib\NET40\NSubstitute.dll</HintPath>
+    <Reference Include="Bender2">
+      <HintPath>lib\Bender2.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+    <Reference Include="fastjson">
+      <HintPath>..\packages\fastJSON.2.0.27.1\lib\net40\fastjson.dll</HintPath>
     </Reference>
-    <Reference Include="Should">
-      <HintPath>..\packages\Should.1.1.12.0\lib\Should.dll</HintPath>
+    <Reference Include="Flexo, Version=1.0.18.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\flexo.1.0.18.0\lib\Flexo.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NSubstitute, Version=1.7.1.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NSubstitute.1.7.1.0\lib\NET40\NSubstitute.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\packages\ServiceStack.Text.4.0.12\lib\net40\ServiceStack.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="Should, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Should.1.1.20\lib\Should.dll</HintPath>
+    </Reference>
+    <Reference Include="StructureMap">
+      <HintPath>..\packages\structuremap.2.6.4.1\lib\net40\StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,56 +77,127 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Deserializer\Xml\LoadTests.cs" />
-    <Compile Include="Deserializer\Json\LoadTests.cs" />
-    <Compile Include="Deserializer\Json\ListTests.cs" />
-    <Compile Include="Deserializer\Json\MappingTests.cs" />
-    <Compile Include="Deserializer\Json\ParameterizedCtorTests.cs" />
-    <Compile Include="Deserializer\Json\PerformanceTests.cs" />
+    <Compile Include="Collections\ArrayAdapterTests.cs" />
+    <Compile Include="Collections\Implementations\DictionaryImpl.cs" />
+    <Compile Include="Collections\Implementations\CollectionImpl.cs" />
+    <Compile Include="Collections\Implementations\EnumerableImpl.cs" />
+    <Compile Include="Collections\GenericListAdapterTests.cs" />
+    <Compile Include="Collections\GenericDictionaryAdapterTests.cs" />
+    <Compile Include="Collections\Implementations\GenericStringCollectionImpl.cs" />
+    <Compile Include="Collections\Implementations\GenericStringEnumerableImpl.cs" />
+    <Compile Include="Collections\Implementations\GenericStringListImpl.cs" />
+    <Compile Include="Collections\Implementations\GenericStringDictionaryImpl.cs" />
+    <Compile Include="Collections\Implementations\GenericEnumerableImpl.cs" />
+    <Compile Include="Collections\Implementations\GenericListImpl.cs" />
+    <Compile Include="Collections\Implementations\ListImpl.cs" />
+    <Compile Include="Deserializer\Json\VisitorTests.cs" />
     <Compile Include="Deserializer\Json\ReaderTests.cs" />
-    <Compile Include="Deserializer\Json\SimpleTypeTests.cs" />
-    <Compile Include="Deserializer\Json\TraversalTests.cs" />
-    <Compile Include="Deserializer\Json\XmlAttributeTests.cs" />
+    <Compile Include="Deserializer\Json\LoadTests.cs" />
+    <Compile Include="Deserializer\Json\DictionaryTests.cs" />
+    <Compile Include="Deserializer\Json\ArrayTests.cs" />
+    <Compile Include="Deserializer\Json\DependencyInjectionTests.cs" />
+    <Compile Include="Deserializer\Json\RootTypeTests.cs" />
+    <Compile Include="Deserializer\Xml\ArrayTests.cs" />
+    <Compile Include="Deserializer\Xml\DependencyInjectionTests.cs" />
+    <Compile Include="Deserializer\Xml\DictionaryTests.cs" />
+    <Compile Include="Deserializer\Xml\LoadTests.cs" />
+    <Compile Include="Deserializer\Xml\ObjectTests.cs" />
     <Compile Include="Deserializer\Xml\ReaderTests.cs" />
-    <Compile Include="Deserializer\Xml\ParameterizedCtorTests.cs" />
-    <Compile Include="Deserializer\Xml\MappingTests.cs" />
-    <Compile Include="Deserializer\Xml\XmlAttributeTests.cs" />
-    <Compile Include="Deserializer\Xml\PerformanceTests.cs" />
-    <Compile Include="Deserializer\Xml\ListTests.cs" />
-    <Compile Include="Deserializer\Xml\SimpleTypeTests.cs" />
-    <Compile Include="Deserializer\Xml\TraversalTests.cs" />
-    <Compile Include="ExpanderTests.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="ExtensionTests.cs" />
+    <Compile Include="Deserializer\Xml\RootTypeTests.cs" />
+    <Compile Include="Deserializer\Xml\VisitorTests.cs" />
+    <Compile Include="Extensions\FuncExtensionTests.cs" />
+    <Compile Include="Extensions\LinqExtensionTests.cs" />
+    <Compile Include="Collections\Implementations\GenericDictionaryImpl.cs" />
+    <Compile Include="Extensions\DateTimeExtensionTests.cs" />
+    <Compile Include="Nodes\ExceptionTests.cs" />
+    <Compile Include="Nodes\Object\ExceptionTests.cs" />
+    <Compile Include="Performance\Profiling.cs" />
+    <Compile Include="TestExtensions.cs" />
+    <Compile Include="Reflection\CachedMemberTests.cs" />
+    <Compile Include="Reflection\CachedTypeTests.cs" />
+    <Compile Include="Reflection\TypeExtensionTests.cs" />
+    <Compile Include="Reflection\MemberExtensionTests.cs" />
+    <Compile Include="Extensions\StringExtensionTests.cs" />
+    <Compile Include="Extensions\XmlExtensionTests.cs" />
+    <Compile Include="Reflection\CollectionExtensionTests.cs" />
+    <Compile Include="NamingConventions\DefaultFieldConventionTests.cs" />
+    <Compile Include="NamingConventions\ArrayItemConventionsTests.cs" />
+    <Compile Include="NamingConventions\NamingConventionsTests.cs" />
+    <Compile Include="NamingConventions\TypeConventionsTests.cs" />
+    <Compile Include="NamingConventions\FieldConventionsTests.cs" />
+    <Compile Include="NamingConventions\PropertyConventionsTests.cs" />
+    <Compile Include="NamingConventions\DefaultTypeConventionTests.cs" />
+    <Compile Include="NamingConventions\DefaultArrayItemConventionTests.cs" />
+    <Compile Include="Deserializer\Json\ObjectTests.cs" />
+    <Compile Include="Nodes\MetadataTests.cs" />
+    <Compile Include="Nodes\NodeMapperTests.cs" />
+    <Compile Include="Nodes\MapConventionsTests.cs" />
+    <Compile Include="Nodes\INodeExtensionTests.cs" />
+    <Compile Include="Nodes\NodeBaseTests.cs" />
+    <Compile Include="Nodes\Object\NodeFactory\Deserializable\NodeTests.cs" />
+    <Compile Include="Nodes\Object\NodeFactory\Deserializable\RootNodeTests.cs" />
+    <Compile Include="Nodes\Object\NodeFactory\Serializable\NodeTests.cs" />
+    <Compile Include="Nodes\Object\NodeFactory\Serializable\RootNodeTests.cs" />
+    <Compile Include="Nodes\Object\DictionaryNodeTests.cs" />
+    <Compile Include="Nodes\Object\ObjectFactoryTests.cs" />
+    <Compile Include="Nodes\Object\ObjectNodeBaseTests.cs" />
+    <Compile Include="Nodes\Object\WriterConventionTests.cs" />
+    <Compile Include="Nodes\Object\ReaderConventionTests.cs" />
+    <Compile Include="Nodes\Object\Values\MemberValueTests.cs" />
+    <Compile Include="Nodes\Object\Values\LazyValueTests.cs" />
+    <Compile Include="Nodes\Object\Values\SimpleValueTests.cs" />
+    <Compile Include="Nodes\Object\Values\ValueFactoryTests.cs" />
+    <Compile Include="Nodes\VisitConventionsTests.cs" />
+    <Compile Include="Nodes\Xml\AttributeNodeTests.cs" />
+    <Compile Include="Performance\BenchmarkChart.cs" />
+    <Compile Include="Performance\Benchmarks.cs" />
+    <Compile Include="Performance\BenchmarkSerializer.cs" />
+    <Compile Include="Performance\Model.cs" />
+    <Compile Include="Performance\Extensions.cs" />
+    <Compile Include="Serializer\Json\ArrayTests.cs" />
     <Compile Include="Serializer\Json\DictionaryTests.cs" />
-    <Compile Include="Serializer\Json\ListTests.cs" />
-    <Compile Include="Serializer\Json\PerformanceTests.cs" />
-    <Compile Include="Serializer\Json\SaveTests.cs" />
-    <Compile Include="Serializer\Json\SimpleTypeTests.cs" />
-    <Compile Include="Serializer\Json\TraversalTests.cs" />
+    <Compile Include="Serializer\Json\ObjectTests.cs" />
+    <Compile Include="Serializer\Json\VisitorTests.cs" />
     <Compile Include="Serializer\Json\WriterTests.cs" />
-    <Compile Include="Serializer\Json\XmlAttributeTests.cs" />
+    <Compile Include="Serializer\Json\RootTypeTests.cs" />
+    <Compile Include="Serializer\Json\SaveTests.cs" />
+    <Compile Include="Serializer\Xml\ArrayTests.cs" />
+    <Compile Include="Serializer\Xml\DictionaryTests.cs" />
+    <Compile Include="Serializer\Xml\ObjectTests.cs" />
+    <Compile Include="Serializer\Xml\RootTypeTests.cs" />
     <Compile Include="Serializer\Xml\SaveTests.cs" />
-    <Compile Include="Serializer\Xml\NamespaceTests.cs" />
-    <Compile Include="Serializer\Xml\FormattingTests.cs" />
-    <Compile Include="Serializer\Xml\TraversalTests.cs" />
-    <Compile Include="Serializer\Xml\ListTests.cs" />
-    <Compile Include="Serializer\Xml\XmlAttributeTests.cs" />
-    <Compile Include="Serializer\Xml\SimpleTypeTests.cs" />
-    <Compile Include="Serializer\Xml\PerformanceTests.cs" />
+    <Compile Include="Serializer\Xml\VisitorTests.cs" />
     <Compile Include="Serializer\Xml\WriterTests.cs" />
+    <Compile Include="Serializer\Xml\Xml.cs" />
+    <Compile Include="TestCases.cs" />
+    <Compile Include="Nodes\Object\ValueNodeTests.cs" />
+    <Compile Include="Nodes\Object\EnumerableNodeTests.cs" />
+    <Compile Include="Performance\PerformanceTests.cs" />
+    <Compile Include="Nodes\JsonNodeTests.cs" />
+    <Compile Include="Nodes\Object\ObjectNodeTests.cs" />
+    <Compile Include="Nodes\Xml\ElementNodeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="NamingConventions\DefaultPropertyConventionTests.cs" />
+    <Compile Include="ShouldExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="Performance\model.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Bender\Bender.csproj">
-      <Project>{0B29DF08-C73D-43ED-9B82-BC4AAC922A53}</Project>
+      <Project>{17a00ce7-0601-469b-a923-e3be99516126}</Project>
       <Name>Bender</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Content Include="Performance\model.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

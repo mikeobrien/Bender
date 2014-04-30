@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0B29DF08-C73D-43ED-9B82-BC4AAC922A53}</ProjectGuid>
+    <ProjectGuid>{17A00CE7-0601-469B-A923-E3BE99516126}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Bender</RootNamespace>
@@ -12,8 +12,6 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <ProductVersion>12.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,9 +31,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Flexo, Version=1.0.18.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\flexo.1.0.18.0\lib\Flexo.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,24 +46,86 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Deserialize.cs" />
-    <Compile Include="DeserializeExceptions.cs" />
-    <Compile Include="DeserializerOptions.cs" />
-    <Compile Include="Expander.cs" />
-    <Compile Include="JsonField.cs" />
-    <Compile Include="LinkedNode.cs" />
-    <Compile Include="ReaderContext.cs" />
-    <Compile Include="Serialize.cs" />
-    <Compile Include="ValueNode.cs" />
-    <Compile Include="Options.cs" />
-    <Compile Include="Deserializer.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="ReflectionExtensions.cs" />
+    <Compile Include="BenderException.cs" />
+    <Compile Include="Collections\ArrayAdapter.cs" />
+    <Compile Include="Collections\GenericListAdapter.cs" />
+    <Compile Include="Collections\GenericDictionaryAdapter.cs" />
+    <Compile Include="Configuration\SerializationOptions.cs" />
+    <Compile Include="Configuration\DeserializationOptions.cs" />
+    <Compile Include="Configuration\OptionsDsl.cs" />
+    <Compile Include="Deserialize.Xml.cs" />
+    <Compile Include="Deserialize.Json.cs" />
+    <Compile Include="Deserializer.Xml.cs" />
+    <Compile Include="Deserializer.Json.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Nodes\Object\Exceptions.cs" />
+    <Compile Include="Reflection\TypeExtensions.cs" />
+    <Compile Include="Reflection\MemberExtensions.cs" />
+    <Compile Include="Reflection\CollectionExtensions.cs" />
+    <Compile Include="Extensions\StreamExtensions.cs" />
+    <Compile Include="NamingConventions\EnumContext.cs" />
+    <Compile Include="NamingConventions\ArrayItemContext.cs" />
+    <Compile Include="NamingConventions\EnumConventions.cs" />
+    <Compile Include="NamingConventions\MemberContext.cs" />
+    <Compile Include="NamingConventions\ArrayItemConventions.cs" />
+    <Compile Include="NamingConventions\TypeContext.cs" />
+    <Compile Include="NamingConventions\TypeConventions.cs" />
+    <Compile Include="Deserialize.Node.cs" />
+    <Compile Include="Configuration\DeserializerOptionsDsl.cs" />
+    <Compile Include="Nodes\Metadata.cs" />
+    <Compile Include="Nodes\Node.cs" />
+    <Compile Include="Nodes\NodeMapper.cs" />
+    <Compile Include="Nodes\Object\MemberDefinition.cs" />
+    <Compile Include="Nodes\Mode.cs" />
+    <Compile Include="Nodes\Object\Context.cs" />
+    <Compile Include="Nodes\Object\ObjectFactory.cs" />
+    <Compile Include="Nodes\Object\NodeFactory.cs" />
+    <Compile Include="Nodes\Object\ObjectNode.cs" />
+    <Compile Include="Nodes\Object\Values\IValue.cs" />
+    <Compile Include="Nodes\Object\Values\LazyValue.cs" />
+    <Compile Include="Nodes\Object\Values\MemberValue.cs" />
+    <Compile Include="Nodes\Object\Values\SimpleValue.cs" />
+    <Compile Include="Nodes\Object\DictionaryNode.cs" />
+    <Compile Include="Nodes\Object\EnumerableNode.cs" />
+    <Compile Include="Nodes\Object\ObjectNodeBase.cs" />
+    <Compile Include="Nodes\Object\ValueNode.cs" />
+    <Compile Include="Nodes\Object\Values\ValueFactory.cs" />
+    <Compile Include="Nodes\Object\WriterConventions.cs" />
+    <Compile Include="Nodes\MapConventions.cs" />
+    <Compile Include="Nodes\Object\ReaderConventions.cs" />
+    <Compile Include="Nodes\Xml\AttributeNode.cs" />
+    <Compile Include="Nodes\Xml\XmlNodeBase.cs" />
+    <Compile Include="ParseException.cs" />
+    <Compile Include="Reflection\CachedMember.cs" />
+    <Compile Include="Reflection\CachedType.cs" />
+    <Compile Include="Reflection\TypeCache.cs" />
+    <Compile Include="Serialize.Json.cs" />
+    <Compile Include="Serialize.Xml.cs" />
+    <Compile Include="Serializer.Json.cs" />
+    <Compile Include="Serializer.Xml.cs" />
+    <Compile Include="Extensions\Exception.cs" />
+    <Compile Include="Extensions\FuncExtensions.cs" />
+    <Compile Include="Nodes\Xml\XmlExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Collections\LinqExtensions.cs" />
+    <Compile Include="NamingConventions\MemberConventions.cs" />
+    <Compile Include="NamingConventions\NamingConventions.cs" />
+    <Compile Include="Nodes\Exceptions.cs" />
+    <Compile Include="Nodes\NodeBase.cs" />
+    <Compile Include="Nodes\INodeExtensions.cs" />
+    <Compile Include="Configuration\Options.cs" />
+    <Compile Include="Serialize.Node.cs" />
     <Compile Include="Serializer.cs" />
+    <Compile Include="Deserializer.cs" />
+    <Compile Include="Nodes\INode.cs" />
+    <Compile Include="Nodes\JsonNode.cs" />
+    <Compile Include="Nodes\Xml\ElementNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SerializerOptions.cs" />
-    <Compile Include="WriterContext.cs" />
-    <Compile Include="XmlExtensions.cs" />
+    <Compile Include="Configuration\SerializerOptionsDsl.cs" />
+    <Compile Include="Nodes\VisitConventions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

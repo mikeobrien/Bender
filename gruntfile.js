@@ -23,6 +23,7 @@ module.exports = function(grunt) {
             options: {
                 projectConfiguration: 'Release',
                 targets: ['Clean', 'Rebuild'],
+                version: 4.0,
                 stdout: true
             }
         },

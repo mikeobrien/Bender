@@ -1,0 +1,76 @@
+{
+    "City": "%1",
+    "Country": "%2",
+	"Father": 
+		{    
+			"City": "%3",
+			"Country": "%4",
+			"FirstName": "%5",
+			"LastName": "%6",
+			"MiddleName": "%7",
+			"Occupation": "%8",
+			"Phone": "%9",
+			"State": "%10",
+			"Street": "%11",
+			"Zip": "%12"
+		},
+    "FirstName": "%13",
+	"Friends": [
+		{    
+			"City": "%14",
+			"Country": "%15",
+			"FirstName": "%16",
+			"LastName": "%17",
+			"MiddleName": "%18",
+			"Occupation": "%19",
+			"Phone": "%20",
+			"State": "%21",
+			"Street": "%22",
+			"Zip": "%23"
+		},
+		{    
+			"City": "%24",
+			"Country": "%25",
+			"FirstName": "%26",
+			"LastName": "%27",
+			"MiddleName": "%28",
+			"Occupation": "%29",
+			"Phone": "%30",
+			"State": "%31",
+			"Street": "%32",
+			"Zip": "%33"
+		},
+		{    
+			"City": "%34",
+			"Country": "%35",
+			"FirstName": "%36",
+			"LastName": "%37",
+			"MiddleName": "%38",
+			"Occupation": "%39",
+			"Phone": "%40",
+			"State": "%41",
+			"Street": "%42",
+			"Zip": "%43"
+		}
+	],
+    "LastName": "%44",
+    "MiddleName": "%45",
+	"Mother": 
+		{    
+			"City": "%46",
+			"Country": "%47",
+			"FirstName": "%48",
+			"LastName": "%49",
+			"MiddleName": "%50",
+			"Occupation": "%51",
+			"Phone": "%52",
+			"State": "%53",
+			"Street": "%54",
+			"Zip": "%55"
+		},
+    "Occupation": "%56",
+    "Phone": "%57",
+    "State": "%58",
+    "Street": "%59",
+    "Zip": "%60"
+}

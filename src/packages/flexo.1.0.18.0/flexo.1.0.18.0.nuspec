@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>flexo</id>
+    <version>1.0.18.0</version>
+    <title>Flexo</title>
+    <authors>Mike O'Brien</authors>
+    <owners>Mike O'Brien</owners>
+    <licenseUrl>https://github.com/mikeobrien/Flexo/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/mikeobrien/Flexo</projectUrl>
+    <iconUrl>https://github.com/mikeobrien/Flexo/raw/master/misc/logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Simple JSON parser/encoder for .NET and Mono.</description>
+    <summary>Simple JSON parser/encoder for .NET and Mono.</summary>
+    <releaseNotes />
+    <copyright />
+    <language>en-US</language>
+    <tags>json</tags>
+  </metadata>
+</package>

@@ -1,162 +1,209 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization.Json;
 using System.Text;
-using System.Xml.Linq;
-using System.Xml.Serialization;
+using Bender.Configuration;
+using Bender.Extensions;
+using Bender.Nodes;
+using Bender.Nodes.Object;
+using Bender.Reflection;
+using NodeBase = Bender.Nodes.Object.ObjectNodeBase;
 
 namespace Bender
 {
-    public class Serializer
+    public partial class Serializer
     {
         private readonly Options _options;
-        private readonly SaveOptions _saveOptions;
 
         public Serializer(Options options)
         {
             _options = options;
-            _saveOptions = _options.PrettyPrintXml ? SaveOptions.None : SaveOptions.DisableFormatting;
         }
 
-        public static Serializer Create(Action<SerializerOptions> configure = null)
+        public static Serializer Create(Options options)
         {
-            var options = new Options();
-            if (configure != null) configure(new SerializerOptions(options));
             return new Serializer(options);
         }
 
-        public Stream SerializeJson(object @object, Stream stream)
+        public static Serializer Create(Action<OptionsDsl> configure = null)
         {
-            var writer = JsonReaderWriterFactory.CreateJsonWriter(stream, Encoding.UTF8);
-            SerializeXmlAsDocument(@object, Format.Json).Save(writer);
-            writer.Flush();
-            return stream;
+            return new Serializer(Options.Create(configure));
         }
 
-        public void SerializeJson(object @object, string path)
+        // String
+
+        public string SerializeString<T>(T source, INode target)
         {
-            using (var stream = File.Create(path)) SerializeJson(@object, stream);
+            return SerializeString(source, typeof(T), target);
         }
 
-        public string SerializeJson(object @object)
+        public string SerializeString<T>(T source, Func<INode, Options, INode> targetFactory, string format)
         {
-            using (var stream = new MemoryStream())
-            {
-                SerializeJson(@object, stream).Position = 0;
-                return new StreamReader(stream).ReadToEnd();
-            }
+            return SerializeString(source, typeof(T), targetFactory, format);
         }
 
-        public Stream SerializeXml(object @object, Stream stream)
+        public string SerializeString(object source, INode target)
         {
-            SerializeXmlAsDocument(@object).Save(stream, _saveOptions);
-            return stream;
+            return SerializeString(source, source.GetType(), target);
         }
 
-        public void SerializeXml(object @object, string path)
+        public string SerializeString(object source, Func<INode, Options, INode> targetFactory, string format)
         {
-            SerializeXmlAsDocument(@object).Save(path, _saveOptions);
+            return SerializeString(source, source.GetType(), targetFactory, format);
         }
 
-        public string SerializeXml(object @object)
+        public string SerializeString(object @object, Type type, INode target)
         {
-            return SerializeXmlAsDocument(@object).ToString(_saveOptions);
+            return SerializeNodes(@object, type, target)
+                .Encode(pretty: _options.Serialization.PrettyPrint).ReadToEnd();
         }
 
-        public XDocument SerializeXmlAsDocument(object source)
+        public string SerializeString(object @object, Type type, Func<INode, Options, INode> targetFactory, string format)
         {
-            return SerializeXmlAsDocument(source, Format.Xml);
+            return SerializeNodes(@object, type, targetFactory, format)
+                .Encode(pretty: _options.Serialization.PrettyPrint).ReadToEnd();
         }
 
-        private XDocument SerializeXmlAsDocument(object source, Format format)
+        // Bytes
+
+        public byte[] SerializeBytes<T>(T source, INode target, Encoding encoding = null)
         {
-            if (source == null) throw new ArgumentNullException("source", "Cannot serialize a null reference.");
-            return new XDocument(Traverse(format, source, LinkedNode<object>.Create(source)));
+            return SerializeBytes(source, typeof(T), target, encoding);
         }
 
-        private XObject Traverse(Format format, object source, LinkedNode<object> ancestors, PropertyInfo sourceProperty = null, Type itemType = null)
+        public byte[] SerializeBytes<T>(T source, Func<INode, Options, INode> targetFactory, string format, Encoding encoding = null)
         {
-            var type = itemType ?? (sourceProperty == null ? source.GetType() : sourceProperty.PropertyType);
-
-            var name = format == Format.Xml ? GetXmlNodeName(type, ancestors, sourceProperty, itemType) :
-                GetJsonNodeName(ancestors, sourceProperty, itemType);
-
-            Func<object, XElement> createElement = x => new XElement(_options.DefaultNamespace == null || format == Format.Json ?
-                name : _options.DefaultNamespace + name, x, format == Format.Json ? new XAttribute("type", "object") : null);
-
-            Func<string, XObject> createValueNode = x => _options.XmlValueNodeType == XmlValueNodeType.Attribute || 
-               (sourceProperty != null && sourceProperty.HasCustomAttribute<XmlAttributeAttribute>()) ?
-                new XAttribute(name, x ?? "") : (XObject)createElement(x);
-
-            XObject node;
-            ValueNode valueNode = null;
-
-            if (_options.ValueWriters.ContainsKey(type))
-            {
-                node = createValueNode(null);
-                valueNode = new ValueNode(node, format);
-                if (format == Format.Json) valueNode.JsonField.DataType = source.ToJsonValueType();
-                _options.ValueWriters[type](new WriterContext(_options, sourceProperty, source, valueNode));
-            }
-            else if (type.IsSimpleType())
-            {
-                node = source == null ? createValueNode(null) : createValueNode(source.ToString());
-                valueNode = new ValueNode(node, format);
-                if (format == Format.Json) valueNode.JsonField.DataType = source.ToJsonValueType();
-            }
-            else if (source == null)
-            {
-                node = createElement(null);
-                valueNode = new ValueNode(node, format);
-                if (format == Format.Json) valueNode.JsonField.DataType = JsonDataType.Null;
-            }
-            else if (type.IsEnumerable())
-            {
-                var listItemType = type.GetGenericEnumerableType();
-                node = createElement(null).WithChildren(source.AsEnumerable().Select(x =>
-                    Traverse(format, x, ancestors.Add(source), sourceProperty, listItemType ?? x.GetType())));
-                valueNode = new ValueNode(node, format);
-                if (format == Format.Json) valueNode.JsonField.DataType = JsonDataType.Array;
-            }
-            else
-            {
-                node = createElement(null);
-                var properties = type.GetSerializableProperties(_options.ExcludedTypes); 
-            
-                foreach (var property in properties.Where(x => !x.IsIgnored()))
-                {
-                    var propertyValue = property.GetValue(source, null);
-                    if ((propertyValue == null && _options.ExcludeNullValues) || ancestors.Any(propertyValue)) continue;
-                    ((XElement)node).Add(Traverse(format, propertyValue, ancestors.Add(propertyValue), property));
-                }
-            }
-
-            valueNode = valueNode ?? new ValueNode(node, format);
-            
-            AddNamespaces(format, ancestors, valueNode);
-
-            _options.NodeWriters.ForEach(x => x(new WriterContext(_options, sourceProperty, source, valueNode)));
-
-            return valueNode.Object;
+            return SerializeBytes(source, typeof(T), targetFactory, format, encoding);
         }
 
-        private void AddNamespaces(Format format, LinkedNode<object> ancestors, ValueNode valueNode)
+        public byte[] SerializeBytes(object source, INode target, Encoding encoding = null)
         {
-            if (format == Format.Xml && !ancestors.Any()) _options.XmlNamespaces.ForEach(x => 
-                valueNode.XmlElement.Add(new XAttribute(XNamespace.Xmlns + x.Key, x.Value)));
+            return SerializeBytes(source, source.GetType(), target, encoding);
         }
 
-        private static string GetJsonNodeName(LinkedNode<object> ancestors, PropertyInfo sourceProperty, Type itemType)
+        public byte[] SerializeBytes(object source, Func<INode, Options, INode> targetFactory, string format, Encoding encoding = null)
         {
-            return !ancestors.Any() ? "root" : (itemType != null ? "item" : sourceProperty.GetXmlName());
+            return SerializeBytes(source, source.GetType(), targetFactory, format, encoding);
         }
 
-        private string GetXmlNodeName(Type type, LinkedNode<object> ancestors, PropertyInfo sourceProperty, Type itemType)
+        public byte[] SerializeBytes(object @object, Type type, INode target, Encoding encoding = null)
         {
-            return sourceProperty != null && itemType == null ? sourceProperty.GetXmlName() :
-                (sourceProperty.GetXmlArrayItemName() ?? type.GetXmlName(_options.GenericTypeXmlNameFormat, _options.GenericListXmlNameFormat, !ancestors.Any()));
+            return SerializeNodes(@object, type, target)
+                .Encode(encoding ?? Encoding.UTF8, _options.Serialization.PrettyPrint).ReadAllBytes();
+        }
+
+        public byte[] SerializeBytes(object @object, Type type, Func<INode, Options, INode> targetFactory, string format, Encoding encoding = null)
+        {
+            return SerializeNodes(@object, type, targetFactory, format)
+                .Encode(encoding ?? Encoding.UTF8, _options.Serialization.PrettyPrint).ReadAllBytes();
+        }
+
+        // Return Stream
+
+        public Stream SerializeStream<T>(T source, INode target, Encoding encoding = null)
+        {
+            return SerializeStream(source, typeof(T), target, encoding);
+        }
+
+        public Stream SerializeStream<T>(T source, Func<INode, Options, INode> targetFactory, string format, Encoding encoding = null)
+        {
+            return SerializeStream(source, typeof(T), targetFactory, format, encoding);
+        }
+
+        public Stream SerializeStream(object source, INode target, Encoding encoding = null)
+        {
+            return SerializeStream(source, source.GetType(), target, encoding);
+        }
+
+        public Stream SerializeStream(object source, Func<INode, Options, INode> targetFactory, string format, Encoding encoding = null)
+        {
+            return SerializeStream(source, source.GetType(), targetFactory, format, encoding);
+        }
+
+        public Stream SerializeStream(object @object, Type type, INode target, Encoding encoding = null)
+        {
+            return SerializeNodes(@object, type, target)
+                .Encode(encoding ?? Encoding.UTF8, _options.Serialization.PrettyPrint);
+        }
+
+        public Stream SerializeStream(object @object, Type type, Func<INode, Options, INode> targetFactory, string format, Encoding encoding = null)
+        {
+            return SerializeNodes(@object, type, targetFactory, format)
+                .Encode(encoding ?? Encoding.UTF8, _options.Serialization.PrettyPrint);
+        }
+
+        // To Stream
+
+        public void SerializeStream<T>(T source, INode target, Stream stream, Encoding encoding = null)
+        {
+            SerializeStream(source, typeof(T), target, stream, encoding);
+        }
+
+        public void SerializeStream<T>(T source, Func<INode, Options, INode> targetFactory, string format, Stream stream, Encoding encoding = null)
+        {
+            SerializeStream(source, typeof(T), targetFactory, format, stream, encoding);
+        }
+
+        public void SerializeStream(object source, INode target, Stream stream, Encoding encoding = null)
+        {
+            SerializeStream(source, source.GetType(), target, stream, encoding);
+        }
+
+        public void SerializeStream(object source, Func<INode, Options, INode> targetFactory, string format, Stream stream, Encoding encoding = null)
+        {
+            SerializeStream(source, source.GetType(), targetFactory, format, stream, encoding);
+        }
+
+        public void SerializeStream(object @object, Type type, INode target, Stream stream, Encoding encoding = null)
+        {
+            SerializeNodes(@object, type, target)
+                .Encode(stream, encoding ?? Encoding.UTF8, _options.Serialization.PrettyPrint);
+        }
+
+        public void SerializeStream(object @object, Type type, Func<INode, Options, INode> targetFactory, string format, Stream stream, Encoding encoding = null)
+        {
+            SerializeNodes(@object, type, targetFactory, format)
+                .Encode(stream, encoding ?? Encoding.UTF8, _options.Serialization.PrettyPrint);
+        }
+
+        // Nodes
+
+        public INode SerializeNodes<T>(T @object, INode target)
+        {
+            return SerializeNodes(@object, typeof(T), (s, o) => target, target.Format);
+        }
+
+        public INode SerializeNodes<T>(T @object, Func<INode, Options, INode> targetFactory, string format)
+        {
+            return SerializeNodes(@object, typeof(T), targetFactory, format);
+        }
+
+        public INode SerializeNodes(object @object, INode target)
+        {
+            return SerializeNodes(@object, @object.GetType(), (s, o) => target, target.Format);
+        }
+
+        public INode SerializeNodes(object @object, Func<INode, Options, INode> targetFactory, string format)
+        {
+            return SerializeNodes(@object, @object.GetType(), targetFactory, format);
+        }
+
+        public INode SerializeNodes(object @object, Type type, INode target)
+        {
+            return SerializeNodes(@object, @object.GetType(), (s, o) => target, target.Format);
+        }
+
+        public INode SerializeNodes(object @object, Type type, Func<INode, Options, INode> targetFactory, string format)
+        {
+            var source = NodeFactory.CreateSerializableRoot(@object, 
+                type.GetCachedType(), _options, format);
+            var target = targetFactory(source, _options);
+            new NodeMapper<NodeBase, INode>(
+                _options.Serialization.Writers.Mapping.HasMapping,
+                _options.Serialization.Writers.Mapping.Map,
+                _options.Serialization.Writers.Visitors.HasVisitor,
+                _options.Serialization.Writers.Visitors.Visit)
+                .Map(source, target, Mode.Serialize);
+            return target;
         }
     }
 }
