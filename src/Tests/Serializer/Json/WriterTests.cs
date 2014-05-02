@@ -67,6 +67,11 @@ namespace Tests.Serializer.Json
             public DateTime DateTime { get; set; }
         }
 
+        private class NullableDateTimeConversion
+        {
+            public DateTime? DateTime { get; set; }
+        }
+
         [Test]
         public void should_write_datetime_as_utc_iso8601()
         {
@@ -76,9 +81,25 @@ namespace Tests.Serializer.Json
         }
 
         [Test]
+        public void should_write_nullable_datetime_as_utc_iso8601()
+        {
+            Serialize.Json(new NullableDateTimeConversion { DateTime = new DateTime(1985, 10, 26, 1, 21, 0) },
+                x => x.Serialization(y => y.WriteDateTimeAsUtcIso8601()))
+                .ShouldEqual("{\"DateTime\":\"1985-10-26T05:21:00.0000000Z\"}");
+        }
+
+        [Test]
         public void should_write_datetime_as_microsoft_datetime()
         {
             Serialize.Json(new DateTimeConversion { DateTime = new DateTime(1985, 10, 26, 1, 21, 0) },
+                x => x.Serialization(y => y.WriteDateTimeAsMicrosoftJsonDateTime()))
+                .ShouldEqual("{\"DateTime\":\"\\/Date(499152060000)\\/\"}");
+        }
+
+        [Test]
+        public void should_write_nullable_datetime_as_microsoft_datetime()
+        {
+            Serialize.Json(new NullableDateTimeConversion { DateTime = new DateTime(1985, 10, 26, 1, 21, 0) },
                 x => x.Serialization(y => y.WriteDateTimeAsMicrosoftJsonDateTime()))
                 .ShouldEqual("{\"DateTime\":\"\\/Date(499152060000)\\/\"}");
         }

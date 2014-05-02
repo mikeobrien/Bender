@@ -45,9 +45,9 @@ namespace Bender.Configuration
             IgnoreUnmatchedElements = true;
             IgnoreUnmatchedMembers = true;
 
-            Readers.AddValueReader((s, t, o) => Version.Parse(s.Value.ToString()));
-            Readers.AddValueReader((s, t, o) => new MailAddress(s.Value.ToString()));
-            Readers.AddValueReader((s, t, o) => IPAddress.Parse(s.Value.ToString()));
+            Readers.AddValueReader((v, s, t, o) => Version.Parse(v.ToString()));
+            Readers.AddValueReader((v, s, t, o) => new MailAddress(v.ToString()));
+            Readers.AddValueReader((v, s, t, o) => IPAddress.Parse(v.ToString()));
         }
 
         public StringComparison NameComparison { get; set; }

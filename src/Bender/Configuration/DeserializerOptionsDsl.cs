@@ -77,7 +77,7 @@ namespace Bender.Configuration
 
         public DeserializerOptionsDsl TreatAllDateTimesAsUtcAndConvertToLocal()
         {
-            AddReader((s, t, o) => DateTime.Parse(s.Value.ToString()).ToLocalTime(), true);
+            AddReader((v, s, t, o) => DateTime.Parse(v.ToString()).ToLocalTime(), true);
             return this;
         }
 
@@ -254,28 +254,28 @@ namespace Bender.Configuration
             return this;
         }
 
-        public DeserializerOptionsDsl AddReader<T>(Func<INode, NodeBase, Options, T> reader)
+        public DeserializerOptionsDsl AddReader<T>(Func<object, INode, NodeBase, Options, T> reader)
         {
             _options.Readers.AddValueReader(reader);
             return this;
         }
 
-        public DeserializerOptionsDsl AddReader<T>(Func<INode, NodeBase, Options, T> reader, 
+        public DeserializerOptionsDsl AddReader<T>(Func<object, INode, NodeBase, Options, T> reader, 
             bool handleNullable) where T : struct
         {
             _options.Readers.AddValueReader(reader, handleNullable);
             return this;
         }
 
-        public DeserializerOptionsDsl AddReader<T>(Func<INode, NodeBase, Options, T> reader,
-            Func<INode, NodeBase, Options, bool> where)
+        public DeserializerOptionsDsl AddReader<T>(Func<object, INode, NodeBase, Options, T> reader,
+            Func<object, INode, NodeBase, Options, bool> where)
         {
             _options.Readers.AddValueReader(reader, where);
             return this;
         }
 
-        public DeserializerOptionsDsl AddReader<T>(Func<INode, NodeBase, Options, T> reader,
-            Func<INode, NodeBase, Options, bool> where, bool handleNullable) where T : struct
+        public DeserializerOptionsDsl AddReader<T>(Func<object, INode, NodeBase, Options, T> reader,
+            Func<object, INode, NodeBase, Options, bool> where, bool handleNullable) where T : struct
         {
             _options.Readers.AddValueReader(reader, where, handleNullable);
             return this;

@@ -1,5 +1,4 @@
 using System;
-using Bender.Collections;
 using Bender.Configuration;
 using Bender.Extensions;
 using Bender.Reflection;
@@ -104,33 +103,33 @@ namespace Bender.Nodes.Object
             return this;
         }
 
-        public ReaderConventions AddValueReader<T>(Func<INode, ObjectNodeBase, Options, T> reader)
+        public ReaderConventions AddValueReader<T>(Func<object, INode, ObjectNodeBase, Options, T> reader)
         {
             AddReader<T>(SetValue(reader));
             return this;
         }
 
-        public ReaderConventions AddValueReader<T>(Func<INode, ObjectNodeBase, Options, T> reader, bool includeNullable) where T : struct
+        public ReaderConventions AddValueReader<T>(Func<object, INode, ObjectNodeBase, Options, T> reader, bool includeNullable) where T : struct
         {
             AddReader<T>(SetValue(reader), includeNullable);
             return this;
         }
 
-        public ReaderConventions AddValueReader<T>(Func<INode, ObjectNodeBase, Options, T> reader,
-            Func<INode, ObjectNodeBase, Options, bool> where)
+        public ReaderConventions AddValueReader<T>(Func<object, INode, ObjectNodeBase, Options, T> reader,
+            Func<object, INode, ObjectNodeBase, Options, bool> where)
         {
-            AddReader<T>(SetValue(reader), where);
+            AddReader<T>(SetValue(reader), (s, t, o) => where(s.Value, s, t, o));
             return this;
         }
 
-        public ReaderConventions AddValueReader<T>(Func<INode, ObjectNodeBase, Options, T> reader,
-            Func<INode, ObjectNodeBase, Options, bool> where, bool includeNullable) where T : struct
+        public ReaderConventions AddValueReader<T>(Func<object, INode, ObjectNodeBase, Options, T> reader,
+            Func<object, INode, ObjectNodeBase, Options, bool> where, bool includeNullable) where T : struct
         {
-            AddReader<T>(SetValue(reader), where, includeNullable);
+            AddReader<T>(SetValue(reader), (s, t, o) => where(s.Value, s, t, o), includeNullable);
             return this;
         }
 
-        private Action<INode, ObjectNodeBase, Options> SetValue<T>(Func<INode, ObjectNodeBase, Options, T> reader)
+        private Action<INode, ObjectNodeBase, Options> SetValue<T>(Func<object, INode, ObjectNodeBase, Options, T> reader)
         {
             return (s, t, o) =>
             {
@@ -138,7 +137,7 @@ namespace Bender.Nodes.Object
                 object value = null;
                 try
                 {
-                    value = reader(s, t, o);
+                    if (s.Value != null) value = reader(s.Value, s, t, o);
                     t.Value = value;
                 }
                 catch (Exception exception)

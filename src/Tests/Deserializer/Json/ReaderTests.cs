@@ -92,7 +92,7 @@ namespace Tests.Deserializer.Json
             var json = "{ \"Property1\": \"oh\", \"Property2\": \"hai\" }";
             var result = Deserialize.Json<Model>(json,
                 x => x.Deserialization(y => y.AddReader<string>(
-                    (s, t, o) => s.Value + "!")));
+                    (v, s, t, o) => s.Value + "!")));
 
             result.Property1.ShouldEqual("oh!");
             result.Property2.ShouldEqual("hai!");
@@ -106,7 +106,7 @@ namespace Tests.Deserializer.Json
         {
             var result = Deserialize.Json<Model>("{ \"NonNullable\": 1, \"Nullable\": 1 }",
                 x => x.Deserialization(y => y.AddReader<int>(
-                    (s, t, o) => 2, includeNullable)));
+                    (v, s, t, o) => 2, includeNullable)));
 
             result.NonNullable.ShouldEqual(nonNullableCount);
             result.Nullable.ShouldEqual(nullableCount);
@@ -118,8 +118,8 @@ namespace Tests.Deserializer.Json
             var json = "{ \"Property1\": \"oh\", \"Property2\": \"hai\" }";
             var result = Deserialize.Json<Model>(json,
                 x => x.Deserialization(y => y.AddReader<string>(
-                    (s, t, o) => s.Value + "!",
-                    (s, t, o) => s.Name.EndsWith("2"))));
+                    (v, s, t, o) => s.Value + "!",
+                    (v, s, t, o) => s.Name.EndsWith("2"))));
 
             result.Property1.ShouldEqual("oh");
             result.Property2.ShouldEqual("hai!");
@@ -135,8 +135,8 @@ namespace Tests.Deserializer.Json
         {
             var result = Deserialize.Json<Model>("{ \"NonNullable\": 1, \"Nullable\": 1 }",
                 x => x.Deserialization(y => y.AddReader<int>(
-                    (s, t, o) => 2,
-                    (s, t, o) => (decimal)s.Value == match, includeNullable)));
+                    (v, s, t, o) => 2,
+                    (v, s, t, o) => (decimal)s.Value == match, includeNullable)));
 
             result.NonNullable.ShouldEqual(nonNullableCount);
             result.Nullable.ShouldEqual(nullableCount);
@@ -156,6 +156,23 @@ namespace Tests.Deserializer.Json
                 x => x.Deserialization(y => y.TreatAllDateTimesAsUtcAndConvertToLocal()));
 
             result.DateTime.ShouldEqual(new DateTime(1985, 10, 26, 1, 21, 0));
+        }
+
+        private class NullableDateTimeConversion
+        {
+            public DateTime? DateTime { get; set; }
+        }
+
+        [Test]
+        [TestCase("\"1985-10-26T05:21:00.0000000Z\"", "10/26/1985 1:21")]
+        [TestCase("\"1985-10-26T05:21:00.0000000\"", "10/26/1985 1:21")]
+        [TestCase("null", null)]
+        public void should_read_nullable_datetime_as_local(string datetime, string result)
+        {
+            var @object = Deserialize.Json<NullableDateTimeConversion>("{{ \"DateTime\": {0} }}".ToFormat(datetime),
+                x => x.Deserialization(y => y.TreatAllDateTimesAsUtcAndConvertToLocal()));
+
+            @object.DateTime.ShouldEqual(result == null ? (DateTime?)null : DateTime.Parse(result));
         }
     }
 }

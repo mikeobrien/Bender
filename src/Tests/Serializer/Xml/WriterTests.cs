@@ -68,12 +68,41 @@ namespace Tests.Serializer.Xml
             public DateTime DateTime { get; set; }
         }
 
+        private class NullableDateTimeConversion
+        {
+            public DateTime? DateTime { get; set; }
+        }
+
         [Test]
         public void should_write_datetime_as_utc_iso8601()
         {
             Serialize.Xml(new DateTimeConversion { DateTime = new DateTime(1985, 10, 26, 1, 21, 0) },
                 x => x.Serialization(y => y.WriteDateTimeAsUtcIso8601()))
                 .ShouldEqual(Xml.Declaration + "<DateTimeConversion><DateTime>1985-10-26T05:21:00.0000000Z</DateTime></DateTimeConversion>");
+        }
+
+        [Test]
+        public void should_write_nullable_datetime_as_utc_iso8601()
+        {
+            Serialize.Xml(new NullableDateTimeConversion { DateTime = new DateTime(1985, 10, 26, 1, 21, 0) },
+                x => x.Serialization(y => y.WriteDateTimeAsUtcIso8601()))
+                .ShouldEqual(Xml.Declaration + "<NullableDateTimeConversion><DateTime>1985-10-26T05:21:00.0000000Z</DateTime></NullableDateTimeConversion>");
+        }
+
+        [Test]
+        public void should_write_datetime_as_microsoft_datetime()
+        {
+            Serialize.Xml(new DateTimeConversion { DateTime = new DateTime(1985, 10, 26, 1, 21, 0) },
+                x => x.Serialization(y => y.WriteDateTimeAsMicrosoftJsonDateTime()))
+                .ShouldEqual(Xml.Declaration + "<DateTimeConversion><DateTime>/Date(499152060000)/</DateTime></DateTimeConversion>");
+        }
+
+        [Test]
+        public void should_write_nullable_datetime_as_microsoft_datetime()
+        {
+            Serialize.Xml(new NullableDateTimeConversion { DateTime = new DateTime(1985, 10, 26, 1, 21, 0) },
+                x => x.Serialization(y => y.WriteDateTimeAsMicrosoftJsonDateTime()))
+                .ShouldEqual(Xml.Declaration + "<NullableDateTimeConversion><DateTime>/Date(499152060000)/</DateTime></NullableDateTimeConversion>");
         }
     }
 }

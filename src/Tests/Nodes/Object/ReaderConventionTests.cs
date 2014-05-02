@@ -1,7 +1,6 @@
 ﻿using System;
 using Bender;
 using Bender.Configuration;
-using Bender.Extensions;
 using Bender.Nodes;
 using Bender.Nodes.Object;
 using Bender.Nodes.Object.Values;
@@ -20,8 +19,8 @@ namespace Tests.Nodes.Object
         private ReaderConventions _readers;
         private Action<INode, INode, Options> _visitorIncrement;
         private Action<INode, INode, Options> _readerIncrement;
-        private Func<INode, INode, Options, int> _readerIncrementValue;
-        private Func<INode, INode, Options, int?> _readerIncrementNullableValue;
+        private Func<object, INode, INode, Options, int> _readerIncrementValue;
+        private Func<object, INode, INode, Options, int?> _readerIncrementNullableValue;
 
         [SetUp]
         public void Setup()
@@ -47,15 +46,15 @@ namespace Tests.Nodes.Object
                 t.Value = t.Value == null ? 1 : (int?)t.Value + 1;
             };
 
-            _readerIncrementValue = (s, t, o) =>
+            _readerIncrementValue = (v, s, t, o) =>
             {
-                should_have_valid_parameters(s, t, o);
+                should_have_valid_parameters(v, s, t, o);
                 return s.Value == null ? 1 : (int)s.Value + 1;
             };
 
-            _readerIncrementNullableValue = (s, t, o) =>
+            _readerIncrementNullableValue = (v, s, t, o) =>
             {
-                should_have_valid_parameters(s, t, o);
+                should_have_valid_parameters(v, s, t, o);
                 return s.Value == null ? 1 : (int?)s.Value + 1;
             };
         }
@@ -63,6 +62,15 @@ namespace Tests.Nodes.Object
         private void should_have_valid_parameters(
             INode source, INode target, Options options)
         {
+            source.ShouldBeSameAs(_source);
+            target.ShouldBeSameAs(_target);
+            options.ShouldBeSameAs(_options);
+        }
+
+        private void should_have_valid_parameters(
+            object value, INode source, INode target, Options options)
+        {
+            value.ShouldEqual(source.Value);
             source.ShouldBeSameAs(_source);
             target.ShouldBeSameAs(_target);
             options.ShouldBeSameAs(_options);
@@ -474,8 +482,21 @@ namespace Tests.Nodes.Object
         // Read value type
 
         [Test]
+        public void should_add_value_reader_and_not_read_when_source_value_is_null()
+        {
+            _source.Value = null;
+            Assert.DoesNotThrow(() => _readers
+                .AddValueReader<int?>((v, s, t, o) => { throw new Exception(); })
+                .Mapping.Map(_source, _target));
+
+            _readers.Mapping.HasMapping(_source, _target).ShouldBeTrue();
+            _target.Value.ShouldBeNull();
+        }
+
+        [Test]
         public void should_add_value_reader_and_read_when_type_matches()
         {
+            _source.Value = 0;
             _readers
                 .AddValueReader<int?>(_readerIncrementNullableValue)
                 .AddValueReader<int?>(_readerIncrementNullableValue)
@@ -499,11 +520,12 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_add_value_reader_and_fail_read_with_value_reader_exception_when_friendly_error_does_not_exist()
         {
+            _source.Value = 0;
             var target = new ValueNode(
                 new Context(_options, Mode.Deserialize, "json"), null,
                 new SimpleValue(typeof(Tuple<string>).GetCachedType()), null, null);
             var exception = new Exception();
-            _readers.AddValueReader<Tuple<string>>((s, t, o) => { throw exception; }, (s, t, o) => true);
+            _readers.AddValueReader<Tuple<string>>((v, s, t, o) => { throw exception; }, (v, s, t, o) => true);
 
             Assert.DoesNotThrow(() => _readers.Mapping.HasMapping(_source, target));
 
@@ -516,7 +538,8 @@ namespace Tests.Nodes.Object
         public void should_add_value_reader_and_fail_read_with_value_parse_exception_when_friendly_error_exists()
         {
             var exception = new Exception();
-            _readers.AddValueReader<int?>((s, t, o) => { throw exception; }, (s, t, o) => true);
+            _source.Value = 0;
+            _readers.AddValueReader<int?>((v, s, t, o) => { throw exception; }, (v, s, t, o) => true);
 
             Assert.DoesNotThrow(() => _readers.Mapping.HasMapping(_source, _target));
 
@@ -529,7 +552,7 @@ namespace Tests.Nodes.Object
         public void should_add_value_reader_and_fail_read_when_with_reader_exception()
         {
             var exception = new Exception();
-            _readers.AddValueReader<int?>((s, t, o) => 0, (s, t, o) => { throw exception; });
+            _readers.AddValueReader<int?>((v, s, t, o) => 0, (v, s, t, o) => { throw exception; });
 
             Assert.Throws<ReaderException>(() => _readers
                 .Mapping.HasMapping(_source, _target))
@@ -545,6 +568,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_add_value_reader_and_read_when_nullable_type_matches()
         {
+            _source.Value = 0;
             _readers
                 .AddValueReader<int>(_readerIncrementValue, true)
                 .AddValueReader<int>(_readerIncrementValue, true)
@@ -570,9 +594,10 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_add_value_reader_and_read_when_type_and_predicate_matches()
         {
+            _source.Value = 0;
             _readers
-                .AddValueReader<int?>(_readerIncrementNullableValue, (s, t, o) => true)
-                .AddValueReader<int?>(_readerIncrementNullableValue, (s, t, o) => true)
+                .AddValueReader<int?>(_readerIncrementNullableValue, (v, s, t, o) => true)
+                .AddValueReader<int?>(_readerIncrementNullableValue, (v, s, t, o) => true)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeTrue();
@@ -583,7 +608,7 @@ namespace Tests.Nodes.Object
         public void should_add_value_reader_but_not_read_when_type_matches_but_predicate_does_not_match()
         {
             _readers
-                .AddValueReader<int?>(_readerIncrementNullableValue, (s, t, o) => false)
+                .AddValueReader<int?>(_readerIncrementNullableValue, (v, s, t, o) => false)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeFalse();
@@ -594,7 +619,7 @@ namespace Tests.Nodes.Object
         public void should_add_value_reader_but_not_read_when_predicate_matches_but_type_does_not_match()
         {
             _readers
-                .AddValueReader<int>(_readerIncrementValue, (s, t, o) => true)
+                .AddValueReader<int>(_readerIncrementValue, (v, s, t, o) => true)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeFalse();
@@ -606,9 +631,10 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_add_value_reader_and_read_when_non_nullable_type_and_predicate_matches()
         {
+            _source.Value = 0;
             _readers
-                .AddValueReader<int>(_readerIncrementValue, (s, t, o) => true, true)
-                .AddValueReader<int>(_readerIncrementValue, (s, t, o) => true, true)
+                .AddValueReader<int>(_readerIncrementValue, (v, s, t, o) => true, true)
+                .AddValueReader<int>(_readerIncrementValue, (v, s, t, o) => true, true)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeTrue();
@@ -619,7 +645,7 @@ namespace Tests.Nodes.Object
         public void should_add_value_reader_but_not_read_when_nullable_type_matches_but_predicate_does_not_match()
         {
             _readers
-                .AddValueReader<int>(_readerIncrementValue, (s, t, o) => false, true)
+                .AddValueReader<int>(_readerIncrementValue, (v, s, t, o) => false, true)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeFalse();
@@ -630,7 +656,7 @@ namespace Tests.Nodes.Object
         public void should_add_value_reader_but_not_read_when_predicate_matches_but_nullable_type_does_not_match()
         {
             _readers
-                .AddValueReader<int>(_readerIncrementValue, (s, t, o) => true, false)
+                .AddValueReader<int>(_readerIncrementValue, (v, s, t, o) => true, false)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeFalse();
