@@ -76,7 +76,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_write_datetime_as_utc_iso8601()
         {
-            Serialize.Xml(new DateTimeConversion { DateTime = new DateTime(1985, 10, 26, 1, 21, 0) },
+            Serialize.Xml(new DateTimeConversion { DateTime = new DateTime(1985, 10, 26, 5, 21, 0).SubtractUtcOffset() },
                 x => x.Serialization(y => y.WriteDateTimeAsUtcIso8601()))
                 .ShouldEqual(Xml.Declaration + "<DateTimeConversion><DateTime>1985-10-26T05:21:00.0000000Z</DateTime></DateTimeConversion>");
         }
@@ -84,7 +84,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_write_nullable_datetime_as_utc_iso8601()
         {
-            Serialize.Xml(new NullableDateTimeConversion { DateTime = new DateTime(1985, 10, 26, 1, 21, 0) },
+            Serialize.Xml(new NullableDateTimeConversion { DateTime = new DateTime(1985, 10, 26, 5, 21, 0).SubtractUtcOffset() },
                 x => x.Serialization(y => y.WriteDateTimeAsUtcIso8601()))
                 .ShouldEqual(Xml.Declaration + "<NullableDateTimeConversion><DateTime>1985-10-26T05:21:00.0000000Z</DateTime></NullableDateTimeConversion>");
         }
@@ -92,7 +92,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_write_datetime_as_microsoft_datetime()
         {
-            Serialize.Xml(new DateTimeConversion { DateTime = new DateTime(1985, 10, 26, 1, 21, 0) },
+            Serialize.Xml(new DateTimeConversion { DateTime = new DateTime(1985, 10, 26, 5, 21, 0).SubtractUtcOffset() },
                 x => x.Serialization(y => y.WriteDateTimeAsMicrosoftJsonDateTime()))
                 .ShouldEqual(Xml.Declaration + "<DateTimeConversion><DateTime>/Date(499152060000)/</DateTime></DateTimeConversion>");
         }
@@ -100,7 +100,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_write_nullable_datetime_as_microsoft_datetime()
         {
-            Serialize.Xml(new NullableDateTimeConversion { DateTime = new DateTime(1985, 10, 26, 1, 21, 0) },
+            Serialize.Xml(new NullableDateTimeConversion { DateTime = new DateTime(1985, 10, 26, 5, 21, 0).SubtractUtcOffset() },
                 x => x.Serialization(y => y.WriteDateTimeAsMicrosoftJsonDateTime()))
                 .ShouldEqual(Xml.Declaration + "<NullableDateTimeConversion><DateTime>/Date(499152060000)/</DateTime></NullableDateTimeConversion>");
         }

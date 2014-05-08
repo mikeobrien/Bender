@@ -155,7 +155,7 @@ namespace Tests.Deserializer.Json
             var result = Deserialize.Json<DateTimeConversion>("{{ \"DateTime\": \"{0}\" }}".ToFormat(datetime),
                 x => x.Deserialization(y => y.TreatAllDateTimesAsUtcAndConvertToLocal()));
 
-            result.DateTime.ShouldEqual(new DateTime(1985, 10, 26, 1, 21, 0));
+            result.DateTime.ShouldEqual(new DateTime(1985, 10, 26, 5, 21, 0).SubtractUtcOffset());
         }
 
         private class NullableDateTimeConversion
@@ -164,15 +164,15 @@ namespace Tests.Deserializer.Json
         }
 
         [Test]
-        [TestCase("\"1985-10-26T05:21:00.0000000Z\"", "10/26/1985 1:21")]
-        [TestCase("\"1985-10-26T05:21:00.0000000\"", "10/26/1985 1:21")]
+        [TestCase("\"1985-10-26T05:21:00.0000000Z\"", "10/26/1985 5:21")]
+        [TestCase("\"1985-10-26T05:21:00.0000000\"", "10/26/1985 5:21")]
         [TestCase("null", null)]
         public void should_read_nullable_datetime_as_local(string datetime, string result)
         {
             var @object = Deserialize.Json<NullableDateTimeConversion>("{{ \"DateTime\": {0} }}".ToFormat(datetime),
                 x => x.Deserialization(y => y.TreatAllDateTimesAsUtcAndConvertToLocal()));
 
-            @object.DateTime.ShouldEqual(result == null ? (DateTime?)null : DateTime.Parse(result));
+            @object.DateTime.ShouldEqual(result == null ? (DateTime?)null : DateTime.Parse(result).SubtractUtcOffset());
         }
     }
 }

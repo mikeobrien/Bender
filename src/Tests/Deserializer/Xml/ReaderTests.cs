@@ -155,7 +155,7 @@ namespace Tests.Deserializer.Xml
             var result = Deserialize.Xml<DateTimeConversion>("<DateTimeConversion><DateTime>{0}</DateTime></DateTimeConversion>".ToFormat(datetime),
                 x => x.Deserialization(y => y.TreatAllDateTimesAsUtcAndConvertToLocal()));
 
-            result.DateTime.ShouldEqual(new DateTime(1985, 10, 26, 1, 21, 0));
+            result.DateTime.ShouldEqual(new DateTime(1985, 10, 26, 5, 21, 0).SubtractUtcOffset());
         }
 
         private class NullableDateTimeConversion
@@ -164,15 +164,15 @@ namespace Tests.Deserializer.Xml
         }
 
         [Test]
-        [TestCase("<DateTime>1985-10-26T05:21:00.0000000Z</DateTime>", "10/26/1985 1:21")]
-        [TestCase("<DateTime>1985-10-26T05:21:00.0000000</DateTime>", "10/26/1985 1:21")]
+        [TestCase("<DateTime>1985-10-26T05:21:00.0000000Z</DateTime>", "10/26/1985 5:21")]
+        [TestCase("<DateTime>1985-10-26T05:21:00.0000000</DateTime>", "10/26/1985 5:21")]
         [TestCase("<DateTime/>", null)]
         public void should_read_nullable_datetime_as_local(string datetime, string result)
         {
             var @object = Deserialize.Xml<NullableDateTimeConversion>("<NullableDateTimeConversion>{0}</NullableDateTimeConversion>".ToFormat(datetime),
                 x => x.Deserialization(y => y.TreatAllDateTimesAsUtcAndConvertToLocal()));
 
-            @object.DateTime.ShouldEqual(result == null ? (DateTime?)null : DateTime.Parse(result));
+            @object.DateTime.ShouldEqual(result == null ? (DateTime?)null : DateTime.Parse(result).SubtractUtcOffset());
         }
     }
 }

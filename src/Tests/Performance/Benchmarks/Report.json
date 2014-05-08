@@ -1,12 +1,12 @@
 [
-	{ "Name": "Bender Json", "Cold": { "Deserialization": 71187, "Serialization": 35735 }, "Warm": { "Deserialization": 5463, "Serialization": 4409 } }
-	{ "Name": "Bender Xml", "Cold": { "Deserialization": 61052, "Serialization": 40219 }, "Warm": { "Deserialization": 4419, "Serialization": 4461 } }
-	{ "Name": "DataContractJsonSerializer Json", "Cold": { "Deserialization": 105383, "Serialization": 40506 }, "Warm": { "Deserialization": 693, "Serialization": 241 } }
-	{ "Name": "DataContractSerializer Xml", "Cold": { "Deserialization": 135747, "Serialization": 38376 }, "Warm": { "Deserialization": 705, "Serialization": 236 } }
-	{ "Name": "fastJSON Json", "Cold": { "Deserialization": 44675, "Serialization": 27329 }, "Warm": { "Deserialization": 280, "Serialization": 116 } }
-	{ "Name": "JavaScriptSerializer Json", "Cold": { "Deserialization": 15677, "Serialization": 5162 }, "Warm": { "Deserialization": 863, "Serialization": 2248 } }
-	{ "Name": "JSON.NET Json", "Cold": { "Deserialization": 92660, "Serialization": 26231 }, "Warm": { "Deserialization": 265, "Serialization": 179 } }
-	{ "Name": "ServiceStack Json", "Cold": { "Deserialization": 48769, "Serialization": 55523 }, "Warm": { "Deserialization": 415, "Serialization": 165 } }
-	{ "Name": "ServiceStack Xml", "Cold": { "Deserialization": 87519, "Serialization": 20625 }, "Warm": { "Deserialization": 338, "Serialization": 229 } }
-	{ "Name": "XmlSerializer Xml", "Cold": { "Deserialization": 166306, "Serialization": 48982 }, "Warm": { "Deserialization": 629, "Serialization": 505 } }
+	{ "Name": "Bender Json", "Cold": { "Deserialization": 25108, "Serialization": 12572 }, "Warm": { "Deserialization": 1962, "Serialization": 1596 } }
+	{ "Name": "Bender Xml", "Cold": { "Deserialization": 22556, "Serialization": 13928 }, "Warm": { "Deserialization": 1656, "Serialization": 1721 } }
+	{ "Name": "DataContractJsonSerializer Json", "Cold": { "Deserialization": 44499, "Serialization": 12983 }, "Warm": { "Deserialization": 287, "Serialization": 104 } }
+	{ "Name": "DataContractSerializer Xml", "Cold": { "Deserialization": 51765, "Serialization": 13444 }, "Warm": { "Deserialization": 228, "Serialization": 136 } }
+	{ "Name": "fastJSON Json", "Cold": { "Deserialization": 15928, "Serialization": 8361 }, "Warm": { "Deserialization": 98, "Serialization": 44 } }
+	{ "Name": "JavaScriptSerializer Json", "Cold": { "Deserialization": 3700, "Serialization": 1807 }, "Warm": { "Deserialization": 379, "Serialization": 812 } }
+	{ "Name": "JSON.NET Json", "Cold": { "Deserialization": 35086, "Serialization": 10123 }, "Warm": { "Deserialization": 102, "Serialization": 73 } }
+	{ "Name": "ServiceStack Json", "Cold": { "Deserialization": 22817, "Serialization": 19676 }, "Warm": { "Deserialization": 226, "Serialization": 63 } }
+	{ "Name": "ServiceStack Xml", "Cold": { "Deserialization": 34872, "Serialization": 8746 }, "Warm": { "Deserialization": 256, "Serialization": 78 } }
+	{ "Name": "XmlSerializer Xml", "Cold": { "Deserialization": 65527, "Serialization": 18081 }, "Warm": { "Deserialization": 223, "Serialization": 174 } }
 ]

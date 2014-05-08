@@ -2,15 +2,15 @@
                                 |           Cold            |           Warm            |
                                 | Deserialize |  Serialize  | Deserialize |  Serialize  |
 -----------------------------------------------------------------------------------------
-fastJSON Json                   |      44,675 |      27,329 |         280 |         116 |
-JSON.NET Json                   |      92,660 |      26,231 |         265 |         179 |
-ServiceStack Json               |      48,769 |      55,523 |         415 |         165 |
-DataContractJsonSerializer Json |     105,383 |      40,506 |         693 |         241 |
-JavaScriptSerializer Json       |      15,677 |       5,162 |         863 |       2,248 |
-Bender Json                     |      71,187 |      35,735 |       5,463 |       4,409 |
+fastJSON Json                   |      15,928 |       8,361 |          98 |          44 |
+JSON.NET Json                   |      35,086 |      10,123 |         102 |          73 |
+ServiceStack Json               |      22,817 |      19,676 |         226 |          63 |
+DataContractJsonSerializer Json |      44,499 |      12,983 |         287 |         104 |
+JavaScriptSerializer Json       |       3,700 |       1,807 |         379 |         812 |
+Bender Json                     |      25,108 |      12,572 |       1,962 |       1,596 |
 -----------------------------------------------------------------------------------------
-ServiceStack Xml                |      87,519 |      20,625 |         338 |         229 |
-DataContractSerializer Xml      |     135,747 |      38,376 |         705 |         236 |
-XmlSerializer Xml               |     166,306 |      48,982 |         629 |         505 |
-Bender Xml                      |      61,052 |      40,219 |       4,419 |       4,461 |
+ServiceStack Xml                |      34,872 |       8,746 |         256 |          78 |
+DataContractSerializer Xml      |      51,765 |      13,444 |         228 |         136 |
+XmlSerializer Xml               |      65,527 |      18,081 |         223 |         174 |
+Bender Xml                      |      22,556 |      13,928 |       1,656 |       1,721 |
 -----------------------------------------------------------------------------------------

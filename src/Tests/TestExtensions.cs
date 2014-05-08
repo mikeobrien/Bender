@@ -55,5 +55,10 @@ namespace Tests
         {
             node.Add(new Node(metadata: metadata) { NodeType = type }, modify);
         }
+
+        public static DateTime SubtractUtcOffset(this DateTime date)
+        {
+            return date.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(date).Hours);
+        }
     }
 }
