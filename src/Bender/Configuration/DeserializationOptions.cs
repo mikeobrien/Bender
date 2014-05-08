@@ -21,7 +21,7 @@ namespace Bender.Configuration
             FriendlyParseErrorMessages[typeof(sbyte)] = "Byte '{0}' not formatted correctly, must be an integer between -128 and 127.";
             FriendlyParseErrorMessages[typeof(byte)] = "Unsigned byte '{0}' not formatted correctly, must be an integer between 0 and 255.";
             FriendlyParseErrorMessages[typeof(short)] = "Integer '{0}' not formatted correctly, must be an integer between -32,768 and 32,767.";
-            FriendlyParseErrorMessages[typeof(ushort)] = "'Unsigned integer {0}' not formatted correctly, must be an integer between 0 and 65,535.";
+            FriendlyParseErrorMessages[typeof(ushort)] = "Unsigned integer '{0}' not formatted correctly, must be an integer between 0 and 65,535.";
             FriendlyParseErrorMessages[typeof(int)] = "Integer '{0}' not formatted correctly, must be an integer between -2,147,483,648 and 2,147,483,647.";
             FriendlyParseErrorMessages[typeof(IntPtr)] = FriendlyParseErrorMessages[typeof(int)];
             FriendlyParseErrorMessages[typeof(UIntPtr)] = FriendlyParseErrorMessages[typeof(ushort)];
@@ -33,7 +33,7 @@ namespace Bender.Configuration
             FriendlyParseErrorMessages[typeof(decimal)] = "Decimal '{0}' not formatted correctly, must be a decimal number between -79,228,162,514,264,337,593,543,950,335 and 79,228,162,514,264,337,593,543,950,335.";
             FriendlyParseErrorMessages[typeof(DateTime)] = "Date '{0}' not formatted correctly, must be formatted as m/d/yyy h:m:s AM.";
             FriendlyParseErrorMessages[typeof(Guid)] = "UUID '{0}' not formatted correctly, should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).";
-            FriendlyParseErrorMessages[typeof(TimeSpan)] = "Timespan'{0}' not formatted correctly, must be formatted as 'd.h:m:s'.";
+            FriendlyParseErrorMessages[typeof(TimeSpan)] = "Timespan '{0}' not formatted correctly, must be formatted as 'd.h:m:s'.";
             FriendlyParseErrorMessages[typeof(Uri)] = "Uri '{0}' not formatted correctly, must be formatted as 'scheme://host'.";
 
             FriendlyParseErrorMessages[typeof(Version)] = "Version '{0}' not formatted correctly, must be formatted as '1.2.3.4'.";
