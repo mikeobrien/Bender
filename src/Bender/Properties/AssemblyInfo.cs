@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Bender")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Xml and json de/serialization for .NET and Mono.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Ultraviolet Catastrophe")]
 [assembly: AssemblyProduct("Bender")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyCopyright("Copyright © 2014 Ultraviolet Catastrophe")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
