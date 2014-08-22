@@ -28,13 +28,13 @@ module.exports = function(grunt) {
             }
         },
         nunit: {
+            files: ['src/Bender.sln'],
             options: {
-                files: ['src/Bender.sln'],
                 teamcity: true
             }
         },
         nugetpack: {
-            flexo: {
+            bender: {
                 src: 'Bender.nuspec',
                 dest: './'
             },
@@ -43,7 +43,7 @@ module.exports = function(grunt) {
             }
         },
         nugetpush: {
-            flexo: {
+            bender: {
                 src: '*.nupkg'
             },
             options: {
