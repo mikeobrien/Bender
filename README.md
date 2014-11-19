@@ -1,5 +1,7 @@
-Bender [![Build Status](https://travis-ci.org/mikeobrien/Bender.png?branch=master)](https://travis-ci.org/mikeobrien/Bender)
+Bender 
 =============
+
+[![Build Status](https://travis-ci.org/mikeobrien/Bender.png?branch=master)](https://travis-ci.org/mikeobrien/Bender) [![Nuget](http://img.shields.io/nuget/v/Bender.svg)](http://www.nuget.org/packages/Bender/) [![Nuget downloads](http://img.shields.io/nuget/dt/Bender.svg)](http://www.nuget.org/packages/Bender/)
 
 <img src="https://raw.github.com/mikeobrien/Bender/master/misc/logo.png"/> 
 
