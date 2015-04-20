@@ -361,7 +361,7 @@ namespace Tests.Deserializer.Xml
         {
             var result = Deserialize.Xml<DictionaryImplementation>(
                 "<DictionaryImplementation><Property>oh</Property><Field>hai</Field></DictionaryImplementation>",
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields());
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields());
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");
@@ -382,7 +382,7 @@ namespace Tests.Deserializer.Xml
         {
             var result = Deserialize.Xml<DictionaryMember>(
                 "<DictionaryMember><DictionaryImpl><Property>oh</Property><Field>hai</Field></DictionaryImpl></DictionaryMember>",
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields()).DictionaryImpl;
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()).DictionaryImpl;
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");
@@ -403,7 +403,7 @@ namespace Tests.Deserializer.Xml
         {
             var result = Deserialize.Xml<List<DictionaryImplementation>>(
                 "<ArrayOfDictionaryImplementation><DictionaryImplementation><Property>oh</Property><Field>hai</Field></DictionaryImplementation></ArrayOfDictionaryImplementation>",
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields()).First();
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()).First();
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");
@@ -424,7 +424,7 @@ namespace Tests.Deserializer.Xml
         {
             var result = Deserialize.Xml<Dictionary<string, DictionaryImplementation>>(
                 "<DictionaryOfDictionaryImplementation><item><Property>oh</Property><Field>hai</Field></item></DictionaryOfDictionaryImplementation>",
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields())["item"];
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields())["item"];
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");

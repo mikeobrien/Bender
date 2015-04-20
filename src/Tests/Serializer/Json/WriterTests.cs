@@ -92,7 +92,7 @@ namespace Tests.Serializer.Json
         public void should_write_datetime_as_microsoft_datetime()
         {
             Serialize.Json(new DateTimeConversion { DateTime = new DateTime(1985, 10, 26, 5, 21, 0).SubtractUtcOffset() },
-                x => x.Serialization(y => y.WriteDateTimeAsMicrosoftJsonDateTime()))
+                x => x.Serialization(y => y.WriteMicrosoftJsonDateTime()))
                 .ShouldEqual("{\"DateTime\":\"\\/Date(499152060000)\\/\"}");
         }
 
@@ -100,7 +100,7 @@ namespace Tests.Serializer.Json
         public void should_write_nullable_datetime_as_microsoft_datetime()
         {
             Serialize.Json(new NullableDateTimeConversion { DateTime = new DateTime(1985, 10, 26, 5, 21, 0).SubtractUtcOffset() },
-                x => x.Serialization(y => y.WriteDateTimeAsMicrosoftJsonDateTime()))
+                x => x.Serialization(y => y.WriteMicrosoftJsonDateTime()))
                 .ShouldEqual("{\"DateTime\":\"\\/Date(499152060000)\\/\"}");
         }
     }

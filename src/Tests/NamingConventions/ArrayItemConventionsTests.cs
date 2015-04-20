@@ -62,31 +62,6 @@ namespace Tests.NamingConventions
 
         [Test]
         [TestCaseSource("ArrayItemCases")]
-        public void should_add_conditional_field_name_convention(
-            CachedMember member, bool hasMember, string itemName)
-        {
-            GetName(member, x => x.Add(
-            c => {
-                c.HasMember.ShouldEqual(hasMember);
-                c.Member.ShouldEqual(member);
-                c.Type.ShouldEqual(ModelType);
-                c.Options.ShouldEqual(Options);
-                return "yada";
-            },
-            c => {
-                c.HasMember.ShouldEqual(hasMember);
-                c.Member.ShouldEqual(member);
-                c.Type.ShouldEqual(ModelType);
-                c.Options.ShouldEqual(Options);
-                return true;
-            })).ShouldEqual("yada");
-
-            GetName(member, x => x.Add((ArrayItemContext c) => "yada", 
-                p => false)).ShouldEqual(itemName);
-        }
-
-        [Test]
-        [TestCaseSource("ArrayItemCases")]
         public void should_add_conditional_field_name_modification_convention(
             CachedMember member, bool hasMember, string itemName)
         {

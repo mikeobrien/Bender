@@ -33,6 +33,18 @@ namespace Bender.Configuration
             return this;
         }
 
+        public DeserializerOptionsDsl IgnoreEnumNameCase()
+        {
+            _options.EnumNameComparison = StringComparison.OrdinalIgnoreCase;
+            return this;
+        }
+
+        public DeserializerOptionsDsl WithEnumNameComparison(StringComparison comparison)
+        {
+            _options.EnumNameComparison = comparison;
+            return this;
+        }
+
         public DeserializerOptionsDsl FailOnUnmatchedElements()
         {
             _options.IgnoreUnmatchedElements = false;
@@ -75,7 +87,7 @@ namespace Bender.Configuration
             return this;
         }
 
-        public DeserializerOptionsDsl TreatAllDateTimesAsUtcAndConvertToLocal()
+        public DeserializerOptionsDsl TreatDatesAsUtcAndConvertToLocal()
         {
             AddReader((v, s, t, o) => DateTime.Parse(v.ToString()).ToLocalTime(), true);
             return this;

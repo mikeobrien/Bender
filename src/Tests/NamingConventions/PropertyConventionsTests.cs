@@ -20,6 +20,7 @@ namespace Tests.NamingConventions
         }
 
         private static readonly Options Options = Options.Create();
+        private static readonly Type MemberType = typeof(string);
         private static readonly CachedMember Property = 
             new CachedMember(typeof(Model).GetProperty("Property"));
 
@@ -40,30 +41,9 @@ namespace Tests.NamingConventions
                 {
                     n.ShouldEqual("SomeElement");
                     c.Member.ShouldEqual(Property);
-                    c.Options.ShouldEqual(Options);
+                    c.Type.ShouldEqual(MemberType);
                     return "yada";
                 })).ShouldEqual("yada");
-        }
-
-        [Test]
-        public void should_add_conditional_property_name_convention()
-        {
-            GetPropertyName(x => x.Add(
-                (p, c) =>
-                {
-                    c.Member.ShouldEqual(Property);
-                    c.Options.ShouldEqual(Options);
-                    return "yada";
-                },
-                (p, c) =>
-                {
-                    c.Member.ShouldEqual(Property);
-                    c.Options.ShouldEqual(Options);
-                    return true;
-                })).ShouldEqual("yada");
-
-            GetPropertyName(x => x.Add((MemberContext c) => "yada",
-                c => false)).ShouldEqual("SomeElement");
         }
 
         [Test]
@@ -74,14 +54,14 @@ namespace Tests.NamingConventions
                 {
                     n.ShouldEqual("SomeElement");
                     c.Member.ShouldEqual(Property);
-                    c.Options.ShouldEqual(Options);
+                    c.Type.ShouldEqual(MemberType);
                     return "yada";
                 },
                 (n, c) =>
                 {
                     n.ShouldEqual("SomeElement");
                     c.Member.ShouldEqual(Property);
-                    c.Options.ShouldEqual(Options);
+                    c.Type.ShouldEqual(MemberType);
                     return true;
                 })).ShouldEqual("yada");
 
@@ -96,7 +76,7 @@ namespace Tests.NamingConventions
                 (n, c) =>
                 {
                     n.ShouldEqual("SomeElement");
-                    c.Options.ShouldEqual(Options);
+                    c.Type.ShouldEqual(MemberType);
                     return "yada";
                 })).ShouldEqual("yada");
         }
@@ -108,13 +88,13 @@ namespace Tests.NamingConventions
                 (n, c) =>
                 {
                     n.ShouldEqual("SomeElement");
-                    c.Options.ShouldEqual(Options);
+                    c.Type.ShouldEqual(MemberType);
                     return "yada";
                 },
                 (n, c) =>
                 {
                     n.ShouldEqual("SomeElement");
-                    c.Options.ShouldEqual(Options);
+                    c.Type.ShouldEqual(MemberType);
                     return true;
                 })).ShouldEqual("yada");
 

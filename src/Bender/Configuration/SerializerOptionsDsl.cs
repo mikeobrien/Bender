@@ -34,7 +34,7 @@ namespace Bender.Configuration
             return this;
         }
 
-        public SerializerOptionsDsl WriteDateTimeAsMicrosoftJsonDateTime()
+        public SerializerOptionsDsl WriteMicrosoftJsonDateTime()
         {
             AddWriter<DateTime>((v, s, t, o) => v.ToMicrosoftJsonDateFormat());
             return this;

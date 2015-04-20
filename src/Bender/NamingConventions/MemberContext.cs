@@ -1,4 +1,4 @@
-using Bender.Configuration;
+using System;
 using Bender.Nodes;
 using Bender.Nodes.Object;
 using Bender.Nodes.Xml;
@@ -12,12 +12,12 @@ namespace Bender.NamingConventions
         {
             Member = member;
             Format = context.Format;
-            Options = context.Options;
             Mode = context.Mode;
+            Type = member.Type.Type;
         }
 
         public CachedMember Member { get; private set; }
-        public Options Options { get; private set; }
+        public Type Type { get; private set; }
         public Mode Mode { get; private set; }
         public string Format { get; private set; }
         public bool IsXml { get { return Format == XmlNodeBase.NodeFormat; } }

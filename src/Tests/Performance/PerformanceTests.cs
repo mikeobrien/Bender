@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Web.Script.Serialization;
 using System.Xml.Serialization;
+using Bender.Collections;
 using Bender.Configuration;
 using Bender.Extensions;
 using Bender.Nodes;
@@ -14,12 +13,11 @@ using Bender.Nodes.Xml;
 using fastJSON;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Should;
-using Serialize = Bender.Serialize;
+using JsonSerializer = ServiceStack.Text.JsonSerializer;
 
 namespace Tests.Performance
 {
-    [TestFixture]
+    [TestFixture, Ignore]
     public class PerformanceTests
     {
         private IEnumerable<Benchmarks.Benchmark> _xmlResults;
@@ -52,8 +50,8 @@ namespace Tests.Performance
                     JsonConvert.SerializeObject),
 
                 new BenchmarkSerializer("ServiceStack", Format.Json, 
-                    ServiceStack.Text.JsonSerializer.DeserializeFromString, 
-                    ServiceStack.Text.JsonSerializer.SerializeToString),
+                    JsonSerializer.DeserializeFromString, 
+                    JsonSerializer.SerializeToString),
 
                 new BenchmarkSerializer("fastJSON", Format.Json, 
                     (s, t) => JSON.Instance.ToObject(s, t), 
@@ -109,8 +107,9 @@ namespace Tests.Performance
         [Test]
         public void should_exceed_xml_serializer_benchmark()
         {
-            Flexo.Extensions.Extensions.ForEach(_xmlResults, x => Console.WriteLine("{0} {1}: {2}",
-                x.Name, x.Format, x.WarmSerialize));
+            Console.WriteLine(TimeSpan.TicksPerMillisecond);
+            //_xmlResults.ForEach(x => Console.WriteLine("{0} {1}: {2} ({3})",
+            //    x.Name, x.Format, x.WarmSerialize, x.Bytes));
 
             //_xmlResults.First(x => x.IsBender).WarmSerialization.ShouldBeLessThan(
             //    _xmlResults.Where(x => !x.IsBender).Min(x => x.WarmSerialization));
@@ -119,8 +118,8 @@ namespace Tests.Performance
         [Test]
         public void should_exceed_xml_deserializer_benchmark()
         {
-            Flexo.Extensions.Extensions.ForEach(_xmlResults, x => Console.WriteLine("{0} {1}: {2}",
-                x.Name, x.Format, x.WarmSerialize));
+            _xmlResults.ForEach(x => Console.WriteLine("{0} {1}: {2} ({3})",
+                x.Name, x.Format, x.WarmDeserialize, x.Bytes));
 
             //_xmlResults.First(x => x.IsBender).WarmDeserialization.ShouldBeLessThan(
             //    _xmlResults.Where(x => !x.IsBender).Min(x => x.WarmDeserialization));
@@ -129,8 +128,8 @@ namespace Tests.Performance
         [Test]
         public void should_exceed_json_serializer_benchmark()
         {
-            Flexo.Extensions.Extensions.ForEach(_jsonResults, x => Console.WriteLine("{0} {1}: {2}",
-                x.Name, x.Format, x.WarmSerialize));
+            _jsonResults.ForEach(x => Console.WriteLine("{0} {1}: {2} ({3})",
+                x.Name, x.Format, x.WarmSerialize, x.Bytes));
 
             //_jsonResults.First(x => x.IsBender).WarmSerialization.ShouldBeLessThan(
             //    _jsonResults.Where(x => !x.IsBender).Min(x => x.WarmSerialization));
@@ -139,8 +138,8 @@ namespace Tests.Performance
         [Test]
         public void should_exceed_json_deserializer_benchmark()
         {
-            Flexo.Extensions.Extensions.ForEach(_jsonResults, x => Console.WriteLine("{0} {1}: {2}",
-                x.Name, x.Format, x.WarmDeserialize));
+            _jsonResults.ForEach(x => Console.WriteLine("{0} {1}: {2} ({3})",
+                x.Name, x.Format, x.WarmDeserialize, x.Bytes));
 
             //_jsonResults.First(x => x.IsBender).WarmDeserialization.ShouldBeLessThan(
             //    _jsonResults.Where(x => !x.IsBender).Min(x => x.WarmDeserialization));

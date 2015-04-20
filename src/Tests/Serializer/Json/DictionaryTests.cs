@@ -232,7 +232,7 @@ namespace Tests.Serializer.Json
         {
             Serialize.Json(
                 new DictionaryImplementation { Property = "oh", Field = "hai" },
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields())
                 .ShouldEqual("{\"Property\":\"oh\",\"Field\":\"hai\"}");
         }
 
@@ -249,7 +249,7 @@ namespace Tests.Serializer.Json
         {
             Serialize.Json(
                 new DictionaryMember { DictionaryImpl = new DictionaryImplementation { Property = "oh", Field = "hai" } },
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields())
                 .ShouldEqual("{\"DictionaryImpl\":{\"Property\":\"oh\",\"Field\":\"hai\"}}");
         }
 
@@ -268,7 +268,7 @@ namespace Tests.Serializer.Json
             Serialize.Json(
                 new List<DictionaryImplementation> { new DictionaryImplementation 
                     { Property = "oh", Field = "hai" } },
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields())
                 .ShouldEqual("[{\"Property\":\"oh\",\"Field\":\"hai\"}]");
         }
 
@@ -287,7 +287,7 @@ namespace Tests.Serializer.Json
             Serialize.Json(
                 new Dictionary<string, DictionaryImplementation> 
                     { { "item", new DictionaryImplementation { Property = "oh", Field = "hai" } } },
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields())
                 .ShouldEqual("{\"item\":{\"Property\":\"oh\",\"Field\":\"hai\"}}");
         }
 

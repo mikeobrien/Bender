@@ -65,7 +65,8 @@ namespace Bender.Nodes.Object
             else
             {
                 if (Context.Options.TypeFilter.WhenNot(_itemType, Context.Options)) return;
-                if (!ActualType.IsList) throw new TypeNotSupportedException("enumerable", ActualType, Mode.Deserialize, supported);
+                if (!ActualType.IsList) throw new TypeNotSupportedException(
+                    "enumerable", ActualType, Mode.Deserialize, supported);
                 if (named)
                 {
                     var itemName = GetItemName(_itemType);

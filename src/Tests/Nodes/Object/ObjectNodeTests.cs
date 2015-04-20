@@ -211,7 +211,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(List<string>), typeof(IList<string>))]
         public void should_exclude_collection_interface_members(Type actualType, Type specifiedType)
         {
-            var nodes = CreateNode(Options.Create(x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields()),
+            var nodes = CreateNode(Options.Create(x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()),
                 new SimpleValue(actualType.CreateInstance(), specifiedType.GetCachedType())).ToList();
             nodes.ShouldTotal(0);
         }
@@ -229,7 +229,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(Dictionary), typeof(Dictionary))]
         public void should_exclude_idictionary_members(Type actualType, Type specifiedType)
         {
-            var nodes = CreateNode(Options.Create(x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields()),
+            var nodes = CreateNode(Options.Create(x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()),
                 new SimpleValue(actualType.CreateInstance(), specifiedType.GetCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
@@ -249,7 +249,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(GenericDictionary), typeof(GenericDictionary))]
         public void should_exclude_generic_idictionary_members(Type actualType, Type specifiedType)
         {
-            var nodes = CreateNode(Options.Create(x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields()),
+            var nodes = CreateNode(Options.Create(x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()),
                 new SimpleValue(actualType.CreateInstance(), specifiedType.GetCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
@@ -269,7 +269,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(Enumerable), typeof(Enumerable))]
         public void should_exclude_ienumerable_members(Type actualType, Type specifiedType)
         {
-            var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields()),
+            var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
                 new SimpleValue(actualType.CreateInstance(), specifiedType.GetCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
@@ -289,7 +289,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(GenericEnumerable), typeof(GenericEnumerable))]
         public void should_exclude_generic_ienumerable_members(Type actualType, Type specifiedType)
         {
-            var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields()),
+            var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
                 new SimpleValue(actualType.CreateInstance(), specifiedType.GetCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
@@ -309,7 +309,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(List), typeof(List))]
         public void should_exclude_ilist_members(Type actualType, Type specifiedType)
         {
-            var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields()),
+            var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
                 new SimpleValue(actualType.CreateInstance(), specifiedType.GetCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
@@ -329,7 +329,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(GenericList), typeof(GenericList))]
         public void should_exclude_generic_ilist_members(Type actualType, Type specifiedType)
         {
-            var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields()),
+            var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
                 new SimpleValue(actualType.CreateInstance(), specifiedType.GetCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");

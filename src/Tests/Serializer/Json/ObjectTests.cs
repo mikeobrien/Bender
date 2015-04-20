@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
 using System.Xml.Serialization;
 using Bender;
 using Bender.Extensions;
@@ -105,6 +108,44 @@ namespace Tests.Serializer.Json
                     value.ToString().ToLower() : 
                     "\"" + value.ToString().Replace("/", "\\/") + "\"");
             result.ShouldEqual(json);
+        }
+
+        // Out of the box types
+
+        public class OutOfTheBoxTypes
+        {
+            public IPAddress IPAddress { get; set; }
+            public Version Version { get; set; }
+            public MailAddress MailAddress { get; set; }
+            public byte[] ByteArray { get; set; }
+        }
+
+        [Test]
+        public void should_serialize_ip_address()
+        {
+            Serialize.Json(new OutOfTheBoxTypes { IPAddress = IPAddress.Parse("192.168.1.1") })
+                .ShouldEqual("{\"IPAddress\":\"192.168.1.1\"}");
+        }
+
+        [Test]
+        public void should_serialize_version()
+        {
+            Serialize.Json(new OutOfTheBoxTypes { Version = Version.Parse("1.2.3.4") })
+                .ShouldEqual("{\"Version\":\"1.2.3.4\"}");
+        }
+
+        [Test]
+        public void should_serialize_mail_address()
+        {
+            Serialize.Json(new OutOfTheBoxTypes { MailAddress = new MailAddress("test@test.com") })
+                .ShouldEqual("{\"MailAddress\":\"test@test.com\"}");
+        }
+
+        [Test]
+        public void should_serialize_byte_array()
+        {
+            Serialize.Json(new OutOfTheBoxTypes { ByteArray = ASCIIEncoding.ASCII.GetBytes("oh hai") })
+                .ShouldEqual("{\"ByteArray\":\"b2ggaGFp\"}");
         }
 
         // Complex types 
@@ -430,25 +471,6 @@ namespace Tests.Serializer.Json
         }
 
         [Test]
-        public void should_apply_member_name_source_convention()
-        {
-            Serialize.Json(new NamingConventions { PropertyValue = "oh", FieldValue = "hai" },
-                x => x.WithMemberNamingConvention(y => "$" + y.Member.Name).IncludePublicFields())
-                .ShouldEqual("{\"$PropertyValue\":\"oh\",\"$FieldValue\":\"hai\"}");
-        }
-
-        [Test]
-        public void should_apply_member_name_source_convention_conditionally()
-        {
-            Serialize.Json(new NamingConventions { PropertyValue = "oh", 
-                PropertyValue2 = "hai", FieldValue = "o", FieldValue2 = "rly" },
-                x => x.WithMemberNamingConvention(y => "$" + y.Member.Name,
-                    y => y.Member.Name.EndsWith("2")).IncludePublicFields())
-                .ShouldEqual("{\"PropertyValue\":\"oh\",\"$PropertyValue2\":\"hai\"," +
-                  "\"FieldValue\":\"o\",\"$FieldValue2\":\"rly\"}");
-        }
-
-        [Test]
         public void should_apply_member_name_modification_convention()
         {
             Serialize.Json(new NamingConventions { PropertyValue = "oh", FieldValue = "hai" },
@@ -466,23 +488,6 @@ namespace Tests.Serializer.Json
         }
 
         [Test]
-        public void should_apply_field_name_source_convention()
-        {
-            Serialize.Json(new NamingConventions { PropertyValue = "oh", FieldValue = "hai" },
-                x => x.WithFieldNamingConvention(y => "$" + y.Member.Name).IncludePublicFields())
-                .ShouldEqual("{\"PropertyValue\":\"oh\",\"$FieldValue\":\"hai\"}");
-        }
-
-        [Test]
-        public void should_apply_field_name_source_convention_conditionally()
-        {
-            Serialize.Json(new NamingConventions { PropertyValue = "oh", FieldValue = "hai", FieldValue2 = "there" },
-                x => x.WithFieldNamingConvention(y => "$" + y.Member.Name,
-                    y => y.Member.Name.EndsWith("2")).IncludePublicFields())
-                .ShouldEqual("{\"PropertyValue\":\"oh\",\"FieldValue\":\"hai\",\"$FieldValue2\":\"there\"}");
-        }
-
-        [Test]
         public void should_apply_field_name_modification_convention()
         {
             Serialize.Json(new NamingConventions { PropertyValue = "oh", FieldValue = "hai" },
@@ -497,23 +502,6 @@ namespace Tests.Serializer.Json
                 x => x.WithFieldNamingConvention((n, c) => "$" + n,
                     (n, c) => c.Member.Name.EndsWith("2")).IncludePublicFields())
                 .ShouldEqual("{\"PropertyValue2\":\"oh\",\"FieldValue\":\"hai\",\"$FieldValue2\":\"there\"}");
-        }
-
-        [Test]
-        public void should_apply_property_name_source_convention()
-        {
-            Serialize.Json(new NamingConventions { PropertyValue = "oh", FieldValue = "hai" },
-                x => x.WithPropertyNamingConvention(y => "$" + y.Member.Name).IncludePublicFields())
-                .ShouldEqual("{\"$PropertyValue\":\"oh\",\"FieldValue\":\"hai\"}");
-        }
-
-        [Test]
-        public void should_apply_property_name_source_convention_conditionally()
-        {
-            Serialize.Json(new NamingConventions { PropertyValue = "oh", FieldValue2 = "hai", PropertyValue2 = "there" },
-                x => x.WithPropertyNamingConvention(y => "$" + y.Member.Name,
-                    y => y.Member.Name.EndsWith("2")).IncludePublicFields())
-                .ShouldEqual("{\"PropertyValue\":\"oh\",\"$PropertyValue2\":\"there\",\"FieldValue2\":\"hai\"}");
         }
 
         [Test]
@@ -538,8 +526,8 @@ namespace Tests.Serializer.Json
         {
             Serialize.Json(new NamingConventions { PropertyValue = "oh", PropertyValue2 = "hai", FieldValue = "o", FieldValue2 = "rly" },
                 x => x
-                    .WithPropertyNamingConvention(c => "(" + c.Member.Name + ")")
-                    .WithFieldNamingConvention(c => "[" + c.Member.Name + "]")
+                    .WithPropertyNamingConvention((n, c) => "(" + c.Member.Name + ")")
+                    .WithFieldNamingConvention((n, c) => "[" + c.Member.Name + "]")
                     .WithPropertyNamingConvention((n, c) => "+" + n, (n, c) => !c.Member.Name.EndsWith("2"))
                     .WithPropertyNamingConvention((n, c) => "$" + n, (n, c) => c.Member.Name.EndsWith("2"))
                     .WithFieldNamingConvention((n, c) => "-" + n, (n, c) => !c.Member.Name.EndsWith("2"))

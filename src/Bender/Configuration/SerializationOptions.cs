@@ -37,6 +37,7 @@ namespace Bender.Configuration
             Writers.AddValueWriter<Version>((v, s, t, o) => v.ToString());
             Writers.AddValueWriter<MailAddress>((v, s, t, o) => v.ToString());
             Writers.AddValueWriter<IPAddress>((v, s, t, o) => v.ToString());
+            Writers.AddValueWriter<byte[]>((v, s, t, o) => Convert.ToBase64String(v));
         }
 
         public bool PrettyPrint { get; set; }

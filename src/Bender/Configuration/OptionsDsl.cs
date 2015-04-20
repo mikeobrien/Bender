@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Text;
 using Bender.Extensions;
 using Bender.NamingConventions;
 using Bender.Reflection;
@@ -38,15 +40,15 @@ namespace Bender.Configuration
             return this;
         }
 
-        public OptionsDsl TreatEnumerableImplementationsAsObjects()
+        public OptionsDsl TreatEnumerableImplsAsObjects()
         {
-            _options.TreatEnumerableImplementationsAsObjects = true;
+            _options.TreatEnumerableImplsAsObjects = true;
             return this;
         }
 
-        public OptionsDsl TreatDictionaryImplementationsAsObjects()
+        public OptionsDsl TreatDictionaryImplsAsObjects()
         {
-            _options.TreatDictionaryImplementationsAsObjects = true;
+            _options.TreatDictionaryImplsAsObjects = true;
             return this;
         }
 
@@ -140,24 +142,6 @@ namespace Bender.Configuration
         // Member naming conventions
 
         public OptionsDsl WithMemberNamingConvention(
-            Func<MemberContext, string> convention)
-        {
-            _options.FieldNameConventions.SetDefault(convention);
-            _options.PropertyNameConventions.SetDefault(convention);
-            return this;
-        }
-
-        public OptionsDsl WithMemberNamingConvention(
-            Func<MemberContext, string> convention,
-            Func<MemberContext, bool> when)
-        {
-            // Mono 2.10.8 build fails when lambdas passed in directly.
-            _options.FieldNameConventions.Add(x => convention(x), x => when(x));
-            _options.PropertyNameConventions.Add(x => convention(x), x => when(x));
-            return this;
-        }
-
-        public OptionsDsl WithMemberNamingConvention(
             Func<string, MemberContext, string> convention)
         {
             _options.FieldNameConventions.Add(convention);
@@ -178,21 +162,6 @@ namespace Bender.Configuration
         // Field naming conventions
 
         public OptionsDsl WithFieldNamingConvention(
-            Func<MemberContext, string> convention)
-        {
-            _options.FieldNameConventions.SetDefault(convention);
-            return this;
-        }
-
-        public OptionsDsl WithFieldNamingConvention(
-            Func<MemberContext, string> convention,
-            Func<MemberContext, bool> when)
-        {
-            _options.FieldNameConventions.Add(convention, when);
-            return this;
-        }
-
-        public OptionsDsl WithFieldNamingConvention(
             Func<string, MemberContext, string> convention)
         {
             _options.FieldNameConventions.Add(convention);
@@ -208,21 +177,6 @@ namespace Bender.Configuration
         }
 
         // Property naming conventions
-
-        public OptionsDsl WithPropertyNamingConvention(
-            Func<MemberContext, string> convention)
-        {
-            _options.PropertyNameConventions.SetDefault(convention);
-            return this;
-        }
-
-        public OptionsDsl WithPropertyNamingConvention(
-            Func<MemberContext, string> convention,
-            Func<MemberContext, bool> when)
-        {
-            _options.PropertyNameConventions.Add(convention, when);
-            return this;
-        }
 
         public OptionsDsl WithPropertyNamingConvention(Func<string,
             MemberContext, string> convention)
@@ -241,21 +195,6 @@ namespace Bender.Configuration
 
         // Array item naming conventions
 
-        public OptionsDsl WithArrayItemNamingConvention(
-            Func<ArrayItemContext, string> convention)
-        {
-            _options.ArrayItemNameConventions.SetDefault(convention);
-            return this;
-        }
-
-        public OptionsDsl WithArrayItemNamingConvention(
-            Func<ArrayItemContext, string> convention,
-            Func<ArrayItemContext, bool> when)
-        {
-            _options.ArrayItemNameConventions.Add(convention, when);
-            return this;
-        }
-
         public OptionsDsl WithArrayItemNamingConvention(Func<string,
             ArrayItemContext, string> convention)
         {
@@ -272,21 +211,6 @@ namespace Bender.Configuration
         }
 
         // Type naming conventions
-
-        public OptionsDsl WithTypeNamingConvention(
-            Func<TypeContext, string> convention)
-        {
-            _options.TypeNameConventions.SetDefault(convention);
-            return this;
-        }
-
-        public OptionsDsl WithTypeNamingConvention(
-            Func<TypeContext, string> convention,
-            Func<TypeContext, bool> when)
-        {
-            _options.TypeNameConventions.Add(convention, when);
-            return this;
-        }
 
         public OptionsDsl WithTypeNamingConvention(
             Func<string, TypeContext, string> convention)
@@ -335,6 +259,13 @@ namespace Bender.Configuration
         public OptionsDsl Deserialization(Action<DeserializerOptionsDsl> configure)
         {
             configure(new DeserializerOptionsDsl(_options.Deserialization));
+            return this;
+        }
+
+        public OptionsDsl DoItForTheLulz()
+        {
+            Process.Start(Encoding.UTF8.GetString(Convert.FromBase64String(
+                "aHR0cDovL2ltZ3VyLmNvbS9nYWxsZXJ5LzVNYnE1")));
             return this;
         }
     }

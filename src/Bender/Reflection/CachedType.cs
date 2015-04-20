@@ -137,6 +137,11 @@ namespace Bender.Reflection
         public bool IsInBclCollectionNamespace { get; private set; }
         public bool IsBclCollectionType { get { return IsInBclCollectionNamespace && IsEnumerable; } }
 
+        public static implicit operator Type(CachedType type)
+        {
+            return type.Type;
+        }
+
         public object CreateGenericListInstance()
         {
             return _concreteGenericListType.Value.CreateInstance();

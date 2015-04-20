@@ -153,7 +153,7 @@ namespace Tests.Deserializer.Json
         public void should_read_datetime_as_local(string datetime)
         {
             var result = Deserialize.Json<DateTimeConversion>("{{ \"DateTime\": \"{0}\" }}".ToFormat(datetime),
-                x => x.Deserialization(y => y.TreatAllDateTimesAsUtcAndConvertToLocal()));
+                x => x.Deserialization(y => y.TreatDatesAsUtcAndConvertToLocal()));
 
             result.DateTime.ShouldEqual(new DateTime(1985, 10, 26, 5, 21, 0).SubtractUtcOffset());
         }
@@ -170,7 +170,7 @@ namespace Tests.Deserializer.Json
         public void should_read_nullable_datetime_as_local(string datetime, string result)
         {
             var @object = Deserialize.Json<NullableDateTimeConversion>("{{ \"DateTime\": {0} }}".ToFormat(datetime),
-                x => x.Deserialization(y => y.TreatAllDateTimesAsUtcAndConvertToLocal()));
+                x => x.Deserialization(y => y.TreatDatesAsUtcAndConvertToLocal()));
 
             @object.DateTime.ShouldEqual(result == null ? (DateTime?)null : DateTime.Parse(result).SubtractUtcOffset());
         }

@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
 using System.Xml.Serialization;
 using Bender;
 using Bender.Configuration;
@@ -260,6 +263,44 @@ namespace Tests.Deserializer.Xml
                 "Xml.ObjectTests.SimpleTypeField.Int32Property': Error parsing ''. Input string was not in a correct format.");
             exception.FriendlyMessage.ShouldEqual("Could not read xml element '/SimpleTypeField/Int32Property': yada");
             exception.InnerException.ShouldBeType<ValueParseException>();
+        }
+
+        // Out of the box types
+
+        public class OutOfTheBoxTypes
+        {
+            public IPAddress IPAddress { get; set; }
+            public Version Version { get; set; }
+            public MailAddress MailAddress { get; set; }
+            public byte[] ByteArray { get; set; }
+        }
+
+        [Test]
+        public void should_deserialize_ip_address()
+        {
+            Deserialize.Xml<OutOfTheBoxTypes>("<OutOfTheBoxTypes><IPAddress>192.168.1.1</IPAddress></OutOfTheBoxTypes>")
+                .IPAddress.ShouldEqual(IPAddress.Parse("192.168.1.1"));
+        }
+
+        [Test]
+        public void should_deserialize_version()
+        {
+            Deserialize.Xml<OutOfTheBoxTypes>("<OutOfTheBoxTypes><Version>1.2.3.4</Version></OutOfTheBoxTypes>")
+                .Version.ShouldEqual(Version.Parse("1.2.3.4"));
+        }
+
+        [Test]
+        public void should_deserialize_mail_address()
+        {
+            Deserialize.Xml<OutOfTheBoxTypes>("<OutOfTheBoxTypes><MailAddress>test@test.com</MailAddress></OutOfTheBoxTypes>")
+                .MailAddress.ShouldEqual(new MailAddress("test@test.com"));
+        }
+
+        [Test]
+        public void should_deserialize_byte_array()
+        {
+            Deserialize.Xml<OutOfTheBoxTypes>("<OutOfTheBoxTypes><ByteArray>b2ggaGFp</ByteArray></OutOfTheBoxTypes>")
+                .ByteArray.ShouldEqual(ASCIIEncoding.ASCII.GetBytes("oh hai"));
         }
 
         // Complex types 
@@ -696,32 +737,6 @@ namespace Tests.Deserializer.Xml
         }
 
         [Test]
-        public void should_apply_member_name_source_convention()
-        {
-            var result = Deserialize.Xml<NamingConventions>(
-                "<NamingConventions><_PropertyValue>oh</_PropertyValue><_FieldValue>hai</_FieldValue></NamingConventions>",
-                x => x.WithMemberNamingConvention(y => "_" + y.Member.Name).IncludePublicFields());
-
-            result.PropertyValue.ShouldEqual("oh");
-            result.FieldValue.ShouldEqual("hai");
-        }
-
-        [Test]
-        public void should_apply_member_name_source_convention_conditionally()
-        {
-            var result = Deserialize.Xml<NamingConventions>(
-                "<NamingConventions><_PropertyValue>oh</_PropertyValue>,<_PropertyValue2>hai</_PropertyValue2>," +
-                  "<_FieldValue>o</_FieldValue><_FieldValue2>rly</_FieldValue2></NamingConventions>",
-                x => x.WithMemberNamingConvention(y => "_" + y.Member.Name,
-                    y => y.Member.Name.EndsWith("2")).IncludePublicFields());
-
-            result.PropertyValue.ShouldBeNull();
-            result.PropertyValue2.ShouldEqual("hai");
-            result.FieldValue.ShouldBeNull();
-            result.FieldValue2.ShouldEqual("rly");
-        }
-
-        [Test]
         public void should_apply_member_name_modification_convention()
         {
             var result = Deserialize.Xml<NamingConventions>(
@@ -742,31 +757,6 @@ namespace Tests.Deserializer.Xml
 
             result.PropertyValue.ShouldEqual("oh");
             result.FieldValue.ShouldBeNull();
-        }
-
-        [Test]
-        public void should_apply_field_name_source_convention()
-        {
-            var result = Deserialize.Xml<NamingConventions>(
-                "<NamingConventions><_PropertyValue>oh</_PropertyValue><_FieldValue>hai</_FieldValue></NamingConventions>",
-                x => x.WithFieldNamingConvention(y => "_" + y.Member.Name).IncludePublicFields());
-
-            result.PropertyValue.ShouldBeNull();
-            result.FieldValue.ShouldEqual("hai");
-        }
-
-        [Test]
-        public void should_apply_field_name_source_convention_conditionally()
-        {
-            var result = Deserialize.Xml<NamingConventions>(
-                "<NamingConventions><_PropertyValue>oh</_PropertyValue>,<_FieldValue>hai</_FieldValue><_FieldValue2>there</_FieldValue2></NamingConventions>",
-                x => x.WithFieldNamingConvention(y => "_" + y.Member.Name,
-                    y => y.Member.Name.EndsWith("2")).IncludePublicFields());
-
-            result.PropertyValue.ShouldBeNull();
-            result.PropertyValue2.ShouldBeNull();
-            result.FieldValue.ShouldBeNull();
-            result.FieldValue2.ShouldEqual("there");
         }
 
         [Test]
@@ -792,31 +782,6 @@ namespace Tests.Deserializer.Xml
             result.PropertyValue2.ShouldBeNull();
             result.FieldValue.ShouldBeNull();
             result.FieldValue2.ShouldEqual("there");
-        }
-
-        [Test]
-        public void should_apply_property_name_source_convention()
-        {
-            var result = Deserialize.Xml<NamingConventions>(
-                "<NamingConventions><_PropertyValue>oh</_PropertyValue><_FieldValue>hai</_FieldValue></NamingConventions>",
-                x => x.WithPropertyNamingConvention(y => "_" + y.Member.Name).IncludePublicFields());
-
-            result.PropertyValue.ShouldEqual("oh");
-            result.FieldValue.ShouldBeNull();
-        }
-
-        [Test]
-        public void should_apply_property_name_source_convention_conditionally()
-        {
-            var result = Deserialize.Xml<NamingConventions>(
-                "<NamingConventions><_PropertyValue>oh</_PropertyValue>,<_FieldValue2>hai</_FieldValue2><_PropertyValue2>there</_PropertyValue2></NamingConventions>",
-                x => x.WithPropertyNamingConvention(y => "_" + y.Member.Name,
-                    y => y.Member.Name.EndsWith("2")).IncludePublicFields());
-
-            result.PropertyValue.ShouldBeNull();
-            result.PropertyValue2.ShouldEqual("there");
-            result.FieldValue.ShouldBeNull();
-            result.FieldValue2.ShouldBeNull();
         }
 
         [Test]
@@ -855,8 +820,8 @@ namespace Tests.Deserializer.Xml
                     "<fbFieldValue2bij>rly</fbFieldValue2bij>" + 
                 "</NamingConventions>",
                 x => x
-                    .WithPropertyNamingConvention(c => "a" + c.Member.Name + "a")
-                    .WithFieldNamingConvention(c => "b" + c.Member.Name + "b")
+                    .WithPropertyNamingConvention((n, c) => "a" + c.Member.Name + "a")
+                    .WithFieldNamingConvention((n, c) => "b" + c.Member.Name + "b")
                     .WithPropertyNamingConvention((n, c) => "c" + n, (n, c) => !c.Member.Name.EndsWith("2"))
                     .WithPropertyNamingConvention((n, c) => "d" + n, (n, c) => c.Member.Name.EndsWith("2"))
                     .WithFieldNamingConvention((n, c) => "e" + n, (n, c) => !c.Member.Name.EndsWith("2"))
