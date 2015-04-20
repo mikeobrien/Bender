@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
 using System.Xml.Serialization;
 using Bender;
 using Bender.Extensions;
@@ -118,6 +121,44 @@ namespace Tests.Serializer.Xml
             var xml = "<SimpleTypeField {0}=\"{1}\" />".ToFormat(memberName,
                 type.GetUnderlyingNullableType() == typeof(bool) ? value.ToString().ToLower() : value);
             result.ShouldEqual(Xml.Declaration + xml);
+        }
+
+        // Out of the box types
+
+        public class OutOfTheBoxTypes
+        {
+            public IPAddress IPAddress { get; set; }
+            public Version Version { get; set; }
+            public MailAddress MailAddress { get; set; }
+            public byte[] ByteArray { get; set; }
+        }
+
+        [Test]
+        public void should_serialize_ip_address()
+        {
+            Serialize.Xml(new OutOfTheBoxTypes { IPAddress = IPAddress.Parse("192.168.1.1") })
+                .ShouldEqual(Xml.Declaration + "<OutOfTheBoxTypes><IPAddress>192.168.1.1</IPAddress></OutOfTheBoxTypes>");
+        }
+
+        [Test]
+        public void should_serialize_version()
+        {
+            Serialize.Xml(new OutOfTheBoxTypes { Version = Version.Parse("1.2.3.4") })
+                .ShouldEqual(Xml.Declaration + "<OutOfTheBoxTypes><Version>1.2.3.4</Version></OutOfTheBoxTypes>");
+        }
+
+        [Test]
+        public void should_serialize_mail_address()
+        {
+            Serialize.Xml(new OutOfTheBoxTypes { MailAddress = new MailAddress("test@test.com") })
+                .ShouldEqual(Xml.Declaration + "<OutOfTheBoxTypes><MailAddress>test@test.com</MailAddress></OutOfTheBoxTypes>");
+        }
+
+        [Test]
+        public void should_serialize_byte_array()
+        {
+            Serialize.Xml(new OutOfTheBoxTypes { ByteArray = ASCIIEncoding.ASCII.GetBytes("oh hai") })
+                .ShouldEqual(Xml.Declaration + "<OutOfTheBoxTypes><ByteArray>b2ggaGFp</ByteArray></OutOfTheBoxTypes>");
         }
 
         // Complex types 
@@ -469,27 +510,6 @@ namespace Tests.Serializer.Xml
         }
 
         [Test]
-        public void should_apply_member_name_source_convention()
-        {
-            Serialize.Xml(new NamingConventions { PropertyValue = "oh", FieldValue = "hai" },
-                x => x.WithMemberNamingConvention(y => "_" + y.Member.Name).IncludePublicFields())
-                .ShouldEqual(Xml.Declaration + "<NamingConventions><_PropertyValue>oh</_PropertyValue><_FieldValue>hai</_FieldValue></NamingConventions>");
-        }
-
-        [Test]
-        public void should_apply_member_name_source_convention_conditionally()
-        {
-            Serialize.Xml(new NamingConventions { PropertyValue = "oh", 
-                PropertyValue2 = "hai", FieldValue = "o", FieldValue2 = "rly" },
-                x => x.WithMemberNamingConvention(y => "_" + y.Member.Name,
-                    y => y.Member.Name.EndsWith("2")).IncludePublicFields())
-                .ShouldEqual(Xml.Declaration + "<NamingConventions>" + 
-                    "<PropertyValue>oh</PropertyValue><_PropertyValue2>hai</_PropertyValue2>" +
-                    "<FieldValue>o</FieldValue><_FieldValue2>rly</_FieldValue2>" + 
-                    "</NamingConventions>");
-        }
-
-        [Test]
         public void should_apply_member_name_modification_convention()
         {
             Serialize.Xml(new NamingConventions { PropertyValue = "oh", FieldValue = "hai" },
@@ -507,23 +527,6 @@ namespace Tests.Serializer.Xml
         }
 
         [Test]
-        public void should_apply_field_name_source_convention()
-        {
-            Serialize.Xml(new NamingConventions { PropertyValue = "oh", FieldValue = "hai" },
-                x => x.WithFieldNamingConvention(y => "_" + y.Member.Name).IncludePublicFields())
-                .ShouldEqual(Xml.Declaration + "<NamingConventions><PropertyValue>oh</PropertyValue><_FieldValue>hai</_FieldValue></NamingConventions>");
-        }
-
-        [Test]
-        public void should_apply_field_name_source_convention_conditionally()
-        {
-            Serialize.Xml(new NamingConventions { PropertyValue = "oh", FieldValue = "hai", FieldValue2 = "there" },
-                x => x.WithFieldNamingConvention(y => "_" + y.Member.Name,
-                    y => y.Member.Name.EndsWith("2")).IncludePublicFields())
-                .ShouldEqual(Xml.Declaration + "<NamingConventions><PropertyValue>oh</PropertyValue><FieldValue>hai</FieldValue><_FieldValue2>there</_FieldValue2></NamingConventions>");
-        }
-
-        [Test]
         public void should_apply_field_name_modification_convention()
         {
             Serialize.Xml(new NamingConventions { PropertyValue = "oh", FieldValue = "hai" },
@@ -538,23 +541,6 @@ namespace Tests.Serializer.Xml
                 x => x.WithFieldNamingConvention((n, c) => "_" + n,
                     (n, c) => c.Member.Name.EndsWith("2")).IncludePublicFields())
                 .ShouldEqual(Xml.Declaration + "<NamingConventions><PropertyValue2>oh</PropertyValue2><FieldValue>hai</FieldValue><_FieldValue2>there</_FieldValue2></NamingConventions>");
-        }
-
-        [Test]
-        public void should_apply_property_name_source_convention()
-        {
-            Serialize.Xml(new NamingConventions { PropertyValue = "oh", FieldValue = "hai" },
-                x => x.WithPropertyNamingConvention(y => "_" + y.Member.Name).IncludePublicFields())
-                .ShouldEqual(Xml.Declaration + "<NamingConventions><_PropertyValue>oh</_PropertyValue><FieldValue>hai</FieldValue></NamingConventions>");
-        }
-
-        [Test]
-        public void should_apply_property_name_source_convention_conditionally()
-        {
-            Serialize.Xml(new NamingConventions { PropertyValue = "oh", FieldValue2 = "hai", PropertyValue2 = "there" },
-                x => x.WithPropertyNamingConvention(y => "_" + y.Member.Name,
-                    y => y.Member.Name.EndsWith("2")).IncludePublicFields())
-                .ShouldEqual(Xml.Declaration + "<NamingConventions><PropertyValue>oh</PropertyValue><_PropertyValue2>there</_PropertyValue2><FieldValue2>hai</FieldValue2></NamingConventions>");
         }
 
         [Test]
@@ -579,8 +565,8 @@ namespace Tests.Serializer.Xml
         {
             Serialize.Xml(new NamingConventions { PropertyValue = "oh", PropertyValue2 = "hai", FieldValue = "o", FieldValue2 = "rly" },
                 x => x
-                    .WithPropertyNamingConvention(c => "a" + c.Member.Name + "a")
-                    .WithFieldNamingConvention(c => "b" + c.Member.Name + "b")
+                    .WithPropertyNamingConvention((n, c) => "a" + c.Member.Name + "a")
+                    .WithFieldNamingConvention((n, c) => "b" + c.Member.Name + "b")
                     .WithPropertyNamingConvention((n, c) => "c" + n, (n, c) => !c.Member.Name.EndsWith("2"))
                     .WithPropertyNamingConvention((n, c) => "d" + n, (n, c) => c.Member.Name.EndsWith("2"))
                     .WithFieldNamingConvention((n, c) => "e" + n, (n, c) => !c.Member.Name.EndsWith("2"))

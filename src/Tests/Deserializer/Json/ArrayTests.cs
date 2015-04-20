@@ -444,7 +444,7 @@ namespace Tests.Deserializer.Json
         {
             var result = Deserialize.Json<EnumerableImplementation>(
                 "{ \"Property\": \"oh\", \"Field\": \"hai\" }",
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields());
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields());
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");
@@ -464,7 +464,7 @@ namespace Tests.Deserializer.Json
         {
             var result = Deserialize.Json<EnumerableMember>(
                 "{ \"EnumerableImpl\": { \"Property\": \"oh\", \"Field\": \"hai\" } }",
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields()).EnumerableImpl;
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()).EnumerableImpl;
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");
@@ -484,7 +484,7 @@ namespace Tests.Deserializer.Json
         {
             var result = Deserialize.Json<List<EnumerableImplementation>>(
                 "[ { \"Property\": \"oh\", \"Field\": \"hai\" } ]",
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields()).First();
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()).First();
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");
@@ -505,7 +505,7 @@ namespace Tests.Deserializer.Json
         {
             var result = Deserialize.Json<Dictionary<string, EnumerableImplementation>>(
                 "{ \"item\": { \"Property\": \"oh\", \"Field\": \"hai\" } }",
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields())["item"];
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields())["item"];
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");

@@ -246,7 +246,7 @@ namespace Tests.Serializer.Json
         public void should_treat_enumerable_root_as_object_when_configured()
         {
             Serialize.Json(new EnumerableImplementation { Property = "oh", Field = "hai" },
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields())
                 .ShouldEqual("{\"Property\":\"oh\",\"Field\":\"hai\"}");
         }
 
@@ -261,7 +261,7 @@ namespace Tests.Serializer.Json
         public void should_treat_enumerable_member_as_object_when_configured()
         {
             Serialize.Json(new EnumerableMember { EnumerableImpl = new EnumerableImplementation { Property = "oh", Field = "hai" } },
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields())
                 .ShouldEqual("{\"EnumerableImpl\":{\"Property\":\"oh\",\"Field\":\"hai\"}}");
         }
 
@@ -276,7 +276,7 @@ namespace Tests.Serializer.Json
         public void should_treat_enumerable_array_item_as_object_when_configured()
         {
             Serialize.Json(new List<EnumerableImplementation> { new EnumerableImplementation { Property = "oh", Field = "hai" }},
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields())
                 .ShouldEqual("[{\"Property\":\"oh\",\"Field\":\"hai\"}]");
         }
 
@@ -293,7 +293,7 @@ namespace Tests.Serializer.Json
         {
             Serialize.Json(new Dictionary<string, EnumerableImplementation> { { "item", 
                     new EnumerableImplementation { Property = "oh", Field = "hai" } } },
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields())
                 .ShouldEqual("{\"item\":{\"Property\":\"oh\",\"Field\":\"hai\"}}");
         }
 

@@ -106,7 +106,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
             var value = new SimpleValue(type.GetCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateDeserializable(
                 NodeName, value, _parent,
-                new Context(Options.Create(x => x.TreatEnumerableImplementationsAsObjects()), 
+                new Context(Options.Create(x => x.TreatEnumerableImplsAsObjects()), 
                     Mode.Deserialize, "xml")).As<NodeBase>();
 
             node.ShouldBeType<ObjectNode>();
@@ -139,7 +139,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
             var value = new SimpleValue(type.GetCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateDeserializable(
                 NodeName, value, _parent,
-                new Context(Options.Create(x => x.TreatDictionaryImplementationsAsObjects()), 
+                new Context(Options.Create(x => x.TreatDictionaryImplsAsObjects()), 
                     Mode.Deserialize, "xml")).As<NodeBase>();
 
             node.ShouldBeType<ObjectNode>();

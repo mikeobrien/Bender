@@ -93,8 +93,8 @@ namespace Bender.Nodes.Object
         private static TypeKind GetTypeKind(CachedType type, Options options)
         {
             return type.GetKind(
-                options.TreatEnumerableImplementationsAsObjects,
-                options.TreatDictionaryImplementationsAsObjects);
+                options.TreatEnumerableImplsAsObjects,
+                options.TreatDictionaryImplsAsObjects);
         }
     }
 }

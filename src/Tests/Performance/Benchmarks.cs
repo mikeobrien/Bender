@@ -44,12 +44,12 @@ namespace Tests.Performance
                 x.Run(typeof (Dummy), dummySource, dryRun: true);
             };
 
-            Enumerable.Range(1, 5).ForEach(x => benchmarks.ForEach(y =>
+            Enumerable.Range(1, 20).ForEach(x => benchmarks.ForEach(y =>
             {
                 var newType = types.Pop();
                 dummyRun(y);
                 y.Run(newType, generateSource()); // Cold
-                Enumerable.Range(1, 10).ForEach(z =>
+                Enumerable.Range(1, 20).ForEach(z =>
                 {
                     dummyRun(y);
                     y.Run(newType, generateSource(), true); // Warm

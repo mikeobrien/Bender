@@ -20,6 +20,7 @@ namespace Tests.NamingConventions
         }
 
         private static readonly Options Options = Options.Create();
+        private static readonly Type MemberType = typeof(string);
         private static readonly CachedMember Field = new CachedMember(typeof(Model).GetField("Field"));
 
         private static string GetFieldName(Action<NamingConventions<MemberContext>> config)
@@ -36,28 +37,9 @@ namespace Tests.NamingConventions
             (n, c) => {
                 n.ShouldEqual("SomeElement");
                 c.Member.ShouldEqual(Field);
-                c.Options.ShouldEqual(Options);
+                c.Type.ShouldEqual(MemberType);
                 return "yada";
             })).ShouldEqual("yada");
-        }
-
-        [Test]
-        public void should_add_conditional_field_name_convention()
-        {
-            GetFieldName(x => x.Add(
-            c => {
-                c.Member.ShouldEqual(Field);
-                c.Options.ShouldEqual(Options);
-                return "yada";
-            },
-            c => {
-                c.Member.ShouldEqual(Field);
-                c.Options.ShouldEqual(Options);
-                return true;
-            })).ShouldEqual("yada");
-
-            GetFieldName(x => x.Add((MemberContext c) => "yada", 
-                c => false)).ShouldEqual("SomeElement");
         }
 
         [Test]
@@ -67,13 +49,13 @@ namespace Tests.NamingConventions
             (n, c) => {
                 n.ShouldEqual("SomeElement");
                 c.Member.ShouldEqual(Field);
-                c.Options.ShouldEqual(Options);
+                c.Type.ShouldEqual(MemberType);
                 return "yada";
             },
             (n, c) => {
                 n.ShouldEqual("SomeElement");
                 c.Member.ShouldEqual(Field);
-                c.Options.ShouldEqual(Options);
+                c.Type.ShouldEqual(MemberType);
                 return true;
             })).ShouldEqual("yada");
 
@@ -87,7 +69,7 @@ namespace Tests.NamingConventions
             GetFieldName(x => x.Add(
             (n, c) => {
                 n.ShouldEqual("SomeElement");
-                c.Options.ShouldEqual(Options);
+                c.Type.ShouldEqual(MemberType);
                 return "yada";
             })).ShouldEqual("yada");
         }
@@ -98,12 +80,12 @@ namespace Tests.NamingConventions
             GetFieldName(x => x.Add(
             (n, c) => {
                 n.ShouldEqual("SomeElement");
-                c.Options.ShouldEqual(Options);
+                c.Type.ShouldEqual(MemberType);
                 return "yada";
             },
             (n, c) => {
                 n.ShouldEqual("SomeElement");
-                c.Options.ShouldEqual(Options);
+                c.Type.ShouldEqual(MemberType);
                 return true;
             })).ShouldEqual("yada");
 

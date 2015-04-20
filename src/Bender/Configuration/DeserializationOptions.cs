@@ -48,6 +48,7 @@ namespace Bender.Configuration
             Readers.AddValueReader((v, s, t, o) => Version.Parse(v.ToString()));
             Readers.AddValueReader((v, s, t, o) => new MailAddress(v.ToString()));
             Readers.AddValueReader((v, s, t, o) => IPAddress.Parse(v.ToString()));
+            Readers.AddValueReader((v, s, t, o) => Convert.FromBase64String(v.ToString()));
         }
 
         public StringComparison NameComparison { get; set; }

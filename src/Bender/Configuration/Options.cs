@@ -19,8 +19,8 @@ namespace Bender.Configuration
             TypeNameConventions = TypeNamingConvention.Create();
         }
 
-        public bool TreatEnumerableImplementationsAsObjects { get; set; }
-        public bool TreatDictionaryImplementationsAsObjects { get; set; }
+        public bool TreatEnumerableImplsAsObjects { get; set; }
+        public bool TreatDictionaryImplsAsObjects { get; set; }
 
         public string EnumerableTypeNameFormat { get; set; }
         public string DictionaryTypeNameFormat { get; set; }
@@ -33,8 +33,8 @@ namespace Bender.Configuration
         public NamingConventions<TypeContext> TypeNameConventions { get; set; }
 
         public Func<CachedType, Options, bool> TypeFilter { get; set; }
-
         public Func<CachedMember, Options, bool> MemberFilter { get; set; }
+
         public bool IncludeNonPublicProperties { get; set; }
         public bool IncludePublicFields { get; set; }
         public bool IncludeNonPublicFields { get; set; } 

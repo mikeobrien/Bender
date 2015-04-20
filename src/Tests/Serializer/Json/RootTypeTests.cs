@@ -42,7 +42,7 @@ namespace Tests.Serializer.Json
         [Test]
         public void should_serialize_collection_as_object_when_configured()
         {
-            Serialize.Json(new GenericStringListImpl(), x => x.TreatEnumerableImplementationsAsObjects()).ShouldEqual("{}");
+            Serialize.Json(new GenericStringListImpl(), x => x.TreatEnumerableImplsAsObjects()).ShouldEqual("{}");
         }
 
         // Json Array

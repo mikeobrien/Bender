@@ -262,7 +262,7 @@ namespace Tests.Serializer.Xml
         public void should_treat_enumerable_root_as_object_when_configured()
         {
             Serialize.Xml(new EnumerableImplementation { Property = "oh", Field = "hai" },
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields())
                 .ShouldEqual(Xml.Declaration + "<EnumerableImplementation><Property>oh</Property><Field>hai</Field></EnumerableImplementation>");
         }
 
@@ -277,7 +277,7 @@ namespace Tests.Serializer.Xml
         public void should_treat_enumerable_member_as_object_when_configured()
         {
             Serialize.Xml(new EnumerableMember { EnumerableImpl = new EnumerableImplementation { Property = "oh", Field = "hai" } },
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields())
                 .ShouldEqual(Xml.Declaration + "<EnumerableMember><EnumerableImpl><Property>oh</Property><Field>hai</Field></EnumerableImpl></EnumerableMember>");
         }
 
@@ -292,7 +292,7 @@ namespace Tests.Serializer.Xml
         public void should_treat_enumerable_array_item_as_object_when_configured()
         {
             Serialize.Xml(new List<EnumerableImplementation> { new EnumerableImplementation { Property = "oh", Field = "hai" }},
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields())
                 .ShouldEqual(Xml.Declaration + "<ArrayOfEnumerableImplementation><EnumerableImplementation><Property>oh</Property><Field>hai</Field></EnumerableImplementation></ArrayOfEnumerableImplementation>");
         }
 
@@ -309,7 +309,7 @@ namespace Tests.Serializer.Xml
         {
             Serialize.Xml(new Dictionary<string, EnumerableImplementation> { { "item", 
                     new EnumerableImplementation { Property = "oh", Field = "hai" } } },
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields())
                 .ShouldEqual(Xml.Declaration + "<DictionaryOfEnumerableImplementation><item><Property>oh</Property><Field>hai</Field></item></DictionaryOfEnumerableImplementation>");
         }
 

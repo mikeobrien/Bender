@@ -358,7 +358,7 @@ namespace Tests.Deserializer.Json
         {
             var result = Deserialize.Json<DictionaryImplementation>(
                 "{ \"Property\": \"oh\", \"Field\": \"hai\" }",
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields());
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields());
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");
@@ -379,7 +379,7 @@ namespace Tests.Deserializer.Json
         {
             var result = Deserialize.Json<DictionaryMember>(
                 "{ \"DictionaryImpl\": { \"Property\": \"oh\", \"Field\": \"hai\" } }",
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields()).DictionaryImpl;
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()).DictionaryImpl;
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");
@@ -400,7 +400,7 @@ namespace Tests.Deserializer.Json
         {
             var result = Deserialize.Json<List<DictionaryImplementation>>(
                 "[ { \"Property\": \"oh\", \"Field\": \"hai\" } ]",
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields()).First();
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()).First();
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");
@@ -421,7 +421,7 @@ namespace Tests.Deserializer.Json
         {
             var result = Deserialize.Json<Dictionary<string, DictionaryImplementation>>(
                 "{ \"item\": { \"Property\": \"oh\", \"Field\": \"hai\" } }",
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields())["item"];
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields())["item"];
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");

@@ -200,7 +200,7 @@ namespace Tests.NamingConventions
         [TestCase(typeof(EnumerableImpl))]
         public void should_return_type_name_if_enumerable_implementations_are_treated_as_objects(Type type)
         {
-            GetName(type, options: Options.Create(x => x.TreatEnumerableImplementationsAsObjects()))
+            GetName(type, options: Options.Create(x => x.TreatEnumerableImplsAsObjects()))
                 .ShouldEqual(type.Name);
         }
 
@@ -214,7 +214,7 @@ namespace Tests.NamingConventions
         [TestCase(typeof(IList), TypeNamingConvention.DefaultItemTypeName)]
         public void should_not_return_type_name_for_bcl_enumerables_when_implementations_are_treated_as_objects(Type type, string itemTypeName)
         {
-            GetName(type, options: Options.Create(x => x.TreatEnumerableImplementationsAsObjects()))
+            GetName(type, options: Options.Create(x => x.TreatEnumerableImplsAsObjects()))
                 .ShouldEqual(TypeNamingConvention.DefaultEnumerableNameFormat.ToFormat(itemTypeName));
         }
 
@@ -246,7 +246,7 @@ namespace Tests.NamingConventions
         [TestCase(typeof(GenericStringDictionaryImpl))]
         public void should_return_type_name_if_dictionary_implementations_are_treated_as_objects(Type type)
         {
-            GetName(type, options: Options.Create(x => x.TreatDictionaryImplementationsAsObjects()))
+            GetName(type, options: Options.Create(x => x.TreatDictionaryImplsAsObjects()))
                 .ShouldEqual(type.Name);
         }
 
@@ -257,7 +257,7 @@ namespace Tests.NamingConventions
         [TestCase(typeof(IDictionary), TypeNamingConvention.DefaultItemTypeName)]
         public void should_not_return_type_name_for_bcl_dictionaries_when_implementations_are_treated_as_objects(Type type, string itemTypeName)
         {
-            GetName(type, options: Options.Create(x => x.TreatDictionaryImplementationsAsObjects()))
+            GetName(type, options: Options.Create(x => x.TreatDictionaryImplsAsObjects()))
                 .ShouldEqual(TypeNamingConvention.DefaultDictionaryNameFormat.ToFormat(itemTypeName));
         }
 

@@ -57,6 +57,21 @@ namespace Bender.Reflection
         public bool IsReadonly { get { return _isReadonly.Value; } }
         public IEnumerable<Attribute> Attributes { get { return _attributes.Value; } }
 
+        public static implicit operator MemberInfo(CachedMember member)
+        {
+            return member.MemberInfo;
+        }
+
+        public static implicit operator PropertyInfo(CachedMember member)
+        {
+            return member.PropertyInfo;
+        }
+
+        public static implicit operator FieldInfo(CachedMember member)
+        {
+            return member.FieldInfo;
+        }
+
         public bool HasAttribute<T>() where T : Attribute
         {
             return _attributes.Value.Any(x => x is T);

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>flexo</id>
-    <version>1.0.19.0</version>
+    <version>1.0.21.0</version>
     <title>Flexo</title>
     <authors>Mike O'Brien</authors>
     <owners>Mike O'Brien</owners>

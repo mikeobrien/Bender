@@ -1,5 +1,4 @@
-﻿using Bender.Configuration;
-using Bender.NamingConventions;
+﻿using Bender.NamingConventions;
 using NUnit.Framework;
 using Should;
 
@@ -20,27 +19,21 @@ namespace Tests.NamingConventions
         }
 
         [Test]
-        public void should_allow_you_to_set_the_default_convention()
-        {
-            GetConventions().SetDefault(c => c + c.ToString()).GetName(5).ShouldEqual("55");
-        }
-
-        [Test]
-        public void should_apply_override_to_source_if_added_before()
+        public void should_apply_override_source_if_added_before()
         {
             var conventions = GetConventions()
-                .Add(n => n += "*")
-                .Add(c => (c * c).ToString(), c => c > 4);
+                .Add(n => n + "*")
+                .Add((n, c) => (c * c).ToString(), (n, c) => c > 4);
 
             conventions.GetName(4).ShouldEqual("4*");
-            conventions.GetName(5).ShouldEqual("25*");
+            conventions.GetName(5).ShouldEqual("25");
         }
 
         [Test]
-        public void should_apply_override_to_source_if_added_after()
+        public void should_apply_override_source_if_added_after()
         {
             var conventions = GetConventions()
-                .Add(c => (c * c).ToString(), c => c > 4)
+                .Add((n, c) => (c * c).ToString(), (n, c) => c > 4)
                 .Add(n => n += "*");
 
             conventions.GetName(4).ShouldEqual("4*");
@@ -73,9 +66,9 @@ namespace Tests.NamingConventions
         public void should_evaluate_last_added_sources_first()
         {
             var conventions = GetConventions()
-                .Add(c => "1" + c, c => c > 4)
-                .Add(c => "2" + c, c => c > 5)
-                .Add(c => "3" + c, c => c > 6);
+                .Add((n, c) => "1" + c, (n, c) => c > 4)
+                .Add((n, c) => "2" + c, (n, c) => c > 5)
+                .Add((n, c) => "3" + c, (n, c) => c > 6);
 
             conventions.GetName(4).ShouldEqual("4");
             conventions.GetName(5).ShouldEqual("15");

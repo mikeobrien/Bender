@@ -21,8 +21,8 @@ namespace Bender.NamingConventions
         {
             var type = context.Type.IsNullable ? context.Type.UnderlyingType : context.Type;
             var kind = type.GetKind(
-                context.Options.TreatEnumerableImplementationsAsObjects,
-                context.Options.TreatDictionaryImplementationsAsObjects);
+                context.Options.TreatEnumerableImplsAsObjects,
+                context.Options.TreatDictionaryImplsAsObjects);
 
             if (kind.IsSimple()) return type.Name;
 

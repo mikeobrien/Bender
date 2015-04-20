@@ -247,7 +247,7 @@ namespace Tests.Serializer.Xml
         {
             Serialize.Xml(
                 new DictionaryImplementation { Property = "oh", Field = "hai" },
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields())
                 .ShouldEqual(Xml.Declaration + "<DictionaryImplementation><Property>oh</Property><Field>hai</Field></DictionaryImplementation>");
         }
 
@@ -264,7 +264,7 @@ namespace Tests.Serializer.Xml
         {
             Serialize.Xml(
                 new DictionaryMember { DictionaryImpl = new DictionaryImplementation { Property = "oh", Field = "hai" } },
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields())
                 .ShouldEqual(Xml.Declaration + "<DictionaryMember><DictionaryImpl><Property>oh</Property><Field>hai</Field></DictionaryImpl></DictionaryMember>");
         }
 
@@ -283,7 +283,7 @@ namespace Tests.Serializer.Xml
             Serialize.Xml(
                 new List<DictionaryImplementation> { new DictionaryImplementation 
                     { Property = "oh", Field = "hai" } },
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields())
                 .ShouldEqual(Xml.Declaration + "<ArrayOfDictionaryImplementation><DictionaryImplementation><Property>oh</Property><Field>hai</Field></DictionaryImplementation></ArrayOfDictionaryImplementation>");
         }
 
@@ -302,7 +302,7 @@ namespace Tests.Serializer.Xml
             Serialize.Xml(
                 new Dictionary<string, DictionaryImplementation> 
                     { { "item", new DictionaryImplementation { Property = "oh", Field = "hai" } } },
-                x => x.TreatDictionaryImplementationsAsObjects().IncludePublicFields())
+                x => x.TreatDictionaryImplsAsObjects().IncludePublicFields())
                 .ShouldEqual(Xml.Declaration + "<DictionaryOfDictionaryImplementation><item><Property>oh</Property><Field>hai</Field></item></DictionaryOfDictionaryImplementation>");
         }
 

@@ -398,7 +398,7 @@ namespace Tests.Deserializer.Xml
         {
             var result = Deserialize.Xml<EnumerableImplementation>(
                 "<EnumerableImplementation><Property>oh</Property><Field>hai</Field></EnumerableImplementation>",
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields());
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields());
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");
@@ -418,7 +418,7 @@ namespace Tests.Deserializer.Xml
         {
             var result = Deserialize.Xml<EnumerableMember>(
                 "<EnumerableMember><EnumerableImpl><Property>oh</Property><Field>hai</Field></EnumerableImpl></EnumerableMember>",
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields()).EnumerableImpl;
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()).EnumerableImpl;
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");
@@ -438,7 +438,7 @@ namespace Tests.Deserializer.Xml
         {
             var result = Deserialize.Xml<List<EnumerableImplementation>>(
                 "<ArrayOfEnumerableImplementation><EnumerableImplementation><Property>oh</Property><Field>hai</Field></EnumerableImplementation></ArrayOfEnumerableImplementation>",
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields()).First();
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()).First();
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");
@@ -459,7 +459,7 @@ namespace Tests.Deserializer.Xml
         {
             var result = Deserialize.Xml<Dictionary<string, EnumerableImplementation>>(
                 "<DictionaryOfEnumerableImplementation><item><Property>oh</Property><Field>hai</Field></item></DictionaryOfEnumerableImplementation>",
-                x => x.TreatEnumerableImplementationsAsObjects().IncludePublicFields())["item"];
+                x => x.TreatEnumerableImplsAsObjects().IncludePublicFields())["item"];
 
             result.Property.ShouldEqual("oh");
             result.Field.ShouldEqual("hai");
