@@ -55,11 +55,15 @@
     <Compile Include="Configuration\SerializationOptions.cs" />
     <Compile Include="Configuration\DeserializationOptions.cs" />
     <Compile Include="Configuration\OptionsDsl.cs" />
+    <Compile Include="Deserialize.FormUrlEncoded.cs" />
     <Compile Include="Deserialize.Xml.cs" />
     <Compile Include="Deserialize.Json.cs" />
+    <Compile Include="Deserializer.FormUrlEncoded.cs" />
     <Compile Include="Deserializer.Xml.cs" />
     <Compile Include="Deserializer.Json.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Nodes\FormUrlEncoded\FormNode.cs" />
+    <Compile Include="Nodes\FormUrlEncoded\FormValueNode.cs" />
     <Compile Include="Nodes\Object\Exceptions.cs" />
     <Compile Include="Reflection\TypeExtensions.cs" />
     <Compile Include="Reflection\MemberExtensions.cs" />
@@ -101,8 +105,10 @@
     <Compile Include="Reflection\CachedMember.cs" />
     <Compile Include="Reflection\CachedType.cs" />
     <Compile Include="Reflection\TypeCache.cs" />
+    <Compile Include="Serialize.FormUrlEncoded.cs" />
     <Compile Include="Serialize.Json.cs" />
     <Compile Include="Serialize.Xml.cs" />
+    <Compile Include="Serializer.FormUrlEncoded.cs" />
     <Compile Include="Serializer.Json.cs" />
     <Compile Include="Serializer.Xml.cs" />
     <Compile Include="Extensions\Exception.cs" />

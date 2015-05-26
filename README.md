@@ -16,6 +16,7 @@ Bender is a highly configurable xml and json serialization library for .NET. Unl
 - Options for name comparison and ignoring names of certain elements altogether.
 - Options for failing on unmatched members or elements.
 - Ability to serialize and deserialize members of enumerable and dictionary implementations.
+- Supports form url encoded.
 
 ## Install
 

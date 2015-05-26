@@ -89,6 +89,7 @@
     <Compile Include="Collections\Implementations\GenericEnumerableImpl.cs" />
     <Compile Include="Collections\Implementations\GenericListImpl.cs" />
     <Compile Include="Collections\Implementations\ListImpl.cs" />
+    <Compile Include="Deserializer\FormUrlEncodedTests.cs" />
     <Compile Include="Deserializer\Json\VisitorTests.cs" />
     <Compile Include="Deserializer\Json\ReaderTests.cs" />
     <Compile Include="Deserializer\Json\LoadTests.cs" />
@@ -109,8 +110,10 @@
     <Compile Include="Collections\Implementations\GenericDictionaryImpl.cs" />
     <Compile Include="Extensions\DateTimeExtensionTests.cs" />
     <Compile Include="Nodes\ExceptionTests.cs" />
+    <Compile Include="Nodes\FormUrlEncodedTests.cs" />
     <Compile Include="Nodes\Object\ExceptionTests.cs" />
     <Compile Include="Performance\Profiling.cs" />
+    <Compile Include="Serializer\FormUrlEncodedTests.cs" />
     <Compile Include="TestExtensions.cs" />
     <Compile Include="Reflection\CachedMemberTests.cs" />
     <Compile Include="Reflection\CachedTypeTests.cs" />
