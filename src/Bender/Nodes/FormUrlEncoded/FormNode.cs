@@ -57,12 +57,8 @@ namespace Bender.Nodes.FormUrlEncoded
 
         public override void Encode(Stream stream, Encoding encoding = null, bool pretty = false)
         {
-            var form = Form
-                .Select(x => "{0}={1}".ToFormat(x.Name, HttpUtility.UrlEncode(x.Value.ToString())))
-                .Aggregate((a, i) => a + "&" + i);
-            var writer = new StreamWriter(stream, encoding ?? Encoding.UTF8);
-            writer.Write(form);
-            writer.Flush();
+            Form.Select(x => "{0}={1}".ToFormat(x.Name, HttpUtility.UrlEncode(x.Value.ToString())))
+                .Aggregate((a, i) => a + "&" + i).WriteToStream(stream, encoding);
         }
 
         private static List<FormValueNode> ParseForm(Stream stream, Encoding encoding)

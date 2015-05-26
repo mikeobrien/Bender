@@ -115,18 +115,17 @@ namespace Tests.Serializer.Xml
         }
 
         // Bytes
-
-        private readonly static byte[] Utf8Bom = { 239, 187, 191 };
+        
         private readonly static byte[] UnicodeBom = { 254, 255 };
 
-        private readonly static byte[] XmlBytesUtf8 = Utf8Bom.Concat(Encoding.UTF8.GetBytes(XmlUtf8Declaration + Xml)).ToArray();
+        private readonly static byte[] XmlBytesUtf8 = Encoding.UTF8.GetBytes(XmlUtf8Declaration + Xml);
         private readonly static byte[] XmlBytesUnicode = UnicodeBom.Concat(Encoding.BigEndianUnicode.GetBytes(XmlUnicodeDeclaration + Xml)).ToArray();
-        private readonly static byte[] LowerCaseXmlBytesUtf8 = Utf8Bom.Concat(Encoding.UTF8.GetBytes(XmlUtf8Declaration + LowerCaseXml)).ToArray();
+        private readonly static byte[] LowerCaseXmlBytesUtf8 = Encoding.UTF8.GetBytes(XmlUtf8Declaration + LowerCaseXml);
         private readonly static byte[] LowerCaseXmlBytesUnicode = UnicodeBom.Concat(Encoding.BigEndianUnicode.GetBytes(XmlUnicodeDeclaration + LowerCaseXml)).ToArray();
 
-        private readonly static byte[] XmlBytesUtf8ByType = Utf8Bom.Concat(Encoding.UTF8.GetBytes(XmlUtf8Declaration + XmlByType)).ToArray();
+        private readonly static byte[] XmlBytesUtf8ByType = Encoding.UTF8.GetBytes(XmlUtf8Declaration + XmlByType);
         private readonly static byte[] XmlBytesUnicodeByType = UnicodeBom.Concat(Encoding.BigEndianUnicode.GetBytes(XmlUnicodeDeclaration + XmlByType)).ToArray();
-        private readonly static byte[] LowerCaseXmlBytesUtf8ByType = Utf8Bom.Concat(Encoding.UTF8.GetBytes(XmlUtf8Declaration + LowerCaseXmlByType)).ToArray();
+        private readonly static byte[] LowerCaseXmlBytesUtf8ByType = Encoding.UTF8.GetBytes(XmlUtf8Declaration + LowerCaseXmlByType);
         private readonly static byte[] LowerCaseXmlBytesUnicodeByType = UnicodeBom.Concat(Encoding.BigEndianUnicode.GetBytes(XmlUnicodeDeclaration + LowerCaseXmlByType)).ToArray();
 
         private static readonly object[] ByteCases = TestCases.Create()

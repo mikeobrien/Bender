@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Bender.Nodes;
 using Bender.Nodes.FormUrlEncoded;
+using Bender.Extensions;
 
 namespace Bender
 {

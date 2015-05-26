@@ -7,6 +7,7 @@ using Bender.Nodes;
 using Bender.Nodes.Object;
 using Bender.Reflection;
 using NodeBase = Bender.Nodes.Object.ObjectNodeBase;
+using UTF8Encoding = Bender.Extensions.UTF8Encoding;
 
 namespace Bender
 {
@@ -88,13 +89,13 @@ namespace Bender
         public byte[] SerializeBytes(object @object, Type type, INode target, Encoding encoding = null)
         {
             return SerializeNodes(@object, type, target)
-                .Encode(encoding ?? Encoding.UTF8, _options.Serialization.PrettyPrint).ReadAllBytes();
+                .Encode(encoding ?? UTF8Encoding.NoBOM, _options.Serialization.PrettyPrint).ReadAllBytes();
         }
 
         public byte[] SerializeBytes(object @object, Type type, Func<INode, Options, INode> targetFactory, string format, Encoding encoding = null)
         {
             return SerializeNodes(@object, type, targetFactory, format)
-                .Encode(encoding ?? Encoding.UTF8, _options.Serialization.PrettyPrint).ReadAllBytes();
+                .Encode(encoding ?? UTF8Encoding.NoBOM, _options.Serialization.PrettyPrint).ReadAllBytes();
         }
 
         // Return Stream
@@ -122,13 +123,13 @@ namespace Bender
         public Stream SerializeStream(object @object, Type type, INode target, Encoding encoding = null)
         {
             return SerializeNodes(@object, type, target)
-                .Encode(encoding ?? Encoding.UTF8, _options.Serialization.PrettyPrint);
+                .Encode(encoding ?? UTF8Encoding.NoBOM, _options.Serialization.PrettyPrint);
         }
 
         public Stream SerializeStream(object @object, Type type, Func<INode, Options, INode> targetFactory, string format, Encoding encoding = null)
         {
             return SerializeNodes(@object, type, targetFactory, format)
-                .Encode(encoding ?? Encoding.UTF8, _options.Serialization.PrettyPrint);
+                .Encode(encoding ?? UTF8Encoding.NoBOM, _options.Serialization.PrettyPrint);
         }
 
         // To Stream
@@ -156,13 +157,13 @@ namespace Bender
         public void SerializeStream(object @object, Type type, INode target, Stream stream, Encoding encoding = null)
         {
             SerializeNodes(@object, type, target)
-                .Encode(stream, encoding ?? Encoding.UTF8, _options.Serialization.PrettyPrint);
+                .Encode(stream, encoding ?? UTF8Encoding.NoBOM, _options.Serialization.PrettyPrint);
         }
 
         public void SerializeStream(object @object, Type type, Func<INode, Options, INode> targetFactory, string format, Stream stream, Encoding encoding = null)
         {
             SerializeNodes(@object, type, targetFactory, format)
-                .Encode(stream, encoding ?? Encoding.UTF8, _options.Serialization.PrettyPrint);
+                .Encode(stream, encoding ?? UTF8Encoding.NoBOM, _options.Serialization.PrettyPrint);
         }
 
         // Nodes

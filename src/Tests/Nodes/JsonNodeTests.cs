@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using System.Text;
 using Bender;
+using Bender.Extensions;
 using Bender.Nodes;
 using NUnit.Framework;
 using Should;
+using UTF8Encoding = Bender.Extensions.UTF8Encoding;
 
 namespace Tests.Nodes
 {
@@ -602,7 +604,7 @@ namespace Tests.Nodes
         {
             var node = new JsonNode(NodeType.Object);
             node.Add("field1", NodeType.Value, Metadata.Empty, x => x.Value = "hai");
-            node.Encode(Encoding.UTF8, true).ShouldEqual("{\r\n  \"field1\": \"hai\"\r\n}");
+            node.Encode(UTF8Encoding.NoBOM, true).ShouldEqual("{\r\n  \"field1\": \"hai\"\r\n}");
         }
 
         // Field names

@@ -62,6 +62,7 @@
     <Compile Include="Deserializer.Xml.cs" />
     <Compile Include="Deserializer.Json.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Extensions\UTF8Encoding.cs" />
     <Compile Include="Nodes\FormUrlEncoded\FormNode.cs" />
     <Compile Include="Nodes\FormUrlEncoded\FormValueNode.cs" />
     <Compile Include="Nodes\Object\Exceptions.cs" />

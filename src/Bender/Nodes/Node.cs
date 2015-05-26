@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Bender.Collections;
+using Bender.Extensions;
+using UTF8Encoding = Bender.Extensions.UTF8Encoding;
 
 namespace Bender.Nodes
 {
@@ -146,7 +148,7 @@ namespace Bender.Nodes
 
         public override void Encode(Stream stream, Encoding encoding = null, bool pretty = false)
         {
-            if (_encoder != null) _encoder(this, stream, encoding ?? Encoding.UTF8, pretty);
+            if (_encoder != null) _encoder(this, stream, encoding ?? UTF8Encoding.NoBOM, pretty);
         }
     }
 }

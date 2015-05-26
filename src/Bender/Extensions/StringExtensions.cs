@@ -34,7 +34,14 @@ namespace Bender.Extensions
 
         public static Stream ToStream(this string value, Encoding encoding = null)
         {
-            return new MemoryStream((encoding ?? Encoding.UTF8).GetBytes(value));
+            return new MemoryStream((encoding ?? UTF8Encoding.NoBOM).GetBytes(value));
+        }
+
+        public static void WriteToStream(this string value, Stream stream, Encoding encoding = null)
+        {
+            var writer = new StreamWriter(stream, encoding ?? UTF8Encoding.NoBOM);
+            writer.Write(value);
+            writer.Flush();
         }
 
         public static string ToFormat(this string value, params object[] args)

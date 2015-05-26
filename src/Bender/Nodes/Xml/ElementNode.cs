@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 using Bender.Collections;
 using Bender.Configuration;
 using Bender.Extensions;
+using UTF8Encoding = Bender.Extensions.UTF8Encoding;
 
 namespace Bender.Nodes.Xml
 {
@@ -121,7 +122,7 @@ namespace Bender.Nodes.Xml
 
         public override void Encode(Stream stream, Encoding encoding = null, bool pretty = false)
         {
-            Element.Save(new StreamWriter(stream, encoding ?? Encoding.UTF8), 
+            Element.Save(new StreamWriter(stream, encoding ?? UTF8Encoding.NoBOM), 
                 pretty ? SaveOptions.None : SaveOptions.DisableFormatting);
         }
 
