@@ -105,6 +105,7 @@ var deserializer = new Deserializer(options);
 | `WithDefaultXmlNamespace` | Allows you to specify the default XML namespace. |
 | `AddXmlNamespace` | Allows you to add an XML namespace. |
 | `OmitXmlDeclaration` | Indicates that you want to omit the XML declaration. |
+| `AsSimpleType<T>` | Treat an object as a simple type, calling `ToString()` for the value. |
 | `AddVisitor` | Adds node visitor. |
 | `AddJsonVisitor` | Adds node visitor for json only. |
 | `AddXmlVisitor` | Adds node visitor for xml only. |
