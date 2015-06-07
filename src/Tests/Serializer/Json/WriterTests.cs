@@ -62,6 +62,30 @@ namespace Tests.Serializer.Json
                 .ShouldEqual("{\"Property1\":\"oh\",\"Property2\":\"hai!\"}");
         }
 
+        public class ObjectTypeParent
+        {
+            public ObjectType Value { get; set; }
+
+            public class ObjectType
+            {
+                public string Value { get; set; }
+
+                public override string ToString()
+                {
+                    return "hai";
+                }
+            }
+        }
+
+        [Test]
+        public void should_write_object_nodes_as_simple_type()
+        {
+            Serialize.Json(new ObjectTypeParent { Value = 
+                    new ObjectTypeParent.ObjectType { Value = "oh" } },
+                x => x.Serialization(y => y.AsSimpleType<ObjectTypeParent.ObjectType>()))
+                .ShouldEqual("{\"Value\":\"hai\"}");
+        }
+
         private class DateTimeConversion
         {
             public DateTime DateTime { get; set; }

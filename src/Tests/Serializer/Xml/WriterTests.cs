@@ -63,6 +63,30 @@ namespace Tests.Serializer.Xml
                 .ShouldEqual(Xml.Declaration + "<Model><Property1>oh</Property1><Property2>hai!</Property2></Model>");
         }
 
+        public class ObjectTypeParent
+        {
+            public ObjectType Value { get; set; }
+
+            public class ObjectType
+            {
+                public string Value { get; set; }
+
+                public override string ToString()
+                {
+                    return "hai";
+                }
+            }
+        }
+
+        [Test]
+        public void should_write_object_nodes_as_simple_type()
+        {
+            Serialize.Xml(new ObjectTypeParent {
+                    Value = new ObjectTypeParent.ObjectType { Value = "oh" } },
+                x => x.Serialization(y => y.AsSimpleType<ObjectTypeParent.ObjectType>()))
+                .ShouldEqual(Xml.Declaration + "<ObjectTypeParent><Value>hai</Value></ObjectTypeParent>");
+        }
+
         private class DateTimeConversion
         {
             public DateTime DateTime { get; set; }
