@@ -72,7 +72,9 @@ namespace Bender.Nodes.Object
                     {
                         try
                         {
-                            Source.Instance = Convert.ChangeType(value, type.Type);
+                            Source.Instance = type.IsEnum ?
+                                value.ConvertToEnum(type.Type) : 
+                                Convert.ChangeType(value, type.Type);
                         }
                         catch (Exception exception)
                         {

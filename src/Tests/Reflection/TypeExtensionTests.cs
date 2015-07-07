@@ -533,5 +533,27 @@ namespace Tests.Reflection
             TypeExtensions.NullOrDefault<TypeCode>().ShouldEqual(TypeCode.Empty); // Enum
             TypeExtensions.NullOrDefault<TimeSpan>().ShouldEqual(TimeSpan.Zero); // Struct
         }
+
+        [Test]
+        [TestCase((sbyte)3)]
+        [TestCase((byte)3)]
+        [TestCase((short)3)]
+        [TestCase((ushort)3)]
+        [TestCase((int)3)]
+        [TestCase((uint)3)]
+        [TestCase((long)3)]
+        [TestCase((ulong)3)]
+        [TestCase((float)3)]
+        [TestCase((double)3)]
+        public void should_convert_numeric_to_enum(object value)
+        {
+            value.ConvertToEnum(typeof(UriFormat)).ShouldEqual(UriFormat.SafeUnescaped);
+        }
+
+        [Test]
+        public void should_convert_decimal_to_enum()
+        {
+            3.0m.ConvertToEnum(typeof(UriFormat)).ShouldEqual(UriFormat.SafeUnescaped);
+        }
     }
 }

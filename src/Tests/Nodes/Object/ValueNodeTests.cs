@@ -58,7 +58,7 @@ namespace Tests.Nodes.Object
             .AddType<string>("1")
             .AddType<Uri>(new Uri("http://www.xkcd.com"))
 
-            .AddType<UriFormat>(UriFormat.UriEscaped).AddType<UriFormat?>(UriFormat.UriEscaped)
+            .AddType<UriFormat>(UriFormat.SafeUnescaped).AddType<UriFormat?>(UriFormat.SafeUnescaped)
 
             .AddType<DateTime>(DateTime.Today).AddType<DateTime?>(DateTime.Today)
             .AddType<TimeSpan>(TimeSpan.MaxValue).AddType<TimeSpan?>(TimeSpan.MaxValue)
@@ -92,6 +92,32 @@ namespace Tests.Nodes.Object
         }
 
         [Test]
+        [TestCase((sbyte)3)]
+        [TestCase((byte)3)]
+        [TestCase((short)3)]
+        [TestCase((ushort)3)]
+        [TestCase((int)3)]
+        [TestCase((uint)3)]
+        [TestCase((long)3)]
+        [TestCase((ulong)3)]
+        [TestCase((float)3)]
+        [TestCase((double)3)]
+        public void should_set_numeric_enum_type(object value)
+        {
+            var result = new SimpleValue(typeof(UriFormat).GetCachedType());
+            new ValueNode(CreateContext(Mode.Deserialize), null, result, null, null).Value = value;
+            result.Instance.ShouldEqual(UriFormat.SafeUnescaped);
+        }
+
+        [Test]
+        public void should_set_decimal_enum_type()
+        {
+            var result = new SimpleValue(typeof(UriFormat).GetCachedType());
+            new ValueNode(CreateContext(Mode.Deserialize), null, result, null, null).Value = 3.0;
+            result.Instance.ShouldEqual(UriFormat.SafeUnescaped);
+        }
+
+        [Test]
         [TestCaseSource("SimpleTypes")]
         public void should_parse_simple_types_from_string(Type type, object value)
         {
@@ -109,7 +135,8 @@ namespace Tests.Nodes.Object
             messageType = messageType.IsEnum ? typeof(Enum) : messageType;
             Assert.Throws<ValueParseException>(() => new ValueNode(CreateContext(Mode.Deserialize), 
                     null, new SimpleValue(type.GetCachedType()), null, null).Value = "yada")
-                .FriendlyMessage.ShouldEqual(Options.Create().Deserialization.FriendlyParseErrorMessages[messageType].ToFormat("yada"));
+                .FriendlyMessage.ShouldEqual(Options.Create().Deserialization
+                    .FriendlyParseErrorMessages[messageType].ToFormat("yada"));
         }
 
         [Test]

@@ -188,6 +188,14 @@ namespace Bender.Reflection
             return isSimpleType(type) || (type.IsNullable() && isSimpleType(Nullable.GetUnderlyingType(type)));
         }
 
+        public static object ConvertToEnum(this object value, Type enumType)
+        {
+            if (value is decimal) value = Convert.ToInt32((decimal) value);
+            if (value is float) value = Convert.ToInt32((float)value);
+            if (value is double) value = Convert.ToInt32((double)value);
+            return Enum.ToObject(enumType, value);
+        }
+
         public static object ParseSimpleType(this string value, CachedType type)
         {
             if (type.Is<string>() || value == null) return value;
