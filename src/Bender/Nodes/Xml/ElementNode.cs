@@ -105,12 +105,32 @@ namespace Bender.Nodes.Xml
             else if (!named) throw new UnnamedChildrenNotSupportedException();
             else
             {
-                var nodeName = _namespace != null ? _namespace + node.Name : node.Name;
                 ((Options.Serialization.XmlValueNodeType == XmlValueNodeType.Attribute ||
                     node.Metadata.Contains<XmlAttributeAttribute>()) && node.NodeType.IsValue() ?
                     (XmlNodeBase)new AttributeNode(Element.CreateAttribute(node.Name), this, Options) :
-                    new ElementNode(Element.CreateElement(nodeName), _namespace, node.NodeType, this, Options)).Configure(modify);
+                    new ElementNode(Element.CreateElement(GetNodeName(node)), _namespace, node.NodeType, this, Options))
+                    .Configure(modify);
             }
+        }
+
+        private XName GetNodeName(INode node)
+        {
+            var @namespace = 
+                GetAttributeValue<XmlRootAttribute>(node.Metadata, x => x.Namespace) ??
+                GetAttributeValue<XmlTypeAttribute>(node.Metadata, x => x.Namespace) ??
+                GetAttributeValue<XmlElementAttribute>(node.Metadata, x => x.Namespace) ??
+                _namespace;
+            var lookup = Options.Serialization.XmlNamespaces.FirstOrDefault(x => x.Key == @namespace);
+            if (lookup.Key != null) @namespace = lookup.Value;
+            return @namespace != null ? @namespace + node.Name : node.Name;
+        }
+
+        private static string GetAttributeValue<T>(Metadata metadata, Func<T, string> map)
+        {
+            if (!metadata.Contains<T>()) return null;
+            var attribute = metadata.Get<T>();
+            var value = map(attribute);
+            return !string.IsNullOrEmpty(value) ? value : null;
         }
 
         protected override IEnumerable<INode> GetNodes()

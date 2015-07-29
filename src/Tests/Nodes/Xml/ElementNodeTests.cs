@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Bender;
@@ -27,7 +28,8 @@ namespace Tests.Nodes.Xml
                 exception.Message.ShouldEqual("1 missing end of arrays or objects (1,2)");
                 exception.FriendlyMessage.ShouldEqual("Unable to parse xml: 1 missing end of arrays or objects (1,2)");
 #else
-            const string message = "Unexpected end of file has occurred. The following elements are not closed: yada. Line 1, position 7.";
+            const string message = "Unexpected end of file has occurred. The following " + 
+                "elements are not closed: yada. Line 1, position 7.";
             exception.Message.ShouldEqual(message);
             exception.FriendlyMessage.ShouldEqual("Unable to parse xml: " + message);
 #endif
@@ -41,7 +43,8 @@ namespace Tests.Nodes.Xml
                 exception.Message.ShouldEqual("':' is expected after a name of an object content (1,10)");
                 exception.FriendlyMessage.ShouldEqual("Unable to parse xml: ':' is expected after a name of an object content (1,10)");
 #else
-            const string message = "The 'hai' start tag on line 1 position 6 does not match the end tag of 'oh'. Line 1, position 12.";
+            const string message = "The 'hai' start tag on line 1 position 6 does not " + 
+                "match the end tag of 'oh'. Line 1, position 12.";
             exception.Message.ShouldEqual(message);
             exception.FriendlyMessage.ShouldEqual("Unable to parse xml: " + message);
 #endif
@@ -372,6 +375,24 @@ namespace Tests.Nodes.Xml
                 x.As<XmlNodeBase>().SetNamespace("http://namespace.org");
             });
             node.Encode().ShouldEqual(Declaration + "<Oh><Hai xmlns=\"http://namespace.org\">There</Hai></Oh>");
+        }
+
+        private readonly object[][] _prefixAttributeCases = {
+            new object[] { new XmlRootAttribute { Namespace = "abc" } },
+            new object[] { new XmlTypeAttribute { Namespace = "abc" } },
+            new object[] { new XmlElementAttribute { Namespace = "abc" } },
+            new object[] { new XmlRootAttribute { Namespace = "http://namespace.org" } },
+            new object[] { new XmlTypeAttribute { Namespace = "http://namespace.org" } },
+            new object[] { new XmlElementAttribute { Namespace = "http://namespace.org" } }};
+
+        [Test]
+        [TestCaseSource(nameof(_prefixAttributeCases))]
+        public void should_set_namespace_prefix_from_xml_attribute(Attribute attribute)
+        {
+            var node = ElementNode.Create("Oh", Metadata.Empty, Options.Create(x => x.Serialization(y => y
+                .AddXmlNamespace("abc", "http://namespace.org"))));
+            node.Add("Hai", NodeType.Value, new Metadata(attribute), x => { });
+            node.Encode().ShouldEqual(Declaration + "<Oh xmlns:abc=\"http://namespace.org\"><abc:Hai /></Oh>");
         }
     }
 }
