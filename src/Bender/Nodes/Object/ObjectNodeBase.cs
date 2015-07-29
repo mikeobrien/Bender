@@ -25,7 +25,7 @@ namespace Bender.Nodes.Object
             Member = member;
             HasMember = member != null;
             if (HasMember) Metadata.Add(member.Attributes);
-            else if (HasMember && Source != null) Metadata.Add(ActualType.Attributes);
+            else if (Source?.ActualType != null) Metadata.Add(ActualType.Attributes);
         }
 
         public override string Format => NodeFormat;
