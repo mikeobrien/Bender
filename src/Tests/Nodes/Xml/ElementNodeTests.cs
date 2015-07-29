@@ -67,42 +67,42 @@ namespace Tests.Nodes.Xml
         // Misc
 
         private static readonly Options Options = Options.Create();
-        private static readonly XmlNodeBase Node = ElementNode.Create("Yada", Metadata.Empty, Options);
+        private readonly XmlNodeBase _node = ElementNode.Create("Yada", Metadata.Empty, Options);
 
         [Test]
         public void should_return_element_type()
         {
-            Node.XmlType.ShouldEqual(XmlObjectType.Element);
+            _node.XmlType.ShouldEqual(XmlObjectType.Element);
         }
 
         [Test]
         public void should_return_format()
         {
-            Node.Format.ShouldEqual(XmlNodeBase.NodeFormat);
+            _node.Format.ShouldEqual(XmlNodeBase.NodeFormat);
         }
 
         [Test]
         public void should_be_of_type_attribute()
         {
-            Node.Type.ShouldEqual("element");
+            _node.Type.ShouldEqual("element");
         }
 
         [Test]
         public void should_return_is_named()
         {
-            Node.IsNamed.ShouldBeTrue();
+            _node.IsNamed.ShouldBeTrue();
         }
 
         [Test]
         public void should_return_path()
         {
-            Node.Path.ShouldEqual("/Yada");
+            _node.Path.ShouldEqual("/Yada");
         }
 
         [Test]
         public void should_return_name()
         {
-            var node = Node;
+            var node = _node;
             node.IsNamed.ShouldBeTrue();
             node.Name.ShouldEqual("Yada");
         }
@@ -110,13 +110,13 @@ namespace Tests.Nodes.Xml
         [Test]
         public void should_return_node_type()
         {
-            Node.NodeType.ShouldEqual(NodeType.Variable);
+            _node.NodeType.ShouldEqual(NodeType.Variable);
         }
 
         [Test]
         public void should_set_node_type()
         {
-            var node = Node;
+            var node = _node;
             node.HasFixedNodeType.ShouldBeFalse();
             node.NodeType.ShouldEqual(NodeType.Variable);
             node.NodeType = NodeType.Value;
@@ -128,7 +128,7 @@ namespace Tests.Nodes.Xml
         [Test]
         public void should_create_empty_root_object()
         {
-            Node.Encode().ShouldEqual("<?xml version=\"1.0\" encoding=\"utf-8\"?><Yada />");
+            _node.Encode().ShouldEqual("<?xml version=\"1.0\" encoding=\"utf-8\"?><Yada />");
         }
 
         [Test]
@@ -192,7 +192,7 @@ namespace Tests.Nodes.Xml
         public void should_fail_to_add_unnamed_node()
         {
             Assert.Throws<UnnamedChildrenNotSupportedException>(() => 
-                Node.Add(NodeType.Value, Metadata.Empty, x => { }));
+                _node.Add(NodeType.Value, Metadata.Empty, x => { }));
         }
 
         // Insert

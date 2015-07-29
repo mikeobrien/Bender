@@ -21,47 +21,85 @@ namespace Tests.Serializer.Xml
         {
             public string StringProperty { get; set; }
             public Uri UriProperty { get; set; }
-            public UriFormat EnumProperty { get; set; } public UriFormat? EnumNullableProperty { get; set; }
-            public DateTime DateTimeProperty { get; set; } public DateTime? DateTimeNullableProperty { get; set; }
-            public TimeSpan TimeSpanProperty { get; set; } public TimeSpan? TimeSpanNullableProperty { get; set; }
-            public Guid GuidProperty { get; set; } public Guid? GuidNullableProperty { get; set; }
-            public Boolean BooleanProperty { get; set; } public Boolean? BooleanNullableProperty { get; set; }
-            public Byte ByteProperty { get; set; } public Byte? ByteNullableProperty { get; set; }
-            public SByte SByteProperty { get; set; } public SByte? SByteNullableProperty { get; set; }
-            public Int16 Int16Property { get; set; } public Int16? Int16NullableProperty { get; set; }
-            public UInt16 UInt16Property { get; set; } public UInt16? UInt16NullableProperty { get; set; }
-            public Int32 Int32Property { get; set; } public Int32? Int32NullableProperty { get; set; }
-            public UInt32 UInt32Property { get; set; } public UInt32? UInt32NullableProperty { get; set; }
-            public Int64 Int64Property { get; set; } public Int64? Int64NullableProperty { get; set; }
-            public UInt64 UInt64Property { get; set; } public UInt64? UInt64NullableProperty { get; set; }
-            public IntPtr IntPtrProperty { get; set; } public IntPtr? IntPtrNullableProperty { get; set; }
-            public UIntPtr UIntPtrProperty { get; set; } public UIntPtr? UIntPtrNullableProperty { get; set; }
-            public Char CharProperty { get; set; } public Char? CharNullableProperty { get; set; }
-            public Double DoubleProperty { get; set; } public Double? DoubleNullableProperty { get; set; }
-            public Single SingleProperty { get; set; } public Single? SingleNullableProperty { get; set; }
-            public Decimal DecimalProperty { get; set; } public Decimal? DecimalNullableProperty { get; set; }
+            public UriFormat EnumProperty { get; set; }
+            public UriFormat? EnumNullableProperty { get; set; }
+            public DateTime DateTimeProperty { get; set; }
+            public DateTime? DateTimeNullableProperty { get; set; }
+            public TimeSpan TimeSpanProperty { get; set; }
+            public TimeSpan? TimeSpanNullableProperty { get; set; }
+            public Guid GuidProperty { get; set; }
+            public Guid? GuidNullableProperty { get; set; }
+            public Boolean BooleanProperty { get; set; }
+            public Boolean? BooleanNullableProperty { get; set; }
+            public Byte ByteProperty { get; set; }
+            public Byte? ByteNullableProperty { get; set; }
+            public SByte SByteProperty { get; set; }
+            public SByte? SByteNullableProperty { get; set; }
+            public Int16 Int16Property { get; set; }
+            public Int16? Int16NullableProperty { get; set; }
+            public UInt16 UInt16Property { get; set; }
+            public UInt16? UInt16NullableProperty { get; set; }
+            public Int32 Int32Property { get; set; }
+            public Int32? Int32NullableProperty { get; set; }
+            public UInt32 UInt32Property { get; set; }
+            public UInt32? UInt32NullableProperty { get; set; }
+            public Int64 Int64Property { get; set; }
+            public Int64? Int64NullableProperty { get; set; }
+            public UInt64 UInt64Property { get; set; }
+            public UInt64? UInt64NullableProperty { get; set; }
+            public IntPtr IntPtrProperty { get; set; }
+            public IntPtr? IntPtrNullableProperty { get; set; }
+            public UIntPtr UIntPtrProperty { get; set; }
+            public UIntPtr? UIntPtrNullableProperty { get; set; }
+            public Char CharProperty { get; set; }
+            public Char? CharNullableProperty { get; set; }
+            public Double DoubleProperty { get; set; }
+            public Double? DoubleNullableProperty { get; set; }
+            public Single SingleProperty { get; set; }
+            public Single? SingleNullableProperty { get; set; }
+            public Decimal DecimalProperty { get; set; }
+            public Decimal? DecimalNullableProperty { get; set; }
 
             public string StringField;
             public Uri UriField;
-            public UriFormat EnumField; public UriFormat? EnumNullableField;
-            public DateTime DateTimeField; public DateTime? DateTimeNullableField;
-            public TimeSpan TimeSpanField; public TimeSpan? TimeSpanNullableField;
-            public Guid GuidField; public Guid? GuidNullableField;
-            public Boolean BooleanField; public Boolean? BooleanNullableField;
-            public Byte ByteField; public Byte? ByteNullableField;
-            public SByte SByteField; public SByte? SByteNullableField;
-            public Int16 Int16Field; public Int16? Int16NullableField;
-            public UInt16 UInt16Field; public UInt16? UInt16NullableField;
-            public Int32 Int32Field; public Int32? Int32NullableField;
-            public UInt32 UInt32Field; public UInt32? UInt32NullableField;
-            public Int64 Int64Field; public Int64? Int64NullableField;
-            public UInt64 UInt64Field; public UInt64? UInt64NullableField;
-            public IntPtr IntPtrField; public IntPtr? IntPtrNullableField;
-            public UIntPtr UIntPtrField; public UIntPtr? UIntPtrNullableField;
-            public Char CharField; public Char? CharNullableField;
-            public Double DoubleField; public Double? DoubleNullableField;
-            public Single SingleField; public Single? SingleNullableField;
-            public Decimal DecimalField; public Decimal? DecimalNullableField;
+            public UriFormat EnumField;
+            public UriFormat? EnumNullableField;
+            public DateTime DateTimeField;
+            public DateTime? DateTimeNullableField;
+            public TimeSpan TimeSpanField;
+            public TimeSpan? TimeSpanNullableField;
+            public Guid GuidField;
+            public Guid? GuidNullableField;
+            public Boolean BooleanField;
+            public Boolean? BooleanNullableField;
+            public Byte ByteField;
+            public Byte? ByteNullableField;
+            public SByte SByteField;
+            public SByte? SByteNullableField;
+            public Int16 Int16Field;
+            public Int16? Int16NullableField;
+            public UInt16 UInt16Field;
+            public UInt16? UInt16NullableField;
+            public Int32 Int32Field;
+            public Int32? Int32NullableField;
+            public UInt32 UInt32Field;
+            public UInt32? UInt32NullableField;
+            public Int64 Int64Field;
+            public Int64? Int64NullableField;
+            public UInt64 UInt64Field;
+            public UInt64? UInt64NullableField;
+            public IntPtr IntPtrField;
+            public IntPtr? IntPtrNullableField;
+            public UIntPtr UIntPtrField;
+            public UIntPtr? UIntPtrNullableField;
+            public Char CharField;
+            public Char? CharNullableField;
+            public Double DoubleField;
+            public Double? DoubleNullableField;
+            public Single SingleField;
+            public Single? SingleNullableField;
+            public Decimal DecimalField;
+            public Decimal? DecimalNullableField;
         }
 
         private static readonly Guid RandomGuid = Guid.NewGuid();
@@ -101,10 +139,11 @@ namespace Tests.Serializer.Xml
             var memberName = name + suffix;
             var @object = new SimpleTypeField();
             @object.SetPropertyOrFieldValue(memberName, value);
-            var result = Serialize.Xml(@object, x => x.IncludePublicFields().IncludeMembersWhen((m, o) => m.Name == memberName));
+            var result = Serialize.Xml(@object,
+                x => x.IncludePublicFields().IncludeMembersWhen((m, o) => m.Name == memberName));
 
-            var xml = "<SimpleTypeField><{0}>{1}</{0}></SimpleTypeField>".ToFormat(memberName, 
-                type.GetUnderlyingNullableType() == typeof(bool) ? value.ToString().ToLower() : value);
+            var xml = "<SimpleTypeField><{0}>{1}</{0}></SimpleTypeField>".ToFormat(memberName,
+                type.GetUnderlyingNullableType() == typeof (bool) ? value.ToString().ToLower() : value);
             result.ShouldEqual(Xml.Declaration + xml);
         }
 
@@ -115,11 +154,12 @@ namespace Tests.Serializer.Xml
             var memberName = name + suffix;
             var @object = new SimpleTypeField();
             @object.SetPropertyOrFieldValue(memberName, value);
-            var result = Serialize.Xml(@object, x => x.IncludePublicFields().IncludeMembersWhen((m, o) => m.Name == memberName)
-                .Serialization(y => y.XmlValuesAsAttributes()));
+            var result = Serialize.Xml(@object,
+                x => x.IncludePublicFields().IncludeMembersWhen((m, o) => m.Name == memberName)
+                    .Serialization(y => y.XmlValuesAsAttributes()));
 
             var xml = "<SimpleTypeField {0}=\"{1}\" />".ToFormat(memberName,
-                type.GetUnderlyingNullableType() == typeof(bool) ? value.ToString().ToLower() : value);
+                type.GetUnderlyingNullableType() == typeof (bool) ? value.ToString().ToLower() : value);
             result.ShouldEqual(Xml.Declaration + xml);
         }
 
@@ -136,28 +176,29 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_ip_address()
         {
-            Serialize.Xml(new OutOfTheBoxTypes { IPAddress = IPAddress.Parse("192.168.1.1") })
+            Serialize.Xml(new OutOfTheBoxTypes {IPAddress = IPAddress.Parse("192.168.1.1")})
                 .ShouldEqual(Xml.Declaration + "<OutOfTheBoxTypes><IPAddress>192.168.1.1</IPAddress></OutOfTheBoxTypes>");
         }
 
         [Test]
         public void should_serialize_version()
         {
-            Serialize.Xml(new OutOfTheBoxTypes { Version = Version.Parse("1.2.3.4") })
+            Serialize.Xml(new OutOfTheBoxTypes {Version = Version.Parse("1.2.3.4")})
                 .ShouldEqual(Xml.Declaration + "<OutOfTheBoxTypes><Version>1.2.3.4</Version></OutOfTheBoxTypes>");
         }
 
         [Test]
         public void should_serialize_mail_address()
         {
-            Serialize.Xml(new OutOfTheBoxTypes { MailAddress = new MailAddress("test@test.com") })
-                .ShouldEqual(Xml.Declaration + "<OutOfTheBoxTypes><MailAddress>test@test.com</MailAddress></OutOfTheBoxTypes>");
+            Serialize.Xml(new OutOfTheBoxTypes {MailAddress = new MailAddress("test@test.com")})
+                .ShouldEqual(Xml.Declaration +
+                             "<OutOfTheBoxTypes><MailAddress>test@test.com</MailAddress></OutOfTheBoxTypes>");
         }
 
         [Test]
         public void should_serialize_byte_array()
         {
-            Serialize.Xml(new OutOfTheBoxTypes { ByteArray = ASCIIEncoding.ASCII.GetBytes("oh hai") })
+            Serialize.Xml(new OutOfTheBoxTypes {ByteArray = ASCIIEncoding.ASCII.GetBytes("oh hai")})
                 .ShouldEqual(Xml.Declaration + "<OutOfTheBoxTypes><ByteArray>b2ggaGFp</ByteArray></OutOfTheBoxTypes>");
         }
 
@@ -176,7 +217,7 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_complex_type()
         {
-            Serialize.Xml(new RootType { Complex = new ComplexType { Property = "hai" }})
+            Serialize.Xml(new RootType {Complex = new ComplexType {Property = "hai"}})
                 .ShouldEqual(Xml.Declaration + "<RootType><Complex><Property>hai</Property></Complex></RootType>");
         }
 
@@ -191,27 +232,28 @@ namespace Tests.Serializer.Xml
         public class ActualType : ISpecifiedType
         {
             public string Actual { get; set; }
-            public string Specified { get; set; } 
+            public string Specified { get; set; }
         }
 
         public interface ISpecifiedType
         {
-            string Specified { get; set; } 
+            string Specified { get; set; }
         }
 
         [Test]
         public void should_serialize_specified_type_by_default()
         {
-            Serialize.Xml(new ActualType { Actual = "oh", Specified = "hai" }, typeof(ISpecifiedType))
+            Serialize.Xml(new ActualType {Actual = "oh", Specified = "hai"}, typeof (ISpecifiedType))
                 .ShouldEqual(Xml.Declaration + "<ISpecifiedType><Specified>hai</Specified></ISpecifiedType>");
         }
 
         [Test]
         public void should_serialize_actual_type_when_configured()
         {
-            Serialize.Xml(new ActualType { Actual = "oh", Specified = "hai" }, typeof(ISpecifiedType),
+            Serialize.Xml(new ActualType {Actual = "oh", Specified = "hai"}, typeof (ISpecifiedType),
                 x => x.Serialization(y => y.UseActualType()))
-                .ShouldEqual(Xml.Declaration + "<ISpecifiedType><Actual>oh</Actual><Specified>hai</Specified></ISpecifiedType>");
+                .ShouldEqual(Xml.Declaration +
+                             "<ISpecifiedType><Actual>oh</Actual><Specified>hai</Specified></ISpecifiedType>");
         }
 
         public class MemberSpecifiedType
@@ -222,24 +264,34 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_serialize_member_specified_type_by_default()
         {
-            Serialize.Xml(new MemberSpecifiedType { Specified = new ActualType 
-                { Actual = "oh", Specified = "hai" } }, typeof(MemberSpecifiedType))
-                .ShouldEqual(Xml.Declaration + "<MemberSpecifiedType><Specified><Specified>hai</Specified></Specified></MemberSpecifiedType>");
+            Serialize.Xml(new MemberSpecifiedType
+            {
+                Specified = new ActualType
+                {Actual = "oh", Specified = "hai"}
+            }, typeof (MemberSpecifiedType))
+                .ShouldEqual(Xml.Declaration +
+                             "<MemberSpecifiedType><Specified><Specified>hai</Specified></Specified></MemberSpecifiedType>");
         }
 
         [Test]
         public void should_serialize_member_actual_type_when_configured()
         {
-            Serialize.Xml(new MemberSpecifiedType { Specified = new ActualType 
-                { Actual = "oh", Specified = "hai" } }, typeof(MemberSpecifiedType),
+            Serialize.Xml(new MemberSpecifiedType
+            {
+                Specified = new ActualType
+                {Actual = "oh", Specified = "hai"}
+            }, typeof (MemberSpecifiedType),
                 x => x.Serialization(y => y.UseActualType()))
-                .ShouldEqual(Xml.Declaration + "<MemberSpecifiedType><Specified><Actual>oh</Actual><Specified>hai</Specified></Specified></MemberSpecifiedType>");
+                .ShouldEqual(Xml.Declaration +
+                             "<MemberSpecifiedType><Specified><Actual>oh</Actual><Specified>hai</Specified></Specified></MemberSpecifiedType>");
         }
 
         // Xml attributes
 
         [XmlRoot("Root")]
-        public class XmlRoot { }
+        public class XmlRoot
+        {
+        }
 
         [Test]
         public void should_override_root_type_name_with_xml_attribute_attribute()
@@ -248,7 +300,9 @@ namespace Tests.Serializer.Xml
         }
 
         [XmlType("Type")]
-        public class XmlType { }
+        public class XmlType
+        {
+        }
 
         [Test]
         public void should_override_type_name_with_xml_attribute_attribute()
@@ -274,28 +328,30 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_override_field_name_with_xml_attribute_attribute()
         {
-            Serialize.Xml(new XmlAttributes { AttributeName = "hai" })
+            Serialize.Xml(new XmlAttributes {AttributeName = "hai"})
                 .ShouldEqual(Xml.Declaration + "<XmlAttributes AttributeNameOverride=\"hai\" />");
         }
 
         [Test]
         public void should_override_field_name_with_xml_element_attribute()
         {
-            Serialize.Xml(new XmlAttributes { ElementName = "hai" })
-                .ShouldEqual(Xml.Declaration + "<XmlAttributes><ElementNameOverride>hai</ElementNameOverride></XmlAttributes>");
+            Serialize.Xml(new XmlAttributes {ElementName = "hai"})
+                .ShouldEqual(Xml.Declaration +
+                             "<XmlAttributes><ElementNameOverride>hai</ElementNameOverride></XmlAttributes>");
         }
 
         [Test]
         public void should_override_field_name_with_xml_array_attribute()
         {
-            Serialize.Xml(new XmlAttributes { ArrayName = new List<string> { "hai" } })
-                .ShouldEqual(Xml.Declaration + "<XmlAttributes><ArrayNameOverride><String>hai</String></ArrayNameOverride></XmlAttributes>");
+            Serialize.Xml(new XmlAttributes {ArrayName = new List<string> {"hai"}})
+                .ShouldEqual(Xml.Declaration +
+                             "<XmlAttributes><ArrayNameOverride><String>hai</String></ArrayNameOverride></XmlAttributes>");
         }
 
         [Test]
         public void should_not_override_field_name_with_xml_array_attribute_when_not_an_enumerable()
         {
-            Serialize.Xml(new XmlAttributes { StringName = "hai" })
+            Serialize.Xml(new XmlAttributes {StringName = "hai"})
                 .ShouldEqual(Xml.Declaration + "<XmlAttributes><StringName>hai</StringName></XmlAttributes>");
         }
 
@@ -311,12 +367,28 @@ namespace Tests.Serializer.Xml
         [Test]
         public void should_set_property_namespace_prefix_from_xml_attribute()
         {
-            Serialize.Xml(new XmlElementNamespace { Namespace = "oh", Prefix = "hai" }, x => x.Serialization(y =>
-            y.AddXmlNamespace("abc", "http://namespace.org"))).ShouldEqual(Xml.Declaration +
-                "<XmlElementNamespace xmlns:abc=\"http://namespace.org\">" +
-                    "<abc:Namespace>oh</abc:Namespace>" +
-                    "<abc:Prefix>hai</abc:Prefix>" + 
-                "</XmlElementNamespace>");
+            Serialize.Xml(new XmlElementNamespace {Namespace = "oh", Prefix = "hai"}, x => x.Serialization(y =>
+                y.AddXmlNamespace("abc", "http://namespace.org"))).ShouldEqual(Xml.Declaration +
+                    "<XmlElementNamespace xmlns:abc=\"http://namespace.org\">" +
+                        "<abc:Namespace>oh</abc:Namespace>" +
+                        "<abc:Prefix>hai</abc:Prefix>" +
+                    "</XmlElementNamespace>");
+        }
+
+        [XmlType(Namespace = "http://namespace.org")]
+        public class XmlElementDefaultNamespace
+        {
+            public string Value { get; set; }
+        }
+
+        [Test]
+        public void should_set_default_type_namespace_from_xml_attribute()
+        {
+            Serialize.Xml(new XmlElementDefaultNamespace { Value = "hai" })
+                .ShouldEqual(Xml.Declaration +
+                    "<XmlElementDefaultNamespace xmlns=\"http://namespace.org\">" +
+                        "<Value>hai</Value>" +
+                    "</XmlElementDefaultNamespace>");
         }
 
         [XmlRoot("element", Namespace = "abc")]
@@ -331,19 +403,21 @@ namespace Tests.Serializer.Xml
         [XmlType("element", Namespace = "http://namespace.org")]
         public class XmlTypeNamespace { }
 
-        private readonly object[][] _prefixAttributeTypeCases = {
-            new object[] { typeof(XmlRootNamespacePrefix) },
-            new object[] { typeof(XmlRootNamespacePrefix) },
-            new object[] { typeof(XmlRootNamespacePrefix) },
-            new object[] { typeof(XmlRootNamespacePrefix) } };
+        private readonly object[][] _prefixAttributeTypeCases =
+        {
+            new object[] {typeof (XmlRootNamespacePrefix)},
+            new object[] {typeof (XmlRootNamespacePrefix)},
+            new object[] {typeof (XmlRootNamespacePrefix)},
+            new object[] {typeof (XmlRootNamespacePrefix)}
+        };
 
         [Test]
         [TestCaseSource(nameof(_prefixAttributeTypeCases))]
         public void should_set_type_namespace_prefix_from_xml_attribute(Type type)
         {
-            Serialize.Xml(type.CreateInstance(), x => x.Serialization(y => 
-            y.AddXmlNamespace("abc", "http://namespace.org"))).ShouldEqual(Xml.Declaration +
-                "<abc:element xmlns:abc=\"http://namespace.org\" />");
+            Serialize.Xml(type.CreateInstance(), x => x.Serialization(y =>
+                y.AddXmlNamespace("abc", "http://namespace.org"))).ShouldEqual(Xml.Declaration +
+                    "<abc:element xmlns:abc=\"http://namespace.org\" />");
         }
 
         // Filtering types

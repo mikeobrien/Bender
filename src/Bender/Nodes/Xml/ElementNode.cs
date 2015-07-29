@@ -36,9 +36,9 @@ namespace Bender.Nodes.Xml
 
         public static XmlNodeBase Create(string name, Metadata metadata, Options options)
         {
-            var @namespace = !options.Serialization.DefaultXmlNamespace.IsNullOrEmpty() ?
-                options.Serialization.DefaultXmlNamespace : null;
-            var element = new XElement(GetNodeName(name, metadata, @namespace, options));
+            var @namespace = GetNamespace(name, metadata, 
+                options.Serialization.DefaultXmlNamespace, options);
+            var element = new XElement(GetNodeName(name, @namespace));
             if (options.Serialization.XmlNamespaces.Any())
                 options.Serialization.XmlNamespaces.ForEach(x => 
                     element.Add(new XAttribute(XNamespace.Xmlns + x.Key, x.Value)));
@@ -105,26 +105,30 @@ namespace Bender.Nodes.Xml
             else if (!named) throw new UnnamedChildrenNotSupportedException();
             else
             {
+                var @namespace = GetNamespace(node.Name, node.Metadata, _namespace, Options);
                 ((Options.Serialization.XmlValueNodeType == XmlValueNodeType.Attribute ||
                     node.Metadata.Contains<XmlAttributeAttribute>()) && node.NodeType.IsValue() ?
                     (XmlNodeBase)new AttributeNode(Element.CreateAttribute(node.Name), this, Options) :
-                    new ElementNode(Element.CreateElement(GetNodeName(
-                            node.Name, node.Metadata, _namespace, Options)), 
-                        _namespace, node.NodeType, this, Options))
+                    new ElementNode(Element.CreateElement(GetNodeName(node.Name, @namespace)),
+                        @namespace, node.NodeType, this, Options))
                     .Configure(modify);
             }
         }
 
-        private static XName GetNodeName(string name, Metadata metadata, 
+        private static XNamespace GetNamespace(string name, Metadata metadata,
             XNamespace defaultNamespace, Options options)
         {
-            var @namespace = 
+            var @namespace =
                 GetAttributeValue<XmlRootAttribute>(metadata, x => x.Namespace) ??
                 GetAttributeValue<XmlTypeAttribute>(metadata, x => x.Namespace) ??
                 GetAttributeValue<XmlElementAttribute>(metadata, x => x.Namespace) ??
                 defaultNamespace;
             var lookup = options.Serialization.XmlNamespaces.FirstOrDefault(x => x.Key == @namespace);
-            if (lookup.Key != null) @namespace = lookup.Value;
+            return lookup.Key != null ? lookup.Value : @namespace;
+        }
+
+        private static XName GetNodeName(string name, XNamespace @namespace)
+        {
             return @namespace != null ? @namespace + name : name;
         }
 
