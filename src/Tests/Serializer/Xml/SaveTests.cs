@@ -58,7 +58,7 @@ namespace Tests.Serializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("StringCases")]
+        [TestCaseSource(nameof(StringCases))]
         public void should_serialize_string(Func<string> serialize, string output)
         {
             serialize().ShouldEqual(XmlUtf8Declaration + output);
@@ -83,7 +83,7 @@ namespace Tests.Serializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("DocumentCases")]
+        [TestCaseSource(nameof(DocumentCases))]
         public void should_serialize_xdocument(Func<XDocument> serialize, string output)
         {
             serialize().ToString().Replace("\r\n", "").Replace(" ", "").ShouldEqual(output);
@@ -108,7 +108,7 @@ namespace Tests.Serializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("ElementCases")]
+        [TestCaseSource(nameof(ElementCases))]
         public void should_serialize_xelement(Func<XElement> serialize, string output)
         {
             serialize().ToString().Replace("\r\n", "").Replace(" ", "").ShouldEqual(output);
@@ -154,7 +154,7 @@ namespace Tests.Serializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("ByteCases")]
+        [TestCaseSource(nameof(ByteCases))]
         public void should_serialize_bytes(Func<byte[]> serialize, byte[] output)
         {
             serialize().ShouldEqual(output);
@@ -212,7 +212,7 @@ namespace Tests.Serializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("AsStreamCases")]
+        [TestCaseSource(nameof(AsStreamCases))]
         public void should_serialize_as_stream(Func<Stream> serialize, Stream output)
         {
             serialize().ShouldEqual(output);
@@ -244,7 +244,7 @@ namespace Tests.Serializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("ToStreamCases")]
+        [TestCaseSource(nameof(ToStreamCases))]
         public void should_serialize_to_stream(Action<Stream> serialize, Stream output)
         {
             var stream = new MemoryStream();
@@ -337,7 +337,7 @@ namespace Tests.Serializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("FileCases")]
+        [TestCaseSource(nameof(FileCases))]
         public void should_serialize_file(Func<byte[]> serialize, byte[] output)
         {
             serialize().ShouldEqual(output);

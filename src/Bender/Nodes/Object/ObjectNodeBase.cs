@@ -25,20 +25,21 @@ namespace Bender.Nodes.Object
             Member = member;
             HasMember = member != null;
             if (HasMember) Metadata.Add(member.Attributes);
+            else if (HasMember && Source != null) Metadata.Add(ActualType.Attributes);
         }
 
-        public override string Format { get { return NodeFormat; } }
-        public override bool IsNamed { get { return true; } }
-        public override bool HasFixedNodeType { get { return true; } }
+        public override string Format => NodeFormat;
+        public override bool IsNamed => true;
+        public override bool HasFixedNodeType => true;
 
-        public IValue Source { get; private set; }
-        public CachedMember Member { get; private set; }
-        public bool HasMember { get; private set; }
-        public CachedType SpecifiedType { get { return Source.SpecifiedType; } }
-        public CachedType ActualType { get { return Source.ActualType; } }
-        public Mode Mode { get { return Context.Mode; } }
+        public IValue Source { get; }
+        public CachedMember Member { get; }
+        public bool HasMember { get; }
+        public CachedType SpecifiedType => Source.SpecifiedType;
+        public CachedType ActualType => Source.ActualType;
+        public Mode Mode => Context.Mode;
 
-        protected Context Context { get; private set; }
+        protected Context Context { get; }
 
         public override object Value
         {

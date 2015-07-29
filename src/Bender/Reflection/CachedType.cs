@@ -102,40 +102,41 @@ namespace Bender.Reflection
 
         public string Name { get; private set; }
         public string FullName { get; private set; }
-        public string FriendlyFullName { get { return _friendlyFullName.Value; } }
-        public string GenericBaseName { get { return _genericBaseName.Value; } }
-        public Type Type { get; private set; }
-        public CachedType UnderlyingType { get { return _underlyingType.Value; } }
+        public string FriendlyFullName => _friendlyFullName.Value;
+        public string GenericBaseName => _genericBaseName.Value;
+        public Type Type { get; }
+        public CachedType UnderlyingType => _underlyingType.Value;
 
-        public IEnumerable<CachedMember> Members { get { return _filteredMembers.Value; } }
-        public bool IsSimpleType { get { return _isSimpleType.Value; } }
-        public bool IsEnumerable { get { return _isEnumerable.Value; } }
-        public bool IsDictionary { get { return _isDictionary.Value; } }
-        public bool IsList { get { return _isList.Value; } }
-        public bool IsGenericListInterface { get { return _isGenericListInterface.Value; } }
-        public bool IsListInterface { get { return _isListInterface.Value; } }
-        public bool IsNonGenericDictionary { get { return _isNonGenericDictionary.Value; } }
-        public bool IsGenericDictionary { get { return _isGenericDictionary.Value; } }
-        public bool IsGenericDictionaryInterface { get { return _isGenericDictionaryInterface.Value; } }
-        public bool IsDictionaryInterface { get { return _isDictionaryInterface.Value; } }
-        public bool IsNonGenericList { get { return _isNonGenericList.Value; } }
-        public bool IsGenericList { get { return _isGenericList.Value; } }
-        public bool IsGenericEnumerableInterface { get { return _isGenericEnumerableInterface.Value; } }
-        public bool IsEnumerableInterface { get { return _isEnumerableInterface.Value; } }
-        public bool IsGenericEnumerable { get { return _isGenericEnumerable.Value; } }
-        public CachedType GenericEnumerableType { get { return _genericEnumerableType.Value; } }
-        public CachedType ElementType { get { return _elementType.Value; } }
-        public KeyValuePair<CachedType, CachedType> GenericDictionaryTypes { get { return _genericDictionaryTypes.Value; } }
-        public bool IsNullable { get { return _isNullable.Value; } }
+        public IEnumerable<CachedMember> Members => _filteredMembers.Value;
+        public IEnumerable<Attribute> Attributes => _attributes.Value;
+        public bool IsSimpleType => _isSimpleType.Value;
+        public bool IsEnumerable => _isEnumerable.Value;
+        public bool IsDictionary => _isDictionary.Value;
+        public bool IsList => _isList.Value;
+        public bool IsGenericListInterface => _isGenericListInterface.Value;
+        public bool IsListInterface => _isListInterface.Value;
+        public bool IsNonGenericDictionary => _isNonGenericDictionary.Value;
+        public bool IsGenericDictionary => _isGenericDictionary.Value;
+        public bool IsGenericDictionaryInterface => _isGenericDictionaryInterface.Value;
+        public bool IsDictionaryInterface => _isDictionaryInterface.Value;
+        public bool IsNonGenericList => _isNonGenericList.Value;
+        public bool IsGenericList => _isGenericList.Value;
+        public bool IsGenericEnumerableInterface => _isGenericEnumerableInterface.Value;
+        public bool IsEnumerableInterface => _isEnumerableInterface.Value;
+        public bool IsGenericEnumerable => _isGenericEnumerable.Value;
+        public CachedType GenericEnumerableType => _genericEnumerableType.Value;
+        public CachedType ElementType => _elementType.Value;
+        public KeyValuePair<CachedType, CachedType> GenericDictionaryTypes => _genericDictionaryTypes.Value;
+        public bool IsNullable => _isNullable.Value;
         public bool IsGenericType { get; private set; }
-        public IEnumerable<CachedType> GenericArguments { get { return _genericTypeArguments.Value; } }
+        public IEnumerable<CachedType> GenericArguments => _genericTypeArguments.Value;
         public bool IsArray { get; private set; }
-        public bool IsEnum { get { return _isEnum.Value; } }
+        public bool IsEnum => _isEnum.Value;
         public bool IsValueType { get; private set; }
         public bool IsInterface { get; private set; }
-        public TypeCode TypeCode { get { return _typeCode.Value; } }
-        public bool IsInBclCollectionNamespace { get; private set; }
-        public bool IsBclCollectionType { get { return IsInBclCollectionNamespace && IsEnumerable; } }
+        public TypeCode TypeCode => _typeCode.Value;
+        public bool IsInBclCollectionNamespace { get; }
+        public bool IsBclCollectionType => IsInBclCollectionNamespace && IsEnumerable;
 
         public static implicit operator Type(CachedType type)
         {

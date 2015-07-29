@@ -38,7 +38,7 @@ namespace Bender.Nodes.Xml
         {
             var @namespace = !options.Serialization.DefaultXmlNamespace.IsNullOrEmpty() ?
                 options.Serialization.DefaultXmlNamespace : null;
-            var element = new XElement(@namespace != null ? @namespace + name : name);
+            var element = new XElement(GetNodeName(name, metadata, @namespace, options));
             if (options.Serialization.XmlNamespaces.Any())
                 options.Serialization.XmlNamespaces.ForEach(x => 
                     element.Add(new XAttribute(XNamespace.Xmlns + x.Key, x.Value)));
@@ -64,8 +64,8 @@ namespace Bender.Nodes.Xml
                 x => new ParseException(x, NodeFormat)), options);
         }
 
-        public override string Type { get { return "element"; } }
-        public override string Path { get { return Element.GetPath(); } }
+        public override string Type => "element";
+        public override string Path => Element.GetPath();
 
         protected override NodeType GetNodeType()
         {
@@ -108,21 +108,24 @@ namespace Bender.Nodes.Xml
                 ((Options.Serialization.XmlValueNodeType == XmlValueNodeType.Attribute ||
                     node.Metadata.Contains<XmlAttributeAttribute>()) && node.NodeType.IsValue() ?
                     (XmlNodeBase)new AttributeNode(Element.CreateAttribute(node.Name), this, Options) :
-                    new ElementNode(Element.CreateElement(GetNodeName(node)), _namespace, node.NodeType, this, Options))
+                    new ElementNode(Element.CreateElement(GetNodeName(
+                            node.Name, node.Metadata, _namespace, Options)), 
+                        _namespace, node.NodeType, this, Options))
                     .Configure(modify);
             }
         }
 
-        private XName GetNodeName(INode node)
+        private static XName GetNodeName(string name, Metadata metadata, 
+            XNamespace defaultNamespace, Options options)
         {
             var @namespace = 
-                GetAttributeValue<XmlRootAttribute>(node.Metadata, x => x.Namespace) ??
-                GetAttributeValue<XmlTypeAttribute>(node.Metadata, x => x.Namespace) ??
-                GetAttributeValue<XmlElementAttribute>(node.Metadata, x => x.Namespace) ??
-                _namespace;
-            var lookup = Options.Serialization.XmlNamespaces.FirstOrDefault(x => x.Key == @namespace);
+                GetAttributeValue<XmlRootAttribute>(metadata, x => x.Namespace) ??
+                GetAttributeValue<XmlTypeAttribute>(metadata, x => x.Namespace) ??
+                GetAttributeValue<XmlElementAttribute>(metadata, x => x.Namespace) ??
+                defaultNamespace;
+            var lookup = options.Serialization.XmlNamespaces.FirstOrDefault(x => x.Key == @namespace);
             if (lookup.Key != null) @namespace = lookup.Value;
-            return @namespace != null ? @namespace + node.Name : node.Name;
+            return @namespace != null ? @namespace + name : name;
         }
 
         private static string GetAttributeValue<T>(Metadata metadata, Func<T, string> map)

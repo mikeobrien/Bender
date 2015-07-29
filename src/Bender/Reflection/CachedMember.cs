@@ -43,19 +43,19 @@ namespace Bender.Reflection
             }
         }
 
-        public MemberInfo MemberInfo { get; private set; }
-        public PropertyInfo PropertyInfo { get; private set; }
-        public FieldInfo FieldInfo { get; private set; }
+        public MemberInfo MemberInfo { get; }
+        public PropertyInfo PropertyInfo { get; }
+        public FieldInfo FieldInfo { get; }
 
         public string Name { get; set; }
-        public CachedType Type { get { return _type.Value; } }
-        public CachedType DeclaringType { get { return _declaringType.Value; } }
-        public MemberTypes MemberType { get; private set; }
-        public bool IsProperty { get; private set; }
-        public bool IsField { get; private set; }
-        public bool IsPublicPropertyOrField { get { return _isPublicPropertyOrField.Value; } }
-        public bool IsReadonly { get { return _isReadonly.Value; } }
-        public IEnumerable<Attribute> Attributes { get { return _attributes.Value; } }
+        public CachedType Type => _type.Value;
+        public CachedType DeclaringType => _declaringType.Value;
+        public MemberTypes MemberType { get; }
+        public bool IsProperty { get; }
+        public bool IsField { get; }
+        public bool IsPublicPropertyOrField => _isPublicPropertyOrField.Value;
+        public bool IsReadonly => _isReadonly.Value;
+        public IEnumerable<Attribute> Attributes => _attributes.Value;
 
         public static implicit operator MemberInfo(CachedMember member)
         {

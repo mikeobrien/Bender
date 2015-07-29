@@ -299,6 +299,53 @@ namespace Tests.Serializer.Xml
                 .ShouldEqual(Xml.Declaration + "<XmlAttributes><StringName>hai</StringName></XmlAttributes>");
         }
 
+        public class XmlElementNamespace
+        {
+            [XmlElement(Namespace = "http://namespace.org")]
+            public string Namespace { get; set; }
+
+            [XmlElement(Namespace = "abc")]
+            public string Prefix { get; set; }
+        }
+
+        [Test]
+        public void should_set_property_namespace_prefix_from_xml_attribute()
+        {
+            Serialize.Xml(new XmlElementNamespace { Namespace = "oh", Prefix = "hai" }, x => x.Serialization(y =>
+            y.AddXmlNamespace("abc", "http://namespace.org"))).ShouldEqual(Xml.Declaration +
+                "<XmlElementNamespace xmlns:abc=\"http://namespace.org\">" +
+                    "<abc:Namespace>oh</abc:Namespace>" +
+                    "<abc:Prefix>hai</abc:Prefix>" + 
+                "</XmlElementNamespace>");
+        }
+
+        [XmlRoot("element", Namespace = "abc")]
+        public class XmlRootNamespacePrefix { }
+
+        [XmlRoot("element", Namespace = "http://namespace.org")]
+        public class XmlRootNamespace { }
+
+        [XmlType("element", Namespace = "abc")]
+        public class XmlTypeNamespacePrefix { }
+
+        [XmlType("element", Namespace = "http://namespace.org")]
+        public class XmlTypeNamespace { }
+
+        private readonly object[][] _prefixAttributeTypeCases = {
+            new object[] { typeof(XmlRootNamespacePrefix) },
+            new object[] { typeof(XmlRootNamespacePrefix) },
+            new object[] { typeof(XmlRootNamespacePrefix) },
+            new object[] { typeof(XmlRootNamespacePrefix) } };
+
+        [Test]
+        [TestCaseSource(nameof(_prefixAttributeTypeCases))]
+        public void should_set_type_namespace_prefix_from_xml_attribute(Type type)
+        {
+            Serialize.Xml(type.CreateInstance(), x => x.Serialization(y => 
+            y.AddXmlNamespace("abc", "http://namespace.org"))).ShouldEqual(Xml.Declaration +
+                "<abc:element xmlns:abc=\"http://namespace.org\" />");
+        }
+
         // Filtering types
 
         public class FilterTypes

@@ -46,7 +46,7 @@ namespace Bender.Nodes.Object
             _addedNodes = new Lazy<IList<INode>>(() => new List<INode>());
         }
 
-        public override string Type { get { return "object"; } }
+        public override string Type => "object";
 
         protected override NodeType GetNodeType()
         {
