@@ -5,14 +5,14 @@
       <version>0.0.0.0</version>
       <title>Bender</title>
       <authors>Mike O'Brien</authors>
-      <description>Xml and json serializer for .NET.</description>
+      <description>Xml, json, CSV and form url encoded serializer for .NET.</description>
       <releaseNotes />
       <copyright />
       <language>en-US</language>
       <licenseUrl>https://github.com/mikeobrien/Bender/blob/master/LICENSE</licenseUrl>
       <projectUrl>https://github.com/mikeobrien/Bender</projectUrl>
       <owners>Mike O'Brien</owners>
-      <summary>Xml and json serializer for .NET.</summary>
+      <summary>Xml, json, CSV and form url encoded serializer for .NET.</summary>
       <iconUrl>https://github.com/mikeobrien/Bender/raw/master/misc/logo.png</iconUrl>
       <tags>xml json serialization deserialization deserializer serializer</tags>
       <dependencies>

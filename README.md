@@ -5,7 +5,7 @@
 Bender is a highly configurable xml, json, CSV and form url encoded serialization library for .NET. Unlike other serializers, Bender gives you complete control over the serialization process though a simple API.
 
 - Not strongly named.
-- One serializer for both json, XML, CSV and form url encoded.
+- One serializer for json, XML, CSV and form url encoded.
 - [Readers](#readers), [writers](#writers) and [visitors](#visitors) give you full control of serialization and deserialization.
 - [Naming conventions](#naming-conventions) give you full control over naming.
 - [Friendly deserialization error messages](#friendly-deserialization-error-messages) allow you to give valuable feedback to consumers of your API.
