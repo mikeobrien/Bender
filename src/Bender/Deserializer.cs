@@ -34,8 +34,8 @@ namespace Bender
         public object Deserialize(INode source, Type type)
         {
             var target = source.IsNamed ?
-                NodeFactory.CreateDeserializableRoot(source.Name, type.GetCachedType(), source.Format, _options) :
-                NodeFactory.CreateDeserializableRoot(type.GetCachedType(), source.Format, _options);
+                NodeFactory.CreateDeserializableRoot(source.Name, type.ToCachedType(), source.Format, _options) :
+                NodeFactory.CreateDeserializableRoot(type.ToCachedType(), source.Format, _options);
             new NodeMapper<INode, NodeBase>(
                 _options.Deserialization.Readers.Mapping.HasMapping,
                 _options.Deserialization.Readers.Mapping.Map,

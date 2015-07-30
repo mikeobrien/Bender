@@ -16,7 +16,7 @@ namespace Bender.Nodes.Object
             IsNodeType = value.SpecifiedType.Type.CanBeCastTo<INode>();
         }
 
-        public string Name { get; private set; }
+        public string Name { get; }
         public IValue Value { get; private set; }
         public CachedMember Member { get; private set; }
         public bool IsNodeType { get; private set; }

@@ -86,7 +86,7 @@ namespace Tests.Nodes.Object
         [TestCaseSource("SimpleTypes")]
         public void should_set_simple_types(Type type, object value)
         {
-            var result = new SimpleValue(type.GetCachedType());
+            var result = new SimpleValue(type.ToCachedType());
             new ValueNode(CreateContext(Mode.Deserialize), null, result, null, null).Value = value;
             result.Instance.ShouldEqual(value);
         }
@@ -104,7 +104,7 @@ namespace Tests.Nodes.Object
         [TestCase((double)3)]
         public void should_set_numeric_enum_type(object value)
         {
-            var result = new SimpleValue(typeof(UriFormat).GetCachedType());
+            var result = new SimpleValue(typeof(UriFormat).ToCachedType());
             new ValueNode(CreateContext(Mode.Deserialize), null, result, null, null).Value = value;
             result.Instance.ShouldEqual(UriFormat.SafeUnescaped);
         }
@@ -112,7 +112,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_set_decimal_enum_type()
         {
-            var result = new SimpleValue(typeof(UriFormat).GetCachedType());
+            var result = new SimpleValue(typeof(UriFormat).ToCachedType());
             new ValueNode(CreateContext(Mode.Deserialize), null, result, null, null).Value = 3.0;
             result.Instance.ShouldEqual(UriFormat.SafeUnescaped);
         }
@@ -121,7 +121,7 @@ namespace Tests.Nodes.Object
         [TestCaseSource("SimpleTypes")]
         public void should_parse_simple_types_from_string(Type type, object value)
         {
-            var result = new SimpleValue(type.GetCachedType());
+            var result = new SimpleValue(type.ToCachedType());
             new ValueNode(CreateContext(Mode.Deserialize), null, result, null, null).Value = value.ToString();
             result.Instance.ShouldEqual(value);
         }
@@ -134,7 +134,7 @@ namespace Tests.Nodes.Object
             var messageType = type.GetUnderlyingNullableType();
             messageType = messageType.IsEnum ? typeof(Enum) : messageType;
             Assert.Throws<ValueParseException>(() => new ValueNode(CreateContext(Mode.Deserialize), 
-                    null, new SimpleValue(type.GetCachedType()), null, null).Value = "yada")
+                    null, new SimpleValue(type.ToCachedType()), null, null).Value = "yada")
                 .FriendlyMessage.ShouldEqual(Options.Create().Deserialization
                     .FriendlyParseErrorMessages[messageType].ToFormat("yada"));
         }
@@ -145,7 +145,7 @@ namespace Tests.Nodes.Object
             Assert.Throws<ValueConversionException>(() =>
                 new ValueNode(CreateContext(Mode.Deserialize), null, 
                     new SimpleValue(typeof(KeyValuePair<string, int>)
-                        .GetCachedType()), null, null).Value = new KeyValuePair<int, string>())
+                        .ToCachedType()), null, null).Value = new KeyValuePair<int, string>())
             .Message.ShouldEqual("Value '[0, ]' of type 'System.Collections.Generic.KeyValuePair<System.Int32, System.String>' " +
                 "cannot be converted to type 'System.Collections.Generic.KeyValuePair<System.String, System.Int32>': " +
                 "Object must implement IConvertible.");
@@ -155,7 +155,7 @@ namespace Tests.Nodes.Object
         [TestCaseSource("SimpleTypes")]
         public void should_convert_simple_types_to_string(Type type, object value)
         {
-            var result = new SimpleValue(typeof(string).GetCachedType());
+            var result = new SimpleValue(typeof(string).ToCachedType());
             new ValueNode(CreateContext(Mode.Deserialize), null, result, null, null).Value = value;
             result.Instance.ShouldEqual(value.ToString());
         }
@@ -180,7 +180,7 @@ namespace Tests.Nodes.Object
         [TestCaseSource("SimpleNumericTypes")]
         public void should_convert_simple_numeric_types_to_decimal(Type type, object value)
         {
-            var result = new SimpleValue(typeof(decimal).GetCachedType());
+            var result = new SimpleValue(typeof(decimal).ToCachedType());
             new ValueNode(CreateContext(Mode.Deserialize), null, result, null, null).Value = value;
             result.Instance.ShouldEqual(Convert.ChangeType(value, typeof(decimal)));
         }
@@ -209,7 +209,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(Decimal?))]
         public void should_set_null_on_reference_types(Type type)
         {
-            var value = new SimpleValue(typeof(string).GetCachedType());
+            var value = new SimpleValue(typeof(string).ToCachedType());
             new ValueNode(CreateContext(Mode.Deserialize), null, value, null, null).Value = null;
             value.Instance.ShouldBeNull();
         }
@@ -238,7 +238,7 @@ namespace Tests.Nodes.Object
         {
             Assert.Throws<ValueCannotBeNullDeserializationException>(() =>
                 new ValueNode(CreateContext(Mode.Deserialize), null,
-                    new SimpleValue(type.GetCachedType()), null, null).Value = null);
+                    new SimpleValue(type.ToCachedType()), null, null).Value = null);
         }
     }
 }

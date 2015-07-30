@@ -13,7 +13,7 @@ namespace Bender.Nodes.Object.Values
             _value = value;
             _member = member;
             var type = member.Type;
-            SpecifiedType = useActualType(type) && Instance != null ? Instance.GetCachedType() : type;
+            SpecifiedType = useActualType(type) && Instance != null ? Instance.ToCachedType() : type;
             IsReadonly = _member.IsReadonly;
         }
 
@@ -29,7 +29,7 @@ namespace Bender.Nodes.Object.Values
 
         public CachedType ActualType
         {
-            get { return Instance != null ? Instance.GetCachedType() : SpecifiedType; }
+            get { return Instance != null ? Instance.ToCachedType() : SpecifiedType; }
         }
     }
 }

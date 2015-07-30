@@ -45,7 +45,7 @@ namespace Tests.Nodes.Object
         [TestCaseSource("SimpleTypes")]
         public void should_fail_to_create_simple_types(Type type)
         {
-            Assert.Throws<SimpleTypeInstantiationNotSupportedException>(() => ObjectFactory.CreateInstance(type.GetCachedType()))
+            Assert.Throws<SimpleTypeInstantiationNotSupportedException>(() => ObjectFactory.CreateInstance(type.ToCachedType()))
                 .Message.ShouldEqual(SimpleTypeInstantiationNotSupportedException.MessageFormat.ToFormat(type.GetFriendlyTypeFullName()));
         }
 
@@ -59,7 +59,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(IEnumerable), typeof(List<object>))]
         public void should_create_collection_interfaces(Type specifiedType, Type resultingType)
         {
-            var result = ObjectFactory.CreateInstance(specifiedType.GetCachedType());
+            var result = ObjectFactory.CreateInstance(specifiedType.ToCachedType());
             result.ShouldNotBeNull();
             result.ShouldBeType(resultingType);
         }
@@ -69,7 +69,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_create_complex_type()
         {
-            var result = ObjectFactory.CreateInstance(typeof(ComplexType).GetCachedType());
+            var result = ObjectFactory.CreateInstance(typeof(ComplexType).ToCachedType());
             result.ShouldNotBeNull();
             result.ShouldBeType<ComplexType>();
         }
@@ -90,7 +90,7 @@ namespace Tests.Nodes.Object
         public void should_create_complex_type_with_dependency()
         {
             var dependency = new ComplexType();
-            var result = ObjectFactory.CreateInstance(typeof(ComplexTypeWithDependency).GetCachedType(), null, dependency);
+            var result = ObjectFactory.CreateInstance(typeof(ComplexTypeWithDependency).ToCachedType(), null, dependency);
             result.ShouldNotBeNull();
             result.ShouldBeType<ComplexTypeWithDependency>();
             ((ComplexTypeWithDependency)result).Dependency.ShouldEqual(dependency);
@@ -100,7 +100,7 @@ namespace Tests.Nodes.Object
         public void should_create_complex_type_with_no_dependency()
         {
             var dependency = new ComplexType();
-            var result = ObjectFactory.CreateInstance(typeof(ComplexType).GetCachedType(), null, dependency);
+            var result = ObjectFactory.CreateInstance(typeof(ComplexType).ToCachedType(), null, dependency);
             result.ShouldNotBeNull();
             result.ShouldBeType<ComplexType>();
         }
@@ -108,7 +108,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_fail_create_complex_type_with_unresolvable_dependency()
         {
-            Assert.Throws<ObjectCreationException>(() => ObjectFactory.CreateInstance(typeof(ComplexType).GetCachedType(), null, null))
+            Assert.Throws<ObjectCreationException>(() => ObjectFactory.CreateInstance(typeof(ComplexType).ToCachedType(), null, null))
                 .Message.ShouldEqual(ObjectCreationException.MessageFormat.ToFormat(
                     "Tests.Nodes.Object.ObjectFactoryTests.ComplexType", 
                     "Value cannot be null. Parameter name: source"));
@@ -118,7 +118,7 @@ namespace Tests.Nodes.Object
         public void should_create_complex_type_with_structure_map_factory()
         {
             var dependency = new ComplexType();
-            var result = ObjectFactory.CreateInstance(typeof(ComplexTypeWithDependency).GetCachedType(),
+            var result = ObjectFactory.CreateInstance(typeof(ComplexTypeWithDependency).ToCachedType(),
                 (t, d) =>
                 {
                     var container = StructureMap.ObjectFactory.Container.GetNestedContainer();

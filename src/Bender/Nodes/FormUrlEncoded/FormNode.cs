@@ -34,10 +34,10 @@ namespace Bender.Nodes.FormUrlEncoded
             .Map(() => ParseForm(stream, encoding), x => new ParseException(x, Format));
         }
 
-        public List<FormValueNode> Form { get; private set; }
-        public override string Format { get { return NodeFormat; } }
+        public List<FormValueNode> Form { get; }
+        public override string Format => NodeFormat;
 
-        public override string Type { get { return "form"; } }
+        public override string Type => "form";
 
         protected override NodeType GetNodeType()
         {

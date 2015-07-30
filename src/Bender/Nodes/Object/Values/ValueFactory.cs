@@ -18,7 +18,7 @@ namespace Bender.Nodes.Object.Values
 
         public static IValue Create(object @object, CachedType type, bool @readonly, Options options)
         {
-            return new SimpleValue(@object, UseActualType(type, options) ? @object.GetCachedType() : type, @readonly);
+            return new SimpleValue(@object, UseActualType(type, options) ? @object.ToCachedType() : type, @readonly);
         }
 
         public static IValue Create(Mode mode, IValue @object, CachedMember member, Options options)

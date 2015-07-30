@@ -45,7 +45,7 @@ namespace Tests.Nodes.Object
             Options options = null, Mode mode = Mode.Deserialize,
             Type type = null, CachedMember member = null)
         {
-            return CreateNode(new SimpleValue(enumerable, (type ?? enumerable.GetType()).GetCachedType()),
+            return CreateNode(new SimpleValue(enumerable, (type ?? enumerable.GetType()).ToCachedType()),
                 options, mode, type, member);
         }
 
@@ -83,7 +83,7 @@ namespace Tests.Nodes.Object
         public void should_initialize_source_value()
         {
             var node = CreateNode(new LazyValue(
-                new SimpleValue(typeof(List<string>).GetCachedType()),
+                new SimpleValue(typeof(List<string>).ToCachedType()),
                 () => new List<string>()));
 
             node.Source.As<LazyValue>().InnerValue.Instance.ShouldBeNull();
@@ -125,7 +125,7 @@ namespace Tests.Nodes.Object
         public void should_add_nodes(Type type)
         {
             var value = new SimpleValue(type.IsArray ? type.CreateArray() :
-                type.CreateInstance(), type.GetCachedType());
+                type.CreateInstance(), type.ToCachedType());
             var node = CreateNode(value);
             node.Add(NodeType.Value, Metadata.Empty, x => x.Value = 1);
             node.Add(NodeType.Value, Metadata.Empty, x => x.Value = "hai");
@@ -143,7 +143,7 @@ namespace Tests.Nodes.Object
         public void should_add_named_nodes(Type type)
         {
             var value = new SimpleValue(type.IsArray ? type.CreateArray() :
-                type.CreateInstance(), type.GetCachedType());
+                type.CreateInstance(), type.ToCachedType());
             var node = CreateNode(value);
             node.Add("String", NodeType.Value, Metadata.Empty, x => x.Value = 1);
             node.Add("String", NodeType.Value, Metadata.Empty, x => x.Value = "hai");
@@ -158,7 +158,7 @@ namespace Tests.Nodes.Object
         public void should_fail_to_add_case_sensitive_nodes_by_default()
         {
             var exception = Assert.Throws<InvalidItemNameDeserializationException>(() => CreateNode(new SimpleValue(new List<String>(),
-                typeof(List<String>).GetCachedType())).Add("string", NodeType.Value, Metadata.Empty, x => { }));
+                typeof(List<String>).ToCachedType())).Add("string", NodeType.Value, Metadata.Empty, x => { }));
 
             var message = "Name 'string' does not match expected name of 'String'.";
             exception.Message.ShouldEqual(message);
@@ -168,7 +168,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_not_fail_to_add_case_sensitive_nodes_when_configured()
         {
-            Assert.DoesNotThrow(() => CreateNode(new SimpleValue(new List<String>(), typeof(List<String>).GetCachedType()), 
+            Assert.DoesNotThrow(() => CreateNode(new SimpleValue(new List<String>(), typeof(List<String>).ToCachedType()), 
                 Options.Create(x => x.Deserialization(y => y.IgnoreNameCase())))
                 .Add("string", NodeType.Value, Metadata.Empty, x => { })); ;
         }
@@ -272,7 +272,7 @@ namespace Tests.Nodes.Object
         public void should_insert_node(Type type)
         {
             var value = new SimpleValue(type.IsArray ? type.CreateArray() :
-                type.CreateInstance(), type.GetCachedType());
+                type.CreateInstance(), type.ToCachedType());
             var parent = CreateNode(value);
             var child = Node.CreateValue();
             parent.ShouldNotExecuteCallback<INode>((s, c) => s.Add(child, c));
@@ -404,7 +404,7 @@ namespace Tests.Nodes.Object
         public void should_not_return_cyclic_references_in_serialize_mode(CyclicRoot root, string name)
         {
             var members = new ObjectNode(new Context(Options.Create(), Mode.Serialize, "xml"), null,
-                new SimpleValue(root, typeof(CyclicRoot).GetCachedType()), null, null).ToList();
+                new SimpleValue(root, typeof(CyclicRoot).ToCachedType()), null, null).ToList();
 
             var child = members.GetNode(name);
             child.ShouldTotal(1);
@@ -451,7 +451,7 @@ namespace Tests.Nodes.Object
             var instance = type.CreateInstance().As<IList>();
             var child = new Node("yada");
             instance.Add(child);
-            var parent = CreateNode(new SimpleValue(instance, type.GetCachedType()), mode: Mode.Serialize);
+            var parent = CreateNode(new SimpleValue(instance, type.ToCachedType()), mode: Mode.Serialize);
             parent.GetNode("yada").ShouldBeSameAs(child);
         }
 

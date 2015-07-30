@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Bender.Collections;
+using Bender.Extensions;
 using Bender.Nodes;
 using Bender.Reflection;
 
@@ -59,6 +61,14 @@ namespace Tests
         public static DateTime SubtractUtcOffset(this DateTime date)
         {
             return date.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(date).Hours);
+        }
+
+        public static string EncodeToString(this INode node)
+        {
+            var stream = new MemoryStream();
+            node.Encode(stream);
+            stream.Position = 0;
+            return stream.ReadToEnd();
         }
     }
 }

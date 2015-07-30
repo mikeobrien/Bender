@@ -353,7 +353,7 @@ namespace Tests.Reflection
         {
             var indexer = new Indexer();
             indexer["oh"] = "hai";
-            typeof(Indexer).GetCachedType().GetIndexer()
+            typeof(Indexer).ToCachedType().GetIndexer()
                 .GetValue(indexer, "oh").ShouldEqual("hai");
         }
 
@@ -361,7 +361,7 @@ namespace Tests.Reflection
         public void should_set_indexer_value()
         {
             var indexer = new Indexer();
-            typeof(Indexer).GetCachedType().GetIndexer()
+            typeof(Indexer).ToCachedType().GetIndexer()
                 .SetValue(indexer, "oh", "hai");
             indexer["oh"].ShouldEqual("hai");
         }

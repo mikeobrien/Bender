@@ -78,7 +78,7 @@ namespace Bender.Nodes.Object
                         }
                         catch (Exception exception)
                         {
-                            throw new ValueConversionException(exception, value, value.GetCachedType(), type);
+                            throw new ValueConversionException(exception, value, value.ToCachedType(), type);
                         }
                     }
                 }

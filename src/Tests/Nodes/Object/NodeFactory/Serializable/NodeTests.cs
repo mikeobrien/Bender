@@ -27,7 +27,7 @@ namespace Tests.Nodes.Object.NodeFactory.Serializable
         public void Setup()
         {
             _parent = new ObjectNode(_context, null,
-                new SimpleValue(new object(), typeof(object).GetCachedType()), null, null);
+                new SimpleValue(new object(), typeof(object).ToCachedType()), null, null);
         }
 
         private interface ISomeInterface { }
@@ -45,7 +45,7 @@ namespace Tests.Nodes.Object.NodeFactory.Serializable
         public void should_create_node(Type specifiedType, 
             object @object, NodeType nodeType)
         {
-            var value = new SimpleValue(@object, specifiedType.GetCachedType());
+            var value = new SimpleValue(@object, specifiedType.ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateSerializable(
                 NodeName, value, _parent,
                 _context).As<NodeBase>();
@@ -64,7 +64,7 @@ namespace Tests.Nodes.Object.NodeFactory.Serializable
         public void should_pass_memberinfo_to_enumerable_node()
         {
             var @object = new List<string> { "hai" };
-            var value = new SimpleValue(@object, typeof(List<string>).GetCachedType());
+            var value = new SimpleValue(@object, typeof(List<string>).ToCachedType());
             var member = new CachedMember(typeof (ArrayItemMember).GetProperty("SomeProperty"));
             var node = Bender.Nodes.Object.NodeFactory.CreateSerializable(
                 NodeName, value, _parent,
@@ -85,7 +85,7 @@ namespace Tests.Nodes.Object.NodeFactory.Serializable
         public void should_create_object_node_when_enumerable_implementations_are_treated_as_objects(Type type)
         {
             var @object = type.CreateInstance();
-            var value = new SimpleValue(@object, type.GetCachedType());
+            var value = new SimpleValue(@object, type.ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateSerializable(
                 NodeName, value, _parent,
                 new Context(Options.Create(x => x.TreatEnumerableImplsAsObjects()), 
@@ -105,7 +105,7 @@ namespace Tests.Nodes.Object.NodeFactory.Serializable
         public void should_create_array_node_when_enumerable_implementations_are_treated_as_arrays(Type type)
         {
             var @object = type.CreateInstance();
-            var value = new SimpleValue(@object, type.GetCachedType());
+            var value = new SimpleValue(@object, type.ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateSerializable(
                 NodeName, value, _parent,
                 _context).As<NodeBase>();
@@ -122,7 +122,7 @@ namespace Tests.Nodes.Object.NodeFactory.Serializable
         public void should_create_object_node_when_dictionary_implementations_are_treated_as_objects(Type type)
         {
             var @object = type.CreateInstance();
-            var value = new SimpleValue(@object, type.GetCachedType());
+            var value = new SimpleValue(@object, type.ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateSerializable(
                 NodeName, value, _parent,
                 new Context(Options.Create(x => x.TreatDictionaryImplsAsObjects()), 
@@ -140,7 +140,7 @@ namespace Tests.Nodes.Object.NodeFactory.Serializable
         public void should_create_array_node_when_dictionary_implementations_are_treated_as_arrays(Type type)
         {
             var @object = type.CreateInstance();
-            var value = new SimpleValue(@object, type.GetCachedType());
+            var value = new SimpleValue(@object, type.ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateSerializable(
                 NodeName, value, _parent,
                 _context).As<NodeBase>();

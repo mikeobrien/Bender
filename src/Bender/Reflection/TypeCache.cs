@@ -18,12 +18,12 @@ namespace Bender.Reflection
             return Cache[type];
         }
 
-        public static CachedType GetCachedType(this Type type)
+        public static CachedType ToCachedType(this Type type)
         {
             return GetType(type);
         }
 
-        public static CachedType GetCachedType(this object instance)
+        public static CachedType ToCachedType(this object instance)
         {
             return GetType(instance.GetType());
         }

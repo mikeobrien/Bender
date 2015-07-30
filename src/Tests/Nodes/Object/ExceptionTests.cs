@@ -13,7 +13,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_correctly_format_type_not_supported_deserialization_exception_message()
         {
-            new TypeNotSupportedException("dictionary", typeof(string).GetCachedType(), 
+            new TypeNotSupportedException("dictionary", typeof(string).ToCachedType(), 
                     Mode.Deserialize, "dictionaries")
                 .Message.ShouldEqual("Dictionary 'System.String' is not supported for " +
                                      "deserialization. Only dictionaries can be deserialized.");
@@ -22,7 +22,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_correctly_format_type_not_supported_serialization_exception_message()
         {
-            new TypeNotSupportedException("dictionary", typeof(string).GetCachedType(),
+            new TypeNotSupportedException("dictionary", typeof(string).ToCachedType(),
                     Mode.Serialize, "dictionaries")
                 .Message.ShouldEqual("Dictionary 'System.String' is not supported for " +
                                      "serialization. Only dictionaries can be serialized.");

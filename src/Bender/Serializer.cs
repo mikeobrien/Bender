@@ -196,7 +196,7 @@ namespace Bender
         public INode SerializeNodes(object @object, Type type, Func<INode, Options, INode> targetFactory, string format)
         {
             var source = NodeFactory.CreateSerializableRoot(@object, 
-                type.GetCachedType(), _options, format);
+                type.ToCachedType(), _options, format);
             var target = targetFactory(source, _options);
             new NodeMapper<NodeBase, INode>(
                 _options.Serialization.Writers.Mapping.HasMapping,

@@ -37,6 +37,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\flexo.1.0.21.0\lib\Flexo.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -56,13 +57,18 @@
     <Compile Include="Configuration\DeserializationOptions.cs" />
     <Compile Include="Configuration\OptionsDsl.cs" />
     <Compile Include="Deserialize.FormUrlEncoded.cs" />
+    <Compile Include="Deserialize.Csv.cs" />
     <Compile Include="Deserialize.Xml.cs" />
     <Compile Include="Deserialize.Json.cs" />
     <Compile Include="Deserializer.FormUrlEncoded.cs" />
+    <Compile Include="Deserializer.Csv.cs" />
     <Compile Include="Deserializer.Xml.cs" />
     <Compile Include="Deserializer.Json.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\UTF8Encoding.cs" />
+    <Compile Include="Nodes\CharacterSeparated\FileNode.cs" />
+    <Compile Include="Nodes\CharacterSeparated\RowNode.cs" />
+    <Compile Include="Nodes\CharacterSeparated\ValueNode.cs" />
     <Compile Include="Nodes\FormUrlEncoded\FormNode.cs" />
     <Compile Include="Nodes\FormUrlEncoded\FormValueNode.cs" />
     <Compile Include="Nodes\Object\Exceptions.cs" />
@@ -107,9 +113,11 @@
     <Compile Include="Reflection\CachedType.cs" />
     <Compile Include="Reflection\TypeCache.cs" />
     <Compile Include="Serialize.FormUrlEncoded.cs" />
+    <Compile Include="Serialize.Csv.cs" />
     <Compile Include="Serialize.Json.cs" />
     <Compile Include="Serialize.Xml.cs" />
     <Compile Include="Serializer.FormUrlEncoded.cs" />
+    <Compile Include="Serializer.Csv.cs" />
     <Compile Include="Serializer.Json.cs" />
     <Compile Include="Serializer.Xml.cs" />
     <Compile Include="Extensions\Exception.cs" />

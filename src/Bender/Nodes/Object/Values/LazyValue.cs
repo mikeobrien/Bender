@@ -13,7 +13,7 @@ namespace Bender.Nodes.Object.Values
         {
             InnerValue = value;
             _factory = factory;
-            _actualType = new Lazy<CachedType>(() => InnerValue.Instance.GetCachedType());
+            _actualType = new Lazy<CachedType>(() => InnerValue.Instance.ToCachedType());
         }
 
         public object Instance

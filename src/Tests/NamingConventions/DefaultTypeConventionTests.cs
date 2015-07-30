@@ -26,7 +26,7 @@ namespace Tests.NamingConventions
         private string GetName(Type type, bool isRoot = false, Options options = null)
         {
             return TypeNamingConvention.Create()
-                .GetName(new TypeContext(type.GetCachedType(), new Context(options ?? Options.Create(), Mode.Deserialize, "xml"), isRoot));
+                .GetName(new TypeContext(type.ToCachedType(), new Context(options ?? Options.Create(), Mode.Deserialize, "xml"), isRoot));
         }
 
         public class SomeClass { }

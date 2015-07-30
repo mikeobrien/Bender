@@ -4,6 +4,7 @@ using System.Text;
 using Bender.Extensions;
 using Bender.NamingConventions;
 using Bender.Reflection;
+using Microsoft.SqlServer.Server;
 
 namespace Bender.Configuration
 {
@@ -49,6 +50,32 @@ namespace Bender.Configuration
         public OptionsDsl TreatDictionaryImplsAsObjects()
         {
             _options.TreatDictionaryImplsAsObjects = true;
+            return this;
+        }
+
+        // CSV Options
+
+        public OptionsDsl WithCsvDelimiter(string delimiter)
+        {
+            _options.CsvDelimiter = delimiter;
+            return this;
+        }
+
+        public OptionsDsl TabSeperated()
+        {
+            _options.CsvDelimiter = "\t";
+            return this;
+        }
+
+        public OptionsDsl WithCsvQualifier(string qualifier)
+        {
+            _options.CsvQualifier = qualifier;
+            return this;
+        }
+
+        public OptionsDsl WithCsvNewLine(string newLine)
+        {
+            _options.CsvNewLine = newLine;
             return this;
         }
 

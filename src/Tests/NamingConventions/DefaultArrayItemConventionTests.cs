@@ -15,7 +15,7 @@ namespace Tests.NamingConventions
         private string GetName<T>(string member, Options options = null)
         {
             return ArrayItemConventions.Create()
-                .GetName(new ArrayItemContext(typeof(T).GetCachedType(), new CachedMember(typeof(T).GetMember(member)[0]), 
+                .GetName(new ArrayItemContext(typeof(T).ToCachedType(), new CachedMember(typeof(T).GetMember(member)[0]), 
                     new Context(options ?? Options.Create(), Mode.Deserialize, "xml")));
         }
 

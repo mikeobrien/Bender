@@ -17,7 +17,7 @@ namespace Tests.Nodes.Object.Values
         {
             var factory = Substitute.For<Func<string>>();
             factory.Invoke().Returns("hai");
-            var value = new SimpleValue(typeof(string).GetCachedType());
+            var value = new SimpleValue(typeof(string).ToCachedType());
             var lazy = new LazyValue(value, factory);
 
             value.Instance.ShouldBeNull();
@@ -38,7 +38,7 @@ namespace Tests.Nodes.Object.Values
         {
             var factory = Substitute.For<Func<string>>();
             factory.Invoke().Returns("hai");
-            var value = new SimpleValue(typeof(string).GetCachedType());
+            var value = new SimpleValue(typeof(string).ToCachedType());
             var lazy = new LazyValue(value, factory);
 
             value.Instance.ShouldBeNull();
@@ -58,7 +58,7 @@ namespace Tests.Nodes.Object.Values
         public void should_return_specified_type_as_actual_type_when_not_initialized()
         {
             var factory = Substitute.For<Func<IList>>();
-            var value = new SimpleValue(typeof(IList).GetCachedType());
+            var value = new SimpleValue(typeof(IList).ToCachedType());
             var lazy = new LazyValue(value, factory);
 
             lazy.SpecifiedType.Type.ShouldBe<IList>();
@@ -71,7 +71,7 @@ namespace Tests.Nodes.Object.Values
         {
             var factory = Substitute.For<Func<IList>>();
             factory.Invoke().Returns(new List<string>());
-            var value = new SimpleValue(typeof(IList).GetCachedType());
+            var value = new SimpleValue(typeof(IList).ToCachedType());
             var lazy = new LazyValue(value, factory);
 
             var instance = lazy.Instance;
@@ -86,7 +86,7 @@ namespace Tests.Nodes.Object.Values
         {
             var factory = Substitute.For<Func<string>>();
             factory.Invoke().Returns("oh");
-            var value = new SimpleValue(typeof(string).GetCachedType());
+            var value = new SimpleValue(typeof(string).ToCachedType());
             var lazy = new LazyValue(value, factory);
 
             value.Instance.ShouldBeNull();
@@ -107,7 +107,7 @@ namespace Tests.Nodes.Object.Values
         [Test]
         public void should_pull_type_and_readonly_from_inner_value()
         {
-            var type = typeof(string).GetCachedType();
+            var type = typeof(string).ToCachedType();
             var lazy = new LazyValue(new SimpleValue(type), () => null);
             lazy.SpecifiedType.Type.ShouldBe<string>();
             lazy.IsReadonly.ShouldBeFalse();

@@ -171,7 +171,7 @@ namespace Tests.Reflection
         [TestCase(typeof(GenericDictionaryImpl<string, string>), TypeKind.Dictionary)]
         public void should_indicate_type_kind(Type type, TypeKind kind)
         {
-            type.GetCachedType().GetKind(false, false).ShouldEqual(kind);
+            type.ToCachedType().GetKind(false, false).ShouldEqual(kind);
         }
 
         [Test]
@@ -182,7 +182,7 @@ namespace Tests.Reflection
         [TestCase(typeof(IList<string>))]
         public void should_not_override_type_kind_of_bcl_enumerables(Type type)
         {
-            type.GetCachedType().GetKind(true, false).ShouldEqual(TypeKind.Enumerable);
+            type.ToCachedType().GetKind(true, false).ShouldEqual(TypeKind.Enumerable);
         }
 
         [Test]
@@ -192,7 +192,7 @@ namespace Tests.Reflection
         [TestCase(typeof(IDictionary<string, int>))]
         public void should_not_override_type_kind_of_bcl_dictionaries(Type type)
         {
-            type.GetCachedType().GetKind(false, true).ShouldEqual(TypeKind.Dictionary);
+            type.ToCachedType().GetKind(false, true).ShouldEqual(TypeKind.Dictionary);
         }
 
         [Test]
@@ -203,7 +203,7 @@ namespace Tests.Reflection
         [TestCase(typeof(GenericStringListImpl))]
         public void should_override_type_kind_of_non_bcl_enumerables(Type type)
         {
-            type.GetCachedType().GetKind(true, false).ShouldEqual(TypeKind.Complex);
+            type.ToCachedType().GetKind(true, false).ShouldEqual(TypeKind.Complex);
         }
 
         [Test]
@@ -213,7 +213,7 @@ namespace Tests.Reflection
         [TestCase(typeof(GenericDictionaryImpl<string, string>))]
         public void should_override_type_kind_of_non_bcl_dictionaries(Type type)
         {
-            type.GetCachedType().GetKind(false, true).ShouldEqual(TypeKind.Complex);
+            type.ToCachedType().GetKind(false, true).ShouldEqual(TypeKind.Complex);
         }
 
         // Enums
@@ -425,7 +425,7 @@ namespace Tests.Reflection
         [TestCaseSource("SimpleTypeParsing")]
         public void should_parse_simple_types(Type type, object value)
         {
-            var result = value.ToString().ParseSimpleType(type.GetCachedType());
+            var result = value.ToString().ParseSimpleType(type.ToCachedType());
             result.ShouldEqual(value);
             result.ShouldBeType(type.GetUnderlyingNullableType());
         }
@@ -433,25 +433,25 @@ namespace Tests.Reflection
         [Test]
         public void should_parse_enum_integer()
         {
-            "2".ParseSimpleType(typeof(UriFormat).GetCachedType()).ShouldEqual(UriFormat.Unescaped);
+            "2".ParseSimpleType(typeof(UriFormat).ToCachedType()).ShouldEqual(UriFormat.Unescaped);
         }
 
         [Test]
         public void should_parse_enum_case_insensitively()
         {
-            "UNESCAPED".ParseSimpleType(typeof(UriFormat).GetCachedType()).ShouldEqual(UriFormat.Unescaped);
+            "UNESCAPED".ParseSimpleType(typeof(UriFormat).ToCachedType()).ShouldEqual(UriFormat.Unescaped);
         }
 
         [Test]
         public void should_parse_bool_case_insensitively()
         {
-            "TRUE".ParseSimpleType(typeof(bool).GetCachedType()).ShouldEqual(true);
+            "TRUE".ParseSimpleType(typeof(bool).ToCachedType()).ShouldEqual(true);
         }
 
         [Test]
         public void should_return_empty_string_when_source_is_empty_string()
         {
-            "".ParseSimpleType(typeof(string).GetCachedType()).ShouldEqual("");
+            "".ParseSimpleType(typeof(string).ToCachedType()).ShouldEqual("");
         }
 
         [Test]
@@ -478,7 +478,7 @@ namespace Tests.Reflection
         [TestCase(typeof(Decimal)), TestCase(typeof(Decimal?))]
         public void should_return_null_when_source_is_null(Type type)
         {
-            ((string)null).ParseSimpleType(type.GetCachedType()).ShouldEqual(null);
+            ((string)null).ParseSimpleType(type.ToCachedType()).ShouldEqual(null);
         }
 
         [Test]
@@ -504,8 +504,8 @@ namespace Tests.Reflection
         [TestCase(typeof(Decimal)), TestCase(typeof(Decimal?))]
         public void should_fail_when_source_is_empty_string(Type type)
         {
-            Assert.That(() => "".ParseSimpleType(type.GetCachedType()), Throws.Exception);
-            Assert.That(() => "yada".ParseSimpleType(type.GetCachedType()), Throws.Exception);
+            Assert.That(() => "".ParseSimpleType(type.ToCachedType()), Throws.Exception);
+            Assert.That(() => "yada".ParseSimpleType(type.ToCachedType()), Throws.Exception);
         }
 
         // Nullablity

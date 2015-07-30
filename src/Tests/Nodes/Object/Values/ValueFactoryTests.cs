@@ -19,7 +19,7 @@ namespace Tests.Nodes.Object.Values
         [Test]
         public void should_create_empty_simple_value()
         {
-            var value = ValueFactory.Create(typeof(object).GetCachedType());
+            var value = ValueFactory.Create(typeof(object).ToCachedType());
 
             value.Instance.ShouldBeNull();
             value.SpecifiedType.Type.ShouldBe<object>();
@@ -32,7 +32,7 @@ namespace Tests.Nodes.Object.Values
         public void should_create_simple_value(bool @readonly)
         {
             var backingValue = new List<int>();
-            var value = ValueFactory.Create(backingValue, typeof(IList).GetCachedType(), 
+            var value = ValueFactory.Create(backingValue, typeof(IList).ToCachedType(), 
                 @readonly, Options.Create());
 
             value.Instance.ShouldEqual(backingValue);
@@ -45,7 +45,7 @@ namespace Tests.Nodes.Object.Values
         public void should_create_simple_value_and_use_actual_type_when_configured()
         {
             var backingValue = new List<int>();
-            var value = ValueFactory.Create(backingValue, typeof(IList).GetCachedType(), Options.Create(x => x
+            var value = ValueFactory.Create(backingValue, typeof(IList).ToCachedType(), Options.Create(x => x
                 .Serialization(y => y.UseActualType())));
 
             value.Instance.ShouldEqual(backingValue);
@@ -69,7 +69,7 @@ namespace Tests.Nodes.Object.Values
         [Test]
         public void should_create_simple_value_and_use_actual_type_when_specified_type_is_object()
         {
-            var value = ValueFactory.Create(5, typeof(object).GetCachedType(), Options.Create());
+            var value = ValueFactory.Create(5, typeof(object).ToCachedType(), Options.Create());
 
             value.Instance.ShouldEqual(5);
             value.SpecifiedType.Type.ShouldBe<int>();
@@ -84,7 +84,7 @@ namespace Tests.Nodes.Object.Values
         public static IValue CreateMemberValue(Mode mode, object value, Options options = null)
         {
             return ValueFactory.Create(mode,
-                new SimpleValue(value, value.GetType().GetCachedType()),
+                new SimpleValue(value, value.GetType().ToCachedType()),
                 new CachedMember(value.GetType().GetProperty("Value")),
                 options ?? Options.Create());
         }
@@ -141,7 +141,7 @@ namespace Tests.Nodes.Object.Values
         public void should_create_lazy_value()
         {
             var type = typeof(int);
-            var backingValue = new SimpleValue(type.GetCachedType());
+            var backingValue = new SimpleValue(type.ToCachedType());
             var value = ValueFactory.Create(backingValue, () => 5);
 
             value.Instance.ShouldEqual(5);

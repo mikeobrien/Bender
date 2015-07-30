@@ -19,7 +19,7 @@ namespace Bender.Collections
 
         public static IList Create(object list)
         {
-            var type = list.GetCachedType();
+            var type = list.ToCachedType();
             if (list is GenericListAdapter || type.IsNonGenericList) return (IList)list;
             if (!type.IsGenericList)
                 throw new ArgumentException("Generic list adapter source '{0}' is not a generic list."

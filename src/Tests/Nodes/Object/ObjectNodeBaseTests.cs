@@ -106,7 +106,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_get_inner_value()
         {
-            var value = new SimpleValue("hai", typeof(string).GetCachedType());
+            var value = new SimpleValue("hai", typeof(string).ToCachedType());
             var node = new Node(value);
             node.Value.ShouldBeSameAs(value.Instance);
             node.SpecifiedType.Type.ShouldBe<String>();
@@ -164,7 +164,7 @@ namespace Tests.Nodes.Object
                     DictionaryNode = new Dictionary<string, object>(),
                     ObjectNode = new Object()
                 }
-            }, typeof (Object).GetCachedType());
+            }, typeof (Object).ToCachedType());
 
             var node = Bender.Nodes.Object.NodeFactory.CreateSerializable("yada", instance, 
                 null, new Context(Options.Create(), Mode.Serialize, "yada"));
@@ -229,7 +229,7 @@ namespace Tests.Nodes.Object
                     DictionaryNode = new Dictionary<string, object>(),
                     ObjectNode = new Object()
                 }
-            }, typeof(List<object>).GetCachedType());
+            }, typeof(List<object>).ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateSerializable("yada", instance,
                 null, new Context(Options.Create(), Mode.Serialize, "yada"));
 
@@ -293,7 +293,7 @@ namespace Tests.Nodes.Object
                     DictionaryNode = new Dictionary<string, object>(),
                     ObjectNode = new Object()
                 } }
-            }, typeof(Dictionary<string, object>).GetCachedType());
+            }, typeof(Dictionary<string, object>).ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateSerializable("yada", instance,
                 null, new Context(Options.Create(), Mode.Serialize, "yada"));
 

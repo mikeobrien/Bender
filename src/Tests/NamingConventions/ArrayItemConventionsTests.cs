@@ -25,7 +25,7 @@ namespace Tests.NamingConventions
         }
 
         private static readonly Options Options = Options.Create();
-        private static readonly CachedType ModelType = typeof(Model).GetCachedType();
+        private static readonly CachedType ModelType = typeof(Model).ToCachedType();
         private static readonly CachedMember Field = new CachedMember(ModelType.Type.GetField("Field"));
         private static readonly CachedMember Property = new CachedMember(ModelType.Type.GetProperty("Property"));
 

@@ -27,6 +27,10 @@ namespace Bender.Configuration
         public string DefaultItemTypeName { get; set; }
         public string GenericTypeNameFormat { get; set; }
 
+        public string CsvDelimiter { get; set; } = ",";
+        public string CsvQualifier { get; set; } = "\"";
+        public string CsvNewLine { get; set; } = "\r\n";
+
         public NamingConventions<MemberContext> FieldNameConventions { get; set; }
         public NamingConventions<MemberContext> PropertyNameConventions { get; set; }
         public NamingConventions<ArrayItemContext> ArrayItemNameConventions { get; set; }

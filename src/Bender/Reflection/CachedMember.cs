@@ -29,8 +29,8 @@ namespace Bender.Reflection
             _isPublicPropertyOrField = new Lazy<bool>(member.IsPublicPropertyOrField);
             _attributes = new Lazy<IEnumerable<Attribute>>(
                 () => member.GetCustomAttributes(true).Cast<Attribute>().ToList());
-            _type = new Lazy<CachedType>(() => member.GetPropertyOrFieldType().GetCachedType());
-            _declaringType = new Lazy<CachedType>(() => member.DeclaringType.GetCachedType());
+            _type = new Lazy<CachedType>(() => member.GetPropertyOrFieldType().ToCachedType());
+            _declaringType = new Lazy<CachedType>(() => member.DeclaringType.ToCachedType());
             _isReadonly = new Lazy<bool>(member.IsReadonly);
 
             _setter = new Lazy<Action<object, object>>(() => IsProperty ? PropertyInfo.BuildSetter() : FieldInfo.BuildSetter());

@@ -18,7 +18,7 @@ namespace Tests.Collections
         [SetUp]
         public void Setup()
         {
-            _array = new SimpleValue(new[] { "oh", "hai" }, typeof(string[]).GetCachedType());
+            _array = new SimpleValue(new[] { "oh", "hai" }, typeof(string[]).ToCachedType());
             _adapter = new ArrayAdapter(_array);
         }
 
@@ -26,7 +26,7 @@ namespace Tests.Collections
         public void should_return_object_if_it_implements_ilist()
         {
             var list = new List<string>();
-            IValue value = new SimpleValue(list, typeof(List<string>).GetCachedType());
+            IValue value = new SimpleValue(list, typeof(List<string>).ToCachedType());
             ArrayAdapter.Create(value).ShouldBeSameAs(list);
         }
 
@@ -34,7 +34,7 @@ namespace Tests.Collections
         public void should_fail_if_not_a_array()
         {
             Assert.Throws<ArgumentException>(() => ArrayAdapter.Create(
-                new SimpleValue(new object(), typeof(object).GetCachedType())));
+                new SimpleValue(new object(), typeof(object).ToCachedType())));
         }
 
         [Test]

@@ -19,7 +19,7 @@ namespace Bender.Collections
 
         public static IDictionary Create(object dictionary)
         {
-            var type = dictionary.GetCachedType();
+            var type = dictionary.ToCachedType();
             if (dictionary is GenericDictionaryAdapter ||
                 type.IsNonGenericDictionary) return (IDictionary)dictionary;
             if (!type.IsGenericDictionary)
@@ -93,7 +93,7 @@ namespace Bender.Collections
             {
                 get
                 {
-                    var type = _enumerator.Current.GetCachedType();
+                    var type = _enumerator.Current.ToCachedType();
                     return new DictionaryEntry(
                         type.GetMember("Key").GetValue(_enumerator.Current),
                         type.GetMember("Value").GetValue(_enumerator.Current));

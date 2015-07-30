@@ -1,20 +1,20 @@
-namespace Bender.Nodes.FormUrlEncoded
+namespace Bender.Nodes.CharacterSeparated
 {
-    public class FormValueNode : NodeBase
+    public class ValueNode : NodeBase
     {
         private string _name;
         private string _value;
 
-        public FormValueNode(string name, string value = null)
+        public ValueNode(string name, string value = null)
         {
             _name = name;
             _value = value;
         }
 
-        public override string Type => "form value";
-        public override string Format => "url encoded";
+        public override string Type => "csv value";
+        public override string Format => FileNode.NodeFormat;
         public override bool IsNamed => true;
-        public override string Path => _name;
+        public override string Path => $"{Parent.Path}.{_name}";
 
         protected override NodeType GetNodeType()
         {
@@ -24,7 +24,7 @@ namespace Bender.Nodes.FormUrlEncoded
         protected override void SetNodeType(NodeType nodeType)
         {
             if (nodeType != NodeType.Value)
-                throw new BenderException("Form values must be value nodes.");
+                throw new BenderException("CSV values must be value nodes.");
         }
 
         protected override string GetName()
@@ -44,8 +44,7 @@ namespace Bender.Nodes.FormUrlEncoded
 
         protected override void SetValue(object value)
         {
-            _value = value == null ? "" : (value is bool ?
-                value.ToString().ToLower() : value.ToString());
+            _value = value?.ToString() ?? "";
         }
     }
 }

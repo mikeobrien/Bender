@@ -31,7 +31,7 @@ namespace Tests.Nodes.Object
             _options = Options.Create();
             _source = new ValueNode(
                 new Context(_options, Mode.Deserialize, "object"), null,
-                new SimpleValue(typeof(int?).GetCachedType()), null, null);
+                new SimpleValue(typeof(int?).ToCachedType()), null, null);
             _target = new Node("yada") { NodeType = NodeType.Value, Format = "xml", Type = "element" };
             _writers = new WriterConventions(_options);
 

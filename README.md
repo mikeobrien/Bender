@@ -2,21 +2,22 @@
 
 <img src="https://raw.github.com/mikeobrien/Bender/master/misc/logo.png"/> 
 
-Bender is a highly configurable xml and json serialization library for .NET. Unlike other serializers, Bender gives you complete control over the serialization process though a simple API.
+Bender is a highly configurable xml, json, CSV and form url encoded serialization library for .NET. Unlike other serializers, Bender gives you complete control over the serialization process though a simple API.
 
 - Not strongly named.
-- One serializer for both json and XML.
+- One serializer for both json, XML, CSV and form url encoded.
 - [Readers](#readers), [writers](#writers) and [visitors](#visitors) give you full control of serialization and deserialization.
 - [Naming conventions](#naming-conventions) give you full control over naming.
 - [Friendly deserialization error messages](#friendly-deserialization-error-messages) allow you to give valuable feedback to consumers of your API.
 - Supports enums, nullable types, `String`, `Char`, `Boolean`, `SByte`, `Byte`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Single`, `Double`, `Decimal`, `DateTime`, `Guid`, `TimeSpan`, `Uri`, `IntPtr`, `UIntPtr`, `Array`, `ArrayList` (Serialization only), `IEnumerable` (Serialization only), `IEnumerable<T>`,  `IDictionary` (Serialization only), `IDictionary<TKey, TValue>`, `byte[]` (As Base64), `MailAddress`, `Version`, `IPAddress` out of the box.
-- Supports `XmlRootAttribute`, `XmlTypeAttribute`, `XmlElementAttribute`, `XmlAttributeAttribute`, `XmlArrayAttribute`, `XmlArrayItemAttribute` and `XmlIgnoreAttribute` attributes.
+- Supports `XmlAttributeAttribute`, and `XmlIgnoreAttribute` attributes.
+- Supports `XmlArrayAttribute` and `XmlArrayItemAttribute` attributes, name properties.
+- Supports `XmlRootAttribute`, `XmlTypeAttribute` and `XmlElementAttribute` attributes, name and namespace properties.
 - Extensibility point to override object creation during deserialization with your own implementation.
 - Filtering options for types, members and visibility.
 - Options for name comparison and ignoring names of certain elements altogether.
 - Options for failing on unmatched members or elements.
 - Ability to serialize and deserialize members of enumerable and dictionary implementations.
-- Supports form url encoded.
 
 ## Install
 

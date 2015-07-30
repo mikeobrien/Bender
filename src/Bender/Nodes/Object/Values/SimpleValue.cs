@@ -26,7 +26,7 @@ namespace Bender.Nodes.Object.Values
 
         public CachedType ActualType
         { 
-            get { return Instance != null ? Instance.GetCachedType() : SpecifiedType; } 
+            get { return Instance != null ? Instance.ToCachedType() : SpecifiedType; } 
         }
     }
 }

@@ -142,7 +142,7 @@ namespace Bender.Nodes.Object
                 }
                 catch (Exception exception)
                 {
-                    var type = typeof(T).GetCachedType().UnderlyingType.Type;
+                    var type = typeof(T).ToCachedType().UnderlyingType.Type;
                     if (!errorMessages.ContainsKey(type)) throw;
                     throw new ValueParseException(exception, value, errorMessages[type].ToFormat(s.Value));
                 }

@@ -56,7 +56,7 @@ namespace Bender.Reflection
         {
             var enumerableInterface = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>) ? type :
                 type.GetInterfaces().FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
-            return enumerableInterface == null ? null : enumerableInterface.GetGenericArguments()[0];
+            return enumerableInterface?.GetGenericArguments()[0];
         }
 
         // List

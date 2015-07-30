@@ -26,14 +26,14 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         public void Setup()
         {
             _parent = new ObjectNode(_context, null,
-                new SimpleValue(new object(), typeof(object).GetCachedType()), null, null);
+                new SimpleValue(new object(), typeof(object).ToCachedType()), null, null);
         }
 
         [Test]
         public void should_create_non_lazy_simple_type_node()
         {
             var type = typeof(string);
-            var value = new SimpleValue(type.GetCachedType());
+            var value = new SimpleValue(type.ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateDeserializable(NodeName, value,
                 _parent, _context).As<NodeBase>();
 
@@ -58,7 +58,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         [TestCaseSource("LazyTypeCases")]
         public void should_create_lazy_nodes_when_member_is_not_null_and_not_root(Type type, object @object, NodeType nodeType)
         {
-            var value = new SimpleValue(type.GetCachedType());
+            var value = new SimpleValue(type.ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateDeserializable(NodeName, value,
                 _parent, _context, new CachedMember(typeof(Lazy).GetProperty("Member"))).As<NodeBase>();
 
@@ -72,7 +72,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         [TestCaseSource("LazyTypeCases")]
         public void should_not_create_lazy_nodes_when_member_is_null_and_not_root(Type type, object @object, NodeType nodeType)
         {
-            var value = new SimpleValue(type.GetCachedType());
+            var value = new SimpleValue(type.ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateDeserializable(NodeName, value,
                 _parent, _context).As<NodeBase>();
 
@@ -86,7 +86,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         [TestCaseSource("LazyTypeCases")]
         public void should_not_create_lazy_nodes_when_root(Type type, object @object, NodeType nodeType)
         {
-            var value = new SimpleValue(type.GetCachedType());
+            var value = new SimpleValue(type.ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateDeserializable(NodeName, value,
                 null, _context, new CachedMember(typeof(Lazy).GetProperty("Member"))).As<NodeBase>();
 
@@ -103,7 +103,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         [TestCase(typeof(GenericStringListImpl))]
         public void should_create_object_node_when_enumerable_implementations_are_treated_as_objects(Type type)
         {
-            var value = new SimpleValue(type.GetCachedType());
+            var value = new SimpleValue(type.ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateDeserializable(
                 NodeName, value, _parent,
                 new Context(Options.Create(x => x.TreatEnumerableImplsAsObjects()), 
@@ -121,7 +121,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         [TestCase(typeof(GenericStringListImpl))]
         public void should_create_array_node_when_enumerable_implementations_are_treated_as_arrays(Type type)
         {
-            var value = new SimpleValue(type.GetCachedType());
+            var value = new SimpleValue(type.ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateDeserializable(
                 NodeName, value, _parent,
                 _context).As<NodeBase>();
@@ -136,7 +136,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         [TestCase(typeof(GenericStringDictionaryImpl))]
         public void should_create_object_node_when_dictionary_implementations_are_treated_as_objects(Type type)
         {
-            var value = new SimpleValue(type.GetCachedType());
+            var value = new SimpleValue(type.ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateDeserializable(
                 NodeName, value, _parent,
                 new Context(Options.Create(x => x.TreatDictionaryImplsAsObjects()), 
@@ -152,7 +152,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         [TestCase(typeof(GenericStringDictionaryImpl))]
         public void should_create_array_node_when_dictionary_implementations_are_treated_as_arrays(Type type)
         {
-            var value = new SimpleValue(type.GetCachedType());
+            var value = new SimpleValue(type.ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateDeserializable(
                 NodeName, value, _parent,
                 _context).As<NodeBase>();
@@ -186,7 +186,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         [Test]
         public void should_pass_member_info_to_array_nodes()
         {
-            var value = new SimpleValue(typeof(List<string>).GetCachedType());
+            var value = new SimpleValue(typeof(List<string>).ToCachedType());
             var member = new CachedMember(typeof(ArrayItemMember).GetProperty("SomeProperty"));
             var node = Bender.Nodes.Object.NodeFactory.CreateDeserializable(NodeName, value,
                 _parent, _context, member).As<NodeBase>();
@@ -211,8 +211,8 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         {
             var parent = new Parent();
             var parentNode = new ObjectNode(_context, null,
-                new SimpleValue(parent, typeof(Parent).GetCachedType()), null, null);
-            var value = new SimpleValue(typeof(Child).GetCachedType());
+                new SimpleValue(parent, typeof(Parent).ToCachedType()), null, null);
+            var value = new SimpleValue(typeof(Child).ToCachedType());
             var node = Bender.Nodes.Object.NodeFactory.CreateDeserializable(null, value, parentNode,
                 _context).As<NodeBase>();
 

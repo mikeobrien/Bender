@@ -23,7 +23,7 @@ namespace Tests.Nodes.Object.Values
             public IList NullList { get { return null; } }
         }
 
-        private static readonly CachedType ModelType = typeof(Model).GetCachedType(); 
+        private static readonly CachedType ModelType = typeof(Model).ToCachedType(); 
 
         [Test]
         public void should_set_and_get_property_value()

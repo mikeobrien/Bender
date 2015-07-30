@@ -33,7 +33,7 @@ namespace Tests.Nodes.Object
         public static ObjectNode CreateNode(Options options = null, IValue value = null, Mode mode = Mode.Deserialize)
         {
             return new ObjectNode(new Context(options ?? Options.Create(), mode, "xml"), null,
-                value ?? new SimpleValue(typeof(MemberEnumeration).GetCachedType()), null, null);
+                value ?? new SimpleValue(typeof(MemberEnumeration).ToCachedType()), null, null);
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace Tests.Nodes.Object
         public void should_return_object_from_inner_value()
         {
             var @object = new MemberEnumeration();
-            var node = CreateNode(value: new SimpleValue(@object, typeof(MemberEnumeration).GetCachedType()));
+            var node = CreateNode(value: new SimpleValue(@object, typeof(MemberEnumeration).ToCachedType()));
             node.Value.ShouldBeSameAs(@object);
         }
 
@@ -75,7 +75,7 @@ namespace Tests.Nodes.Object
         public void should_initialize_source_value()
         {
             var node = CreateAdditionNode(value: new LazyValue(
-                new SimpleValue(typeof(InitializeSource).GetCachedType()),
+                new SimpleValue(typeof(InitializeSource).ToCachedType()),
                 () => new InitializeSource()));
 
             node.Source.As<LazyValue>().InnerValue.Instance.ShouldBeNull();
@@ -163,7 +163,7 @@ namespace Tests.Nodes.Object
         public void should_enumerate_value_on_anonymous_type()
         {
             var @object = new { Oh = "hai" };
-            var nodes = CreateNode(value: new SimpleValue(@object, @object.GetType().GetCachedType())).ToList();
+            var nodes = CreateNode(value: new SimpleValue(@object, @object.GetType().ToCachedType())).ToList();
             nodes.ShouldTotal(1);
             nodes[0].Name.ShouldEqual("Oh");
             nodes[0].NodeType.ShouldEqual(NodeType.Value);
@@ -180,7 +180,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_exclude_members_with_xml_ignore_attribute_applied()
         {
-            var nodes = CreateNode(value: new SimpleValue(new ExcludedMember(), typeof(ExcludedMember).GetCachedType())).ToList();
+            var nodes = CreateNode(value: new SimpleValue(new ExcludedMember(), typeof(ExcludedMember).ToCachedType())).ToList();
             nodes.ShouldTotal(1);
             nodes.ShouldContainNode("Included");
         }
@@ -196,7 +196,7 @@ namespace Tests.Nodes.Object
         public void should_exclude_indexers()
         {
             var nodes = CreateNode(Options.Create(x => x.IncludePublicFields()),
-                new SimpleValue(new IndexerMember(), typeof(IndexerMember).GetCachedType())).ToList();
+                new SimpleValue(new IndexerMember(), typeof(IndexerMember).ToCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
             nodes.ShouldContainNode("Field");
@@ -212,7 +212,7 @@ namespace Tests.Nodes.Object
         public void should_exclude_collection_interface_members(Type actualType, Type specifiedType)
         {
             var nodes = CreateNode(Options.Create(x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()),
-                new SimpleValue(actualType.CreateInstance(), specifiedType.GetCachedType())).ToList();
+                new SimpleValue(actualType.CreateInstance(), specifiedType.ToCachedType())).ToList();
             nodes.ShouldTotal(0);
         }
 
@@ -230,7 +230,7 @@ namespace Tests.Nodes.Object
         public void should_exclude_idictionary_members(Type actualType, Type specifiedType)
         {
             var nodes = CreateNode(Options.Create(x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()),
-                new SimpleValue(actualType.CreateInstance(), specifiedType.GetCachedType())).ToList();
+                new SimpleValue(actualType.CreateInstance(), specifiedType.ToCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
             nodes.ShouldContainNode("Field");
@@ -250,7 +250,7 @@ namespace Tests.Nodes.Object
         public void should_exclude_generic_idictionary_members(Type actualType, Type specifiedType)
         {
             var nodes = CreateNode(Options.Create(x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()),
-                new SimpleValue(actualType.CreateInstance(), specifiedType.GetCachedType())).ToList();
+                new SimpleValue(actualType.CreateInstance(), specifiedType.ToCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
             nodes.ShouldContainNode("Field");
@@ -270,7 +270,7 @@ namespace Tests.Nodes.Object
         public void should_exclude_ienumerable_members(Type actualType, Type specifiedType)
         {
             var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
-                new SimpleValue(actualType.CreateInstance(), specifiedType.GetCachedType())).ToList();
+                new SimpleValue(actualType.CreateInstance(), specifiedType.ToCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
             nodes.ShouldContainNode("Field");
@@ -290,7 +290,7 @@ namespace Tests.Nodes.Object
         public void should_exclude_generic_ienumerable_members(Type actualType, Type specifiedType)
         {
             var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
-                new SimpleValue(actualType.CreateInstance(), specifiedType.GetCachedType())).ToList();
+                new SimpleValue(actualType.CreateInstance(), specifiedType.ToCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
             nodes.ShouldContainNode("Field");
@@ -310,7 +310,7 @@ namespace Tests.Nodes.Object
         public void should_exclude_ilist_members(Type actualType, Type specifiedType)
         {
             var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
-                new SimpleValue(actualType.CreateInstance(), specifiedType.GetCachedType())).ToList();
+                new SimpleValue(actualType.CreateInstance(), specifiedType.ToCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
             nodes.ShouldContainNode("Field");
@@ -330,7 +330,7 @@ namespace Tests.Nodes.Object
         public void should_exclude_generic_ilist_members(Type actualType, Type specifiedType)
         {
             var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
-                new SimpleValue(actualType.CreateInstance(), specifiedType.GetCachedType())).ToList();
+                new SimpleValue(actualType.CreateInstance(), specifiedType.ToCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
             nodes.ShouldContainNode("Field");
@@ -351,7 +351,7 @@ namespace Tests.Nodes.Object
             var child = new Node("yada");
             instance.SetPropertyOrFieldValue(member, child);
             var parent = CreateNode(Options.Create(),
-                new SimpleValue(instance, typeof (NodeMembers).GetCachedType()));
+                new SimpleValue(instance, typeof (NodeMembers).ToCachedType()));
             parent.GetNode("yada").ShouldBeSameAs(child);
         }
 
@@ -361,14 +361,14 @@ namespace Tests.Nodes.Object
         public void should_get_node_by_name()
         {
             var @object = new { Oh = "hai" };
-            CreateNode(value: new SimpleValue(@object, @object.GetType().GetCachedType())).GetNode("Oh").Value.ShouldEqual("hai");
+            CreateNode(value: new SimpleValue(@object, @object.GetType().ToCachedType())).GetNode("Oh").Value.ShouldEqual("hai");
         }
 
         [Test]
         public void should_return_null_when_there_is_no_match()
         {
             var @object = new { Oh = "hai" };
-            CreateNode(value: new SimpleValue(@object, @object.GetType().GetCachedType())).GetNode("yada").ShouldBeNull();
+            CreateNode(value: new SimpleValue(@object, @object.GetType().ToCachedType())).GetNode("yada").ShouldBeNull();
         }
 
         [Test]
@@ -376,14 +376,14 @@ namespace Tests.Nodes.Object
         {
             var @object = new { Oh = "hai" };
             CreateNode(Options.Create(x => x.Deserialization(y => y.IgnoreNameCase())),
-                new SimpleValue(@object, @object.GetType().GetCachedType())).GetNode("Oh").Value.ShouldEqual("hai");
+                new SimpleValue(@object, @object.GetType().ToCachedType())).GetNode("Oh").Value.ShouldEqual("hai");
         }
 
         [Test]
         public void should_fail_to_get_node_by_name_when_case_does_no_match()
         {
             var @object = new { Oh = "hai" };
-            CreateNode(value: new SimpleValue(@object, @object.GetType().GetCachedType())).GetNode("oh").ShouldBeNull();
+            CreateNode(value: new SimpleValue(@object, @object.GetType().ToCachedType())).GetNode("oh").ShouldBeNull();
         }
 
         // Metadata
@@ -409,7 +409,7 @@ namespace Tests.Nodes.Object
             var children = new ObjectNode(new Context(Options.Create(x => x.IncludePublicFields()), 
                 Mode.Serialize, "xml"), null, new SimpleValue(new MemberMetadata 
                 { EmptyProperty = "", Property = "", Field = "", EmptyField = "" }, 
-                typeof(MemberMetadata).GetCachedType()), null, null);
+                typeof(MemberMetadata).ToCachedType()), null, null);
                 
             children.GetNode(name).Metadata.Contains<XmlAttributeAttribute>().ShouldEqual(exists);
         }
@@ -443,7 +443,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(ConcreteType), Mode.Serialize, 2)]
         public void should_enumerate_members_on_specified_type(Type type, Mode mode, int count)
         {
-            var nodes = CreateNode(value: new SimpleValue(ConcreteTypeInstance, type.GetCachedType()), 
+            var nodes = CreateNode(value: new SimpleValue(ConcreteTypeInstance, type.ToCachedType()), 
                 mode: mode).ToList();
             
             nodes.ShouldTotal(count);
@@ -472,7 +472,7 @@ namespace Tests.Nodes.Object
         {
             var nodes = CreateNode(
                     Options.Create(x => x.Serialization(y => y.UseActualType())),
-                    new SimpleValue(ModelInstance, typeof(Model).GetCachedType()),
+                    new SimpleValue(ModelInstance, typeof(Model).ToCachedType()),
                     Mode.Serialize
                 );
 
@@ -494,7 +494,7 @@ namespace Tests.Nodes.Object
         {
             var nodes = CreateNode(Options.Create(x => x.Serialization(y => 
                 { if (type == SerializationType.ActualType) y.UseActualType(); })),
-                new SimpleValue(ModelInstance, typeof(Model).GetCachedType()), mode).ToList();
+                new SimpleValue(ModelInstance, typeof(Model).ToCachedType()), mode).ToList();
 
             nodes.GetNode(name).ShouldTotal(count);
         }
@@ -511,7 +511,7 @@ namespace Tests.Nodes.Object
         public void should_not_return_null_members_in_serialize_mode()
         {
             var @object = new NullMembers { Property = "hai" };
-            var members = CreateNode(value: new SimpleValue(@object, typeof(NullMembers).GetCachedType()), 
+            var members = CreateNode(value: new SimpleValue(@object, typeof(NullMembers).ToCachedType()), 
                 mode: Mode.Serialize).ToList();
 
             members.ShouldTotal(1);
@@ -542,7 +542,7 @@ namespace Tests.Nodes.Object
                 CyclicProperty = @object
             };
 
-            var members = CreateNode(value: new SimpleValue(@object, typeof(CyclicRoot).GetCachedType()), 
+            var members = CreateNode(value: new SimpleValue(@object, typeof(CyclicRoot).ToCachedType()), 
                 mode: Mode.Serialize).ToList();
 
             members.ShouldTotal(1);
@@ -577,7 +577,7 @@ namespace Tests.Nodes.Object
         {
             var nodes = CreateNode(
                 Options.Create(x => x.ExcludeType<string>()),
-                new SimpleValue(TypeFilteringInstance, typeof(TypeFiltering).GetCachedType()), mode).ToList();
+                new SimpleValue(TypeFilteringInstance, typeof(TypeFiltering).ToCachedType()), mode).ToList();
         
             nodes.ShouldTotal(1);
             nodes.ShouldContainNode("Int");
@@ -593,7 +593,7 @@ namespace Tests.Nodes.Object
                     o.ShouldNotBeNull();
                     return t.Type == typeof(string);
                 })),
-                new SimpleValue(TypeFilteringInstance, typeof(TypeFiltering).GetCachedType()), mode).ToList();
+                new SimpleValue(TypeFilteringInstance, typeof(TypeFiltering).ToCachedType()), mode).ToList();
                 
             nodes.ShouldTotal(1);
             nodes.ShouldContainNode("Int");
@@ -609,7 +609,7 @@ namespace Tests.Nodes.Object
                     o.ShouldNotBeNull();
                     return t.Type == typeof(string);
                 })),
-                new SimpleValue(TypeFilteringInstance, typeof(TypeFiltering).GetCachedType()), mode).ToList();
+                new SimpleValue(TypeFilteringInstance, typeof(TypeFiltering).ToCachedType()), mode).ToList();
                 
             nodes.ShouldTotal(1);
             nodes.ShouldContainNode("String");
@@ -626,7 +626,7 @@ namespace Tests.Nodes.Object
         public static ObjectNode CreateAdditionNode(Options options = null, IValue value = null, Mode mode = Mode.Deserialize)
         {
             return new ObjectNode(new Context(options ?? Options.Create(), mode, "xml"), null,
-                value ?? new SimpleValue(typeof(NodeAddition).GetCachedType()), null, null);
+                value ?? new SimpleValue(typeof(NodeAddition).ToCachedType()), null, null);
         }
 
         [Test]
@@ -735,7 +735,7 @@ namespace Tests.Nodes.Object
         public static ObjectNode CreateInsertionNode(Options options = null, IValue value = null, Mode mode = Mode.Deserialize)
         {
             return new ObjectNode(new Context(options ?? Options.Create(), mode, "xml"), null,
-                value ?? new SimpleValue(typeof(MemberEnumeration).GetCachedType()), null, null);
+                value ?? new SimpleValue(typeof(MemberEnumeration).ToCachedType()), null, null);
         }
 
         public class NodeInsertion
@@ -750,7 +750,7 @@ namespace Tests.Nodes.Object
         public void should_insert_any_node_into_an_inode_member()
         {
             var instance = new NodeInsertion();
-            var parent = CreateNode(value: new SimpleValue(instance, typeof(NodeInsertion).GetCachedType()));
+            var parent = CreateNode(value: new SimpleValue(instance, typeof(NodeInsertion).ToCachedType()));
             var child = new Node("NodeInterface");
             parent.ShouldNotExecuteCallback<INode>((s, c) => s.Add(child, c));
             parent.GetNode("NodeInterface").ShouldBeSameAs(child);
@@ -765,7 +765,7 @@ namespace Tests.Nodes.Object
         {
             var instance = new NodeInsertion();
             var parent = CreateNode(Options.Create(x => x.Deserialization(y => y.WithNameComparison(comparison))),
-                new SimpleValue(instance, typeof(NodeInsertion).GetCachedType()));
+                new SimpleValue(instance, typeof(NodeInsertion).ToCachedType()));
             var child = new Node(name);
             parent.ShouldNotExecuteCallback<INode>((s, c) => s.Add(child, c));
             parent.GetNode(name).ShouldBeSameAs(child);
@@ -776,7 +776,7 @@ namespace Tests.Nodes.Object
         public void should_insert_a_node_into_a_member_of_the_same_type()
         {
             var instance = new NodeInsertion();
-            var parent = CreateNode(value: new SimpleValue(instance, typeof(NodeInsertion).GetCachedType())); 
+            var parent = CreateNode(value: new SimpleValue(instance, typeof(NodeInsertion).ToCachedType())); 
             var child = new Node("Node");
             parent.ShouldNotExecuteCallback<INode>((s, c) => s.Add(child, c));
             parent.GetNode("Node").ShouldBeSameAs(child);
@@ -787,7 +787,7 @@ namespace Tests.Nodes.Object
         public void should_ignore_a_node_that_implements_inode_but_not_the_same_type_as_the_member()
         {
             var instance = new NodeInsertion();
-            var parent = CreateNode(value: new SimpleValue(instance, typeof(NodeInsertion).GetCachedType()));
+            var parent = CreateNode(value: new SimpleValue(instance, typeof(NodeInsertion).ToCachedType()));
             var child = new Node("JsonNode");
             parent.ShouldNotExecuteCallback<INode>((s, c) => s.Add(child, c));
             var jsonNode = parent.GetNode("JsonNode");

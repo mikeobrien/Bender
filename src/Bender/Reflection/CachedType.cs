@@ -77,10 +77,10 @@ namespace Bender.Reflection
             _isGenericEnumerableInterface = new Lazy<bool>(type.IsGenericEnumerableInterface);
             _isEnumerableInterface = new Lazy<bool>(type.IsEnumerableInterface);
             _isGenericEnumerable = new Lazy<bool>(type.IsGenericEnumerable);
-            _genericEnumerableType = new Lazy<CachedType>(() => type.GetGenericEnumerableType().GetCachedType());
+            _genericEnumerableType = new Lazy<CachedType>(() => type.GetGenericEnumerableType().ToCachedType());
             IsGenericType = type.IsGenericType;
             _genericTypeArguments = new Lazy<IEnumerable<CachedType>>(() => 
-                type.GetGenericArguments().Select(x => x.GetCachedType()));
+                type.GetGenericArguments().Select(x => x.ToCachedType()));
             _isNullable = new Lazy<bool>(type.IsNullable);
             IsArray = type.IsArray;
             IsInterface = type.IsInterface;
@@ -94,7 +94,7 @@ namespace Bender.Reflection
             _isEnum = new Lazy<bool>(() => type.GetUnderlyingNullableType().IsEnum);
             _elementType = new Lazy<CachedType>(() => TypeCache.GetType(type.GetElementType()));
             _genericDictionaryTypes = new Lazy<KeyValuePair<CachedType, CachedType>>(
-                () => type.GetGenericDictionaryTypes().Map(x => new KeyValuePair<CachedType, CachedType>(x.Key.GetCachedType(), x.Value.GetCachedType())));
+                () => type.GetGenericDictionaryTypes().Map(x => new KeyValuePair<CachedType, CachedType>(x.Key.ToCachedType(), x.Value.ToCachedType())));
             _attributes = new Lazy<IEnumerable<Attribute>>(
                 () => type.GetCustomAttributes(true).Cast<Attribute>().ToList());
 

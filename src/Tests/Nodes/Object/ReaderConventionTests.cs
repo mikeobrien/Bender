@@ -28,10 +28,10 @@ namespace Tests.Nodes.Object
             _options = Options.Create();
             _source = new ValueNode(
                 new Context(_options, Mode.Deserialize, "json"), null,
-                new SimpleValue(typeof(int?).GetCachedType()), null, null);
+                new SimpleValue(typeof(int?).ToCachedType()), null, null);
             _target = new ValueNode(
                 new Context(_options, Mode.Deserialize, "json"), null,
-                new SimpleValue(typeof(int?).GetCachedType()), null, null);
+                new SimpleValue(typeof(int?).ToCachedType()), null, null);
             _readers = new ReaderConventions(_options);
 
             _visitorIncrement = (s, t, o) =>
@@ -523,7 +523,7 @@ namespace Tests.Nodes.Object
             _source.Value = 0;
             var target = new ValueNode(
                 new Context(_options, Mode.Deserialize, "json"), null,
-                new SimpleValue(typeof(Tuple<string>).GetCachedType()), null, null);
+                new SimpleValue(typeof(Tuple<string>).ToCachedType()), null, null);
             var exception = new Exception();
             _readers.AddValueReader<Tuple<string>>((v, s, t, o) => { throw exception; }, (v, s, t, o) => true);
 

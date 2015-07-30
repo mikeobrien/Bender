@@ -16,7 +16,7 @@ namespace Bender.Collections
         {
             _array = array;
             _list = array.ActualType.CreateGenericListInstance().As<IList>();
-            _listType = _list.GetType().GetCachedType();
+            _listType = _list.GetType().ToCachedType();
             _listType.InvokeAction("AddRange", _list, array.Instance);
         }
 

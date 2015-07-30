@@ -17,7 +17,7 @@ namespace Tests.Reflection
         [TestCase(typeof(List<string>))]
         public void should_indicate_if_a_type_is_a_clr_collection(Type type)
         {
-            type.GetCachedType().IsBclCollectionType.ShouldBeTrue();
+            type.ToCachedType().IsBclCollectionType.ShouldBeTrue();
         }
 
         [Test]
@@ -25,13 +25,13 @@ namespace Tests.Reflection
         [TestCase(typeof(IComparer))]
         public void should_indicate_if_a_type_is_not_a_clr_collection(Type type)
         {
-            type.GetCachedType().IsBclCollectionType.ShouldBeFalse();
+            type.ToCachedType().IsBclCollectionType.ShouldBeFalse();
         }
 
         [Test]
         public void should_indicate_that_an_anon_type_is_not_a_clr_collection()
         {
-            new { }.GetCachedType().IsBclCollectionType.ShouldBeFalse();
+            new { }.ToCachedType().IsBclCollectionType.ShouldBeFalse();
         }
 
         [Test]
@@ -260,7 +260,7 @@ namespace Tests.Reflection
         [Test]
         public void should_create_a_generic_list()
         {
-            typeof(IList<int>).GetCachedType().CreateGenericListInstance().ShouldBeType<List<int>>();
+            typeof(IList<int>).ToCachedType().CreateGenericListInstance().ShouldBeType<List<int>>();
         }
 
         // Dictionary
@@ -400,7 +400,7 @@ namespace Tests.Reflection
         [Test]
         public void should_create_a_generic_dictionary()
         {
-            typeof(IDictionary<string, int>).GetCachedType().CreateGenericDictionaryInstance().ShouldBeType<Dictionary<string, int>>();
+            typeof(IDictionary<string, int>).ToCachedType().CreateGenericDictionaryInstance().ShouldBeType<Dictionary<string, int>>();
         }
     }
 }

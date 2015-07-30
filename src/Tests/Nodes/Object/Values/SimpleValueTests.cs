@@ -13,7 +13,7 @@ namespace Tests.Nodes.Object.Values
         public void should_set_correct_defaults_in_type_overload()
         {
             var type = typeof(object);
-            var value = new SimpleValue(type.GetCachedType());
+            var value = new SimpleValue(type.ToCachedType());
 
             value.Instance.ShouldBeNull();
             value.SpecifiedType.Type.ShouldEqual(type);
@@ -27,7 +27,7 @@ namespace Tests.Nodes.Object.Values
         {
             var type = typeof(object);
             var @object = new Tuple<string>("yada");
-            var value = new SimpleValue(@object, type.GetCachedType(), @readonly);
+            var value = new SimpleValue(@object, type.ToCachedType(), @readonly);
 
             value.Instance.ShouldEqual(@object);
             value.SpecifiedType.Type.ShouldEqual(type);

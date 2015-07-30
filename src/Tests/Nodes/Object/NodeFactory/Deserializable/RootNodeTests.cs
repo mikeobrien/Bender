@@ -29,7 +29,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         public void should_create_node_with_name(
             Type type, object @object, string name, NodeType nodeType)
         {
-            var node = Bender.Nodes.Object.NodeFactory.CreateDeserializableRoot(name, type.GetCachedType(), "xml",
+            var node = Bender.Nodes.Object.NodeFactory.CreateDeserializableRoot(name, type.ToCachedType(), "xml",
                 Options.Create()).As<NodeBase>();
 
             node.Name.ShouldEqual(name);
@@ -41,7 +41,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         public void should_create_node_without_name(
             Type type, object @object, string name, NodeType nodeType)
         {
-            var node = Bender.Nodes.Object.NodeFactory.CreateDeserializableRoot(type.GetCachedType(), "xml",
+            var node = Bender.Nodes.Object.NodeFactory.CreateDeserializableRoot(type.ToCachedType(), "xml",
                 Options.Create()).As<NodeBase>();
 
             node.Name.ShouldBeNull();
@@ -52,7 +52,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         public void should_create_root_node_case_insensitively_name()
         {
             var node = Bender.Nodes.Object.NodeFactory.CreateDeserializableRoot(
-                "sometypeofstring", typeof(SomeType<string>).GetCachedType(), "xml", Options.Create(x => x.Deserialization(y => y.IgnoreNameCase())));
+                "sometypeofstring", typeof(SomeType<string>).ToCachedType(), "xml", Options.Create(x => x.Deserialization(y => y.IgnoreNameCase())));
 
             node.Name.ShouldEqual("sometypeofstring");
         }
@@ -64,7 +64,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         public void should_create_root_node_with_custom_name()
         {
             var node = Bender.Nodes.Object.NodeFactory.CreateDeserializableRoot(
-                "Yada", typeof(SomeCustomNamedType).GetCachedType(), "xml", Options.Create());
+                "Yada", typeof(SomeCustomNamedType).ToCachedType(), "xml", Options.Create());
 
             node.Name.ShouldEqual("Yada");
         }
@@ -84,7 +84,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         {
             var exception = Assert.Throws<InvalidRootNameDeserializationException>(() =>
                 Bender.Nodes.Object.NodeFactory.CreateDeserializableRoot("hai", 
-                typeof(SomeType<string>).GetCachedType(), "xml", Options.Create()));
+                typeof(SomeType<string>).ToCachedType(), "xml", Options.Create()));
 
             exception.FriendlyMessage.ShouldEqual("Xml root name 'hai' does not match expected " +
                                                   "name of 'SomeTypeOfString'.");
@@ -99,7 +99,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         {
             Assert.DoesNotThrow(() =>
                 Bender.Nodes.Object.NodeFactory.CreateDeserializableRoot("hai", 
-                        typeof(SomeType<string>).GetCachedType(), "xml",
+                        typeof(SomeType<string>).ToCachedType(), "xml",
                     Options.Create(x => x.Deserialization(y => y.IgnoreRootName()))));
         }
 
@@ -108,7 +108,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         {
             Assert.Throws<TypeNotSupportedException>(() =>
                 Bender.Nodes.Object.NodeFactory.CreateDeserializableRoot("String", 
-                    typeof(string).GetCachedType(), "xml", Options.Create()))
+                    typeof(string).ToCachedType(), "xml", Options.Create()))
                 .Message.ShouldEqual("Simple type 'System.String' is not supported for " +
                                      "deserialization. Only complex types can be deserialized.");
         }
@@ -118,7 +118,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         {
             Assert.Throws<TypeNotSupportedException>(() =>
                 Bender.Nodes.Object.NodeFactory.CreateDeserializableRoot(
-                    typeof(string).GetCachedType(), "xml", Options.Create()))
+                    typeof(string).ToCachedType(), "xml", Options.Create()))
                 .Message.ShouldEqual("Simple type 'System.String' is not supported for " +
                                      "deserialization. Only complex types can be deserialized.");
         }

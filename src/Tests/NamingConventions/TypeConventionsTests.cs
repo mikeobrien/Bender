@@ -23,7 +23,7 @@ namespace Tests.NamingConventions
         {
             var convention = TypeNamingConvention.Create();
             config(convention);
-            return convention.GetName(new TypeContext(ModelType.GetCachedType(), new Context(Options, Mode.Deserialize, "xml"), true));
+            return convention.GetName(new TypeContext(ModelType.ToCachedType(), new Context(Options, Mode.Deserialize, "xml"), true));
         }
 
         [Test]

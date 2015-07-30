@@ -30,7 +30,7 @@ namespace Tests.Nodes.Object.NodeFactory.Serializable
             Type specifiedType, object value, string specifiedTypeName, string actualName, NodeType nodeType)
         {
             var node = Bender.Nodes.Object.NodeFactory.CreateSerializableRoot(
-                value, value.GetCachedType(), Options.Create(), "xml").As<NodeBase>();
+                value, value.ToCachedType(), Options.Create(), "xml").As<NodeBase>();
 
             node_should_be_in_valid_state(actualName, node, value, nodeType, value.GetType());
         }
@@ -40,7 +40,7 @@ namespace Tests.Nodes.Object.NodeFactory.Serializable
         public void should_create_node_from_specified_type_overload(
             Type specifiedType, object value, string specifiedName, string actualName, NodeType nodeType)
         {
-            var node = Bender.Nodes.Object.NodeFactory.CreateSerializableRoot(value, specifiedType.GetCachedType(),
+            var node = Bender.Nodes.Object.NodeFactory.CreateSerializableRoot(value, specifiedType.ToCachedType(),
                 Options.Create(), "xml").As<NodeBase>();
 
             node_should_be_in_valid_state(specifiedName, node, value, nodeType, specifiedType);
@@ -64,7 +64,7 @@ namespace Tests.Nodes.Object.NodeFactory.Serializable
         {
             Assert.Throws<TypeNotSupportedException>(() =>
                 Bender.Nodes.Object.NodeFactory.CreateSerializableRoot("hai", 
-                    typeof(string).GetCachedType(), Options.Create(), "xml"))
+                    typeof(string).ToCachedType(), Options.Create(), "xml"))
                 .Message.ShouldEqual("Simple type 'System.String' is not supported for " +
                                      "serialization. Only complex types can be serialized.");
         }
@@ -74,7 +74,7 @@ namespace Tests.Nodes.Object.NodeFactory.Serializable
         {
             Assert.Throws<TypeNotSupportedException>(() =>
                 Bender.Nodes.Object.NodeFactory.CreateSerializableRoot("hai", 
-                    typeof(string).GetCachedType(), Options.Create(), "xml"))
+                    typeof(string).ToCachedType(), Options.Create(), "xml"))
                 .Message.ShouldEqual("Simple type 'System.String' is not supported for " +
                                      "serialization. Only complex types can be serialized.");
         }

@@ -145,6 +145,11 @@ namespace Bender.Collections
             Func<TSource, TMap1> map1, Func<TSource, TMap2> map2, Func<TMap1, TMap2, bool> predicate)
         {
             return predicate != null ? source.Where(x => predicate(map1(x), map2(x))) : source;
-        } 
+        }
+
+        public static int IndexOf<T>(this T[] source, T value)
+        {
+            return Array.IndexOf(source, value);
+        }
     }
 }

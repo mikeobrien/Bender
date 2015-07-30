@@ -34,7 +34,7 @@ namespace Tests.Nodes.Object
             Options options = null, Mode mode = Mode.Deserialize, Type type = null, IValue value = null)
         {
             return new DictionaryNode(new Context(options ?? Options.Create(), mode, "xml"), type != null ? type.Name : null,
-                value ?? new SimpleValue(dictionary, (type ?? dictionary.GetType()).GetCachedType()), null, null);
+                value ?? new SimpleValue(dictionary, (type ?? dictionary.GetType()).ToCachedType()), null, null);
         }
 
         [Test]
@@ -63,7 +63,7 @@ namespace Tests.Nodes.Object
         public void should_initialize_source_value()
         {
             var node = CreateNode(value: new LazyValue(
-                new SimpleValue(typeof(Dictionary<string, object>).GetCachedType()),
+                new SimpleValue(typeof(Dictionary<string, object>).ToCachedType()),
                 () => new Dictionary<string, object>()));
 
             node.Source.As<LazyValue>().InnerValue.Instance.ShouldBeNull();
@@ -299,7 +299,7 @@ namespace Tests.Nodes.Object
         public void should_not_return_cyclic_references_in_serialize_mode(CyclicRoot root, string name)
         {
             var members = new ObjectNode(new Context(Options.Create(), Mode.Serialize, "xml"), null,
-                new SimpleValue(root, typeof(CyclicRoot).GetCachedType()), null, null).ToList();
+                new SimpleValue(root, typeof(CyclicRoot).ToCachedType()), null, null).ToList();
 
             var child = members.GetNode(name);
             child.ShouldTotal(1);
