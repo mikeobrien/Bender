@@ -1,4 +1,4 @@
-[![Nuget](http://img.shields.io/nuget/v/Bender.svg?style=flat)](http://www.nuget.org/packages/Bender/) [![Nuget downloads](http://img.shields.io/nuget/dt/Bender.svg?style=flat)](http://www.nuget.org/packages/Bender/) [![Travis CI Build Status](http://img.shields.io/travis/mikeobrien/Bender.svg?style=flat&label=Travis%20CI)](https://travis-ci.org/mikeobrien/Bender) [![TeamCity Build Status](https://img.shields.io/teamcity/http/build.mikeobrien.net/s/bender.svg?style=flat&label=TeamCity)](http://build.mikeobrien.net/viewType.html?buildTypeId=bender&guest=1)
+[![Nuget](http://img.shields.io/nuget/v/Bender.svg?style=flat)](http://www.nuget.org/packages/Bender/) [![Nuget downloads](http://img.shields.io/nuget/dt/Bender.svg?style=flat)](http://www.nuget.org/packages/Bender/) [![TeamCity Build Status](https://img.shields.io/teamcity/http/build.mikeobrien.net/s/bender.svg?style=flat&label=TeamCity)](http://build.mikeobrien.net/viewType.html?buildTypeId=bender&guest=1)
 
 <img src="https://raw.github.com/mikeobrien/Bender/master/misc/logo.png"/> 
 
