@@ -76,7 +76,7 @@ namespace Bender.Nodes.CharacterSeparated
 
             Action<string[]> writeLine = x => writer
                 .Write(x.Select(y =>
-                    $"{qualifier}{y.Replace(qualifier, qualifier + qualifier)}{qualifier}")
+                    $"{qualifier}{y?.Replace(qualifier, qualifier + qualifier)}{qualifier}")
                 .Aggregate((a, i) => $"{a}{_options.CsvDelimiter}{i}") + _options.CsvNewLine);
 
             writeLine(columns);
