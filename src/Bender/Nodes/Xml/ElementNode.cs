@@ -149,8 +149,27 @@ namespace Bender.Nodes.Xml
 
         public override void Encode(Stream stream, Encoding encoding = null, bool pretty = false)
         {
-            Element.Save(new StreamWriter(stream, encoding ?? UTF8Encoding.NoBOM), 
-                pretty ? SaveOptions.None : SaveOptions.DisableFormatting);
+            XDocument doc = new XDocument(Element);
+            var settings = GetXmlWriterSettings(encoding, pretty);
+
+            using (var writer = XmlWriter.Create(stream, settings))
+            {
+                doc.Save(writer);
+            }
+        }
+
+        private XmlWriterSettings GetXmlWriterSettings(Encoding encoding, bool pretty)
+        {
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.OmitXmlDeclaration = Options.Serialization.OmitXmlDeclaration;
+            settings.Encoding = encoding ?? UTF8Encoding.NoBOM;
+            settings.WriteEndDocumentOnClose = true;
+
+            settings.NewLineOnAttributes = false;
+            settings.IndentChars = "\t";
+            settings.Indent = pretty;
+
+            return settings;
         }
 
         public override void SetNamespace(XNamespace @namespace)
