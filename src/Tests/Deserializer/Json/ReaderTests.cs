@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Bender;
 using Flexo.Extensions;
 using NUnit.Framework;
@@ -155,7 +156,7 @@ namespace Tests.Deserializer.Json
             var result = Deserialize.Json<DateTimeConversion>("{{ \"DateTime\": \"{0}\" }}".ToFormat(datetime),
                 x => x.Deserialization(y => y.TreatDatesAsUtcAndConvertToLocal()));
 
-            result.DateTime.ShouldEqual(new DateTime(1985, 10, 26, 5, 21, 0).SubtractUtcOffset());
+            result.DateTime.ShouldEqual(new DateTime(1985, 10, 26, 5, 21, 0, DateTimeKind.Utc).SubtractUtcOffset());
         }
 
         private class NullableDateTimeConversion
@@ -172,7 +173,7 @@ namespace Tests.Deserializer.Json
             var @object = Deserialize.Json<NullableDateTimeConversion>("{{ \"DateTime\": {0} }}".ToFormat(datetime),
                 x => x.Deserialization(y => y.TreatDatesAsUtcAndConvertToLocal()));
 
-            @object.DateTime.ShouldEqual(result == null ? (DateTime?)null : DateTime.Parse(result).SubtractUtcOffset());
+            @object.DateTime.ShouldEqual(result == null ? (DateTime?)null : DateTime.Parse(result, CultureInfo.InvariantCulture).SubtractUtcOffset());
         }
     }
 }

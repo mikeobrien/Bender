@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Bender;
 using Bender.Extensions;
 using NUnit.Framework;
@@ -172,7 +173,7 @@ namespace Tests.Deserializer.Xml
             var @object = Deserialize.Xml<NullableDateTimeConversion>("<NullableDateTimeConversion>{0}</NullableDateTimeConversion>".ToFormat(datetime),
                 x => x.Deserialization(y => y.TreatDatesAsUtcAndConvertToLocal()));
 
-            @object.DateTime.ShouldEqual(result == null ? (DateTime?)null : DateTime.Parse(result).SubtractUtcOffset());
+            @object.DateTime.ShouldEqual(result == null ? (DateTime?)null : DateTime.Parse(result, CultureInfo.InstalledUICulture).SubtractUtcOffset());
         }
     }
 }

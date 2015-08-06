@@ -11,7 +11,7 @@ namespace Tests.Extensions
         [Test]
         public void should_indicate_if_string_cast_as_object_is_null_or_empty()
         {
-            new DateTime(1985, 10, 26, 5, 21, 0).SubtractUtcOffset()
+            new DateTime(1985, 10, 26, 5, 21, 0, DateTimeKind.Utc).SubtractUtcOffset()
                 .ToMicrosoftJsonDateFormat().ShouldEqual("/Date(499152060000)/");
         }
     }
