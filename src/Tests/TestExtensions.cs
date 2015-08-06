@@ -60,7 +60,7 @@ namespace Tests
 
         public static DateTime SubtractUtcOffset(this DateTime date)
         {
-            return date.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(date).Hours);
+            return date.ToLocalTime();
         }
 
         public static string EncodeToString(this INode node)

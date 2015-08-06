@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Bender.Nodes;
 using Bender.Nodes.Xml;
 using Bender.Reflection;
@@ -89,7 +90,11 @@ namespace Bender.Configuration
 
         public DeserializerOptionsDsl TreatDatesAsUtcAndConvertToLocal()
         {
-            AddReader((v, s, t, o) => DateTime.Parse(v.ToString()).ToLocalTime(), true);
+            AddReader((v, s, t, o) =>
+            {
+                return
+                    DateTime.Parse(v.ToString(), CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal).ToLocalTime();
+            }, true);
             return this;
         }
 
