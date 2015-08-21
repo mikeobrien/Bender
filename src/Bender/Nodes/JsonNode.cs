@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Bender.Collections;
+using Bender.Configuration;
 using Bender.Extensions;
 using Flexo;
 
@@ -12,9 +13,11 @@ namespace Bender.Nodes
     public class JsonNode : NodeBase
     {
         public const string NodeFormat = "json";
+        private readonly Options _options;
 
-        public JsonNode(NodeType type)
+        public JsonNode(NodeType type, Options options)
         {
+            _options = options;
             Element = JElement.Create(type == NodeType.Array ? ElementType.Array : ElementType.Object);
         }
 
@@ -33,9 +36,9 @@ namespace Bender.Nodes
         }
 
         public JElement Element { get; private set; }
-        public override string Format { get { return NodeFormat; } }
-        public override string Path { get { return Element.Path; } }
-        public override bool IsNamed { get { return Element.IsNamed; } }
+        public override string Format => NodeFormat;
+        public override string Path => Element.Path;
+        public override bool IsNamed => Element.IsNamed;
 
         public override string Type
         {
@@ -109,9 +112,9 @@ namespace Bender.Nodes
             return Element.Select(x => new JsonNode(x, this));
         }
 
-        public override void Encode(Stream stream, Encoding encoding = null, bool pretty = false)
+        public override void Encode(Stream stream, Encoding encoding = null)
         {
-            Element.Encode(stream, encoding, pretty);
+            Element.Encode(stream, encoding, _options.Serialization.PrettyPrint);
         }
     }
 }

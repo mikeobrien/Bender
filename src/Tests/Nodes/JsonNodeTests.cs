@@ -1,11 +1,10 @@
 ﻿using System.Linq;
-using System.Text;
 using Bender;
+using Bender.Configuration;
 using Bender.Extensions;
 using Bender.Nodes;
 using NUnit.Framework;
 using Should;
-using UTF8Encoding = Bender.Extensions.UTF8Encoding;
 
 namespace Tests.Nodes
 {
@@ -18,39 +17,24 @@ namespace Tests.Nodes
         public void should_fail_on_unclosed_outer_object()
         {
             var exception = Assert.Throws<ParseException>(() => new JsonNode("{"));
-            #if __MonoCS__
-                exception.Message.ShouldEqual("1 missing end of arrays or objects (1,2)");
-                exception.FriendlyMessage.ShouldEqual("Unable to parse json: 1 missing end of arrays or objects (1,2)");
-            #else
-                exception.Message.ShouldEqual("Unexpected end of file. Following elements are not closed: root.");
-                exception.FriendlyMessage.ShouldEqual("Unable to parse json: Unexpected end of file. Following elements are not closed: root.");
-            #endif
+            exception.Message.ShouldEqual("Unexpected end of file. Following elements are not closed: root.");
+            exception.FriendlyMessage.ShouldEqual("Unable to parse json: Unexpected end of file. Following elements are not closed: root.");
         }
 
         [Test]
         public void should_fail_on_missing_token()
         {
             var exception = Assert.Throws<ParseException>(() => new JsonNode("{ \"yada\" }"));
-            #if __MonoCS__
-                exception.Message.ShouldEqual("':' is expected after a name of an object content (1,10)");
-                exception.FriendlyMessage.ShouldEqual("Unable to parse json: ':' is expected after a name of an object content (1,10)");
-            #else
-                exception.Message.ShouldEqual("The token ':' was expected but found '}'.");
-                exception.FriendlyMessage.ShouldEqual("Unable to parse json: The token ':' was expected but found '}'.");
-            #endif
+            exception.Message.ShouldEqual("The token ':' was expected but found '}'.");
+            exception.FriendlyMessage.ShouldEqual("Unable to parse json: The token ':' was expected but found '}'.");
         }
 
         [Test]
         public void should_fail_on_unclosed_nested_array()
         {
             var exception = Assert.Throws<ParseException>(() => new JsonNode("{ \"yada\": [ }"));
-            #if __MonoCS__
-                exception.Message.ShouldEqual("Unexpected end of object (1,13)");
-                exception.FriendlyMessage.ShouldEqual("Unable to parse json: Unexpected end of object (1,13)");
-            #else
-                exception.Message.ShouldEqual("Encountered unexpected character '}'.");
-                exception.FriendlyMessage.ShouldEqual("Unable to parse json: Encountered unexpected character '}'.");
-            #endif
+            exception.Message.ShouldEqual("Encountered unexpected character '}'.");
+            exception.FriendlyMessage.ShouldEqual("Unable to parse json: Encountered unexpected character '}'.");
         }
 
         // Misc
@@ -58,13 +42,13 @@ namespace Tests.Nodes
         [Test]
         public void should_return_path()
         {
-            new JsonNode(NodeType.Object).Path.ShouldEqual("$");
+            new JsonNode(NodeType.Object, null).Path.ShouldEqual("$");
         }
 
         [Test]
         public void should_set_node_type()
         {
-            var node = new JsonNode(NodeType.Object);
+            var node = new JsonNode(NodeType.Object, null);
             node.NodeType.ShouldEqual(NodeType.Object);
             node.NodeType = NodeType.Value;
             node.NodeType.ShouldEqual(NodeType.Value);
@@ -75,7 +59,7 @@ namespace Tests.Nodes
         [TestCase(NodeType.Array, "array")]
         public void should_be_own_type_when_root(NodeType nodeType, string type)
         {
-            new JsonNode(nodeType).Type.ShouldEqual(type);
+            new JsonNode(nodeType, null).Type.ShouldEqual(type);
         }
 
         [Test]
@@ -84,7 +68,7 @@ namespace Tests.Nodes
         [TestCase(NodeType.Value, "value")]
         public void should_be_own_type_when_array_item(NodeType nodeType, string type)
         {
-            var node = new JsonNode(NodeType.Array);
+            var node = new JsonNode(NodeType.Array, null);
             node.Add("item", nodeType, Metadata.Empty, x => { });
             node.First().Type.ShouldEqual(type);
         }
@@ -95,7 +79,7 @@ namespace Tests.Nodes
         [TestCase(NodeType.Value)]
         public void should_be_field_type_when_field(NodeType nodeType)
         {
-            var node = new JsonNode(NodeType.Object);
+            var node = new JsonNode(NodeType.Object, null);
             node.Add("field", nodeType, Metadata.Empty, x => {});
             node.GetNode("field").Type.ShouldEqual("field");
         }
@@ -105,7 +89,7 @@ namespace Tests.Nodes
         [Test]
         public void should_create_empty_root_object()
         {
-            new JsonNode(NodeType.Object).Encode().ShouldEqual("{}");
+            new JsonNode(NodeType.Object, new Options()).Encode().ShouldEqual("{}");
         }
 
         [Test]
@@ -123,7 +107,7 @@ namespace Tests.Nodes
         [Test]
         public void should_create_empty_root_array()
         {
-            new JsonNode(NodeType.Array).Encode().ShouldEqual("[]");
+            new JsonNode(NodeType.Array, new Options()).Encode().ShouldEqual("[]");
         }
 
         [Test]
@@ -155,7 +139,7 @@ namespace Tests.Nodes
         [Test]
         public void should_add_node()
         {
-            var node = new JsonNode(NodeType.Array);
+            var node = new JsonNode(NodeType.Array, null);
             node.ShouldExecuteCallback<INode>(
                 (x, c) => x.Add(NodeType.Value, Metadata.Empty, c),
                 x => 
@@ -170,7 +154,7 @@ namespace Tests.Nodes
         [Test]
         public void should_add_named_node()
         {
-            var node = new JsonNode(NodeType.Object);
+            var node = new JsonNode(NodeType.Object, null);
             node.ShouldExecuteCallback<INode>(
                 (x, c) => x.Add("node", NodeType.Value, Metadata.Empty, c),
                 x =>
@@ -187,8 +171,8 @@ namespace Tests.Nodes
         [Test]
         public void should_insert_json_node()
         {
-            var parent = new JsonNode(NodeType.Array);
-            var node = new JsonNode(NodeType.Object);
+            var parent = new JsonNode(NodeType.Array, null);
+            var node = new JsonNode(NodeType.Object, null);
             parent.ShouldNotExecuteCallback<INode>((s, c) => s.Add(node, c));
             var child = parent.Cast<JsonNode>().First();
             child.Element.ShouldBeSameAs(node.Element);
@@ -213,7 +197,7 @@ namespace Tests.Nodes
         [Test]
         public void should_set_field_string_value()
         {
-            var node = new JsonNode(NodeType.Object);
+            var node = new JsonNode(NodeType.Object, new Options());
             node.NodeType = NodeType.Object;
             node.Add("field1", NodeType.Value, Metadata.Empty, x => x.Value = "hai");
             node.Add("field2", NodeType.Value, Metadata.Empty, x => x.Value = 'y');
@@ -235,7 +219,7 @@ namespace Tests.Nodes
         [Test]
         public void should_set_array_string_value()
         {
-            var node = new JsonNode(NodeType.Array);
+            var node = new JsonNode(NodeType.Array, new Options());
             node.NodeType = NodeType.Array;
             node.Add(NodeType.Value, Metadata.Empty, x => x.Value = "hai");
             node.Add(NodeType.Value, Metadata.Empty, x => x.Value = 'y');
@@ -260,7 +244,7 @@ namespace Tests.Nodes
         [Test]
         public void should_set_field_number_value()
         {
-            var node = new JsonNode(NodeType.Object);
+            var node = new JsonNode(NodeType.Object, new Options());
             node.NodeType = NodeType.Object;
             node.Add("field1", NodeType.Value, Metadata.Empty, x => x.Value = (decimal)1.1);
             node.Add("field2", NodeType.Value, Metadata.Empty, x => x.Value = (float)2.2);
@@ -303,7 +287,7 @@ namespace Tests.Nodes
         [Test]
         public void should_set_array_number_value()
         {
-            var node = new JsonNode(NodeType.Array);
+            var node = new JsonNode(NodeType.Array, new Options());
             node.NodeType = NodeType.Array;
             node.Add(NodeType.Value, Metadata.Empty, x => x.Value = (decimal)1.1);
             node.Add(NodeType.Value, Metadata.Empty, x => x.Value = (float)2.2);
@@ -337,7 +321,7 @@ namespace Tests.Nodes
         [Test]
         public void should_set_field_bool_value()
         {
-            var node = new JsonNode(NodeType.Object);
+            var node = new JsonNode(NodeType.Object, new Options());
             node.NodeType = NodeType.Object;
             node.Add("field1", NodeType.Value, Metadata.Empty, x => x.Value = true);
             node.Encode().ShouldEqual("{\"field1\":true}");
@@ -358,7 +342,7 @@ namespace Tests.Nodes
         [Test]
         public void should_set_array_bool_value()
         {
-            var node = new JsonNode(NodeType.Array);
+            var node = new JsonNode(NodeType.Array, new Options());
             node.Add(NodeType.Value, Metadata.Empty, x => x.Value = true);
             node.Encode().ShouldEqual("[true]");
         }
@@ -381,7 +365,7 @@ namespace Tests.Nodes
         [Test]
         public void should_set_field_null_value()
         {
-            var node = new JsonNode(NodeType.Object);
+            var node = new JsonNode(NodeType.Object, new Options());
             node.NodeType = NodeType.Object;
             node.Add("field1", NodeType.Value, Metadata.Empty, x => x.Value = null);
             node.Encode().ShouldEqual("{\"field1\":null}");
@@ -402,7 +386,7 @@ namespace Tests.Nodes
         [Test]
         public void should_set_array_null_value()
         {
-            var node = new JsonNode(NodeType.Array);
+            var node = new JsonNode(NodeType.Array, new Options());
             node.NodeType = NodeType.Array;
             node.Add(NodeType.Value, Metadata.Empty, x => { });
             node.Encode().ShouldEqual("[null]");
@@ -425,7 +409,7 @@ namespace Tests.Nodes
         [Test]
         public void should_set_field_array_value()
         {
-            var node = new JsonNode(NodeType.Object);
+            var node = new JsonNode(NodeType.Object, new Options());
             node.NodeType = NodeType.Object;
             node.Add("field1", NodeType.Array, Metadata.Empty, x => { });
             node.Encode().ShouldEqual("{\"field1\":[]}");
@@ -445,7 +429,7 @@ namespace Tests.Nodes
         [Test]
         public void should_set_array_array_value()
         {
-            var node = new JsonNode(NodeType.Array);
+            var node = new JsonNode(NodeType.Array, new Options());
             node.NodeType = NodeType.Array;
             node.Add(NodeType.Array, Metadata.Empty, x => {});
             node.Encode().ShouldEqual("[[]]");
@@ -468,7 +452,7 @@ namespace Tests.Nodes
         [Test]
         public void should_set_field_object_value()
         {
-            var node = new JsonNode(NodeType.Object);
+            var node = new JsonNode(NodeType.Object, new Options());
             node.NodeType = NodeType.Object;
             node.Add("field1", NodeType.Object, Metadata.Empty, x => {});
             node.Encode().ShouldEqual("{\"field1\":{}}");
@@ -488,7 +472,7 @@ namespace Tests.Nodes
         [Test]
         public void should_set_array_object_value()
         {
-            var node = new JsonNode(NodeType.Array);
+            var node = new JsonNode(NodeType.Array, new Options());
             node.NodeType = NodeType.Array;
             node.Add(NodeType.Object, Metadata.Empty, x => {});
             node.Encode().ShouldEqual("[{}]");
@@ -517,7 +501,7 @@ namespace Tests.Nodes
         [Test]
         public void should_add_named_fields_to_objects()
         {
-            var node = new JsonNode(NodeType.Object);
+            var node = new JsonNode(NodeType.Object, new Options());
             node.NodeType.ShouldEqual(NodeType.Object);
             node.Add("field1", NodeType.Value, Metadata.Empty, x => x.Value = "oh");
             node.Add("field2", NodeType.Value, Metadata.Empty, x => x.Value = "hai");
@@ -527,7 +511,7 @@ namespace Tests.Nodes
         [Test]
         public void should_fail_to_add_unamed_fields_to_objects()
         {
-            var node = new JsonNode(NodeType.Object);
+            var node = new JsonNode(NodeType.Object, new Options());
             node.NodeType.ShouldEqual(NodeType.Object);
             Assert.Throws<UnnamedChildrenNotSupportedException>(() => 
                 node.Add(NodeType.Value, Metadata.Empty, x => x.Value = "hai"));
@@ -552,7 +536,7 @@ namespace Tests.Nodes
         [Test]
         public void should_add_unamed_fields_to_arrays()
         {
-            var node = new JsonNode(NodeType.Array);
+            var node = new JsonNode(NodeType.Array, new Options());
             node.NodeType.ShouldEqual(NodeType.Array);
             node.Add(NodeType.Value, Metadata.Empty, x => x.Value = "oh");
             node.Add(NodeType.Value, Metadata.Empty, x => x.Value = "hai");
@@ -562,7 +546,7 @@ namespace Tests.Nodes
         [Test]
         public void should_add_named_fields_to_arrays()
         {
-            var node = new JsonNode(NodeType.Array);
+            var node = new JsonNode(NodeType.Array, new Options());
             node.NodeType.ShouldEqual(NodeType.Array);
             node.Add("item1", NodeType.Value, Metadata.Empty, x => x.Value = "oh");
             node.Add("item2", NodeType.Value, Metadata.Empty, x => x.Value = "hai");
@@ -602,9 +586,10 @@ namespace Tests.Nodes
         [Test, Ignore("Whitespace is not supported in 4.0 but is supported in 4.5.")]
         public void should_save_with_whitespace()
         {
-            var node = new JsonNode(NodeType.Object);
+            var node = new JsonNode(NodeType.Object, 
+                Options.Create(x => x.Serialization(y => y.PrettyPrint())));
             node.Add("field1", NodeType.Value, Metadata.Empty, x => x.Value = "hai");
-            node.Encode(UTF8Encoding.NoBOM, true).ShouldEqual("{\r\n  \"field1\": \"hai\"\r\n}");
+            node.Encode(UTF8Encoding.NoBOM).ShouldEqual("{\r\n  \"field1\": \"hai\"\r\n}");
         }
 
         // Field names
@@ -612,7 +597,7 @@ namespace Tests.Nodes
         [Test]
         public void should_set_field_name()
         {
-            var node = new JsonNode(NodeType.Object);
+            var node = new JsonNode(NodeType.Object, new Options());
             node.Add("field2", NodeType.Value, Metadata.Empty, x => x.Value = "");
             node.Encode().ShouldEqual("{\"field2\":\"\"}");
         }
@@ -629,7 +614,7 @@ namespace Tests.Nodes
         [Test]
         public void should_be_named_if_parent_is_object()
         {
-            var node = new JsonNode(NodeType.Object);
+            var node = new JsonNode(NodeType.Object, null);
             node.Add("field1", NodeType.Value, Metadata.Empty, x => { });
             node.First().IsNamed.ShouldBeTrue();
             
@@ -639,7 +624,7 @@ namespace Tests.Nodes
         [Test]
         public void should_not_be_named_if_parent_is_array()
         {
-            var node = new JsonNode(NodeType.Array);
+            var node = new JsonNode(NodeType.Array, null);
             node.Add("field1", NodeType.Value, Metadata.Empty, x => { });
             node.First().IsNamed.ShouldBeFalse();
 
@@ -649,8 +634,8 @@ namespace Tests.Nodes
         [Test]
         public void should_not_be_named_if_doesnt_have_a_parent()
         {
-            new JsonNode(NodeType.Object).IsNamed.ShouldBeFalse();
-            new JsonNode(NodeType.Array).IsNamed.ShouldBeFalse();
+            new JsonNode(NodeType.Object, null).IsNamed.ShouldBeFalse();
+            new JsonNode(NodeType.Array, null).IsNamed.ShouldBeFalse();
             new JsonNode("{}").IsNamed.ShouldBeFalse();
         }
     }

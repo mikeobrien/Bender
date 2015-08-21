@@ -55,7 +55,7 @@ namespace Bender.Nodes.FormUrlEncoded
             return Form;
         }
 
-        public override void Encode(Stream stream, Encoding encoding = null, bool pretty = false)
+        public override void Encode(Stream stream, Encoding encoding = null)
         {
             Form.Select(x => "{0}={1}".ToFormat(x.Name, HttpUtility.UrlEncode(x.Value.ToString())))
                 .Aggregate((a, i) => a + "&" + i).WriteToStream(stream, encoding);

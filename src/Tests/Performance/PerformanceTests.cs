@@ -34,7 +34,7 @@ namespace Tests.Performance
                     x => new JsonNode(x),
                     (n, t) => Bender.Deserializer.Create().Deserialize(n, t), 
                     x => Bender.Serializer.Create().SerializeNodes(x, (n, o) => 
-                        new JsonNode(n.NodeType), JsonNode.NodeFormat),
+                        new JsonNode(n.NodeType, new Options()), JsonNode.NodeFormat),
                     x => x.Encode().ReadToEnd()),
 
                 new BenchmarkSerializer("JavaScriptSerializer", Format.Json, 

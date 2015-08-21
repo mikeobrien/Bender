@@ -732,7 +732,7 @@ namespace Tests.Serializer.Xml
         {
             Serialize.Xml(new Encoding { Oh = "hai" },
                 x => x.Serialization(y => y.PrettyPrint()))
-                .ShouldEqual(Xml.Declaration + "\r\n<Encoding>\r\n  <Oh>hai</Oh>\r\n</Encoding>");
+                .ShouldEqual(Xml.Declaration + "\r\n<Encoding>\r\n\t<Oh>hai</Oh>\r\n</Encoding>");
         }
 
         [Test]

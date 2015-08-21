@@ -84,10 +84,10 @@ namespace Bender.Nodes
             return nodes.FirstOrDefault(x => x.IsNamed && x.Name.Equals(name, comparison));
         }
 
-        public static Stream Encode(this INode node, Encoding encoding = null, bool pretty = false)
+        public static Stream Encode(this INode node, Encoding encoding = null)
         {
             var stream = new MemoryStream();
-            node.Encode(stream, encoding, pretty);
+            node.Encode(stream, encoding);
             stream.Position = 0;
             return stream;
         }

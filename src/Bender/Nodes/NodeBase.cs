@@ -156,7 +156,7 @@ namespace Bender.Nodes
             return GetEnumerator();
         }
 
-        public virtual void Encode(Stream stream, Encoding encoding = null, bool pretty = false)
+        public virtual void Encode(Stream stream, Encoding encoding = null)
         {
             throw new EncodingNotSupportedException();
         }

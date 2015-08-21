@@ -146,9 +146,10 @@ namespace Bender.Nodes
 
         public override string Path { get { return this.Walk<INode>(x => x.Parent).Select(x => x.IsNamed ? x.Name : "*").Aggregate("."); } }
 
-        public override void Encode(Stream stream, Encoding encoding = null, bool pretty = false)
+        public override void Encode(Stream stream, Encoding encoding = null)
         {
-            if (_encoder != null) _encoder(this, stream, encoding ?? UTF8Encoding.NoBOM, pretty);
+            if (_encoder != null) _encoder(this, stream, 
+                encoding ?? UTF8Encoding.NoBOM, false);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Bender.Configuration;
 using Bender.Nodes;
 using Bender.Nodes.Xml;
 using NUnit.Framework;
@@ -147,7 +148,7 @@ namespace Tests.Nodes
         [Test]
         public void should_encode_to_stream()
         {
-            new JsonNode(NodeType.Object).Encode().ShouldEqual("{}");
+            new JsonNode(NodeType.Object, new Options()).Encode().ShouldEqual("{}");
         }
     }
 }

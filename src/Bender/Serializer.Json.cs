@@ -22,7 +22,8 @@ namespace Bender
 
         public string SerializeJson(object source, Type type)
         {
-            return SerializeString(source, type, (s, o) => new JsonNode(s.NodeType), JsonNode.NodeFormat);
+            return SerializeString(source, type, (s, o) => 
+                new JsonNode(s.NodeType, o), JsonNode.NodeFormat);
         }
 
         // Bytes
@@ -39,7 +40,8 @@ namespace Bender
 
         public byte[] SerializeJsonBytes(object source, Type type, Encoding encoding = null)
         {
-            return SerializeBytes(source, type, (s, o) => new JsonNode(s.NodeType), JsonNode.NodeFormat, encoding);
+            return SerializeBytes(source, type, (s, o) => 
+                new JsonNode(s.NodeType, o), JsonNode.NodeFormat, encoding);
         }
 
         // Return Stream
@@ -56,7 +58,8 @@ namespace Bender
 
         public Stream SerializeJsonStream(object source, Type type, Encoding encoding = null)
         {
-            return SerializeStream(source, type, (s, o) => new JsonNode(s.NodeType), JsonNode.NodeFormat, encoding);
+            return SerializeStream(source, type, (s, o) => new JsonNode(s.NodeType, o),  
+                JsonNode.NodeFormat, encoding);
         }
 
         // To Stream
@@ -73,7 +76,8 @@ namespace Bender
 
         public void SerializeJsonStream(object source, Type type, Stream stream, Encoding encoding = null)
         {
-            SerializeStream(source, type, (s, o) => new JsonNode(s.NodeType), JsonNode.NodeFormat, stream, encoding);
+            SerializeStream(source, type, (s, o) => new JsonNode(s.NodeType, o), 
+                JsonNode.NodeFormat, stream, encoding);
         }
 
         // File
@@ -90,7 +94,8 @@ namespace Bender
 
         public void SerializeJsonFile(object source, Type type, string path, Encoding encoding = null)
         {
-            SerializeStream(source, type, (s, o) => new JsonNode(s.NodeType), JsonNode.NodeFormat, encoding).SaveToFile(path);
+            SerializeStream(source, type, (s, o) => new JsonNode(s.NodeType, o), 
+                JsonNode.NodeFormat, encoding).SaveToFile(path);
         }
 
         // Nodes
@@ -107,7 +112,8 @@ namespace Bender
 
         public JsonNode SerializeJsonNodes(object source, Type type)
         {
-            return (JsonNode)SerializeNodes(source, type, (s, o) => new JsonNode(s.NodeType), JsonNode.NodeFormat);
+            return (JsonNode)SerializeNodes(source, type, (s, o) => 
+                new JsonNode(s.NodeType, o), JsonNode.NodeFormat);
         }
     }
 }

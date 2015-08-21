@@ -24,44 +24,32 @@ namespace Tests.Nodes.Xml
         public void should_fail_on_unclosed_outer_object()
         {
             var exception = Assert.Throws<ParseException>(() => ElementNode.Parse("<yada>", Options));
-#if __MonoCS__
-                exception.Message.ShouldEqual("1 missing end of arrays or objects (1,2)");
-                exception.FriendlyMessage.ShouldEqual("Unable to parse xml: 1 missing end of arrays or objects (1,2)");
-#else
+
             const string message = "Unexpected end of file has occurred. The following " + 
                 "elements are not closed: yada. Line 1, position 7.";
             exception.Message.ShouldEqual(message);
             exception.FriendlyMessage.ShouldEqual("Unable to parse xml: " + message);
-#endif
         }
 
         [Test]
         public void should_fail_on_missing_token()
         {
             var exception = Assert.Throws<ParseException>(() => ElementNode.Parse("<oh><hai></oh> }", Options));
-#if __MonoCS__
-                exception.Message.ShouldEqual("':' is expected after a name of an object content (1,10)");
-                exception.FriendlyMessage.ShouldEqual("Unable to parse xml: ':' is expected after a name of an object content (1,10)");
-#else
+
             const string message = "The 'hai' start tag on line 1 position 6 does not " + 
                 "match the end tag of 'oh'. Line 1, position 12.";
             exception.Message.ShouldEqual(message);
             exception.FriendlyMessage.ShouldEqual("Unable to parse xml: " + message);
-#endif
         }
 
         [Test]
         public void should_fail_on_unclosed_nested_array()
         {
             var exception = Assert.Throws<ParseException>(() => ElementNode.Parse("<yada", Options));
-#if __MonoCS__
-                exception.Message.ShouldEqual("Unexpected end of object (1,13)");
-                exception.FriendlyMessage.ShouldEqual("Unable to parse xml: Unexpected end of object (1,13)");
-#else
+
             const string message = "Unexpected end of file while parsing Name has occurred. Line 1, position 6.";
             exception.Message.ShouldEqual(message);
             exception.FriendlyMessage.ShouldEqual("Unable to parse xml: " + message);
-#endif
         }
 
         // Misc
@@ -186,6 +174,15 @@ namespace Tests.Nodes.Xml
                     x.NodeType.ShouldEqual(NodeType.Value);
                     x.Parent.ShouldBeSameAs(node);
                 });
+        }
+
+        [Test]
+        public void should_add_items_to_parent_when_passed_xml_siblings_attribute()
+        {
+            var node = ElementNode.Create("Oh", Metadata.Empty, Options);
+            node.ShouldExecuteCallback<INode>(
+                (x, c) => x.Add("Hai", NodeType.Value, new Metadata(new XmlSiblingsAttribute()), c),
+                x => x.ShouldBeSameAs(node));
         }
 
         [Test]
@@ -393,6 +390,28 @@ namespace Tests.Nodes.Xml
                 .AddXmlNamespace("abc", "http://namespace.org"))));
             node.Add("Hai", NodeType.Value, new Metadata(attribute), x => { });
             node.Encode().ShouldEqual(Declaration + "<Oh xmlns:abc=\"http://namespace.org\"><abc:Hai /></Oh>");
+        }
+
+        // Encode
+
+        [Test]
+        public void should_omit_xml_element()
+        {
+            var node = ElementNode.Create("Oh", Metadata.Empty, 
+                Options.Create(x => x.Serialization(y => y.OmitXmlDeclaration())));
+            node.Encode().ShouldEqual("<Oh />");
+        }
+
+        [Test]
+        public void should_pretty_print()
+        {
+            var node = ElementNode.Create("Oh", Metadata.Empty, 
+                Options.Create(x => x.Serialization(y => y.PrettyPrint())));
+            node.Add("Hai", NodeType.Value, Metadata.Empty, x => { });
+            node.Encode().ShouldEqual(Declaration +
+               "\r\n<Oh>\r\n" +
+                    "\t<Hai />\r\n" +
+               "</Oh>");
         }
     }
 }

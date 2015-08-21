@@ -25,7 +25,7 @@ namespace Tests.Performance
             {
                 _object = Bender.Deserializer.Create().Deserialize(_jsonNode, typeof(Model<string>));
                 Bender.Serializer.Create().SerializeNodes(_object, (n, o) =>
-                    new JsonNode(n.NodeType), JsonNode.NodeFormat);
+                    new JsonNode(n.NodeType, new Options()), JsonNode.NodeFormat);
             });
 
             var xml = File.ReadAllText(@"../../Performance/model.xml");
@@ -49,7 +49,7 @@ namespace Tests.Performance
         public void profile_serialize_json()
         {
             _jsonNode = Bender.Serializer.Create().SerializeNodes(_object, (n, o) =>
-                new JsonNode(n.NodeType), JsonNode.NodeFormat);
+                new JsonNode(n.NodeType, new Options()), JsonNode.NodeFormat);
         }
 
         [Test]

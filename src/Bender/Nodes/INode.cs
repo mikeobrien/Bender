@@ -34,6 +34,6 @@ namespace Bender.Nodes
 
         void Validate();
 
-        void Encode(Stream stream, Encoding encoding = null, bool pretty = false);
+        void Encode(Stream stream, Encoding encoding = null);
     }
 }

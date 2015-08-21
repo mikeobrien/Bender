@@ -62,7 +62,7 @@ namespace Bender.Nodes.CharacterSeparated
             else _rows.Add(new RowNode(_rowIndex++).Configure(modify).As<RowNode>());
         }
 
-        public override void Encode(Stream stream, Encoding encoding = null, bool pretty = false)
+        public override void Encode(Stream stream, Encoding encoding = null)
         {
             var context = new Context(_options, Mode.Deserialize, NodeFormat);
             var header = new SimpleValue(_type.GenericEnumerableType);

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Web.UI.WebControls;
 using System.Xml.Serialization;
 using Bender;
 using Bender.Collections;
 using Bender.Extensions;
+using Bender.Nodes.Xml;
 using Bender.Reflection;
 using NUnit.Framework;
 using Should;
@@ -182,6 +184,39 @@ namespace Tests.Serializer.Xml
         public void should_serialize_member_array_of_complex_type(string name, Model model)
         {
             Serialize.Xml(model).ShouldEqual(Xml.Declaration + "<Model><{0}><ComplexType><Property>hai</Property></ComplexType></{0}></Model>".ToFormat(name));
+        }
+
+        // Array sibling items
+
+        public class ArraySiblingItem
+        {
+            public string SiblingProperty { get; set; }
+        }
+
+        public class ArraySiblingItems
+        {
+            public string Property { get; set; }
+            [XmlArrayItem("SiblingProperty"), XmlSiblings]
+            public List<string> Siblings { get; set; }
+        }
+
+        [Test]
+        public void should_serialize_array_items_as_siblings_when_xml_sibling_attribute_applied()
+        {
+            Serialize.Xml(new ArraySiblingItems
+            {
+                Property = "property",
+                Siblings = new List<string>
+                {
+                    "sibling property 1",
+                    "sibling property 2"
+                }
+            }).ShouldEqual(Xml.Declaration + 
+                "<ArraySiblingItems>" +
+                    "<Property>property</Property>" +
+                    "<SiblingProperty>sibling property 1</SiblingProperty>" +
+                    "<SiblingProperty>sibling property 2</SiblingProperty>" +
+                "</ArraySiblingItems>");
         }
 
         // Actual vs specified type

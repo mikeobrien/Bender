@@ -13,6 +13,8 @@ using UTF8Encoding = Bender.Extensions.UTF8Encoding;
 
 namespace Bender.Nodes.Xml
 {
+    public class XmlSiblingsAttribute : Attribute { }
+
     public class ElementNode : XmlNodeBase
     {
         private readonly XNamespace _namespace;
@@ -106,12 +108,19 @@ namespace Bender.Nodes.Xml
             else
             {
                 var @namespace = GetNamespace(node.Name, node.Metadata, _namespace, Options);
-                ((Options.Serialization.XmlValueNodeType == XmlValueNodeType.Attribute ||
-                    node.Metadata.Contains<XmlAttributeAttribute>()) && node.NodeType.IsValue() ?
-                    (XmlNodeBase)new AttributeNode(Element.CreateAttribute(node.Name), this, Options) :
-                    new ElementNode(Element.CreateElement(GetNodeName(node.Name, @namespace)),
-                        @namespace, node.NodeType, this, Options))
-                    .Configure(modify);
+                XmlNodeBase xmlNode;
+                if ((Options.Serialization.XmlValueNodeType == XmlValueNodeType.Attribute ||
+                    node.Metadata.Contains<XmlAttributeAttribute>()) && node.NodeType.IsValue())
+                {
+                    xmlNode = new AttributeNode(Element.CreateAttribute(node.Name), this, Options);
+                }
+                else if (node.Metadata.Contains<XmlSiblingsAttribute>()) xmlNode = this;
+                else
+                {
+                    xmlNode = new ElementNode(Element.CreateElement(GetNodeName(node.Name, 
+                        @namespace)), @namespace, node.NodeType, this, Options);
+                }
+                xmlNode.Configure(modify);
             }
         }
 
@@ -147,10 +156,17 @@ namespace Bender.Nodes.Xml
                 .Union(Element.Attributes().Select(x => new AttributeNode(x, this, Options)));
         }
 
-        public override void Encode(Stream stream, Encoding encoding = null, bool pretty = false)
+        public override void Encode(Stream stream, Encoding encoding = null)
         {
-            Element.Save(new StreamWriter(stream, encoding ?? UTF8Encoding.NoBOM), 
-                pretty ? SaveOptions.None : SaveOptions.DisableFormatting);
+            var writer = XmlWriter.Create(stream, new XmlWriterSettings
+            {
+                OmitXmlDeclaration = Options.Serialization.OmitXmlDeclaration,
+                Encoding = encoding ?? UTF8Encoding.NoBOM,
+                IndentChars = "\t",
+                Indent = Options.Serialization.PrettyPrint
+            });
+            Element.Save(writer);
+            writer.Flush();
         }
 
         public override void SetNamespace(XNamespace @namespace)
