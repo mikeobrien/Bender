@@ -29,13 +29,6 @@ namespace Bender.Nodes.Xml
             _namespace = @namespace;
         }
 
-        private ElementNode(XElement element, XNamespace @namespace, NodeType type, ElementNode parent, Options options)
-            : base(element, parent, options)
-        {
-            _namespace = @namespace;
-            _type = type;
-        }
-
         public static XmlNodeBase Create(string name, Metadata metadata, Options options)
         {
             var @namespace = GetNamespace(name, metadata, 
@@ -118,7 +111,7 @@ namespace Bender.Nodes.Xml
                 else
                 {
                     xmlNode = new ElementNode(Element.CreateElement(GetNodeName(node.Name, 
-                        @namespace)), @namespace, node.NodeType, this, Options);
+                        @namespace)), Options, @namespace, this);
                 }
                 xmlNode.Configure(modify);
             }

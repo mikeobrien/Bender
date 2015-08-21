@@ -156,7 +156,7 @@ namespace Tests.Nodes.Xml
                 {
                     x.ShouldBeType<ElementNode>();
                     x.Name.ShouldEqual("Hai");
-                    x.NodeType.ShouldEqual(NodeType.Value);
+                    x.NodeType.ShouldEqual(NodeType.Variable);
                     x.Parent.ShouldBeSameAs(node);
                 });
         }

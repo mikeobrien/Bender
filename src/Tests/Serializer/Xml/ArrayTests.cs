@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Web.UI.WebControls;
 using System.Xml.Serialization;
 using Bender;
 using Bender.Collections;
@@ -51,7 +50,7 @@ namespace Tests.Serializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("SimpleArrayTypes")]
+        [TestCaseSource(nameof(SimpleArrayTypes))]
         public void should_serialize_typed_array_elements(Type type, object value)
         {
             var list = type.MakeGenericListType().CreateInstance().As<IList>();
@@ -62,7 +61,7 @@ namespace Tests.Serializer.Xml
         }
 
         [Test]
-        [TestCaseSource("SimpleArrayTypes")]
+        [TestCaseSource(nameof(SimpleArrayTypes))]
         public void should_serialize_typed_array_attributes(Type type, object value)
         {
             var list = type.MakeGenericListType().CreateInstance().As<IList>();
@@ -96,7 +95,7 @@ namespace Tests.Serializer.Xml
         .All;
 
         [Test]
-        [TestCaseSource("ComplexTypeArrays")]
+        [TestCaseSource(nameof(ComplexTypeArrays))]
         public void should_serialize_list_of_complex_type(Type type, object list)
         {
             Serialize.Xml(list, type).ShouldEqual(Xml.Declaration + "<ArrayOf{0}><ComplexType><Property>hai</Property></ComplexType></ArrayOf{0}>"
@@ -118,7 +117,7 @@ namespace Tests.Serializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("ComplexTypeArrayOfArrays")]
+        [TestCaseSource(nameof(ComplexTypeArrayOfArrays))]
         public void should_serialize_array_of_arrays(Type type, object list)
         {
             Serialize.Xml(list, type).ShouldEqual(Xml.Declaration + "<ArrayOf{0}{1}><ArrayOf{1}><ComplexType><Property>hai</Property></ComplexType></ArrayOf{1}></ArrayOf{0}{1}>"
@@ -144,7 +143,7 @@ namespace Tests.Serializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("ComplexTypeDictionaries")]
+        [TestCaseSource(nameof(ComplexTypeDictionaries))]
         public void should_serialize_array_of_dictionary(Type type, object list)
         {
             Serialize.Xml(list, type).ShouldEqual(Xml.Declaration + "<ArrayOfDictionaryOf{0}><DictionaryOf{0}><item><Property>hai</Property></item></DictionaryOf{0}></ArrayOfDictionaryOf{0}>"
@@ -180,7 +179,7 @@ namespace Tests.Serializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("ComplexArrayMembers")]
+        [TestCaseSource(nameof(ComplexArrayMembers))]
         public void should_serialize_member_array_of_complex_type(string name, Model model)
         {
             Serialize.Xml(model).ShouldEqual(Xml.Declaration + "<Model><{0}><ComplexType><Property>hai</Property></ComplexType></{0}></Model>".ToFormat(name));
@@ -188,35 +187,83 @@ namespace Tests.Serializer.Xml
 
         // Array sibling items
 
-        public class ArraySiblingItem
-        {
-            public string SiblingProperty { get; set; }
-        }
-
-        public class ArraySiblingItems
+        public class ArraySibling
         {
             public string Property { get; set; }
             [XmlArrayItem("SiblingProperty"), XmlSiblings]
-            public List<string> Siblings { get; set; }
+            public List<string> SimpleTypeSiblings { get; set; }
+            [XmlArrayItem("Sibling"), XmlSiblings]
+            public List<ArraySibling> ObjectSiblings { get; set; }
         }
 
         [Test]
-        public void should_serialize_array_items_as_siblings_when_xml_sibling_attribute_applied()
+        public void should_serialize_simple_type_array_items_as_siblings_when_xml_sibling_attribute_applied()
         {
-            Serialize.Xml(new ArraySiblingItems
+            Serialize.Xml(new ArraySibling
             {
                 Property = "property",
-                Siblings = new List<string>
+                SimpleTypeSiblings = new List<string>
                 {
                     "sibling property 1",
                     "sibling property 2"
                 }
-            }).ShouldEqual(Xml.Declaration + 
-                "<ArraySiblingItems>" +
+            }).ShouldEqual(Xml.Declaration +
+                "<ArraySibling>" +
                     "<Property>property</Property>" +
                     "<SiblingProperty>sibling property 1</SiblingProperty>" +
                     "<SiblingProperty>sibling property 2</SiblingProperty>" +
-                "</ArraySiblingItems>");
+                "</ArraySibling>");
+        }
+
+        [Test]
+        public void should_serialize_object_array_items_as_siblings_when_xml_sibling_attribute_applied()
+        {
+            Serialize.Xml(new ArraySibling
+            {
+                Property = "property",
+                ObjectSiblings = new List<ArraySibling>
+                {
+                    new ArraySibling
+                    {
+                        Property = "sibling property 1",
+                        ObjectSiblings = new List<ArraySibling>
+                        {
+                            new ArraySibling { Property = "sibling property 1a" },
+                            new ArraySibling { Property = "sibling property 1b" }
+                        }
+                    },
+                    new ArraySibling
+                    {
+                        Property = "sibling property 2",
+                        ObjectSiblings = new List<ArraySibling>
+                        {
+                            new ArraySibling { Property = "sibling property 2a" },
+                            new ArraySibling { Property = "sibling property 2b" }
+                        }
+                    }
+                }
+            }).ShouldEqual(Xml.Declaration +
+                "<ArraySibling>" +
+                    "<Property>property</Property>" +
+                    "<Sibling>" +
+                        "<Property>sibling property 1</Property>" +
+                        "<Sibling>" +
+                            "<Property>sibling property 1a</Property>" +
+                        "</Sibling>" +
+                        "<Sibling>" +
+                            "<Property>sibling property 1b</Property>" +
+                        "</Sibling>" +
+                    "</Sibling>" +
+                    "<Sibling>" +
+                        "<Property>sibling property 2</Property>" +
+                        "<Sibling>" +
+                            "<Property>sibling property 2a</Property>" +
+                        "</Sibling>" +
+                        "<Sibling>" +
+                            "<Property>sibling property 2b</Property>" +
+                        "</Sibling>" +
+                    "</Sibling>" +
+                "</ArraySibling>");
         }
 
         // Actual vs specified type
