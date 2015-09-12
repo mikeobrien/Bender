@@ -1,6 +1,8 @@
 using System.Xml.Serialization;
 using Bender.Collections;
 using Bender.Extensions;
+using Bender.Nodes;
+using Bender.Nodes.Xml;
 
 namespace Bender.NamingConventions
 {
@@ -15,8 +17,11 @@ namespace Bender.NamingConventions
         {
             return context.Member
                 .PipeWhen(x => x.Type.Map(y => y.IsEnumerable && !y.IsSimpleType))
-                .MapOrDefault(x => x.GetAttribute<XmlArrayItemAttribute>())
-                .MapOrDefault(x => x.ElementName)
+                .MapOrDefault(x => 
+                    x.MapOrDefault(y => y.GetAttribute<XmlArrayItemAttribute>())
+                     .MapOrDefault(y => y.ElementName) ??
+                    x.MapOrDefault(y => y.GetAttribute<XmlSiblingsAttribute>())
+                     .MapOrDefault(y => y.ElementName))
                 .PipeWhen(x => !x.IsEmpty());
         }
     }

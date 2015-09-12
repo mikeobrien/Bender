@@ -45,7 +45,7 @@ namespace Tests.NamingConventions
             .All;
 
         [Test]
-        [TestCaseSource("ArrayItemCases")]
+        [TestCaseSource(nameof(ArrayItemCases))]
         public void should_add_field_name_convention(
             CachedMember member, bool hasMember, string itemName)
         {

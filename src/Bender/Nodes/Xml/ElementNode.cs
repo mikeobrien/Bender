@@ -13,8 +13,6 @@ using UTF8Encoding = Bender.Extensions.UTF8Encoding;
 
 namespace Bender.Nodes.Xml
 {
-    public class XmlSiblingsAttribute : Attribute { }
-
     public class ElementNode : XmlNodeBase
     {
         private readonly XNamespace _namespace;

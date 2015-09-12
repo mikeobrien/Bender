@@ -9,6 +9,7 @@ using Bender.Configuration;
 using Bender.Extensions;
 using Bender.Nodes;
 using Bender.Nodes.Object;
+using Bender.Nodes.Xml;
 using Bender.Reflection;
 using NUnit.Framework;
 using Should;
@@ -369,6 +370,70 @@ namespace Tests.Deserializer.Xml
             result.ShouldNotBeNull();
             result.ComplexArray.ShouldNotBeNull();
             result.ComplexArray.ShouldBeEmpty();
+        }
+
+        // Array sibling items
+
+        public class ArraySibling
+        {
+            public string Property { get; set; }
+            [XmlSiblings("SiblingProperty")]
+            public List<string> SimpleTypeSiblings { get; set; }
+            [XmlSiblings("Sibling")]
+            public List<ArraySibling> ObjectSiblings { get; set; }
+        }
+
+        [Test]
+        public void should_serialize_simple_type_array_items_as_siblings_when_xml_sibling_attribute_applied()
+        {
+            var result = Deserialize.Xml<ArraySibling>(
+                "<ArraySibling>" +
+                    "<Property>property</Property>" +
+                    "<SiblingProperty>sibling property 1</SiblingProperty>" +
+                    "<SiblingProperty>sibling property 2</SiblingProperty>" +
+                "</ArraySibling>");
+
+            result.Property.ShouldEqual("property");
+            result.SimpleTypeSiblings.Count.ShouldEqual(2);
+            result.SimpleTypeSiblings[0].ShouldEqual("sibling property 1");
+            result.SimpleTypeSiblings[1].ShouldEqual("sibling property 2");
+        }
+
+        [Test]
+        public void should_serialize_object_array_items_as_siblings_when_xml_sibling_attribute_applied()
+        {
+            var result = Deserialize.Xml<ArraySibling>(
+                "<ArraySibling>" +
+                    "<Property>property</Property>" +
+                    "<Sibling>" +
+                        "<Property>sibling property 1</Property>" +
+                        "<Sibling>" +
+                            "<Property>sibling property 1a</Property>" +
+                        "</Sibling>" +
+                        "<Sibling Property=\"sibling property 1b\"/>" +
+                    "</Sibling>" +
+                    "<Sibling Property=\"sibling property 2\">" +
+                        "<Sibling>" +
+                            "<Property>sibling property 2a</Property>" +
+                        "</Sibling>" +
+                        "<Sibling Property=\"sibling property 2b\"/>" +
+                    "</Sibling>" +
+                "</ArraySibling>");
+
+            result.Property.ShouldEqual("property");
+            result.ObjectSiblings.Count.ShouldEqual(2);
+
+            var sibling = result.ObjectSiblings[0];
+            sibling.Property.ShouldEqual("sibling property 1");
+            sibling.ObjectSiblings.Count.ShouldEqual(2);
+            sibling.ObjectSiblings[0].Property.ShouldEqual("sibling property 1a");
+            sibling.ObjectSiblings[1].Property.ShouldEqual("sibling property 1b");
+
+            sibling = result.ObjectSiblings[1];
+            sibling.Property.ShouldEqual("sibling property 2");
+            sibling.ObjectSiblings.Count.ShouldEqual(2);
+            sibling.ObjectSiblings[0].Property.ShouldEqual("sibling property 2a");
+            sibling.ObjectSiblings[1].Property.ShouldEqual("sibling property 2b");
         }
 
         // Enumerable vs object handling

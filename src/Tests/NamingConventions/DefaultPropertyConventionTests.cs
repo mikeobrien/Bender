@@ -3,6 +3,7 @@ using Bender.Configuration;
 using Bender.NamingConventions;
 using Bender.Nodes;
 using Bender.Nodes.Object;
+using Bender.Nodes.Xml;
 using Bender.Reflection;
 using NUnit.Framework;
 using Should;
@@ -35,6 +36,9 @@ namespace Tests.NamingConventions
             public string[] ArrayProperty { get; set; }
             [XmlArray("SomeArray")]
             public string NotAnArrayProperty { get; set; }
+
+            [XmlSiblings("SiblingSomeItem")]
+            public string[] SiblingsProperty { get; set; }
         }
 
         [Test]
@@ -49,6 +53,13 @@ namespace Tests.NamingConventions
         {
             GetName<PropertyNameConventions>("AttributeProperty")
                 .ShouldEqual("SomeAttribute");
+        }
+
+        [Test]
+        public void should_use_xml_siblings_name()
+        {
+            GetName<PropertyNameConventions>("SiblingsProperty")
+                .ShouldEqual("SiblingSomeItem");
         }
 
         [Test]

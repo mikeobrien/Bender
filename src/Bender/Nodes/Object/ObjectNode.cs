@@ -7,6 +7,7 @@ using Bender.Configuration;
 using Bender.Extensions;
 using Bender.NamingConventions;
 using Bender.Nodes.Object.Values;
+using Bender.Nodes.Xml;
 using Bender.Reflection;
 
 namespace Bender.Nodes.Object
@@ -55,7 +56,8 @@ namespace Bender.Nodes.Object
 
         protected override void AddNode(INode node, bool named, Action<INode> modify)
         {
-            var match = _members.Value.GetMember(node.Name, Context.Options.Deserialization.NameComparison);
+            var match = _members.Value.GetMember(node.Name, 
+                Context.Options.Deserialization.NameComparison);
             if (match != null && match.IsNodeType)
             {
                 if (match.Value.SpecifiedType.Is<INode>() || match.Value.SpecifiedType.IsTypeOf(node))
@@ -63,14 +65,18 @@ namespace Bender.Nodes.Object
             }
             else
             {
-                var matchingNode = _nodes.Value.GetNode(node.Name, Context.Options.Deserialization.NameComparison);
+                var matchingNode = _nodes.Value.GetNode(node.Name, 
+                    Context.Options.Deserialization.NameComparison);
                 if (matchingNode == null)
                 {
                     if (Context.Options.Deserialization.IgnoreUnmatchedElements) return;
                     throw new UnrecognizedNodeDeserializationException(node);
                 }
-                matchingNode.Configure(modify);
-                _addedNodes.Value.Add(matchingNode);
+                if (matchingNode.Metadata.Contains<XmlSiblingsAttribute>())
+                    matchingNode.Add(node, modify);
+                else matchingNode.Configure(modify);
+                if (!_addedNodes.Value.Contains(matchingNode))
+                    _addedNodes.Value.Add(matchingNode);
             }
         }
 

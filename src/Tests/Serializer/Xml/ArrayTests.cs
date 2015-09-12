@@ -5,6 +5,7 @@ using System.Xml.Serialization;
 using Bender;
 using Bender.Collections;
 using Bender.Extensions;
+using Bender.Nodes;
 using Bender.Nodes.Xml;
 using Bender.Reflection;
 using NUnit.Framework;
@@ -190,9 +191,9 @@ namespace Tests.Serializer.Xml
         public class ArraySibling
         {
             public string Property { get; set; }
-            [XmlArrayItem("SiblingProperty"), XmlSiblings]
+            [XmlSiblings("SiblingProperty")]
             public List<string> SimpleTypeSiblings { get; set; }
-            [XmlArrayItem("Sibling"), XmlSiblings]
+            [XmlSiblings("Sibling")]
             public List<ArraySibling> ObjectSiblings { get; set; }
         }
 

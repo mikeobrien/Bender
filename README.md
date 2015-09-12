@@ -145,6 +145,21 @@ var deserializer = new Deserializer(options);
 
 Bender has a number of extensibility points. The following covers these in more detail.
 
+### Attributes
+
+Bender supports a number of attributes that override serialization and deserialization.
+
+| Attribute | Format | Description |
+| ------------- | ------------- | ------------- |
+| `XmlIgnoreAttribute` | All | Indicates that a member should not be serialized or deserialized. |
+| `XmlArrayAttribute` | All | Overrides the name of an enumerable member. |
+| `XmlElementAttribute` | All | Overrides the name of a member. |
+| `XmlRootAttribute` | XML | Overrides the name of the root element. |
+| `XmlTypeAttribute` | XML | Overrides the name of the root element or an enumerable item. |
+| `XmlAttributeAttribute` | XML | Indicates that a member should be serialized as an XML attribute and optionally overrides it's name. |
+| `XmlArrayItemAttribute` | XML | Overrides the name of an enumerable item. |
+| `XmlSiblingsAttribute` | XML | Serializes or deserializes an enumerable item as a sibling of other members in the type. |
+
 ### Naming Conventions
 
 Bender ships with some common naming conventions out of the box: `camelCase`,  `snake_case`, `spinal-case` and `Train-Case`. You can add your own naming conventions with the `With*NamingConvention()` options. There are options to override naming for fields, properties, members (fields and properties), array items, types or all of the above. Each option method has an overload that applies to all and one that takes a predicate to limit its application. Naming conventions form a pipeline where a name is modified by one convention and then passed to the next convention to be modified further. This allows you to define multiple conventions that work together. The order that the conventions are defined is the order they will execute.
