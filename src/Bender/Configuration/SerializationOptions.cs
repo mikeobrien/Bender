@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Net;
 using System.Net.Mail;
 using System.Xml.Linq;
@@ -38,6 +39,7 @@ namespace Bender.Configuration
             Writers.AddValueWriter<MailAddress>((v, s, t, o) => v.ToString());
             Writers.AddValueWriter<IPAddress>((v, s, t, o) => v.ToString());
             Writers.AddValueWriter<byte[]>((v, s, t, o) => Convert.ToBase64String(v));
+            Writers.AddValueWriter<SqlConnectionStringBuilder>((v, s, t, o) => v.ToString());
         }
 
         public bool PrettyPrint { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -118,6 +119,7 @@ namespace Tests.Serializer.Json
             public Version Version { get; set; }
             public MailAddress MailAddress { get; set; }
             public byte[] ByteArray { get; set; }
+            public SqlConnectionStringBuilder ConnectionString { get; set; }
         }
 
         [Test]
@@ -146,6 +148,15 @@ namespace Tests.Serializer.Json
         {
             Serialize.Json(new OutOfTheBoxTypes { ByteArray = ASCIIEncoding.ASCII.GetBytes("oh hai") })
                 .ShouldEqual("{\"ByteArray\":\"b2ggaGFp\"}");
+        }
+
+        [Test]
+        public void should_serialize_connection_string()
+        {
+            Serialize.Json(new OutOfTheBoxTypes { ConnectionString = new SqlConnectionStringBuilder(
+                    "server=localhost;database=myapp;Integrated Security=SSPI") })
+                .ShouldEqual("{\"ConnectionString\":\"Data Source=localhost;" +
+                    "Initial Catalog=myapp;Integrated Security=True\"}");
         }
 
         // Complex types 

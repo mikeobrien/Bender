@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -171,6 +172,7 @@ namespace Tests.Serializer.Xml
             public Version Version { get; set; }
             public MailAddress MailAddress { get; set; }
             public byte[] ByteArray { get; set; }
+            public SqlConnectionStringBuilder ConnectionString { get; set; }
         }
 
         [Test]
@@ -200,6 +202,15 @@ namespace Tests.Serializer.Xml
         {
             Serialize.Xml(new OutOfTheBoxTypes {ByteArray = ASCIIEncoding.ASCII.GetBytes("oh hai")})
                 .ShouldEqual(Xml.Declaration + "<OutOfTheBoxTypes><ByteArray>b2ggaGFp</ByteArray></OutOfTheBoxTypes>");
+        }
+
+        [Test]
+        public void should_serialize_connection_string()
+        {
+            Serialize.Xml(new OutOfTheBoxTypes { ConnectionString = new SqlConnectionStringBuilder(
+                    "server=localhost;database=myapp;Integrated Security=SSPI") })
+                .ShouldEqual(Xml.Declaration + "<OutOfTheBoxTypes><ConnectionString>Data Source=localhost;" +
+                    "Initial Catalog=myapp;Integrated Security=True</ConnectionString></OutOfTheBoxTypes>");
         }
 
         // Complex types 

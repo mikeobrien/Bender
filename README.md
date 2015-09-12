@@ -9,7 +9,7 @@ Bender is a highly configurable xml, json, CSV and form url encoded serializatio
 - [Readers](#readers), [writers](#writers) and [visitors](#visitors) give you full control of serialization and deserialization.
 - [Naming conventions](#naming-conventions) give you full control over naming.
 - [Friendly deserialization error messages](#friendly-deserialization-error-messages) allow you to give valuable feedback to consumers of your API.
-- Supports enums, nullable types, `String`, `Char`, `Boolean`, `SByte`, `Byte`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Single`, `Double`, `Decimal`, `DateTime`, `Guid`, `TimeSpan`, `Uri`, `IntPtr`, `UIntPtr`, `Array`, `ArrayList` (Serialization only), `IEnumerable` (Serialization only), `IEnumerable<T>`,  `IDictionary` (Serialization only), `IDictionary<TKey, TValue>`, `byte[]` (As Base64), `MailAddress`, `Version`, `IPAddress` out of the box.
+- Supports enums, nullable types, `String`, `Char`, `Boolean`, `SByte`, `Byte`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Single`, `Double`, `Decimal`, `DateTime`, `Guid`, `TimeSpan`, `Uri`, `IntPtr`, `UIntPtr`, `Array`, `ArrayList` (Serialization only), `IEnumerable` (Serialization only), `IEnumerable<T>`,  `IDictionary` (Serialization only), `IDictionary<TKey, TValue>`, `byte[]` (As Base64), `MailAddress`, `Version`, `IPAddress` and `SqlConnectionStringBuilder` out of the box.
 - Supports `XmlAttributeAttribute`, and `XmlIgnoreAttribute` attributes.
 - Supports `XmlArrayAttribute` and `XmlArrayItemAttribute` attributes, name properties.
 - Supports `XmlRootAttribute`, `XmlTypeAttribute` and `XmlElementAttribute` attributes, name and namespace properties.

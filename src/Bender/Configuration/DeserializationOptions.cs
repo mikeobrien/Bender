@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Net;
 using System.Net.Mail;
 using Bender.Nodes.Object;
@@ -49,6 +50,7 @@ namespace Bender.Configuration
             Readers.AddValueReader((v, s, t, o) => new MailAddress(v.ToString()));
             Readers.AddValueReader((v, s, t, o) => IPAddress.Parse(v.ToString()));
             Readers.AddValueReader((v, s, t, o) => Convert.FromBase64String(v.ToString()));
+            Readers.AddValueReader((v, s, t, o) => new SqlConnectionStringBuilder(v.ToString()));
         }
 
         public StringComparison NameComparison { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -98,7 +99,7 @@ namespace Tests.Deserializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_deserialize_values_as_elements(string suffix, Type type, object value, string name)
         {
             var xml = "<SimpleTypeField><{0}>{1}</{0}></SimpleTypeField>".ToFormat(name + suffix, value);
@@ -111,7 +112,7 @@ namespace Tests.Deserializer.Xml
         }
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_deserialize_values_as_attributes(string suffix, Type type, object value, string name)
         {
             var xml = "<SimpleTypeField {0}=\"{1}\" />".ToFormat(name + suffix, value);
@@ -152,7 +153,7 @@ namespace Tests.Deserializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("SimpleFieldReferenceTypes")]
+        [TestCaseSource(nameof(SimpleFieldReferenceTypes))]
         public void should_deserialize_empty_value_elements_as_null_for_reference_types(string suffix, Type type, object value, string name)
         {
             var xml = "<SimpleTypeField><{0} /></SimpleTypeField>".ToFormat(name + suffix);
@@ -190,7 +191,7 @@ namespace Tests.Deserializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("SimpleFieldValueTypes")]
+        [TestCaseSource(nameof(SimpleFieldValueTypes))]
         public void should_fail_to_deserialize_empty_value_elements_as_null_for_value_types(string suffix, Type type, object value, string name)
         {
             var xml = "<SimpleTypeField><{0} /></SimpleTypeField>".ToFormat(name + suffix);
@@ -205,7 +206,7 @@ namespace Tests.Deserializer.Xml
         }
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_fail_to_parse_empty_value_elements(string suffix, Type type, object value, string name)
         {
             if (type == typeof(string)) return;
@@ -229,7 +230,7 @@ namespace Tests.Deserializer.Xml
         }
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_fail_to_parse_empty_fields_with_custom_parse_message(string suffix, Type type, object value, string name)
         {
             if (type == typeof(string)) return;
@@ -273,34 +274,50 @@ namespace Tests.Deserializer.Xml
             public Version Version { get; set; }
             public MailAddress MailAddress { get; set; }
             public byte[] ByteArray { get; set; }
+            public SqlConnectionStringBuilder ConnectionString { get; set; }
         }
 
         [Test]
         public void should_deserialize_ip_address()
         {
-            Deserialize.Xml<OutOfTheBoxTypes>("<OutOfTheBoxTypes><IPAddress>192.168.1.1</IPAddress></OutOfTheBoxTypes>")
+            Deserialize.Xml<OutOfTheBoxTypes>("<OutOfTheBoxTypes>" +
+                    "<IPAddress>192.168.1.1</IPAddress></OutOfTheBoxTypes>")
                 .IPAddress.ShouldEqual(IPAddress.Parse("192.168.1.1"));
         }
 
         [Test]
         public void should_deserialize_version()
         {
-            Deserialize.Xml<OutOfTheBoxTypes>("<OutOfTheBoxTypes><Version>1.2.3.4</Version></OutOfTheBoxTypes>")
+            Deserialize.Xml<OutOfTheBoxTypes>("<OutOfTheBoxTypes>" +
+                    "<Version>1.2.3.4</Version></OutOfTheBoxTypes>")
                 .Version.ShouldEqual(Version.Parse("1.2.3.4"));
         }
 
         [Test]
         public void should_deserialize_mail_address()
         {
-            Deserialize.Xml<OutOfTheBoxTypes>("<OutOfTheBoxTypes><MailAddress>test@test.com</MailAddress></OutOfTheBoxTypes>")
+            Deserialize.Xml<OutOfTheBoxTypes>("<OutOfTheBoxTypes>" +
+                    "<MailAddress>test@test.com</MailAddress></OutOfTheBoxTypes>")
                 .MailAddress.ShouldEqual(new MailAddress("test@test.com"));
         }
 
         [Test]
         public void should_deserialize_byte_array()
         {
-            Deserialize.Xml<OutOfTheBoxTypes>("<OutOfTheBoxTypes><ByteArray>b2ggaGFp</ByteArray></OutOfTheBoxTypes>")
+            Deserialize.Xml<OutOfTheBoxTypes>("<OutOfTheBoxTypes>" +
+                    "<ByteArray>b2ggaGFp</ByteArray></OutOfTheBoxTypes>")
                 .ByteArray.ShouldEqual(ASCIIEncoding.ASCII.GetBytes("oh hai"));
+        }
+
+        [Test]
+        public void should_deserialize_connection_string()
+        {
+            var result = Deserialize.Xml<OutOfTheBoxTypes>("<OutOfTheBoxTypes>" +
+                "<ConnectionString>server=localhost;database=myapp;" +
+                "Integrated Security=SSPI</ConnectionString></OutOfTheBoxTypes>");
+            result.ConnectionString.DataSource.ShouldEqual("localhost");
+            result.ConnectionString.InitialCatalog.ShouldEqual("myapp");
+            result.ConnectionString.IntegratedSecurity.ShouldBeTrue();
         }
 
         // Complex types 

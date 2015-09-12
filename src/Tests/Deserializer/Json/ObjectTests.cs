@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -275,6 +276,7 @@ namespace Tests.Deserializer.Json
             public Version Version { get; set; }
             public MailAddress MailAddress { get; set; }
             public byte[] ByteArray { get; set; }
+            public SqlConnectionStringBuilder ConnectionString { get; set; }
         }
 
         [Test]
@@ -303,6 +305,16 @@ namespace Tests.Deserializer.Json
         {
             Deserialize.Json<OutOfTheBoxTypes>("{ \"ByteArray\": \"b2ggaGFp\" }")
                 .ByteArray.ShouldEqual(ASCIIEncoding.ASCII.GetBytes("oh hai"));
+        }
+
+        [Test]
+        public void should_deserialize_connection_string()
+        {
+            var result = Deserialize.Json<OutOfTheBoxTypes>("{ \"ConnectionString\": " +
+                "\"server=localhost;database=myapp;Integrated Security=SSPI\" }");
+            result.ConnectionString.DataSource.ShouldEqual("localhost");
+            result.ConnectionString.InitialCatalog.ShouldEqual("myapp");
+            result.ConnectionString.IntegratedSecurity.ShouldBeTrue();
         }
 
         // Complex types 
