@@ -666,6 +666,17 @@ namespace Tests.Deserializer.Xml
             result[0].ShouldEqual("oh");
         }
 
+        [Test]
+        public void should_ignore_items_whose_names_do_not_match_when_configured()
+        {
+            var result = Deserialize.Xml<List<string>>(
+                "<ArrayOfString><sdfgsdfasdfasdfas>oh</sdfgsdfasdfasdfas><String>hai</String></ArrayOfString>",
+                x => x.Deserialization(y => y.IgnoreUnmatchedArrayItems()));
+
+            result.Count.ShouldEqual(1);
+            result[0].ShouldEqual("hai");
+        }
+
         // Naming conventions
 
         [Test]

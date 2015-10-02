@@ -70,9 +70,13 @@ namespace Bender.Nodes.Object
                 if (named)
                 {
                     var itemName = GetItemName(_itemType);
-                    if (!Context.Options.Deserialization.IgnoreArrayItemNames &&
-                        !node.Name.Equals(itemName, Context.Options.Deserialization.NameComparison))
-                        throw new InvalidItemNameDeserializationException(node.Name, itemName);
+                    if (!node.Name.Equals(itemName, Context.Options.Deserialization.NameComparison))
+                    {
+                        if (Context.Options.Deserialization.IgnoreUnmatchedArrayItems) return;
+                        if (!Context.Options.Deserialization.IgnoreArrayItemNames)
+                            throw new InvalidItemNameDeserializationException(node.Name, itemName);
+                    }
+                    
                 }
                 var value = ValueFactory.Create(_itemType);
                 NodeFactory.CreateDeserializable(named ? Name : null, value, this, Context).Configure(modify);

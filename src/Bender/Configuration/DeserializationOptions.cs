@@ -62,6 +62,8 @@ namespace Bender.Configuration
         public bool IgnoreXmlAttributes { get; set; }
         public bool IgnoreRootName { get; set; }
         public bool IgnoreArrayItemNames { get; set; }
+        public bool IgnoreUnmatchedArrayItems { get; set; }
+        
         public Dictionary<Type, string> FriendlyParseErrorMessages { get; set; }
         public Func<CachedType, object[], object> ObjectFactory { get; set; }
 

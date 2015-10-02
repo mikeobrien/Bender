@@ -57,6 +57,12 @@ namespace Bender.Configuration
             return this;
         }
 
+        public DeserializerOptionsDsl IgnoreUnmatchedArrayItems()
+        {
+            _options.IgnoreUnmatchedArrayItems = true;
+            return this;
+        }
+
         public DeserializerOptionsDsl IgnoreXmlAttributes()
         {
             _options.IgnoreXmlAttributes = true;

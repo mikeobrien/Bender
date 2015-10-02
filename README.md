@@ -127,6 +127,7 @@ var deserializer = new Deserializer(options);
 | `WithEnumNameComparison` | Allows you to set the specific `StringComparison` for `enum` value matching. |
 | `IgnoreXmlAttributes` | Ignores XML attributes. |
 | `IgnoreRootName` | Does not attempt to match the root element name. |
+| `IgnoreUnmatchedArrayItems` | Ignores array items whose names do not match. This throws an exception by default. |
 | `IgnoreArrayItemNames` | Does not attempt to match array item element names. |
 | `FailOnUnmatchedElements` | Fail if an element exists but not its corresponding member. |
 | `FailOnUnmatchedMembers` | Fail if a member exists but not its corresponding element. |
