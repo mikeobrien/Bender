@@ -804,5 +804,23 @@ namespace Tests.Deserializer.Json
             result.FieldValue.ShouldEqual("o");
             result.FieldValue2.ShouldEqual("rly");
         }
+
+
+        public class Response
+        {
+            public List<AoDOption> AodHourlyStatuses { get; set; }
+        }
+
+        public class AoDOption
+        {
+            public AoDOption() { }
+            public AoDOption(int id, string name)
+            {
+                Id = id;
+                Name = name;
+            }
+            public int Id { get; }
+            public string Name { get; }
+        }
     }
 }

@@ -25,7 +25,11 @@ namespace Bender.Reflection
             IsProperty = MemberType == MemberTypes.Property;
             IsField = MemberType == MemberTypes.Field;
             if (IsField) FieldInfo = (FieldInfo)member;
-            if (IsProperty) PropertyInfo = (PropertyInfo)member;
+            if (IsProperty)
+            {
+                PropertyInfo = (PropertyInfo)member;
+                HasGetter = PropertyInfo.GetMethod != null;
+            }
             _isPublicPropertyOrField = new Lazy<bool>(member.IsPublicPropertyOrField);
             _attributes = new Lazy<IEnumerable<Attribute>>(
                 () => member.GetCustomAttributes(true).Cast<Attribute>().ToList());
@@ -52,6 +56,7 @@ namespace Bender.Reflection
         public CachedType DeclaringType => _declaringType.Value;
         public MemberTypes MemberType { get; }
         public bool IsProperty { get; }
+        public bool HasGetter { get; }
         public bool IsField { get; }
         public bool IsPublicPropertyOrField => _isPublicPropertyOrField.Value;
         public bool IsReadonly => _isReadonly.Value;

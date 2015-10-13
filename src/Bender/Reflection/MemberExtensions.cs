@@ -109,6 +109,9 @@ namespace Bender.Reflection
         public static Action<object, object> BuildSetter(this PropertyInfo propertyInfo)
         {
             var method = propertyInfo.GetSetMethod(true);
+
+            if (method == null) throw new Exception($"Property {propertyInfo.Name} does not have a setter.");
+
             var instance = Expression.Parameter(typeof(object), "instance");
             var value = Expression.Parameter(typeof(object));
 

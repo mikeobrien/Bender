@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Xml.Serialization;
 using Bender.Reflection;
 using NUnit.Framework;
@@ -27,7 +25,9 @@ namespace Tests.Reflection
             public string Field;
             [XmlIgnore, XmlArray]
             public string Property { get; set; }
-            public string Readonly { get { return null; } }
+            public string ReadonlyProperty => null;
+            public string WriteonlyProperty { set { }  }
+            public readonly string ReadonlyField;
             public void Method() { }
         }
 
@@ -58,35 +58,35 @@ namespace Tests.Reflection
         }
 
         [Test]
-        [TestCaseSource("Cases")]
+        [TestCaseSource(nameof(Cases))]
         public void should_return_name(CachedMember cachedMember, MemberInfo memberInfo, Type type)
         {
             cachedMember.Name.ShouldEqual(memberInfo.Name);
         }
 
         [Test]
-        [TestCaseSource("Cases")]
+        [TestCaseSource(nameof(Cases))]
         public void should_return_type(CachedMember cachedMember, MemberInfo memberInfo, Type type)
         {
             cachedMember.Type.Type.ShouldEqual(type);
         }
 
         [Test]
-        [TestCaseSource("Cases")]
+        [TestCaseSource(nameof(Cases))]
         public void should_return_declaring_type(CachedMember cachedMember, MemberInfo memberInfo, Type type)
         {
             cachedMember.DeclaringType.Type.ShouldEqual(memberInfo.DeclaringType);
         }
 
         [Test]
-        [TestCaseSource("Cases")]
+        [TestCaseSource(nameof(Cases))]
         public void should_return_member_type(CachedMember cachedMember, MemberInfo memberInfo, Type type)
         {
             cachedMember.MemberType.ShouldEqual(memberInfo.MemberType);
         }
 
         [Test]
-        [TestCaseSource("Cases")]
+        [TestCaseSource(nameof(Cases))]
         public void should_return_is_property(CachedMember cachedMember, MemberInfo memberInfo, Type type)
         {
             var isProperty = memberInfo.MemberType == MemberTypes.Property;
@@ -95,7 +95,7 @@ namespace Tests.Reflection
         }
 
         [Test]
-        [TestCaseSource("Cases")]
+        [TestCaseSource(nameof(Cases))]
         public void should_return_is_field(CachedMember cachedMember, MemberInfo memberInfo, Type type)
         {
             var isField = memberInfo.MemberType == MemberTypes.Field;
@@ -104,7 +104,7 @@ namespace Tests.Reflection
         }
 
         [Test]
-        [TestCaseSource("Cases")]
+        [TestCaseSource(nameof(Cases))]
         public void should_return_is_property_or_field(CachedMember cachedMember, MemberInfo memberInfo, Type type)
         {
             cachedMember.IsPublicPropertyOrField.ShouldBeTrue();
@@ -118,21 +118,35 @@ namespace Tests.Reflection
         }
 
         [Test]
-        public void should_return_is_readonly()
+        public void should_return_field_is_readonly()
         {
-            new CachedMember(typeof(Members).GetProperty("Readonly"))
+            new CachedMember(typeof(Members).GetField(nameof(Members.ReadonlyField)))
                 .IsReadonly.ShouldBeTrue();
         }
 
         [Test]
-        [TestCaseSource("Cases")]
+        public void should_return_property_is_readonly()
+        {
+            new CachedMember(typeof(Members).GetProperty(nameof(Members.ReadonlyProperty)))
+                .IsReadonly.ShouldBeTrue();
+        }
+
+        [Test]
+        public void should_return_property_is_writeonly()
+        {
+            new CachedMember(typeof(Members).GetProperty("WriteonlyProperty"))
+                .HasGetter.ShouldBeFalse();
+        }
+
+        [Test]
+        [TestCaseSource(nameof(Cases))]
         public void should_return_is_not_readonly(CachedMember cachedMember, MemberInfo memberInfo, Type type)
         {
             cachedMember.IsReadonly.ShouldBeFalse();
         }
 
         [Test]
-        [TestCaseSource("Cases")]
+        [TestCaseSource(nameof(Cases))]
         public void should_return_attributes(CachedMember cachedMember, MemberInfo memberInfo, Type type)
         {
             cachedMember.Attributes.ShouldContain(x => x is XmlIgnoreAttribute);
@@ -140,7 +154,7 @@ namespace Tests.Reflection
         }
 
         [Test]
-        [TestCaseSource("Cases")]
+        [TestCaseSource(nameof(Cases))]
         public void should_return_attribute(CachedMember cachedMember, MemberInfo memberInfo, Type type)
         {
             cachedMember.GetAttribute<XmlIgnoreAttribute>().ShouldNotBeNull();
@@ -148,14 +162,14 @@ namespace Tests.Reflection
         }
 
         [Test]
-        [TestCaseSource("Cases")]
+        [TestCaseSource(nameof(Cases))]
         public void should_return_null_when_attribute_not_applied_attribute(CachedMember cachedMember, MemberInfo memberInfo, Type type)
         {
             cachedMember.GetAttribute<XmlArrayItemAttribute>().ShouldBeNull();
         }
 
         [Test]
-        [TestCaseSource("Cases")]
+        [TestCaseSource(nameof(Cases))]
         public void should_indicate_if_member_has_attributes(CachedMember cachedMember, MemberInfo memberInfo, Type type)
         {
             cachedMember.HasAttribute<XmlIgnoreAttribute>().ShouldBeTrue();
@@ -163,14 +177,14 @@ namespace Tests.Reflection
         }
 
         [Test]
-        [TestCaseSource("Cases")]
+        [TestCaseSource(nameof(Cases))]
         public void should_indicate_if_member_does_not_have_an_attributes(CachedMember cachedMember, MemberInfo memberInfo, Type type)
         {
             cachedMember.HasAttribute<XmlArrayItemAttribute>().ShouldBeFalse();
         }
 
         [Test]
-        [TestCaseSource("Cases")]
+        [TestCaseSource(nameof(Cases))]
         public void should_get_value(CachedMember cachedMember, MemberInfo memberInfo, Type type)
         {
             var @object = new Members();
@@ -179,7 +193,7 @@ namespace Tests.Reflection
         }
 
         [Test]
-        [TestCaseSource("Cases")]
+        [TestCaseSource(nameof(Cases))]
         public void should_set_value(CachedMember cachedMember, MemberInfo memberInfo, Type type)
         {
             var @object = new Members();
@@ -190,8 +204,7 @@ namespace Tests.Reflection
         [Test]
         public void should_get_named_value()
         {
-            var @object = new Members();
-            @object["oh"] = "hai";
+            var @object = new Members { ["oh"] = "hai"} ;
             new CachedMember(typeof(Members).GetProperty("Item"))
                 .GetValue(@object, "oh").ShouldEqual("hai");
         }

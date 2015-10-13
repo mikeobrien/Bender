@@ -19,7 +19,7 @@ namespace Tests.Nodes.Object
     [TestFixture]
     public class ObjectNodeTests
     {
-        public class MemberEnumeration
+        public class MemberAccessModifierEnumeration
         {
             private string _privateField;
             protected string ProtectedField;
@@ -30,36 +30,51 @@ namespace Tests.Nodes.Object
             public string PublicProperty { get; set; }
         }
 
-        public static ObjectNode CreateNode(Options options = null, IValue value = null, Mode mode = Mode.Deserialize)
+        public class MemberAccessibilityEnumeration
+        {
+            public readonly string ReadonlyField = "yada";
+            public string ReadonlyProperty => "yada";
+            public string WriteonlyProperty { set { } }
+        }
+
+        public static ObjectNode CreateAccessModifierNode(Options options = null, IValue value = null, Mode mode = Mode.Deserialize)
         {
             return new ObjectNode(new Context(options ?? Options.Create(), mode, "xml"), null,
-                value ?? new SimpleValue(typeof(MemberEnumeration).ToCachedType()), null, null);
+                value ?? new SimpleValue(typeof(MemberAccessModifierEnumeration).ToCachedType()), null, null);
+        }
+
+        public static ObjectNode CreateAccessibilityNode(Options options, Mode mode)
+        {
+            var value = new SimpleValue(new MemberAccessibilityEnumeration(), 
+                typeof(MemberAccessibilityEnumeration).ToCachedType());
+            return new ObjectNode(new Context(options ?? Options.Create(), 
+                mode, "xml"), null, value, null, null);
         }
 
         [Test]
         public void should_be_of_node_type_object()
         {
-            CreateNode().NodeType.ShouldEqual(NodeType.Object);
+            CreateAccessModifierNode().NodeType.ShouldEqual(NodeType.Object);
         }
 
         [Test]
         public void should_be_of_type_object()
         {
-            CreateNode().Type.ShouldEqual("object");
+            CreateAccessModifierNode().Type.ShouldEqual("object");
         }
 
         [Test]
         public void should_return_object_from_inner_value()
         {
-            var @object = new MemberEnumeration();
-            var node = CreateNode(value: new SimpleValue(@object, typeof(MemberEnumeration).ToCachedType()));
+            var @object = new MemberAccessModifierEnumeration();
+            var node = CreateAccessModifierNode(value: new SimpleValue(@object, typeof(MemberAccessModifierEnumeration).ToCachedType()));
             node.Value.ShouldBeSameAs(@object);
         }
 
         [Test]
         public void should_pass_ancestors_to_children()
         {
-            var parent = CreateNode();
+            var parent = CreateAccessModifierNode();
             var children = parent.Cast<NodeBase>().ToList();
             children.ShouldTotal(1);
             children.ShouldAllMatch(x =>
@@ -88,7 +103,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_enumerate_only_public_properties_by_default()
         {
-            var nodes = CreateNode().ToList();
+            var nodes = CreateAccessModifierNode().ToList();
             nodes.ShouldTotal(1);
             nodes.ShouldContainNode("PublicProperty");
         }
@@ -96,7 +111,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_enumerate_all_properties_when_configured()
         {
-            var nodes = CreateNode(Options.Create(x => x.IncludeNonPublicProperties())).ToList();
+            var nodes = CreateAccessModifierNode(Options.Create(x => x.IncludeNonPublicProperties())).ToList();
             nodes.ShouldTotal(3);
             nodes.ShouldContainNode("PublicProperty");
             nodes.ShouldContainNode("ProtectedProperty");
@@ -106,7 +121,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_enumerate_public_properties_and_public_fields_when_configured()
         {
-            var nodes = CreateNode(Options.Create(x => x.IncludePublicFields())).ToList();
+            var nodes = CreateAccessModifierNode(Options.Create(x => x.IncludePublicFields())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("PublicProperty");
             nodes.ShouldContainNode("PublicField");
@@ -115,7 +130,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_enumerate_public_properties_and_non_public_fields_when_configured()
         {
-            var nodes = CreateNode(Options.Create(x => x.IncludeNonPublicFields())).ToList();
+            var nodes = CreateAccessModifierNode(Options.Create(x => x.IncludeNonPublicFields())).ToList();
             nodes.ShouldTotal(3);
             nodes.ShouldContainNode("PublicProperty");
             nodes.ShouldContainNode("ProtectedField");
@@ -125,7 +140,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_enumerate_all_properties_and_fields_when_configured()
         {
-            var nodes = CreateNode(Options.Create(x => x
+            var nodes = CreateAccessModifierNode(Options.Create(x => x
                 .IncludePublicFields()
                 .IncludeNonPublicFields()
                 .IncludeNonPublicProperties())).ToList();
@@ -141,7 +156,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_include_members_with_a_custom_filter()
         {
-            var nodes = CreateNode(Options.Create(x => 
+            var nodes = CreateAccessModifierNode(Options.Create(x => 
                 x.IncludeMembersWhen((m, o) => m.Name.Length == 14)
                  .IncludeNonPublicFields())).ToList();
             nodes.ShouldTotal(2);
@@ -150,9 +165,33 @@ namespace Tests.Nodes.Object
         }
 
         [Test]
+        public void should_exclude_readonly_members_when_deserializing()
+        {
+            var nodes = CreateAccessibilityNode(Options.Create(x => x
+                .IncludePublicFields()), mode: Mode.Deserialize).ToList();
+
+            nodes.ShouldNotContainNode("ReadonlyField");
+            nodes.ShouldNotContainNode("ReadonlyProperty");
+
+            nodes.ShouldContainNode("WriteonlyProperty");
+        }
+
+        [Test]
+        public void should_exclude_writeonly_members_when_serializing()
+        {
+            var nodes = CreateAccessibilityNode(Options.Create(x => x
+                .IncludePublicFields()), mode: Mode.Serialize).ToList();
+
+            nodes.ShouldNotContainNode("WriteonlyProperty");
+
+            nodes.ShouldContainNode("ReadonlyField");
+            nodes.ShouldContainNode("ReadonlyProperty");
+        }
+
+        [Test]
         public void should_exclude_members_with_a_custom_filter()
         {
-            var nodes = CreateNode(Options.Create(x =>
+            var nodes = CreateAccessModifierNode(Options.Create(x =>
                 x.ExcludeMembersWhen((m, o) => m.Name.Contains("Pr"))
                  .IncludePublicFields())).ToList();
             nodes.ShouldTotal(1);
@@ -163,7 +202,10 @@ namespace Tests.Nodes.Object
         public void should_enumerate_value_on_anonymous_type()
         {
             var @object = new { Oh = "hai" };
-            var nodes = CreateNode(value: new SimpleValue(@object, @object.GetType().ToCachedType())).ToList();
+            var nodes = CreateAccessModifierNode(
+                value: new SimpleValue(@object, @object
+                    .GetType().ToCachedType()), 
+                mode: Mode.Serialize).ToList();
             nodes.ShouldTotal(1);
             nodes[0].Name.ShouldEqual("Oh");
             nodes[0].NodeType.ShouldEqual(NodeType.Value);
@@ -180,7 +222,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_exclude_members_with_xml_ignore_attribute_applied()
         {
-            var nodes = CreateNode(value: new SimpleValue(new ExcludedMember(), typeof(ExcludedMember).ToCachedType())).ToList();
+            var nodes = CreateAccessModifierNode(value: new SimpleValue(new ExcludedMember(), typeof(ExcludedMember).ToCachedType())).ToList();
             nodes.ShouldTotal(1);
             nodes.ShouldContainNode("Included");
         }
@@ -195,7 +237,7 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_exclude_indexers()
         {
-            var nodes = CreateNode(Options.Create(x => x.IncludePublicFields()),
+            var nodes = CreateAccessModifierNode(Options.Create(x => x.IncludePublicFields()),
                 new SimpleValue(new IndexerMember(), typeof(IndexerMember).ToCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
@@ -211,7 +253,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(List<string>), typeof(IList<string>))]
         public void should_exclude_collection_interface_members(Type actualType, Type specifiedType)
         {
-            var nodes = CreateNode(Options.Create(x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()),
+            var nodes = CreateAccessModifierNode(Options.Create(x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()),
                 new SimpleValue(actualType.CreateInstance(), specifiedType.ToCachedType())).ToList();
             nodes.ShouldTotal(0);
         }
@@ -229,7 +271,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(Dictionary), typeof(Dictionary))]
         public void should_exclude_idictionary_members(Type actualType, Type specifiedType)
         {
-            var nodes = CreateNode(Options.Create(x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()),
+            var nodes = CreateAccessModifierNode(Options.Create(x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()),
                 new SimpleValue(actualType.CreateInstance(), specifiedType.ToCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
@@ -249,7 +291,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(GenericDictionary), typeof(GenericDictionary))]
         public void should_exclude_generic_idictionary_members(Type actualType, Type specifiedType)
         {
-            var nodes = CreateNode(Options.Create(x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()),
+            var nodes = CreateAccessModifierNode(Options.Create(x => x.TreatDictionaryImplsAsObjects().IncludePublicFields()),
                 new SimpleValue(actualType.CreateInstance(), specifiedType.ToCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
@@ -269,7 +311,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(Enumerable), typeof(Enumerable))]
         public void should_exclude_ienumerable_members(Type actualType, Type specifiedType)
         {
-            var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
+            var nodes = CreateAccessModifierNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
                 new SimpleValue(actualType.CreateInstance(), specifiedType.ToCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
@@ -289,7 +331,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(GenericEnumerable), typeof(GenericEnumerable))]
         public void should_exclude_generic_ienumerable_members(Type actualType, Type specifiedType)
         {
-            var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
+            var nodes = CreateAccessModifierNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
                 new SimpleValue(actualType.CreateInstance(), specifiedType.ToCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
@@ -309,7 +351,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(List), typeof(List))]
         public void should_exclude_ilist_members(Type actualType, Type specifiedType)
         {
-            var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
+            var nodes = CreateAccessModifierNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
                 new SimpleValue(actualType.CreateInstance(), specifiedType.ToCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
@@ -329,7 +371,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(GenericList), typeof(GenericList))]
         public void should_exclude_generic_ilist_members(Type actualType, Type specifiedType)
         {
-            var nodes = CreateNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
+            var nodes = CreateAccessModifierNode(Options.Create(x => x.TreatEnumerableImplsAsObjects().IncludePublicFields()),
                 new SimpleValue(actualType.CreateInstance(), specifiedType.ToCachedType())).ToList();
             nodes.ShouldTotal(2);
             nodes.ShouldContainNode("Property");
@@ -350,7 +392,7 @@ namespace Tests.Nodes.Object
             var instance = new NodeMembers();
             var child = new Node("yada");
             instance.SetPropertyOrFieldValue(member, child);
-            var parent = CreateNode(Options.Create(),
+            var parent = CreateAccessModifierNode(Options.Create(),
                 new SimpleValue(instance, typeof (NodeMembers).ToCachedType()));
             parent.GetNode("yada").ShouldBeSameAs(child);
         }
@@ -361,29 +403,34 @@ namespace Tests.Nodes.Object
         public void should_get_node_by_name()
         {
             var @object = new { Oh = "hai" };
-            CreateNode(value: new SimpleValue(@object, @object.GetType().ToCachedType())).GetNode("Oh").Value.ShouldEqual("hai");
+            CreateAccessModifierNode(value: new SimpleValue(@object,
+                @object.GetType().ToCachedType()), mode: Mode.Serialize)
+                .GetNode("Oh").Value.ShouldEqual("hai");
         }
 
         [Test]
         public void should_return_null_when_there_is_no_match()
         {
             var @object = new { Oh = "hai" };
-            CreateNode(value: new SimpleValue(@object, @object.GetType().ToCachedType())).GetNode("yada").ShouldBeNull();
+            CreateAccessModifierNode(value: new SimpleValue(@object, 
+                @object.GetType().ToCachedType()), mode: Mode.Serialize)
+                .GetNode("yada").ShouldBeNull();
         }
 
         [Test]
         public void should_get_node_by_name_when_case_does_no_match_and_configured()
         {
             var @object = new { Oh = "hai" };
-            CreateNode(Options.Create(x => x.Deserialization(y => y.IgnoreNameCase())),
-                new SimpleValue(@object, @object.GetType().ToCachedType())).GetNode("Oh").Value.ShouldEqual("hai");
+            CreateAccessModifierNode(Options.Create(x => x.Deserialization(y => y.IgnoreNameCase())),
+                new SimpleValue(@object, @object.GetType().ToCachedType()), Mode.Serialize)
+                .GetNode("Oh").Value.ShouldEqual("hai");
         }
 
         [Test]
         public void should_fail_to_get_node_by_name_when_case_does_no_match()
         {
             var @object = new { Oh = "hai" };
-            CreateNode(value: new SimpleValue(@object, @object.GetType().ToCachedType())).GetNode("oh").ShouldBeNull();
+            CreateAccessModifierNode(value: new SimpleValue(@object, @object.GetType().ToCachedType())).GetNode("oh").ShouldBeNull();
         }
 
         // Metadata
@@ -443,7 +490,7 @@ namespace Tests.Nodes.Object
         [TestCase(typeof(ConcreteType), Mode.Serialize, 2)]
         public void should_enumerate_members_on_specified_type(Type type, Mode mode, int count)
         {
-            var nodes = CreateNode(value: new SimpleValue(ConcreteTypeInstance, type.ToCachedType()), 
+            var nodes = CreateAccessModifierNode(value: new SimpleValue(ConcreteTypeInstance, type.ToCachedType()), 
                 mode: mode).ToList();
             
             nodes.ShouldTotal(count);
@@ -470,7 +517,7 @@ namespace Tests.Nodes.Object
         public void should_enumerate_member_actual_type_in_serialize_mode_when_configured(
             string name)
         {
-            var nodes = CreateNode(
+            var nodes = CreateAccessModifierNode(
                     Options.Create(x => x.Serialization(y => y.UseActualType())),
                     new SimpleValue(ModelInstance, typeof(Model).ToCachedType()),
                     Mode.Serialize
@@ -492,7 +539,7 @@ namespace Tests.Nodes.Object
         public void should_enumerate_member_specified_type_when_in_serialize_mode_and_configured_or_when_in_deserialize_mode(
             string name, Mode mode, SerializationType type, int count)
         {
-            var nodes = CreateNode(Options.Create(x => x.Serialization(y => 
+            var nodes = CreateAccessModifierNode(Options.Create(x => x.Serialization(y => 
                 { if (type == SerializationType.ActualType) y.UseActualType(); })),
                 new SimpleValue(ModelInstance, typeof(Model).ToCachedType()), mode).ToList();
 
@@ -511,7 +558,7 @@ namespace Tests.Nodes.Object
         public void should_not_return_null_members_in_serialize_mode()
         {
             var @object = new NullMembers { Property = "hai" };
-            var members = CreateNode(value: new SimpleValue(@object, typeof(NullMembers).ToCachedType()), 
+            var members = CreateAccessModifierNode(value: new SimpleValue(@object, typeof(NullMembers).ToCachedType()), 
                 mode: Mode.Serialize).ToList();
 
             members.ShouldTotal(1);
@@ -542,7 +589,7 @@ namespace Tests.Nodes.Object
                 CyclicProperty = @object
             };
 
-            var members = CreateNode(value: new SimpleValue(@object, typeof(CyclicRoot).ToCachedType()), 
+            var members = CreateAccessModifierNode(value: new SimpleValue(@object, typeof(CyclicRoot).ToCachedType()), 
                 mode: Mode.Serialize).ToList();
 
             members.ShouldTotal(1);
@@ -575,7 +622,7 @@ namespace Tests.Nodes.Object
         [TestCase(Mode.Deserialize), TestCase(Mode.Serialize)]
         public void should_exclude_type(Mode mode)
         {
-            var nodes = CreateNode(
+            var nodes = CreateAccessModifierNode(
                 Options.Create(x => x.ExcludeType<string>()),
                 new SimpleValue(TypeFilteringInstance, typeof(TypeFiltering).ToCachedType()), mode).ToList();
         
@@ -587,7 +634,7 @@ namespace Tests.Nodes.Object
         [TestCase(Mode.Deserialize), TestCase(Mode.Serialize)]
         public void should_exclude_type_by_filter(Mode mode)
         {
-            var nodes = CreateNode(
+            var nodes = CreateAccessModifierNode(
                 Options.Create(x => x.ExcludeTypesWhen((t, o) =>
                 {
                     o.ShouldNotBeNull();
@@ -603,7 +650,7 @@ namespace Tests.Nodes.Object
         [TestCase(Mode.Deserialize), TestCase(Mode.Serialize)]
         public void should_include_type_by_filter(Mode mode)
         {
-            var nodes = CreateNode(
+            var nodes = CreateAccessModifierNode(
                 Options.Create(x => x.IncludeTypesWhen((t, o) =>
                 {
                     o.ShouldNotBeNull();
@@ -735,7 +782,7 @@ namespace Tests.Nodes.Object
         public static ObjectNode CreateInsertionNode(Options options = null, IValue value = null, Mode mode = Mode.Deserialize)
         {
             return new ObjectNode(new Context(options ?? Options.Create(), mode, "xml"), null,
-                value ?? new SimpleValue(typeof(MemberEnumeration).ToCachedType()), null, null);
+                value ?? new SimpleValue(typeof(MemberAccessModifierEnumeration).ToCachedType()), null, null);
         }
 
         public class NodeInsertion
@@ -750,7 +797,7 @@ namespace Tests.Nodes.Object
         public void should_insert_any_node_into_an_inode_member()
         {
             var instance = new NodeInsertion();
-            var parent = CreateNode(value: new SimpleValue(instance, typeof(NodeInsertion).ToCachedType()));
+            var parent = CreateAccessModifierNode(value: new SimpleValue(instance, typeof(NodeInsertion).ToCachedType()));
             var child = new Node("NodeInterface");
             parent.ShouldNotExecuteCallback<INode>((s, c) => s.Add(child, c));
             parent.GetNode("NodeInterface").ShouldBeSameAs(child);
@@ -764,7 +811,7 @@ namespace Tests.Nodes.Object
             StringComparison comparison, string name)
         {
             var instance = new NodeInsertion();
-            var parent = CreateNode(Options.Create(x => x.Deserialization(y => y.WithNameComparison(comparison))),
+            var parent = CreateAccessModifierNode(Options.Create(x => x.Deserialization(y => y.WithNameComparison(comparison))),
                 new SimpleValue(instance, typeof(NodeInsertion).ToCachedType()));
             var child = new Node(name);
             parent.ShouldNotExecuteCallback<INode>((s, c) => s.Add(child, c));
@@ -776,7 +823,7 @@ namespace Tests.Nodes.Object
         public void should_insert_a_node_into_a_member_of_the_same_type()
         {
             var instance = new NodeInsertion();
-            var parent = CreateNode(value: new SimpleValue(instance, typeof(NodeInsertion).ToCachedType())); 
+            var parent = CreateAccessModifierNode(value: new SimpleValue(instance, typeof(NodeInsertion).ToCachedType())); 
             var child = new Node("Node");
             parent.ShouldNotExecuteCallback<INode>((s, c) => s.Add(child, c));
             parent.GetNode("Node").ShouldBeSameAs(child);
@@ -787,7 +834,7 @@ namespace Tests.Nodes.Object
         public void should_ignore_a_node_that_implements_inode_but_not_the_same_type_as_the_member()
         {
             var instance = new NodeInsertion();
-            var parent = CreateNode(value: new SimpleValue(instance, typeof(NodeInsertion).ToCachedType()));
+            var parent = CreateAccessModifierNode(value: new SimpleValue(instance, typeof(NodeInsertion).ToCachedType()));
             var child = new Node("JsonNode");
             parent.ShouldNotExecuteCallback<INode>((s, c) => s.Add(child, c));
             var jsonNode = parent.GetNode("JsonNode");

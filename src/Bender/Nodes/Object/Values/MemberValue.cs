@@ -23,13 +23,10 @@ namespace Bender.Nodes.Object.Values
             set { _member.SetValue(_value.Instance, value); }
         }
 
-        public CachedType SpecifiedType { get; private set; }
-        public bool IsReadonly { get; private set; }
+        public CachedType SpecifiedType { get; }
+        public bool IsReadonly { get; }
         public void EnsureValue() { }
 
-        public CachedType ActualType
-        {
-            get { return Instance != null ? Instance.ToCachedType() : SpecifiedType; }
-        }
+        public CachedType ActualType => Instance != null ? Instance.ToCachedType() : SpecifiedType;
     }
 }
