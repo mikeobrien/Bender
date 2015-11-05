@@ -99,6 +99,7 @@ var deserializer = new Deserializer(options);
 | Method | Description |
 | ------------- | ------------- |
 | `PrettyPrint` | Includes whitespace in the output. |
+| `IncludeNullMembers` | Serializes null members. By default these are ignored. |
 | `UseActualType` | Indicates whether to serialize the actual type as opposed to the cast type. The cast type is used by default. |
 | `WriteDateTimeAsUtcIso8601` | Serialize `DateTime`'s as [ISO8601](http://en.wikipedia.org/wiki/ISO_8601). |
 | `WriteMicrosoftJsonDateTime` | Serialize `DateTime`'s as the Microsoft date format for json only (e.g. `/Date(1330848000000)/`). |

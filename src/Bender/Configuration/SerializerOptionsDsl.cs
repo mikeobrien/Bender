@@ -22,6 +22,12 @@ namespace Bender.Configuration
             return this;
         }
 
+        public SerializerOptionsDsl IncludeNullMembers()
+        {
+            _options.IncludeNullMembers = true;
+            return this;
+        }
+
         public SerializerOptionsDsl UseActualType()
         {
             _options.SerializationType = SerializationType.ActualType;

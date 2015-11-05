@@ -43,6 +43,7 @@ namespace Bender.Configuration
         }
 
         public bool PrettyPrint { get; set; }
+        public bool IncludeNullMembers { get; set; }
         public SerializationType SerializationType { get; set; }
 
         public XmlValueNodeType XmlValueNodeType { get; set; }

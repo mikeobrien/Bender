@@ -32,6 +32,7 @@ namespace Bender.Nodes.Object
         public static ObjectNodeBase CreateSerializable(string name, IValue @object, INode parent,
             Context context, CachedMember member = null)
         {
+            if (@object.Instance == null) return new ValueNode(context, name, @object, member, parent);
             switch (GetTypeKind(@object.SpecifiedType, context.Options))
             {
                 case TypeKind.Simple:

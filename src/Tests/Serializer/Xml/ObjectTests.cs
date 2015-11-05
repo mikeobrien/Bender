@@ -20,6 +20,7 @@ namespace Tests.Serializer.Xml
 
         public class SimpleTypeField
         {
+            public object ObjectProperty { get; set; }
             public string StringProperty { get; set; }
             public Uri UriProperty { get; set; }
             public UriFormat EnumProperty { get; set; }
@@ -61,6 +62,7 @@ namespace Tests.Serializer.Xml
             public Decimal DecimalProperty { get; set; }
             public Decimal? DecimalNullableProperty { get; set; }
 
+            public string ObjectField;
             public string StringField;
             public Uri UriField;
             public UriFormat EnumField;
@@ -134,7 +136,7 @@ namespace Tests.Serializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_serialize_value_elements(string suffix, Type type, object value, string name)
         {
             var memberName = name + suffix;
@@ -149,7 +151,7 @@ namespace Tests.Serializer.Xml
         }
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_serialize_value_attributes(string suffix, Type type, object value, string name)
         {
             var memberName = name + suffix;
@@ -161,6 +163,51 @@ namespace Tests.Serializer.Xml
 
             var xml = "<SimpleTypeField {0}=\"{1}\" />".ToFormat(memberName,
                 type.GetUnderlyingNullableType() == typeof (bool) ? value.ToString().ToLower() : value);
+            result.ShouldEqual(Xml.Declaration + xml);
+        }
+
+        private static readonly object[] NullableTypes = TestCases.Create("Property", "Field")
+            .AddType<object>("Object")
+            .AddType<string>("String")
+            .AddType<Uri>("Uri")
+
+            .AddType<UriFormat?>("EnumNullable")
+
+            .AddType<DateTime?>("DateTimeNullable")
+            .AddType<TimeSpan?>("TimeSpanNullable")
+            .AddType<Guid?>("GuidNullable")
+
+            .AddType<Boolean?>("BooleanNullable")
+            .AddType<Byte?>("ByteNullable")
+            .AddType<SByte?>("SByteNullable")
+            .AddType<Int16?>("Int16Nullable")
+            .AddType<UInt16?>("UInt16Nullable")
+            .AddType<Int32?>("Int32Nullable")
+            .AddType<UInt32?>("UInt32Nullable")
+            .AddType<Int64?>("Int64Nullable")
+            .AddType<UInt64?>("UInt64Nullable")
+            .AddType<IntPtr?>("IntPtrNullable")
+            .AddType<UIntPtr?>("UIntPtrNullable")
+            .AddType<Char?>("CharNullable")
+            .AddType<Double?>("DoubleNullable")
+            .AddType<Single?>("SingleNullable")
+            .AddType<Decimal?>("DecimalNullable")
+
+            .All;
+
+        [Test]
+        [TestCaseSource(nameof(NullableTypes))]
+        public void should_serialize_null_members_when_configured(string suffix, Type type, string name)
+        {
+            var memberName = name + suffix;
+            var @object = new SimpleTypeField();
+            @object.SetPropertyOrFieldValue(memberName, null);
+            var result = Serialize.Xml(@object, x => x
+                .IncludePublicFields()
+                .IncludeMembersWhen((m, o) => m.Name == memberName)
+                .Serialization(y => y.IncludeNullMembers()));
+
+            var xml = "<SimpleTypeField><{0} /></SimpleTypeField>".ToFormat(memberName);
             result.ShouldEqual(Xml.Declaration + xml);
         }
 

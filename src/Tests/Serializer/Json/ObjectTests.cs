@@ -20,6 +20,7 @@ namespace Tests.Serializer.Json
 
         public class SimpleTypeField
         {
+            public object ObjectProperty { get; set; }
             public string StringProperty { get; set; }
             public Uri UriProperty { get; set; }
             public UriFormat EnumProperty { get; set; } public UriFormat? EnumNullableProperty { get; set; }
@@ -42,6 +43,7 @@ namespace Tests.Serializer.Json
             public Single SingleProperty { get; set; } public Single? SingleNullableProperty { get; set; }
             public Decimal DecimalProperty { get; set; } public Decimal? DecimalNullableProperty { get; set; }
 
+            public string ObjectField;
             public string StringField;
             public Uri UriField;
             public UriFormat EnumField; public UriFormat? EnumNullableField;
@@ -67,7 +69,7 @@ namespace Tests.Serializer.Json
 
         private static readonly Guid RandomGuid = Guid.NewGuid();
 
-        private static readonly object[] SimpleFieldTypes = TestCases.Create("Property", "Field")
+        private static readonly object[] SimpleMemberTypes = TestCases.Create("Property", "Field")
             .AddType<string>("1", "String")
             .AddType<Uri>(new Uri("http://www.xkcd.com"), "Uri")
 
@@ -96,8 +98,8 @@ namespace Tests.Serializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
-        public void should_serialize_fields(string suffix, Type type, object value, string name)
+        [TestCaseSource(nameof(SimpleMemberTypes))]
+        public void should_serialize_members(string suffix, Type type, object value, string name)
         {
             var memberName = name + suffix;
             var @object = new SimpleTypeField();
@@ -108,6 +110,51 @@ namespace Tests.Serializer.Json
                 type.IsNumeric() || type.IsBoolean() ? 
                     value.ToString().ToLower() : 
                     "\"" + value.ToString().Replace("/", "\\/") + "\"");
+            result.ShouldEqual(json);
+        }
+
+        private static readonly object[] NullableTypes = TestCases.Create("Property", "Field")
+            .AddType<object>("Object")
+            .AddType<string>("String")
+            .AddType<Uri>("Uri")
+
+            .AddType<UriFormat?>("EnumNullable")
+
+            .AddType<DateTime?>("DateTimeNullable")
+            .AddType<TimeSpan?>("TimeSpanNullable")
+            .AddType<Guid?>("GuidNullable")
+
+            .AddType<Boolean?>("BooleanNullable")
+            .AddType<Byte?>("ByteNullable")
+            .AddType<SByte?>("SByteNullable")
+            .AddType<Int16?>("Int16Nullable")
+            .AddType<UInt16?>("UInt16Nullable")
+            .AddType<Int32?>("Int32Nullable")
+            .AddType<UInt32?>("UInt32Nullable")
+            .AddType<Int64?>("Int64Nullable")
+            .AddType<UInt64?>("UInt64Nullable")
+            .AddType<IntPtr?>("IntPtrNullable")
+            .AddType<UIntPtr?>("UIntPtrNullable")
+            .AddType<Char?>("CharNullable")
+            .AddType<Double?>("DoubleNullable")
+            .AddType<Single?>("SingleNullable")
+            .AddType<Decimal?>("DecimalNullable")
+
+            .All;
+
+        [Test]
+        [TestCaseSource(nameof(NullableTypes))]
+        public void should_serialize_null_members_when_configured(string suffix, Type type, string name)
+        {
+            var memberName = name + suffix;
+            var @object = new SimpleTypeField();
+            @object.SetPropertyOrFieldValue(memberName, null);
+            var result = Serialize.Json(@object, x => x
+                .IncludePublicFields()
+                .IncludeMembersWhen((m, o) => m.Name == memberName)
+                .Serialization(y => y.IncludeNullMembers()));
+
+            var json = "{{\"{0}\":null}}".ToFormat(memberName);
             result.ShouldEqual(json);
         }
 

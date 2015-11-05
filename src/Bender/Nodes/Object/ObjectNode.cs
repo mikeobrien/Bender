@@ -122,7 +122,8 @@ namespace Bender.Nodes.Object
 
             if (Context.Mode.IsSerialize()) members = members
                 .Where(x => !x.Member.IsProperty || (x.Member.IsProperty && x.Member.HasGetter))
-                .Where(x => x.Value.Instance != null && this.Walk<INode>(y => y.Parent)
+                .Where(x => (Context.Options.Serialization.IncludeNullMembers || 
+                        x.Value.Instance != null) && this.Walk<INode>(y => y.Parent)
                     .All(y => y.Value != x.Value.Instance));
 
             if (Context.Mode.IsDeserialize()) members = members.Where(x => !x.Member.IsReadonly);
