@@ -49,15 +49,15 @@ Additional convenience methods take or return a `byte[]`, `Stream`, file path, `
 Bender can be configured in a number of different ways depending on your needs.  First, the configuration DSL is available on all convenience and factory methods:
 
 ```csharp
-var model = Deserialize.Json<Model>("{ ... }", x => { ... });
-var serializer = Serializer.Create(x => { ... });
-var deserializer = Deserializer.Create(x => { ... });
+var model = Deserialize.Json<Model>("{ ... }", o => { ... });
+var serializer = Serializer.Create(o => { ... });
+var deserializer = Deserializer.Create(o => { ... });
 ```
 
 Second, you can create options with the options factory method and pass those in later:
 
 ```csharp
-var options = Options.Create(x => { ... });
+var options = Options.Create(o => { ... });
 
 var model = Deserialize.Json<Model>("{ ... }", options);
 var serializer = new Serializer(options);
@@ -169,7 +169,7 @@ Bender ships with some common naming conventions out of the box: `camelCase`,  `
 Lets take a look at an arbitrary example where we create a couple of naming conventions.
 
 ```csharp
-Options.Create(x => x
+Options.Create(o => o
     .WithPropertyNamingConvention(
         (name, member) => name + "EmailAddress",
         (name, member) => member.Type == typeof(MailAddress))
@@ -185,7 +185,7 @@ Visitors enable you to operate on each node in the target graph. Both serializat
 Lets take a look at an xml visitor for serialization that adds a `nil` attribute when a value is null.
 
 ```csharp
-Options.Create(x => x
+Options.Create(o => o
     .Serialization(s => s
         .AddXmlNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
         .AddXmlVisitor(
@@ -202,33 +202,28 @@ Readers read values from a source like xml or json during deserialization. Each 
 Lets look at an example where we read an IP address.
 
 ```csharp
-Options.Create(x => x
-    .Deserialization(s => s
-        .AddReader((value, source, target, options) => 
-            IPAddress.Parse(value.ToString()))));
+Options.Create(o => o
+    .Deserialization(d => d
+        .AddReader(value => IPAddress.Parse(value.ToString()))));
 ```
 
 You can also define readers for nullable and non-nullable types separately if you want to have fine grained control, for example if you wanted to override how `bool`'s are parsed:
 
 ```csharp
-Options.Create(x => x
-    .Deserialization(s => s
-        .AddReader<bool>(
-            (value, source, target, options) => bool.Parse(value.ToString()))
-        .AddReader<bool?>(
-            (value, source, target, options) => 
-                !string.IsNullOrEmpty(value.ToString()) ? 
-                    (bool?)bool.Parse(value.ToString()) : null)));
+Options.Create(o => o
+    .Deserialization(d => d
+        .AddReader<bool>(value => bool.Parse(value.ToString()))
+        .AddReader<bool?>(value => 
+			!string.IsNullOrEmpty(value.ToString()) ? 
+				(bool?)bool.Parse(value.ToString()) : null)));
 ```
     
 But most of the time the functionality will be the same for nullable and non nullable readers and writers, save the boilerplate null checking logic. So you can define one writer for both nullable and non-nullable types by passing true to the `handleNullable` parameter:
 
 ```csharp
-Options.Create(x => x
-    .Deserialization(s => s
-        .AddReader<bool>(
-            (value, source, target, options) => 
-                bool.Parse(value.ToString()), true)));
+Options.Create(o => o
+    .Deserialization(d => d
+        .AddReader<bool>(value => bool.Parse(value.ToString()), true)));
 ```
 
 ### Writers
@@ -238,10 +233,9 @@ Writers write values to a target like xml or json during serialization. Each opt
 Lets look at an example where we write an IP address.
 
 ```csharp
-Options.Create(x => x
+Options.Create(o => o
     .Serialization(s => s
-        .AddWriter<IPAddress>((value, source, target, options) => 
-            value.ToString())));
+        .AddWriter<IPAddress>(value => value.ToString())));
 ```
 
 ## Friendly Deserialization Error Messages
@@ -251,11 +245,11 @@ Errors during deserialization can result from issues with the source or with you
 Bender also has default friendly messages for parsing simple types and these can be overridden by calling the `WithFriendlyParseErrorMessage<T>(string message)` method in the deserialization options. Also, when creating readers you can make use of friendly parse error messages by specifying one for the type your reader handles:
 
 ```csharp
-var deserializer = Deserializer.Create(x => x
+var deserializer = Deserializer.Create(o => o
     .Deserialization(d => d
         .WithFriendlyParseErrorMessage<IPAddress>(
             "IP addresss not formatted correctly, must be formatted as '1.2.3.4'.")
-        .AddReader((v, s, t, o) => IPAddress.Parse(v.ToString()))));
+        .AddReader(value => IPAddress.Parse(value.ToString()))));
 ```
   
 Any errors resulting from the reader will be wrapped in a `FriendlyBenderException` with the friendly error specified.
