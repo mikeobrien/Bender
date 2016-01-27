@@ -188,6 +188,12 @@ namespace Bender.Configuration
             return this;
         }
 
+        public SerializerOptionsDsl AddWriter<T>(Func<T, object> writer)
+        {
+            _options.Writers.AddValueWriter<T>((v, s, t, o) => writer(v));
+            return this;
+        }
+
         public SerializerOptionsDsl AddWriter<T>(Func<T, NodeBase, INode, Options, object> writer)
         {
             _options.Writers.AddValueWriter(writer);

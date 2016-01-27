@@ -272,6 +272,12 @@ namespace Bender.Configuration
             return this;
         }
 
+        public DeserializerOptionsDsl AddReader<T>(Func<object, T> reader)
+        {
+            _options.Readers.AddValueReader((v, s, t, o) => reader(v));
+            return this;
+        }
+
         public DeserializerOptionsDsl AddReader<T>(Func<object, INode, NodeBase, Options, T> reader)
         {
             _options.Readers.AddValueReader(reader);
