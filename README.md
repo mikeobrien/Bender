@@ -204,8 +204,7 @@ Lets look at an example where we read an IP address.
 ```csharp
 Options.Create(x => x
     .Deserialization(s => s
-        .AddReader((value, source, target, options) => 
-            IPAddress.Parse(value.ToString()))));
+        .AddReader(value => IPAddress.Parse(value.ToString()))));
 ```
 
 You can also define readers for nullable and non-nullable types separately if you want to have fine grained control, for example if you wanted to override how `bool`'s are parsed:
@@ -213,12 +212,10 @@ You can also define readers for nullable and non-nullable types separately if yo
 ```csharp
 Options.Create(x => x
     .Deserialization(s => s
-        .AddReader<bool>(
-            (value, source, target, options) => bool.Parse(value.ToString()))
-        .AddReader<bool?>(
-            (value, source, target, options) => 
-                !string.IsNullOrEmpty(value.ToString()) ? 
-                    (bool?)bool.Parse(value.ToString()) : null)));
+        .AddReader<bool>(value => bool.Parse(value.ToString()))
+        .AddReader<bool?>(value => 
+			!string.IsNullOrEmpty(value.ToString()) ? 
+				(bool?)bool.Parse(value.ToString()) : null)));
 ```
     
 But most of the time the functionality will be the same for nullable and non nullable readers and writers, save the boilerplate null checking logic. So you can define one writer for both nullable and non-nullable types by passing true to the `handleNullable` parameter:
@@ -226,9 +223,7 @@ But most of the time the functionality will be the same for nullable and non nul
 ```csharp
 Options.Create(x => x
     .Deserialization(s => s
-        .AddReader<bool>(
-            (value, source, target, options) => 
-                bool.Parse(value.ToString()), true)));
+        .AddReader<bool>(value => bool.Parse(value.ToString()), true)));
 ```
 
 ### Writers
@@ -240,8 +235,7 @@ Lets look at an example where we write an IP address.
 ```csharp
 Options.Create(x => x
     .Serialization(s => s
-        .AddWriter<IPAddress>((value, source, target, options) => 
-            value.ToString())));
+        .AddWriter<IPAddress>(value => value.ToString())));
 ```
 
 ## Friendly Deserialization Error Messages
