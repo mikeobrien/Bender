@@ -22,10 +22,12 @@ namespace Tests.NamingConventions
 
         public class PropertyNameConventions
         {
-            [XmlAttribute]
+            [System.Xml.Serialization.XmlAttribute]
             public string NoNameAttributeProperty { get; set; }
-            [XmlAttribute("SomeAttribute")]
-            public string AttributeProperty { get; set; }
+            [Bender.Nodes.Xml.XmlAttribute("SomeAttribute")]
+            public string BenderXmlAttributeProperty { get; set; }
+            [System.Xml.Serialization.XmlAttribute("SomeAttribute")]
+            public string SystemXmlAttributeProperty { get; set; }
             [XmlElement]
             public string NoNameElementProperty { get; set; }
             [XmlElement("SomeElement")]
@@ -49,9 +51,16 @@ namespace Tests.NamingConventions
         }
 
         [Test]
-        public void should_use_property_xml_attribute_name()
+        public void should_use_property_bender_xml_attribute_name()
         {
-            GetName<PropertyNameConventions>("AttributeProperty")
+            GetName<PropertyNameConventions>("BenderXmlAttributeProperty")
+                .ShouldEqual("SomeAttribute");
+        }
+
+        [Test]
+        public void should_use_property_system_xml_attribute_name()
+        {
+            GetName<PropertyNameConventions>("SystemXmlAttributeProperty")
                 .ShouldEqual("SomeAttribute");
         }
 

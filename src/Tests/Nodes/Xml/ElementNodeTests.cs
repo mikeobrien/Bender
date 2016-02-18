@@ -162,11 +162,26 @@ namespace Tests.Nodes.Xml
         }
 
         [Test]
-        public void should_add_named_node_as_attribute_when_passed_xml_attribute_attribute()
+        public void should_add_named_node_as_attribute_when_passed_bender_xml_attribute_attribute()
         {
             var node = ElementNode.Create("Oh", Metadata.Empty, Options);
             node.ShouldExecuteCallback<INode>(
-                (x, c) => x.Add("Hai", NodeType.Value, new Metadata(new XmlAttributeAttribute()), c),
+                (x, c) => x.Add("Hai", NodeType.Value, new Metadata(new Bender.Nodes.Xml.XmlAttributeAttribute()), c),
+                x =>
+                {
+                    x.ShouldBeType<AttributeNode>();
+                    x.Name.ShouldEqual("Hai");
+                    x.NodeType.ShouldEqual(NodeType.Value);
+                    x.Parent.ShouldBeSameAs(node);
+                });
+        }
+
+        [Test]
+        public void should_add_named_node_as_attribute_when_passed_system_xml_attribute_attribute()
+        {
+            var node = ElementNode.Create("Oh", Metadata.Empty, Options);
+            node.ShouldExecuteCallback<INode>(
+                (x, c) => x.Add("Hai", NodeType.Value, new Metadata(new System.Xml.Serialization.XmlAttributeAttribute()), c),
                 x =>
                 {
                     x.ShouldBeType<AttributeNode>();

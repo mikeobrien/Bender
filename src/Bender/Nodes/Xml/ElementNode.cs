@@ -101,7 +101,9 @@ namespace Bender.Nodes.Xml
                 var @namespace = GetNamespace(node.Name, node.Metadata, _namespace, Options);
                 XmlNodeBase xmlNode;
                 if ((Options.Serialization.XmlValueNodeType == XmlValueNodeType.Attribute ||
-                    node.Metadata.Contains<XmlAttributeAttribute>()) && node.NodeType.IsValue())
+                    node.Metadata.Contains<System.Xml.Serialization.XmlAttributeAttribute>() ||
+                    node.Metadata.Contains<Bender.Nodes.Xml.XmlAttributeAttribute>()) && 
+                    node.NodeType.IsValue())
                 {
                     xmlNode = new AttributeNode(Element.CreateAttribute(node.Name), this, Options);
                 }

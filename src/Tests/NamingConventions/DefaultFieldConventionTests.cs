@@ -24,10 +24,12 @@ namespace Tests.NamingConventions
 
         public class FieldNameConventions
         {
-            [XmlAttribute]
+            [System.Xml.Serialization.XmlAttribute]
             private string _noNameAttributeProperty;
-            [XmlAttribute("SomeAttribute")]
-            private string _attributeProperty;
+            [Bender.Nodes.Xml.XmlAttribute("SomeAttribute")]
+            private string _benderXmlAttributeProperty;
+            [System.Xml.Serialization.XmlAttribute("SomeAttribute")]
+            private string _systemXmlAttributeProperty;
             [XmlElement]
             private string _noNameElementProperty;
             [XmlElement("SomeElement")]
@@ -51,9 +53,16 @@ namespace Tests.NamingConventions
         }
 
         [Test]
-        public void should_use_field_xml_attribute_name()
+        public void should_use_field_bender_xml_attribute_name()
         {
-            GetName<FieldNameConventions>("_attributeProperty")
+            GetName<FieldNameConventions>("_benderXmlAttributeProperty")
+                .ShouldEqual("SomeAttribute");
+        }
+
+        [Test]
+        public void should_use_field_system_xml_attribute_name()
+        {
+            GetName<FieldNameConventions>("_systemXmlAttributeProperty")
                 .ShouldEqual("SomeAttribute");
         }
 

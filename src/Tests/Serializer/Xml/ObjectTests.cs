@@ -370,8 +370,11 @@ namespace Tests.Serializer.Xml
 
         public class XmlAttributes
         {
-            [XmlAttribute("AttributeNameOverride")]
-            public string AttributeName { get; set; }
+            [Bender.Nodes.Xml.XmlAttribute("AttributeNameOverride")]
+            public string BenderXmlAttributeName { get; set; }
+
+            [System.Xml.Serialization.XmlAttribute("AttributeNameOverride")]
+            public string SystemXmlAttributeName { get; set; }
 
             [XmlElement("ElementNameOverride")]
             public string ElementName { get; set; }
@@ -384,9 +387,16 @@ namespace Tests.Serializer.Xml
         }
 
         [Test]
-        public void should_override_field_name_with_xml_attribute_attribute()
+        public void should_override_field_name_with_bender_xml_attribute_attribute()
         {
-            Serialize.Xml(new XmlAttributes {AttributeName = "hai"})
+            Serialize.Xml(new XmlAttributes { BenderXmlAttributeName = "hai"})
+                .ShouldEqual(Xml.Declaration + "<XmlAttributes AttributeNameOverride=\"hai\" />");
+        }
+
+        [Test]
+        public void should_override_field_name_with_system_xml_attribute_attribute()
+        {
+            Serialize.Xml(new XmlAttributes { SystemXmlAttributeName = "hai" })
                 .ShouldEqual(Xml.Declaration + "<XmlAttributes AttributeNameOverride=\"hai\" />");
         }
 
