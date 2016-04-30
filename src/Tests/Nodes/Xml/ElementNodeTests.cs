@@ -10,6 +10,7 @@ using Bender.Nodes;
 using Bender.Nodes.Xml;
 using NUnit.Framework;
 using Should;
+using XmlAttributeAttribute = Bender.Nodes.Xml.Microsoft.XmlAttributeAttribute;
 
 namespace Tests.Nodes.Xml
 {
@@ -166,7 +167,7 @@ namespace Tests.Nodes.Xml
         {
             var node = ElementNode.Create("Oh", Metadata.Empty, Options);
             node.ShouldExecuteCallback<INode>(
-                (x, c) => x.Add("Hai", NodeType.Value, new Metadata(new Bender.Nodes.Xml.XmlAttributeAttribute()), c),
+                (x, c) => x.Add("Hai", NodeType.Value, new Metadata(new XmlAttributeAttribute()), c),
                 x =>
                 {
                     x.ShouldBeType<AttributeNode>();

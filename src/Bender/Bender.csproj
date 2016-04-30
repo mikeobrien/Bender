@@ -72,7 +72,7 @@
     <Compile Include="Nodes\FormUrlEncoded\FormNode.cs" />
     <Compile Include="Nodes\FormUrlEncoded\FormValueNode.cs" />
     <Compile Include="Nodes\Object\Exceptions.cs" />
-    <Compile Include="Nodes\Xml\XmlAttributeAttribute.cs" />
+    <Compile Include="Nodes\Xml\Microsoft\XmlAttributeAttribute.cs" />
     <Compile Include="Nodes\Xml\XmlSiblingsAttribute.cs" />
     <Compile Include="Reflection\TypeExtensions.cs" />
     <Compile Include="Reflection\MemberExtensions.cs" />

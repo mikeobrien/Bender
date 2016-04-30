@@ -10,6 +10,7 @@ using Bender.Collections;
 using Bender.Configuration;
 using Bender.Extensions;
 using UTF8Encoding = Bender.Extensions.UTF8Encoding;
+using XmlAttributeAttribute = Bender.Nodes.Xml.Microsoft.XmlAttributeAttribute;
 
 namespace Bender.Nodes.Xml
 {
@@ -102,7 +103,7 @@ namespace Bender.Nodes.Xml
                 XmlNodeBase xmlNode;
                 if ((Options.Serialization.XmlValueNodeType == XmlValueNodeType.Attribute ||
                     node.Metadata.Contains<System.Xml.Serialization.XmlAttributeAttribute>() ||
-                    node.Metadata.Contains<Bender.Nodes.Xml.XmlAttributeAttribute>()) && 
+                    node.Metadata.Contains<XmlAttributeAttribute>()) && 
                     node.NodeType.IsValue())
                 {
                     xmlNode = new AttributeNode(Element.CreateAttribute(node.Name), this, Options);

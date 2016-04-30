@@ -370,7 +370,7 @@ namespace Tests.Serializer.Xml
 
         public class XmlAttributes
         {
-            [Bender.Nodes.Xml.XmlAttribute("AttributeNameOverride")]
+            [Bender.Nodes.Xml.Microsoft.XmlAttribute("AttributeNameOverride")]
             public string BenderXmlAttributeName { get; set; }
 
             [System.Xml.Serialization.XmlAttribute("AttributeNameOverride")]

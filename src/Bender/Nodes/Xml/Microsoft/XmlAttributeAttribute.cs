@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Bender.Nodes.Xml
+namespace Bender.Nodes.Xml.Microsoft
 {
     public class XmlAttributeAttribute : Attribute
     {

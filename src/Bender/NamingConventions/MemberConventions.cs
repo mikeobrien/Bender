@@ -2,6 +2,7 @@ using System.Xml.Serialization;
 using Bender.Collections;
 using Bender.Extensions;
 using Bender.Nodes.Xml;
+using XmlAttributeAttribute = Bender.Nodes.Xml.Microsoft.XmlAttributeAttribute;
 
 namespace Bender.NamingConventions
 {
@@ -19,7 +20,7 @@ namespace Bender.NamingConventions
                     .MapOrDefault(x => x.AttributeName)
                     .PipeWhen(x => !x.IsEmpty()) ??
                 context.Member
-                    .GetAttribute<Bender.Nodes.Xml.XmlAttributeAttribute>()
+                    .GetAttribute<XmlAttributeAttribute>()
                     .MapOrDefault(x => x.AttributeName)
                     .PipeWhen(x => !x.IsEmpty()) ??
                 context.Member.GetAttribute<XmlElementAttribute>()

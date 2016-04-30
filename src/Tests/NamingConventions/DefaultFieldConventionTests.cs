@@ -26,7 +26,7 @@ namespace Tests.NamingConventions
         {
             [System.Xml.Serialization.XmlAttribute]
             private string _noNameAttributeProperty;
-            [Bender.Nodes.Xml.XmlAttribute("SomeAttribute")]
+            [Bender.Nodes.Xml.Microsoft.XmlAttribute("SomeAttribute")]
             private string _benderXmlAttributeProperty;
             [System.Xml.Serialization.XmlAttribute("SomeAttribute")]
             private string _systemXmlAttributeProperty;

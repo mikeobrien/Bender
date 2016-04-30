@@ -24,7 +24,7 @@ namespace Tests.NamingConventions
         {
             [System.Xml.Serialization.XmlAttribute]
             public string NoNameAttributeProperty { get; set; }
-            [Bender.Nodes.Xml.XmlAttribute("SomeAttribute")]
+            [Bender.Nodes.Xml.Microsoft.XmlAttribute("SomeAttribute")]
             public string BenderXmlAttributeProperty { get; set; }
             [System.Xml.Serialization.XmlAttribute("SomeAttribute")]
             public string SystemXmlAttributeProperty { get; set; }
