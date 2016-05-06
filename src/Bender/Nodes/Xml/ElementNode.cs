@@ -19,11 +19,24 @@ namespace Bender.Nodes.Xml
         private readonly XNamespace _namespace;
         private NodeType _type = NodeType.Variable;
 
-        public ElementNode(XDocument document, Options options, XNamespace @namespace = null) :
+        public ElementNode(XDocument document, Options options, 
+            XNamespace @namespace = null) :
             this(document.Root, options, @namespace) { }
 
-        public ElementNode(XElement element, Options options, XNamespace @namespace = null, ElementNode parent = null)
+        public ElementNode(XDocument document, string xsl, 
+            Options options, XNamespace @namespace = null) :
+            this(document.Root, xsl, options, @namespace) { }
+
+        public ElementNode(XElement element, Options options, 
+            XNamespace @namespace = null, ElementNode parent = null)
             : base(element, parent, options)
+        {
+            _namespace = @namespace;
+        }
+
+        public ElementNode(XElement element, string xsl, Options options, 
+            XNamespace @namespace = null, ElementNode parent = null)
+            : base(element.Transform(xsl), parent, options)
         {
             _namespace = @namespace;
         }
@@ -41,21 +54,36 @@ namespace Bender.Nodes.Xml
 
         public static XmlNodeBase Parse(string xml, Options options)
         {
+            return Parse(xml, null, options);
+        }
+
+        public static XmlNodeBase Parse(string xml, string xsl, Options options)
+        {
             return new ElementNode(Exception<XmlException>.Map(
                 () => XDocument.Parse(xml),
-                x => new ParseException(x, NodeFormat)), options);
+                x => new ParseException(x, NodeFormat)), xsl, options);
         }
 
         public static XmlNodeBase Parse(byte[] bytes, Options options, Encoding encoding = null)
         {
-            return Parse(new MemoryStream(bytes), options, encoding);
+            return Parse(bytes, null, options, encoding);
+        }
+
+        public static XmlNodeBase Parse(byte[] bytes, string xsl, Options options, Encoding encoding = null)
+        {
+            return Parse(new MemoryStream(bytes), xsl, options, encoding);
         }
 
         public static XmlNodeBase Parse(Stream stream, Options options, Encoding encoding = null)
         {
+            return Parse(stream, null, options, encoding);
+        }
+
+        public static XmlNodeBase Parse(Stream stream, string xsl, Options options, Encoding encoding = null)
+        {
             return new ElementNode(Exception<XmlException>.Map(
                 () => XDocument.Load(new StreamReader(stream, encoding ?? Encoding.UTF8)),
-                x => new ParseException(x, NodeFormat)), options);
+                x => new ParseException(x, NodeFormat)), xsl, options);
         }
 
         public override string Type => "element";

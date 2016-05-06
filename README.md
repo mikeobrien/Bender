@@ -18,6 +18,7 @@ Bender is a highly configurable xml, json, CSV and form url encoded serializatio
 - Options for name comparison and ignoring names of certain elements altogether.
 - Options for failing on unmatched members or elements.
 - Ability to serialize and deserialize members of enumerable and dictionary implementations.
+- Ability to transform XML during deserialization.
 
 ## Install
 

@@ -7,6 +7,7 @@ using Bender.Collections;
 using Bender.Configuration;
 using Bender.Extensions;
 using Bender.Nodes;
+using Bender.Nodes.Xml;
 using NUnit.Framework;
 using Should;
 
@@ -56,26 +57,50 @@ namespace Tests.Deserializer.Xml
         public const string Xml = "<Model><Oh>Hai</Oh></Model>";
         public const string LowerCaseXml = "<model><oh>Hai</oh></model>";
 
+        public const string XslXml = "<Model><Fark>Hai</Fark></Model>";
+        public const string Xsl = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+                <xsl:stylesheet xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" version=""1.0"">
+                  <xsl:output method=""xml""/>
+
+                  <xsl:template match=""/Model"">
+                    <Model>
+                      <xsl:apply-templates select=""Fark""/>
+                    </Model>
+                  </xsl:template>
+
+                  <xsl:template match=""Fark"">
+                    <Oh>
+                      <xsl:value-of select=""."" />
+                    </Oh>
+                  </xsl:template>
+
+                </xsl:stylesheet>";
+
         private static readonly XDocument XmlDocument = XDocument.Parse(Xml);
         private static readonly XDocument LowerCaseXmlDocument = XDocument.Parse(LowerCaseXml);
+        private static readonly XDocument XslXmlDocument = XDocument.Parse(XslXml);
 
         private static readonly XElement XmlElement = XmlDocument.Root;
         private static readonly XElement LowerCaseXmlElement = LowerCaseXmlDocument.Root;
+        private static readonly XElement XslXmlElement = XslXmlDocument.Root;
         
-        private readonly static byte[] XmlBytesUtf8 = Encoding.UTF8.GetBytes(Xml);
-        private readonly static byte[] XmlBytesUnicode = Encoding.BigEndianUnicode.GetBytes(Xml);
-        private readonly static byte[] LowerCaseXmlBytesUtf8 = Encoding.UTF8.GetBytes(LowerCaseXml);
-        private readonly static byte[] LowerCaseXmlBytesUnicode = Encoding.BigEndianUnicode.GetBytes(LowerCaseXml);
+        private static readonly byte[] XmlBytesUtf8 = Encoding.UTF8.GetBytes(Xml);
+        private static readonly byte[] XmlBytesUnicode = Encoding.BigEndianUnicode.GetBytes(Xml);
+        private static readonly byte[] LowerCaseXmlBytesUtf8 = Encoding.UTF8.GetBytes(LowerCaseXml);
+        private static readonly byte[] LowerCaseXmlBytesUnicode = Encoding.BigEndianUnicode.GetBytes(LowerCaseXml);
+        private static readonly byte[] XslXmlBytes = Encoding.UTF8.GetBytes(XslXml);
 
-        private readonly static Stream XmlStreamUtf8 = new MemoryStream(XmlBytesUtf8);
-        private readonly static Stream XmlStreamUnicode = new MemoryStream(XmlBytesUnicode);
-        private readonly static Stream LowerCaseXmlStreamUtf8 = new MemoryStream(LowerCaseXmlBytesUtf8);
-        private readonly static Stream LowerCaseXmlStreamUnicode = new MemoryStream(LowerCaseXmlBytesUnicode);
+        private static readonly Stream XmlStreamUtf8 = new MemoryStream(XmlBytesUtf8);
+        private static readonly Stream XmlStreamUnicode = new MemoryStream(XmlBytesUnicode);
+        private static readonly Stream LowerCaseXmlStreamUtf8 = new MemoryStream(LowerCaseXmlBytesUtf8);
+        private static readonly Stream LowerCaseXmlStreamUnicode = new MemoryStream(LowerCaseXmlBytesUnicode);
+        private static readonly Stream XslXmlStream = new MemoryStream(XslXmlBytes);
 
-        private readonly static string XmlPathUtf8 = Path.GetTempFileName();
-        private readonly static string XmlPathUnicode = Path.GetTempFileName();
-        private readonly static string LowerCaseXmlPathUtf8 = Path.GetTempFileName();
-        private readonly static string LowerCaseXmlPathUnicode = Path.GetTempFileName();
+        private static readonly string XmlPathUtf8 = Path.GetTempFileName();
+        private static readonly string XmlPathUnicode = Path.GetTempFileName();
+        private static readonly string LowerCaseXmlPathUtf8 = Path.GetTempFileName();
+        private static readonly string LowerCaseXmlPathUnicode = Path.GetTempFileName();
+        private static readonly string XslXmlPath = Path.GetTempFileName();
 
         [SetUp]
         public void Setup()
@@ -84,11 +109,13 @@ namespace Tests.Deserializer.Xml
             XmlStreamUnicode.Reset();
             LowerCaseXmlStreamUtf8.Reset();
             LowerCaseXmlStreamUnicode.Reset();
+            XslXmlStream.Reset();
 
             File.WriteAllBytes(XmlPathUtf8, XmlBytesUtf8);
             File.WriteAllBytes(XmlPathUnicode, XmlBytesUnicode);
             File.WriteAllBytes(LowerCaseXmlPathUtf8, LowerCaseXmlBytesUtf8);
             File.WriteAllBytes(LowerCaseXmlPathUnicode, LowerCaseXmlBytesUnicode);
+            File.WriteAllBytes(XslXmlPath, XslXmlBytes);
         }
 
         [TearDown]
@@ -111,6 +138,13 @@ namespace Tests.Deserializer.Xml
             .AddFunc(() => Deserialize.Xml<Model>(LowerCaseXml, Configure))
             .AddFunc(() => Deserialize.Xml<Model>(LowerCaseXml, Options))
 
+            .AddFunc(() => Deserialize.Xml(XslXml, Xsl, typeof(Model)))
+            .AddFunc(() => Deserialize.Xml(XslXml, Xsl, typeof(Model), Configure))
+            .AddFunc(() => Deserialize.Xml(XslXml, Xsl, typeof(Model), Options))
+            .AddFunc(() => Deserialize.Xml<Model>(XslXml, Xsl))
+            .AddFunc(() => Deserialize.Xml<Model>(XslXml, Xsl, Configure))
+            .AddFunc(() => Deserialize.Xml<Model>(XslXml, Xsl, Options))
+
             // Document
 
             .AddFunc(() => Deserialize.Xml(XmlDocument, typeof(Model)))
@@ -120,6 +154,13 @@ namespace Tests.Deserializer.Xml
             .AddFunc(() => Deserialize.Xml<Model>(LowerCaseXmlDocument, Configure))
             .AddFunc(() => Deserialize.Xml<Model>(LowerCaseXmlDocument, Options))
 
+            .AddFunc(() => Deserialize.Xml(XslXmlDocument, Xsl, typeof(Model)))
+            .AddFunc(() => Deserialize.Xml(XslXmlDocument, Xsl, typeof(Model), Configure))
+            .AddFunc(() => Deserialize.Xml(XslXmlDocument, Xsl, typeof(Model), Options))
+            .AddFunc(() => Deserialize.Xml<Model>(XslXmlDocument, Xsl))
+            .AddFunc(() => Deserialize.Xml<Model>(XslXmlDocument, Xsl, Configure))
+            .AddFunc(() => Deserialize.Xml<Model>(XslXmlDocument, Xsl, Options))
+
             // Element
 
             .AddFunc(() => Deserialize.Xml(XmlElement, typeof(Model)))
@@ -128,6 +169,13 @@ namespace Tests.Deserializer.Xml
             .AddFunc(() => Deserialize.Xml<Model>(XmlElement))
             .AddFunc(() => Deserialize.Xml<Model>(LowerCaseXmlElement, Configure))
             .AddFunc(() => Deserialize.Xml<Model>(LowerCaseXmlElement, Options))
+
+            .AddFunc(() => Deserialize.Xml(XslXmlElement, Xsl, typeof(Model)))
+            .AddFunc(() => Deserialize.Xml(XslXmlElement, Xsl, typeof(Model), Configure))
+            .AddFunc(() => Deserialize.Xml(XslXmlElement, Xsl, typeof(Model), Options))
+            .AddFunc(() => Deserialize.Xml<Model>(XslXmlElement, Xsl))
+            .AddFunc(() => Deserialize.Xml<Model>(XslXmlElement, Xsl, Configure))
+            .AddFunc(() => Deserialize.Xml<Model>(XslXmlElement, Xsl, Options))
 
             // Bytes
 
@@ -144,6 +192,13 @@ namespace Tests.Deserializer.Xml
             .AddFunc(() => Deserialize.Xml<Model>(LowerCaseXmlBytesUnicode, Encoding.BigEndianUnicode, Configure))
             .AddFunc(() => Deserialize.Xml<Model>(LowerCaseXmlBytesUnicode, Encoding.BigEndianUnicode, Options))
 
+            .AddFunc(() => Deserialize.Xml(XslXmlBytes, Xsl, typeof(Model)))
+            .AddFunc(() => Deserialize.Xml(XslXmlBytes, Xsl, typeof(Model), Configure))
+            .AddFunc(() => Deserialize.Xml(XslXmlBytes, Xsl, typeof(Model), Options))
+            .AddFunc(() => Deserialize.Xml<Model>(XslXmlBytes, Xsl))
+            .AddFunc(() => Deserialize.Xml<Model>(XslXmlBytes, Xsl, Configure))
+            .AddFunc(() => Deserialize.Xml<Model>(XslXmlBytes, Xsl, Options))
+
             // Stream
 
             .AddFunc(() => Deserialize.Xml(XmlStreamUtf8, typeof(Model)))
@@ -158,6 +213,13 @@ namespace Tests.Deserializer.Xml
             .AddFunc(() => Deserialize.Xml<Model>(XmlStreamUnicode, Encoding.BigEndianUnicode))
             .AddFunc(() => Deserialize.Xml<Model>(LowerCaseXmlStreamUnicode, Encoding.BigEndianUnicode, Configure))
             .AddFunc(() => Deserialize.Xml<Model>(LowerCaseXmlStreamUnicode, Encoding.BigEndianUnicode, Options))
+
+            .AddFunc(() => Deserialize.Xml(XslXmlStream, Xsl, typeof(Model)))
+            .AddFunc(() => Deserialize.Xml(XslXmlStream, Xsl, typeof(Model), Configure))
+            .AddFunc(() => Deserialize.Xml(XslXmlStream, Xsl, typeof(Model), Options))
+            .AddFunc(() => Deserialize.Xml<Model>(XslXmlStream, Xsl))
+            .AddFunc(() => Deserialize.Xml<Model>(XslXmlStream, Xsl, Configure))
+            .AddFunc(() => Deserialize.Xml<Model>(XslXmlStream, Xsl, Options))
 
             // File
 
@@ -174,10 +236,17 @@ namespace Tests.Deserializer.Xml
             .AddFunc(() => Deserialize.XmlFile<Model>(LowerCaseXmlPathUnicode, Encoding.BigEndianUnicode, Configure))
             .AddFunc(() => Deserialize.XmlFile<Model>(LowerCaseXmlPathUnicode, Encoding.BigEndianUnicode, Options))
 
+            .AddFunc(() => Deserialize.XmlFile(XslXmlPath, Xsl, typeof(Model)))
+            .AddFunc(() => Deserialize.XmlFile(XslXmlPath, Xsl, typeof(Model), Configure))
+            .AddFunc(() => Deserialize.XmlFile(XslXmlPath, Xsl, typeof(Model), Options))
+            .AddFunc(() => Deserialize.XmlFile<Model>(XslXmlPath, Xsl))
+            .AddFunc(() => Deserialize.XmlFile<Model>(XslXmlPath, Xsl, Configure))
+            .AddFunc(() => Deserialize.XmlFile<Model>(XslXmlPath, Xsl, Options))
+
             .All;
 
         [Test]
-        [TestCaseSource("ToObjectCases")]
+        [TestCaseSource(nameof(ToObjectCases))]
         public void should_deserialize_to_object(Func<object> deserialize)
         {
             deserialize().As<Model>().Oh.ShouldEqual("Hai");
@@ -233,10 +302,10 @@ namespace Tests.Deserializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("ToNodeCases")]
+        [TestCaseSource(nameof(ToNodeCases))]
         public void should_deserialize_to_node(Func<INode> deserialize)
         {
-            deserialize().GetNode("Oh").Value.ShouldEqual("Hai");;
+            deserialize().GetNode("Oh").Value.ShouldEqual("Hai");
         }
     }
 }
