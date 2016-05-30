@@ -337,7 +337,7 @@ namespace Tests.Nodes.Object
             .All;
 
         [Test]
-        [TestCaseSource("GenericEnumerableCases")]
+        [TestCaseSource(nameof(GenericEnumerableCases))]
         public void should_enumerate_nodes_backed_by_generic_list(
             object enumerable, NodeType nodeType, string name)
         {
@@ -400,7 +400,7 @@ namespace Tests.Nodes.Object
             .All;
 
         [Test]
-        [TestCaseSource("CyclicCases")]
+        [TestCaseSource(nameof(CyclicCases))]
         public void should_not_return_cyclic_references_in_serialize_mode(CyclicRoot root, string name)
         {
             var members = new ObjectNode(new Context(Options.Create(), Mode.Serialize, "xml"), null,
@@ -417,7 +417,7 @@ namespace Tests.Nodes.Object
             var parent = CreateNodeOfType(new List<string> { "oh", null }, mode: Mode.Serialize);
             var children = parent.Cast<NodeBase>().ToList();
             children.ShouldTotal(1);
-            children.ShouldContain(x => x.Value == "oh");
+            children.ShouldContain(x => (string)x.Value == "oh");
         }
 
         [Test]
@@ -482,7 +482,7 @@ namespace Tests.Nodes.Object
             .All;
 
         [Test]
-        [TestCaseSource("GenericEnumerableTypeCases")]
+        [TestCaseSource(nameof(GenericEnumerableTypeCases))]
         public void should_enuerate_specified_type_when_backed_by_a_specified_generic_enumerable(
             Type type, object enumerable)
         {
@@ -495,7 +495,7 @@ namespace Tests.Nodes.Object
         }
 
         [Test]
-        [TestCaseSource("GenericEnumerableTypeCases")]
+        [TestCaseSource(nameof(GenericEnumerableTypeCases))]
         public void should_enuerate_actual_type_when_configured_and_backed_by_a_specified_generic_enumerable(
             Type type, object enumerable)
         {
@@ -519,7 +519,7 @@ namespace Tests.Nodes.Object
             .All;
 
         [Test]
-        [TestCaseSource("NonGenericEnumerableTypeCases")]
+        [TestCaseSource(nameof(NonGenericEnumerableTypeCases))]
         public void should_enumerate_actual_type_when_backed_by_a_specified_non_generic_enumerable(
             object enumerable, Type type)
         {

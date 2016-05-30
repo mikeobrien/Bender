@@ -21,8 +21,8 @@ namespace Bender.Nodes.Object
             Visitors = new VisitConventions<ObjectNodeBase, INode>(options, handler);
         }
 
-        public MapConventions<ObjectNodeBase, INode> Mapping { get; private set; }
-        public VisitConventions<ObjectNodeBase, INode> Visitors { get; private set; }
+        public MapConventions<ObjectNodeBase, INode> Mapping { get; }
+        public VisitConventions<ObjectNodeBase, INode> Visitors { get; }
 
         // Visitors
 

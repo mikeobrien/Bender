@@ -4,6 +4,7 @@ using Bender.Collections;
 using Bender.Extensions;
 using Bender.Nodes.Object.Values;
 using Bender.Reflection;
+using Bender.NamingConventions;
 
 namespace Bender.Nodes.Object
 {
@@ -41,7 +42,7 @@ namespace Bender.Nodes.Object
             _friendlyParseMessages = Context.Options.Deserialization.FriendlyParseErrorMessages;
         }
 
-        public override string Type { get { return "value"; } }
+        public override string Type => "value";
 
         protected override NodeType GetNodeType()
         {
@@ -60,7 +61,14 @@ namespace Bender.Nodes.Object
                     {
                         try
                         {
-                            Source.Instance = value.As<string>().ParseSimpleType(SpecifiedType);
+                            if (type.IsEnum)
+                            {
+                                Source.Instance = Context.Options.EnumNameConventions
+                                    .GetName(value, SpecifiedType, Context)
+                                    .ParseEnum(SpecifiedType, Context.Options.Deserialization
+                                        .EnumNameComparison.IgnoreCase());
+                            }
+                            else Source.Instance = value.As<string>().ParseSimpleType(SpecifiedType);
                         }
                         catch (Exception exception)
                         {
@@ -85,6 +93,16 @@ namespace Bender.Nodes.Object
                 else if (value == null && SpecifiedType.IsValueType && !SpecifiedType.IsNullable) 
                     throw new ValueCannotBeNullDeserializationException();
                 else Source.Instance = value;
+            }
+            get
+            {
+                var type = SpecifiedType.UnderlyingType;
+                if (type.IsEnum)
+                {
+                    return Context.Options.EnumNameConventions
+                        .GetName(base.Value, SpecifiedType, Context);
+            }
+                return base.Value;
             }
         }
     }

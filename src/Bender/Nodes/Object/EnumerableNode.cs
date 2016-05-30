@@ -39,7 +39,7 @@ namespace Bender.Nodes.Object
             _nodes = new Lazy<IEnumerable<INode>>(EnumerateNodes);
         }
 
-        public override string Type { get { return "list"; } }
+        public override string Type => "list";
 
         protected override NodeType GetNodeType()
         {

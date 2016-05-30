@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Bender.Configuration;
 using Bender.Nodes;
-using Bender.Nodes.Object;
 using Bender.Nodes.Object.Values;
 using Bender.Reflection;
 using NUnit.Framework;

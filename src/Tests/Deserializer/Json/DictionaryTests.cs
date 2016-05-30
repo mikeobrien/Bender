@@ -52,7 +52,7 @@ namespace Tests.Deserializer.Json
             .All; 
 
         [Test]
-        [TestCaseSource("SimpleDictionaryTypes")]
+        [TestCaseSource(nameof(SimpleDictionaryTypes))]
         public void should_deserialize_typed_dictionary_entries(Type type, object value, object defaultValue)
         {
             var json = "{{ \"item\": {0} }}".ToFormat(type.IsNumeric() || type.IsBoolean() ? value.ToString().ToLower() : "\"" + value + "\"");
@@ -67,7 +67,7 @@ namespace Tests.Deserializer.Json
         }
 
         [Test]
-        [TestCaseSource("SimpleDictionaryTypes")]
+        [TestCaseSource(nameof(SimpleDictionaryTypes))]
         public void should_deserialize_string_dictionary_entries(Type type, object value, object defaultValue)
         {
             var json = "{{ \"item\": \"{0}\" }}".ToFormat(type.IsNumeric() || type.IsBoolean() ? value.ToString().ToLower() : value);
@@ -147,7 +147,7 @@ namespace Tests.Deserializer.Json
         }
 
         [Test]
-        [TestCaseSource("SimpleDictionaryTypes")]
+        [TestCaseSource(nameof(SimpleDictionaryTypes))]
         public void should_fail_to_parse_empty_dictionary_entries(Type type, object value, object defaultValue)
         {
             if (type == typeof(string)) return;
@@ -168,7 +168,7 @@ namespace Tests.Deserializer.Json
         }
 
         [Test]
-        [TestCaseSource("SimpleDictionaryTypes")]
+        [TestCaseSource(nameof(SimpleDictionaryTypes))]
         public void should_fail_to_parse_empty_dictionary_entries_with_custom_parse_message(Type type, object value, object defaultValue)
         {
             if (type == typeof(string)) return;

@@ -5,7 +5,6 @@ using System.Xml.Serialization;
 using Bender;
 using Bender.Collections;
 using Bender.Extensions;
-using Bender.Nodes;
 using Bender.Nodes.Xml;
 using Bender.Reflection;
 using NUnit.Framework;
@@ -80,7 +79,7 @@ namespace Tests.Serializer.Xml
             public string Property {get; set; }
         }
 
-        private readonly static ComplexType ComplexTypeInstance = new ComplexType { Property = "hai" };
+        private static readonly ComplexType ComplexTypeInstance = new ComplexType { Property = "hai" };
 
         private static readonly object[] ComplexTypeArrays = TestCases.Create()
             .AddTypeAndValues(new List<ComplexType> { ComplexTypeInstance })
@@ -147,7 +146,8 @@ namespace Tests.Serializer.Xml
         [TestCaseSource(nameof(ComplexTypeDictionaries))]
         public void should_serialize_array_of_dictionary(Type type, object list)
         {
-            Serialize.Xml(list, type).ShouldEqual(Xml.Declaration + "<ArrayOfDictionaryOf{0}><DictionaryOf{0}><item><Property>hai</Property></item></DictionaryOf{0}></ArrayOfDictionaryOf{0}>"
+            Serialize.Xml(list, type).ShouldEqual(Xml.Declaration + ("<ArrayOfDictionaryOf{0}><DictionaryOf{0}>" +
+                    "<item><Property>hai</Property></item></DictionaryOf{0}></ArrayOfDictionaryOf{0}>")
                 .ToFormat(type.GetGenericEnumerableType().IsGenericEnumerable() ? "ComplexType" : "AnyType"));
         }
 

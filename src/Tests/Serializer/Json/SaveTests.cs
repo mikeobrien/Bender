@@ -53,7 +53,7 @@ namespace Tests.Serializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("StringCases")]
+        [TestCaseSource(nameof(StringCases))]
         public void should_serialize_string(Func<string> serialize, string output)
         {
             serialize().ShouldEqual(output);
@@ -61,15 +61,15 @@ namespace Tests.Serializer.Json
 
         // Bytes
 
-        private readonly static byte[] JsonBytesUtf8 = Encoding.UTF8.GetBytes(Json);
-        private readonly static byte[] JsonBytesUnicode = Encoding.BigEndianUnicode.GetBytes(Json);
-        private readonly static byte[] LowerCaseJsonBytesUtf8 = Encoding.UTF8.GetBytes(LowerCaseJson);
-        private readonly static byte[] LowerCaseJsonBytesUnicode = Encoding.BigEndianUnicode.GetBytes(LowerCaseJson);
+        private static readonly byte[] JsonBytesUtf8 = Encoding.UTF8.GetBytes(Json);
+        private static readonly byte[] JsonBytesUnicode = Encoding.BigEndianUnicode.GetBytes(Json);
+        private static readonly byte[] LowerCaseJsonBytesUtf8 = Encoding.UTF8.GetBytes(LowerCaseJson);
+        private static readonly byte[] LowerCaseJsonBytesUnicode = Encoding.BigEndianUnicode.GetBytes(LowerCaseJson);
 
-        private readonly static byte[] JsonBytesUtf8ByType = Encoding.UTF8.GetBytes(JsonByType);
-        private readonly static byte[] JsonBytesUnicodeByType = Encoding.BigEndianUnicode.GetBytes(JsonByType);
-        private readonly static byte[] LowerCaseJsonBytesUtf8ByType = Encoding.UTF8.GetBytes(LowerCaseJsonByType);
-        private readonly static byte[] LowerCaseJsonBytesUnicodeByType = Encoding.BigEndianUnicode.GetBytes(LowerCaseJsonByType);
+        private static readonly byte[] JsonBytesUtf8ByType = Encoding.UTF8.GetBytes(JsonByType);
+        private static readonly byte[] JsonBytesUnicodeByType = Encoding.BigEndianUnicode.GetBytes(JsonByType);
+        private static readonly byte[] LowerCaseJsonBytesUtf8ByType = Encoding.UTF8.GetBytes(LowerCaseJsonByType);
+        private static readonly byte[] LowerCaseJsonBytesUnicodeByType = Encoding.BigEndianUnicode.GetBytes(LowerCaseJsonByType);
 
         private static readonly object[] ByteCases = TestCases.Create()
 
@@ -97,7 +97,7 @@ namespace Tests.Serializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("ByteCases")]
+        [TestCaseSource(nameof(ByteCases))]
         public void should_serialize_bytes(Func<byte[]> serialize, byte[] output)
         {
             serialize().ShouldEqual(output);
@@ -105,15 +105,15 @@ namespace Tests.Serializer.Json
 
         // Stream
 
-        private readonly static Stream JsonStreamUtf8 = new MemoryStream(JsonBytesUtf8);
-        private readonly static Stream JsonStreamUnicode = new MemoryStream(JsonBytesUnicode);
-        private readonly static Stream LowerCaseJsonStreamUtf8 = new MemoryStream(LowerCaseJsonBytesUtf8);
-        private readonly static Stream LowerCaseJsonStreamUnicode = new MemoryStream(LowerCaseJsonBytesUnicode);
+        private static readonly Stream JsonStreamUtf8 = new MemoryStream(JsonBytesUtf8);
+        private static readonly Stream JsonStreamUnicode = new MemoryStream(JsonBytesUnicode);
+        private static readonly Stream LowerCaseJsonStreamUtf8 = new MemoryStream(LowerCaseJsonBytesUtf8);
+        private static readonly Stream LowerCaseJsonStreamUnicode = new MemoryStream(LowerCaseJsonBytesUnicode);
 
-        private readonly static Stream JsonStreamUtf8ByType = new MemoryStream(JsonBytesUtf8ByType);
-        private readonly static Stream JsonStreamUnicodeByType = new MemoryStream(JsonBytesUnicodeByType);
-        private readonly static Stream LowerCaseJsonStreamUtf8ByType = new MemoryStream(LowerCaseJsonBytesUtf8ByType);
-        private readonly static Stream LowerCaseJsonStreamUnicodeByType = new MemoryStream(LowerCaseJsonBytesUnicodeByType);
+        private static readonly Stream JsonStreamUtf8ByType = new MemoryStream(JsonBytesUtf8ByType);
+        private static readonly Stream JsonStreamUnicodeByType = new MemoryStream(JsonBytesUnicodeByType);
+        private static readonly Stream LowerCaseJsonStreamUtf8ByType = new MemoryStream(LowerCaseJsonBytesUtf8ByType);
+        private static readonly Stream LowerCaseJsonStreamUnicodeByType = new MemoryStream(LowerCaseJsonBytesUnicodeByType);
 
         [SetUp]
         public void CreateStreams()
@@ -155,7 +155,7 @@ namespace Tests.Serializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("AsStreamCases")]
+        [TestCaseSource(nameof(AsStreamCases))]
         public void should_serialize_as_stream(Func<Stream> serialize, Stream output)
         {
             serialize().ShouldEqual(output);
@@ -187,7 +187,7 @@ namespace Tests.Serializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("ToStreamCases")]
+        [TestCaseSource(nameof(ToStreamCases))]
         public void should_serialize_to_stream(Action<Stream> serialize, Stream output)
         {
             var stream = new MemoryStream();
@@ -198,15 +198,15 @@ namespace Tests.Serializer.Json
 
         // Files
 
-        private readonly static string JsonPathUtf8 = Path.GetTempFileName();
-        private readonly static string JsonPathUnicode = Path.GetTempFileName();
-        private readonly static string LowerCaseJsonPathUtf8 = Path.GetTempFileName();
-        private readonly static string LowerCaseJsonPathUnicode = Path.GetTempFileName();
+        private static readonly string JsonPathUtf8 = Path.GetTempFileName();
+        private static readonly string JsonPathUnicode = Path.GetTempFileName();
+        private static readonly string LowerCaseJsonPathUtf8 = Path.GetTempFileName();
+        private static readonly string LowerCaseJsonPathUnicode = Path.GetTempFileName();
 
-        private readonly static string JsonPathUtf8ByType = Path.GetTempFileName();
-        private readonly static string JsonPathUnicodeByType = Path.GetTempFileName();
-        private readonly static string LowerCaseJsonPathUtf8ByType = Path.GetTempFileName();
-        private readonly static string LowerCaseJsonPathUnicodeByType = Path.GetTempFileName();
+        private static readonly string JsonPathUtf8ByType = Path.GetTempFileName();
+        private static readonly string JsonPathUnicodeByType = Path.GetTempFileName();
+        private static readonly string LowerCaseJsonPathUtf8ByType = Path.GetTempFileName();
+        private static readonly string LowerCaseJsonPathUnicodeByType = Path.GetTempFileName();
 
         [SetUp]
         public void CreateFiles()
@@ -280,7 +280,7 @@ namespace Tests.Serializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("FileCases")]
+        [TestCaseSource(nameof(FileCases))]
         public void should_serialize_file(Func<byte[]> serialize, byte[] output)
         {
             serialize().ShouldEqual(output);

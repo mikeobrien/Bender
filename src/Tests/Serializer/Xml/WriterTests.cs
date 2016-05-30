@@ -1,6 +1,5 @@
 ﻿using System;
 using Bender;
-using Bender.Extensions;
 using NUnit.Framework;
 using Should;
 

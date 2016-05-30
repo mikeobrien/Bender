@@ -16,11 +16,11 @@ namespace Tests.Nodes.Object.Values
             public string Property { get; set; }
 
             public readonly string ReadonlyField;
-            public string ReadonlyProperty { get { return "hai"; } }
+            public string ReadonlyProperty => "hai";
 
-            public IList List { get { return new List<string>(); } }
+            public IList List => new List<string>();
 
-            public IList NullList { get { return null; } }
+            public IList NullList => null;
         }
 
         private static readonly CachedType ModelType = typeof(Model).ToCachedType(); 

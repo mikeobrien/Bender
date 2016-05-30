@@ -52,8 +52,8 @@ namespace Tests.Collections.Implementations
             return _list.Remove(item);
         }
 
-        public int Count { get { return _list.Count; } }
-        public bool IsReadOnly { get { return _list.IsReadOnly; } }
+        public int Count => _list.Count;
+        public bool IsReadOnly => _list.IsReadOnly;
 
         public int IndexOf(string item)
         {

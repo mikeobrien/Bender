@@ -116,17 +116,17 @@ namespace Tests.Serializer.Xml
 
         // Bytes
         
-        private readonly static byte[] UnicodeBom = { 254, 255 };
+        private static readonly byte[] UnicodeBom = { 254, 255 };
 
-        private readonly static byte[] XmlBytesUtf8 = Encoding.UTF8.GetBytes(XmlUtf8Declaration + Xml);
-        private readonly static byte[] XmlBytesUnicode = UnicodeBom.Concat(Encoding.BigEndianUnicode.GetBytes(XmlUnicodeDeclaration + Xml)).ToArray();
-        private readonly static byte[] LowerCaseXmlBytesUtf8 = Encoding.UTF8.GetBytes(XmlUtf8Declaration + LowerCaseXml);
-        private readonly static byte[] LowerCaseXmlBytesUnicode = UnicodeBom.Concat(Encoding.BigEndianUnicode.GetBytes(XmlUnicodeDeclaration + LowerCaseXml)).ToArray();
+        private static readonly byte[] XmlBytesUtf8 = Encoding.UTF8.GetBytes(XmlUtf8Declaration + Xml);
+        private static readonly byte[] XmlBytesUnicode = UnicodeBom.Concat(Encoding.BigEndianUnicode.GetBytes(XmlUnicodeDeclaration + Xml)).ToArray();
+        private static readonly byte[] LowerCaseXmlBytesUtf8 = Encoding.UTF8.GetBytes(XmlUtf8Declaration + LowerCaseXml);
+        private static readonly byte[] LowerCaseXmlBytesUnicode = UnicodeBom.Concat(Encoding.BigEndianUnicode.GetBytes(XmlUnicodeDeclaration + LowerCaseXml)).ToArray();
 
-        private readonly static byte[] XmlBytesUtf8ByType = Encoding.UTF8.GetBytes(XmlUtf8Declaration + XmlByType);
-        private readonly static byte[] XmlBytesUnicodeByType = UnicodeBom.Concat(Encoding.BigEndianUnicode.GetBytes(XmlUnicodeDeclaration + XmlByType)).ToArray();
-        private readonly static byte[] LowerCaseXmlBytesUtf8ByType = Encoding.UTF8.GetBytes(XmlUtf8Declaration + LowerCaseXmlByType);
-        private readonly static byte[] LowerCaseXmlBytesUnicodeByType = UnicodeBom.Concat(Encoding.BigEndianUnicode.GetBytes(XmlUnicodeDeclaration + LowerCaseXmlByType)).ToArray();
+        private static readonly byte[] XmlBytesUtf8ByType = Encoding.UTF8.GetBytes(XmlUtf8Declaration + XmlByType);
+        private static readonly byte[] XmlBytesUnicodeByType = UnicodeBom.Concat(Encoding.BigEndianUnicode.GetBytes(XmlUnicodeDeclaration + XmlByType)).ToArray();
+        private static readonly byte[] LowerCaseXmlBytesUtf8ByType = Encoding.UTF8.GetBytes(XmlUtf8Declaration + LowerCaseXmlByType);
+        private static readonly byte[] LowerCaseXmlBytesUnicodeByType = UnicodeBom.Concat(Encoding.BigEndianUnicode.GetBytes(XmlUnicodeDeclaration + LowerCaseXmlByType)).ToArray();
 
         private static readonly object[] ByteCases = TestCases.Create()
 
@@ -162,15 +162,15 @@ namespace Tests.Serializer.Xml
 
         // Stream
 
-        private readonly static Stream XmlStreamUtf8 = new MemoryStream(XmlBytesUtf8);
-        private readonly static Stream XmlStreamUnicode = new MemoryStream(XmlBytesUnicode);
-        private readonly static Stream LowerCaseXmlStreamUtf8 = new MemoryStream(LowerCaseXmlBytesUtf8);
-        private readonly static Stream LowerCaseXmlStreamUnicode = new MemoryStream(LowerCaseXmlBytesUnicode);
+        private static readonly Stream XmlStreamUtf8 = new MemoryStream(XmlBytesUtf8);
+        private static readonly Stream XmlStreamUnicode = new MemoryStream(XmlBytesUnicode);
+        private static readonly Stream LowerCaseXmlStreamUtf8 = new MemoryStream(LowerCaseXmlBytesUtf8);
+        private static readonly Stream LowerCaseXmlStreamUnicode = new MemoryStream(LowerCaseXmlBytesUnicode);
 
-        private readonly static Stream XmlStreamUtf8ByType = new MemoryStream(XmlBytesUtf8ByType);
-        private readonly static Stream XmlStreamUnicodeByType = new MemoryStream(XmlBytesUnicodeByType);
-        private readonly static Stream LowerCaseXmlStreamUtf8ByType = new MemoryStream(LowerCaseXmlBytesUtf8ByType);
-        private readonly static Stream LowerCaseXmlStreamUnicodeByType = new MemoryStream(LowerCaseXmlBytesUnicodeByType);
+        private static readonly Stream XmlStreamUtf8ByType = new MemoryStream(XmlBytesUtf8ByType);
+        private static readonly Stream XmlStreamUnicodeByType = new MemoryStream(XmlBytesUnicodeByType);
+        private static readonly Stream LowerCaseXmlStreamUtf8ByType = new MemoryStream(LowerCaseXmlBytesUtf8ByType);
+        private static readonly Stream LowerCaseXmlStreamUnicodeByType = new MemoryStream(LowerCaseXmlBytesUnicodeByType);
 
         [SetUp]
         public void CreateStreams()
@@ -255,15 +255,15 @@ namespace Tests.Serializer.Xml
 
         // Files
 
-        private readonly static string XmlPathUtf8 = Path.GetTempFileName();
-        private readonly static string XmlPathUnicode = Path.GetTempFileName();
-        private readonly static string LowerCaseXmlPathUtf8 = Path.GetTempFileName();
-        private readonly static string LowerCaseXmlPathUnicode = Path.GetTempFileName();
+        private static readonly string XmlPathUtf8 = Path.GetTempFileName();
+        private static readonly string XmlPathUnicode = Path.GetTempFileName();
+        private static readonly string LowerCaseXmlPathUtf8 = Path.GetTempFileName();
+        private static readonly string LowerCaseXmlPathUnicode = Path.GetTempFileName();
 
-        private readonly static string XmlPathUtf8ByType = Path.GetTempFileName();
-        private readonly static string XmlPathUnicodeByType = Path.GetTempFileName();
-        private readonly static string LowerCaseXmlPathUtf8ByType = Path.GetTempFileName();
-        private readonly static string LowerCaseXmlPathUnicodeByType = Path.GetTempFileName();
+        private static readonly string XmlPathUtf8ByType = Path.GetTempFileName();
+        private static readonly string XmlPathUnicodeByType = Path.GetTempFileName();
+        private static readonly string LowerCaseXmlPathUtf8ByType = Path.GetTempFileName();
+        private static readonly string LowerCaseXmlPathUnicodeByType = Path.GetTempFileName();
 
         [SetUp]
         public void CreateFiles()

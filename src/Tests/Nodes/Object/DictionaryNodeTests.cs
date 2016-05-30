@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Bender.Collections;
 using Bender.Configuration;
-using Bender.Extensions;
 using Bender.Nodes;
 using Bender.Nodes.Object;
 using Bender.Nodes.Object.Values;
@@ -33,7 +32,7 @@ namespace Tests.Nodes.Object
         public static DictionaryNode CreateNode(object dictionary,
             Options options = null, Mode mode = Mode.Deserialize, Type type = null, IValue value = null)
         {
-            return new DictionaryNode(new Context(options ?? Options.Create(), mode, "xml"), type != null ? type.Name : null,
+            return new DictionaryNode(new Context(options ?? Options.Create(), mode, "xml"), type?.Name,
                 value ?? new SimpleValue(dictionary, (type ?? dictionary.GetType()).ToCachedType()), null, null);
         }
 
@@ -117,7 +116,7 @@ namespace Tests.Nodes.Object
             .All;
 
         [Test]
-        [TestCaseSource("AddNodeCases")]
+        [TestCaseSource(nameof(AddNodeCases))]
         public void should_add_nodes(
             object dictionary, NodeType nodeType, string value1, int value2)
         {
@@ -236,7 +235,7 @@ namespace Tests.Nodes.Object
             .All;
 
         [Test]
-        [TestCaseSource("GenericDictionaryStringKeysCases")]
+        [TestCaseSource(nameof(GenericDictionaryStringKeysCases))]
         public void should_enumerate_nodes_backed_by_generic_dictionary(
             object dictionary, NodeType nodeType)
         {
@@ -295,7 +294,7 @@ namespace Tests.Nodes.Object
             .All;
         
         [Test]
-        [TestCaseSource("CyclicCases")]
+        [TestCaseSource(nameof(CyclicCases))]
         public void should_not_return_cyclic_references_in_serialize_mode(CyclicRoot root, string name)
         {
             var members = new ObjectNode(new Context(Options.Create(), Mode.Serialize, "xml"), null,
@@ -361,7 +360,7 @@ namespace Tests.Nodes.Object
             .All;
 
         [Test]
-        [TestCaseSource("GenericDictionaryTypeCases")]
+        [TestCaseSource(nameof(GenericDictionaryTypeCases))]
         public void should_enuerate_specified_type_when_backed_by_a_specified_generic_dictionary(
             Type type, object dictionary)
         {
@@ -374,7 +373,7 @@ namespace Tests.Nodes.Object
         }
 
         [Test]
-        [TestCaseSource("GenericDictionaryTypeCases")]
+        [TestCaseSource(nameof(GenericDictionaryTypeCases))]
         public void should_enuerate_actual_type_when_configured_and_backed_by_a_specified_generic_dictionary(
             Type type, object dictionary)
         {
@@ -396,7 +395,7 @@ namespace Tests.Nodes.Object
             .All;
 
         [Test]
-        [TestCaseSource("NonGenericDictionaryTypeCases")]
+        [TestCaseSource(nameof(NonGenericDictionaryTypeCases))]
         public void should_enumerate_actual_type_when_backed_by_a_specified_non_generic_dictionary(
             object dictionary, Type type)
         {

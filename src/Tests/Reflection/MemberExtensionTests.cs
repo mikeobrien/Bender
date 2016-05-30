@@ -351,8 +351,7 @@ namespace Tests.Reflection
         [Test]
         public void should_get_indexer_value()
         {
-            var indexer = new Indexer();
-            indexer["oh"] = "hai";
+            var indexer = new Indexer { ["oh"] = "hai" };
             typeof(Indexer).ToCachedType().GetIndexer()
                 .GetValue(indexer, "oh").ShouldEqual("hai");
         }

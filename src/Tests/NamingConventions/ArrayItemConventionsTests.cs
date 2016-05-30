@@ -31,7 +31,7 @@ namespace Tests.NamingConventions
 
         private static string GetName(CachedMember member, Action<NamingConventions<ArrayItemContext>> config)
         {
-            var convention = ArrayItemConventions.Create();
+            var convention = ArrayItemNamingConventions.Create();
             config(convention);
             return convention.GetName(new ArrayItemContext(ModelType, member, 
                 new Context(Options, Mode.Deserialize, "xml")));
@@ -61,7 +61,7 @@ namespace Tests.NamingConventions
         }
 
         [Test]
-        [TestCaseSource("ArrayItemCases")]
+        [TestCaseSource(nameof(ArrayItemCases))]
         public void should_add_conditional_field_name_modification_convention(
             CachedMember member, bool hasMember, string itemName)
         {
@@ -88,7 +88,7 @@ namespace Tests.NamingConventions
         }
 
         [Test]
-        [TestCaseSource("ArrayItemCases")]
+        [TestCaseSource(nameof(ArrayItemCases))]
         public void should_add_generic_field_name_convention(
             CachedMember member, bool hasMember, string itemName)
         {
@@ -101,7 +101,7 @@ namespace Tests.NamingConventions
         }
 
         [Test]
-        [TestCaseSource("ArrayItemCases")]
+        [TestCaseSource(nameof(ArrayItemCases))]
         public void should_add_conditional_generic_field_convention(
             CachedMember member, bool hasMember, string itemName)
         {

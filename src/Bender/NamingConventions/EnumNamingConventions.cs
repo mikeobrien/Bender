@@ -1,6 +1,6 @@
 namespace Bender.NamingConventions
 {
-    public class EnumConventions
+    public class EnumNamingConventions
     {
         public static NamingConventions<EnumContext> Create()
         {
@@ -9,7 +9,7 @@ namespace Bender.NamingConventions
 
         public static string DefaultConvention(EnumContext context)
         {
-            return context.Value.ToString();
+            return context.Value?.ToString();
         }
     }
 }

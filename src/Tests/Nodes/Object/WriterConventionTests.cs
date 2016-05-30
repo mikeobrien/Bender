@@ -1,7 +1,6 @@
 ﻿using System;
 using Bender;
 using Bender.Configuration;
-using Bender.Extensions;
 using Bender.Nodes;
 using Bender.Nodes.Object;
 using Bender.Nodes.Object.Values;
@@ -44,13 +43,13 @@ namespace Tests.Nodes.Object
             _writerObjectIncrement = (v, s, t, o) =>
             {
                 should_have_valid_parameters(s, t, o);
-                t.Value = t.Value == null ? 1 : (int)t.Value + 1;
+                t.Value = (int?) t.Value + 1 ?? 1;
             };
 
             _writerIncrement = (v, s, t, o) =>
             {
                 should_have_valid_parameters(s, t, o);
-                t.Value = t.Value == null ? 1 : (int)t.Value + 1;
+                t.Value = (int?) t.Value + 1 ?? 1;
             };
 
             _writerNullableIncrement = (v, s, t, o) =>
@@ -62,13 +61,13 @@ namespace Tests.Nodes.Object
             _writerIncrementValue = (v, s, t, o) =>
             {
                 should_have_valid_parameters(s, t, o);
-                return v == null ? 1 : (int)v + 1;
+                return v + 1;
             };
 
             _writerIncrementNullableValue = (v, s, t, o) =>
             {
                 should_have_valid_parameters(s, t, o);
-                return v == null ? 1 : (int?)v + 1;
+                return v == null ? 1 : v + 1;
             };
         }
 
@@ -307,8 +306,8 @@ namespace Tests.Nodes.Object
         public void should_add_writer_and_write_when_type_matches()
         {
             _writers
-                .AddWriter<int?>(_writerNullableIncrement)
-                .AddWriter<int?>(_writerNullableIncrement)
+                .AddWriter(_writerNullableIncrement)
+                .AddWriter(_writerNullableIncrement)
                 .Mapping.Map(_source, _target);
 
             _writers.Mapping.HasMapping(_source, _target).ShouldBeTrue();
@@ -319,7 +318,7 @@ namespace Tests.Nodes.Object
         public void should_add_writer_but_not_write_when_type_does_not_match()
         {
             _writers
-                .AddWriter<int>(_writerIncrement)
+                .AddWriter(_writerIncrement)
                 .Mapping.Map(_source, _target);
 
             _writers.Mapping.HasMapping(_source, _target).ShouldBeFalse();
@@ -332,8 +331,8 @@ namespace Tests.Nodes.Object
         public void should_add_writer_and_write_when_type_and_predicate_matches()
         {
             _writers
-                .AddWriter<int?>(_writerNullableIncrement, (v, s, t, o) => true)
-                .AddWriter<int?>(_writerNullableIncrement, (v, s, t, o) => true)
+                .AddWriter(_writerNullableIncrement, (v, s, t, o) => true)
+                .AddWriter(_writerNullableIncrement, (v, s, t, o) => true)
                 .Mapping.Map(_source, _target);
 
             _writers.Mapping.HasMapping(_source, _target).ShouldBeTrue();
@@ -344,7 +343,7 @@ namespace Tests.Nodes.Object
         public void should_add_writer_but_not_write_when_type_matches_but_predicate_does_not_match()
         {
             _writers
-                .AddWriter<int?>(_writerNullableIncrement, (v, s, t, o) => false)
+                .AddWriter(_writerNullableIncrement, (v, s, t, o) => false)
                 .Mapping.Map(_source, _target);
 
             _writers.Mapping.HasMapping(_source, _target).ShouldBeFalse();
@@ -355,7 +354,7 @@ namespace Tests.Nodes.Object
         public void should_add_writer_but_not_write_when_predicate_matches_but_type_does_not_match()
         {
             _writers
-                .AddWriter<int>(_writerIncrement, (v, s, t, o) => true)
+                .AddWriter(_writerIncrement, (v, s, t, o) => true)
                 .Mapping.Map(_source, _target);
 
             _writers.Mapping.HasMapping(_source, _target).ShouldBeFalse();
@@ -368,8 +367,8 @@ namespace Tests.Nodes.Object
         public void should_add_value_writer_and_write_when_type_matches()
         {
             _writers
-                .AddValueWriter<int?>(_writerIncrementNullableValue)
-                .AddValueWriter<int?>(_writerIncrementNullableValue)
+                .AddValueWriter(_writerIncrementNullableValue)
+                .AddValueWriter(_writerIncrementNullableValue)
                 .Mapping.Map(_source, _target);
 
             _writers.Mapping.HasMapping(_source, _target).ShouldBeTrue();
@@ -380,7 +379,7 @@ namespace Tests.Nodes.Object
         public void should_add_value_writer_but_not_write_when_type_does_not_match()
         {
             _writers
-                .AddValueWriter<int>(_writerIncrementValue)
+                .AddValueWriter(_writerIncrementValue)
                 .Mapping.Map(_source, _target);
 
             _writers.Mapping.HasMapping(_source, _target).ShouldBeFalse();
@@ -420,7 +419,7 @@ namespace Tests.Nodes.Object
         {
             _target.NodeType = NodeType.Object;
             _writers
-                .AddValueWriter<int?>(_writerIncrementNullableValue)
+                .AddValueWriter(_writerIncrementNullableValue)
                 .Mapping.Map(_source, _target);
 
             _writers.Mapping.HasMapping(_source, _target).ShouldBeTrue();
@@ -434,7 +433,7 @@ namespace Tests.Nodes.Object
             _target.NodeType = NodeType.Object;
             _target.HasFixedNodeType = true;
             var exception = Assert.Throws<WriterException>(() => _writers
-                .AddValueWriter<int?>(_writerIncrementNullableValue)
+                .AddValueWriter(_writerIncrementNullableValue)
                 .Mapping.Map(_source, _target));
 
             exception.Message.ShouldEqual("Writer failed: Values not supported on object nodes.");
@@ -447,8 +446,8 @@ namespace Tests.Nodes.Object
         public void should_add_value_writer_and_write_when_type_and_predicate_matches()
         {
             _writers
-                .AddValueWriter<int?>(_writerIncrementNullableValue, (v, s, t, o) => true)
-                .AddValueWriter<int?>(_writerIncrementNullableValue, (v, s, t, o) => true)
+                .AddValueWriter(_writerIncrementNullableValue, (v, s, t, o) => true)
+                .AddValueWriter(_writerIncrementNullableValue, (v, s, t, o) => true)
                 .Mapping.Map(_source, _target);
 
             _writers.Mapping.HasMapping(_source, _target).ShouldBeTrue();
@@ -459,7 +458,7 @@ namespace Tests.Nodes.Object
         public void should_add_value_writer_but_not_write_when_type_matches_but_predicate_does_not_match()
         {
             _writers
-                .AddValueWriter<int?>(_writerIncrementNullableValue, (v, s, t, o) => false)
+                .AddValueWriter(_writerIncrementNullableValue, (v, s, t, o) => false)
                 .Mapping.Map(_source, _target);
 
             _writers.Mapping.HasMapping(_source, _target).ShouldBeFalse();
@@ -470,7 +469,7 @@ namespace Tests.Nodes.Object
         public void should_add_value_writer_but_not_write_when_predicate_matches_but_type_does_not_match()
         {
             _writers
-                .AddValueWriter<int>(_writerIncrementValue, (v, s, t, o) => true)
+                .AddValueWriter(_writerIncrementValue, (v, s, t, o) => true)
                 .Mapping.Map(_source, _target);
 
             _writers.Mapping.HasMapping(_source, _target).ShouldBeFalse();

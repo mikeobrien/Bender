@@ -13,7 +13,7 @@ namespace Tests.Reflection
     {
         public class Members
         {
-            private Dictionary<string, string> _items = new Dictionary<string, string>();
+            private readonly Dictionary<string, string> _items = new Dictionary<string, string>();
 
             public string this[string index]
             {

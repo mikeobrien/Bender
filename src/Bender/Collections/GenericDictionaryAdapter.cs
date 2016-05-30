@@ -28,15 +28,15 @@ namespace Bender.Collections
             return new GenericDictionaryAdapter(dictionary, type);
         }
 
-        public ICollection Keys { get { return (ICollection)_type.GetMember("Keys").GetValue(_dictionary); } }
-        public ICollection Values { get { return (ICollection)_type.GetMember("Values").GetValue(_dictionary); } }
+        public ICollection Keys => (ICollection)_type.GetMember("Keys").GetValue(_dictionary);
+        public ICollection Values => (ICollection)_type.GetMember("Values").GetValue(_dictionary);
 
-        public bool IsReadOnly { get { return (bool)_type.GetMember("IsReadOnly").GetValue(_dictionary); } }
-        public bool IsFixedSize { get { return false; } }
+        public bool IsReadOnly => (bool)_type.GetMember("IsReadOnly").GetValue(_dictionary);
+        public bool IsFixedSize => false;
 
-        public int Count { get { return (int)_type.GetMember("Count").GetValue(_dictionary); } }
-        public object SyncRoot { get { return _dictionary; } }
-        public bool IsSynchronized { get { return false; } }
+        public int Count => (int)_type.GetMember("Count").GetValue(_dictionary);
+        public object SyncRoot => _dictionary;
+        public bool IsSynchronized => false;
 
         public object this[object key]
         {
@@ -100,9 +100,9 @@ namespace Bender.Collections
                 }
             }
 
-            public DictionaryEntry Entry { get { return (DictionaryEntry)Current; } }
-            public Object Key { get { return Entry.Key; } }
-            public Object Value { get { return Entry.Value; } }
+            public DictionaryEntry Entry => (DictionaryEntry)Current;
+            public Object Key => Entry.Key;
+            public Object Value => Entry.Value;
             public Boolean MoveNext() { return _enumerator.MoveNext(); }
             public void Reset() { _enumerator.Reset(); }
         }

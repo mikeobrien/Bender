@@ -114,7 +114,7 @@ namespace Tests.Deserializer
             .All;
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_deserialize_typed_fields(string suffix, Type type, object value, string name)
         {
             var form = "{0}={1}".ToFormat(name + suffix,
@@ -128,7 +128,7 @@ namespace Tests.Deserializer
         }
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_deserialize_string_fields(string suffix, Type type, object value, string name)
         {
             var form = "{0}={1}".ToFormat(name + suffix,
@@ -142,7 +142,7 @@ namespace Tests.Deserializer
         }
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_fail_to_parse_empty_fields(string suffix, Type type, object value, string name)
         {
             if (type == typeof(string)) return;
@@ -166,7 +166,7 @@ namespace Tests.Deserializer
         }
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_fail_to_parse_empty_fields_with_custom_parse_message(string suffix, Type type, object value, string name)
         {
             if (type == typeof(string)) return;

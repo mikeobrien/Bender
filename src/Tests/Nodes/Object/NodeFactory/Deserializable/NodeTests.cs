@@ -55,7 +55,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         public class Lazy { public string Member { get; set; } }
 
         [Test]
-        [TestCaseSource("LazyTypeCases")]
+        [TestCaseSource(nameof(LazyTypeCases))]
         public void should_create_lazy_nodes_when_member_is_not_null_and_not_root(Type type, object @object, NodeType nodeType)
         {
             var value = new SimpleValue(type.ToCachedType());
@@ -69,7 +69,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         }
 
         [Test]
-        [TestCaseSource("LazyTypeCases")]
+        [TestCaseSource(nameof(LazyTypeCases))]
         public void should_not_create_lazy_nodes_when_member_is_null_and_not_root(Type type, object @object, NodeType nodeType)
         {
             var value = new SimpleValue(type.ToCachedType());
@@ -83,7 +83,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         }
 
         [Test]
-        [TestCaseSource("LazyTypeCases")]
+        [TestCaseSource(nameof(LazyTypeCases))]
         public void should_not_create_lazy_nodes_when_root(Type type, object @object, NodeType nodeType)
         {
             var value = new SimpleValue(type.ToCachedType());

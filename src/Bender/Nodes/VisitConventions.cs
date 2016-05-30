@@ -52,7 +52,7 @@ namespace Bender.Nodes
         {
             try
             {
-                if (_visit != null) _visit(source, target, _options);
+                _visit?.Invoke(source, target, _options);
             }
             catch (Exception exception)
             {

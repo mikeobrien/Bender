@@ -5,7 +5,7 @@ namespace Bender.Nodes
 {
     public class Metadata
     {
-        public readonly static Metadata Empty = new Metadata();
+        public static readonly Metadata Empty = new Metadata();
 
         protected List<object> _metadata;
 
