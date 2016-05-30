@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Bender.Collections;
-using Bender.Extensions;
 using Bender.Nodes.Xml;
 
 namespace Bender.Nodes

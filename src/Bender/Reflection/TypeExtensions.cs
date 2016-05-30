@@ -149,7 +149,7 @@ namespace Bender.Reflection
 
         public static bool HasMatchingConstructor(this Type type, object[] parameters)
         {
-            return type.HasMatchingConstructor(parameters != null ? parameters.Select(x => x.GetType()).ToArray() : null);
+            return type.HasMatchingConstructor(parameters?.Select(x => x.GetType()).ToArray());
         }
 
         // Simple types
@@ -196,10 +196,15 @@ namespace Bender.Reflection
             return Enum.ToObject(enumType, value);
         }
 
+        public static object ParseEnum(this string value, CachedType type, bool ignoreCase)
+        {
+            return Enum.Parse(type.UnderlyingType.Type, value, ignoreCase);
+        }
+
         public static object ParseSimpleType(this string value, CachedType type)
         {
             if (type.Is<string>() || value == null) return value;
-            if (type.IsEnum) return Enum.Parse(type.UnderlyingType.Type, value, true);
+            if (type.IsEnum) return value.ParseEnum(type, true);
             switch (type.TypeCode)
             {
                 case TypeCode.Char: 
@@ -229,6 +234,16 @@ namespace Bender.Reflection
         }
 
         // Nullable types
+
+        public static bool IsOptional(this Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Optional<>);
+        }
+
+        public static Type GetUnderlyingOptionalType(this Type type)
+        {
+            return type.IsOptional() ? type.GetGenericArguments().First() : type;
+        }
 
         public static Type GetUnderlyingNullableType(this Type type)
         {

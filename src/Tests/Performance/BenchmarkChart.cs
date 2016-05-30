@@ -56,10 +56,9 @@ namespace Tests.Performance
                     ChartType = SeriesChartType.StackedBar,
                     Color = color,
                     LegendText = label,
-                    IsVisibleInLegend = true
+                    IsVisibleInLegend = true,
+                    ["PixelPointWidth"] = "10"
                 };
-
-                series["PixelPointWidth"] = "10";
 
                 results.OrderBy(x => x.Name).ForEach(x => series.Points.AddXY(
                     "{0} {1}".ToFormat(x.Name, x.Format), timing(x)));

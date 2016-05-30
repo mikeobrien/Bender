@@ -10,8 +10,8 @@ namespace Bender.Nodes.Xml
         public AttributeNode(XAttribute attribute, ElementNode parent, Options options) : 
             base(attribute, parent, options) { }
 
-        public override string Type { get { return "attribute"; } }
-        public override string Path { get { return Attribute.GetPath(); } }
+        public override string Type => "attribute";
+        public override string Path => Attribute.GetPath();
 
         protected override NodeType GetNodeType()
         {

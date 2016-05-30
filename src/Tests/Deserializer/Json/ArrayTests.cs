@@ -52,7 +52,7 @@ namespace Tests.Deserializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("SimpleArrayTypes")]
+        [TestCaseSource(nameof(SimpleArrayTypes))]
         public void should_deserialize_typed_array_items(Type type, object value, object defaultValue)
         {
             var json = "[ {0} ]".ToFormat(type.IsNumeric() || type.IsBoolean() ? value.ToString().ToLower() : "\"" + value + "\"");
@@ -67,7 +67,7 @@ namespace Tests.Deserializer.Json
         }
 
         [Test]
-        [TestCaseSource("SimpleArrayTypes")]
+        [TestCaseSource(nameof(SimpleArrayTypes))]
         public void should_deserialize_string_array_items(Type type, object value, object defaultValue)
         {
             var json = "[ \"{0}\" ]".ToFormat(type.IsNumeric() || type.IsBoolean() ? value.ToString().ToLower() : value);
@@ -146,7 +146,7 @@ namespace Tests.Deserializer.Json
         }
 
         [Test]
-        [TestCaseSource("SimpleArrayTypes")]
+        [TestCaseSource(nameof(SimpleArrayTypes))]
         public void should_fail_to_parse_empty_array_items(Type type, object value, object defaultValue)
         {
             if (type == typeof(string)) return;
@@ -167,7 +167,7 @@ namespace Tests.Deserializer.Json
         }
 
         [Test]
-        [TestCaseSource("SimpleArrayTypes")]
+        [TestCaseSource(nameof(SimpleArrayTypes))]
         public void should_fail_to_parse_empty_array_items_with_custom_parse_message(Type type, object value, object defaultValue)
         {
             if (type == typeof(string)) return;

@@ -27,12 +27,12 @@ namespace Bender.Collections
             return new GenericListAdapter(list, type);
         }
 
-        public bool IsReadOnly { get { return (bool)_type.GetMember("IsReadOnly").GetValue(_list); } }
-        public bool IsFixedSize { get { return false; } }
+        public bool IsReadOnly => (bool)_type.GetMember("IsReadOnly").GetValue(_list);
+        public bool IsFixedSize => false;
 
-        public int Count { get { return (int)_type.GetMember("Count").GetValue(_list); } }
-        public object SyncRoot { get { return _list; } }
-        public bool IsSynchronized { get { return false; } }
+        public int Count => (int)_type.GetMember("Count").GetValue(_list);
+        public object SyncRoot => _list;
+        public bool IsSynchronized => false;
 
         public object this[int key]
         {

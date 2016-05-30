@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using Bender.Collections;
 using Bender.Configuration;
-using Bender.Extensions;
 using Bender.Nodes;
 using Bender.Nodes.Object;
 using Bender.Nodes.Object.Values;
@@ -41,7 +40,7 @@ namespace Tests.Nodes.Object.NodeFactory.Serializable
             .All;
 
         [Test]
-        [TestCaseSource("TypeCases")]
+        [TestCaseSource(nameof(TypeCases))]
         public void should_create_node(Type specifiedType, 
             object @object, NodeType nodeType)
         {

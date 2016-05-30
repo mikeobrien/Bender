@@ -8,6 +8,7 @@ namespace Bender.Nodes.Object.Values
         CachedType SpecifiedType { get; }
         CachedType ActualType { get; }
         bool IsReadonly { get; }
+        bool HasValue { get; }
 
         void EnsureValue();
     }

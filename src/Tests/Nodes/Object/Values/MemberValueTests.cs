@@ -15,12 +15,15 @@ namespace Tests.Nodes.Object.Values
             public string Field;
             public string Property { get; set; }
 
+            public Optional<string> OptionalField;
+            public Optional<string> OptionalProperty { get; set; }
+
             public readonly string ReadonlyField;
-            public string ReadonlyProperty { get { return "hai"; } }
+            public string ReadonlyProperty => "hai";
 
-            public IList List { get { return new List<string>(); } }
+            public IList List => new List<string>();
 
-            public IList NullList { get { return null; } }
+            public IList NullList => null;
         }
 
         private static readonly CachedType ModelType = typeof(Model).ToCachedType(); 
@@ -115,21 +118,47 @@ namespace Tests.Nodes.Object.Values
         [Test]
         public void should_indicate_if_property_is_readonly()
         {
-            new MemberValue(null, new CachedMember(ModelType.Type.GetProperty("Property")), x => false)
+            new MemberValue(new SimpleValue(typeof(string).ToCachedType()), 
+                new CachedMember(ModelType.Type.GetProperty("Property")), x => false)
                 .IsReadonly.ShouldBeFalse();
 
-            new MemberValue(null, new CachedMember(ModelType.Type.GetProperty("ReadonlyProperty")), x => false)
+            new MemberValue(new SimpleValue(typeof(string).ToCachedType()), 
+                new CachedMember(ModelType.Type.GetProperty("ReadonlyProperty")), x => false)
                 .IsReadonly.ShouldBeTrue();
         }
 
         [Test]
         public void should_indicate_if_field_is_readonly()
         {
-            new MemberValue(null, new CachedMember(ModelType.Type.GetField("Field")), x => false)
+            new MemberValue(new SimpleValue(typeof(string).ToCachedType()), 
+                new CachedMember(ModelType.Type.GetField("Field")), x => false)
                 .IsReadonly.ShouldBeFalse();
 
-            new MemberValue(null, new CachedMember(ModelType.Type.GetField("ReadonlyField")), x => false)
+            new MemberValue(new SimpleValue(typeof(string).ToCachedType()), 
+                new CachedMember(ModelType.Type.GetField("ReadonlyField")), x => false)
                 .IsReadonly.ShouldBeTrue();
+        }
+
+        [Test]
+        public void should_indicate_if_an_optional_property_has_a_value(
+            [Values(true, false)] bool hasValue)
+        {
+            var model = new Model();
+            if (hasValue) model.OptionalProperty = "fark";
+            new MemberValue(new SimpleValue(model, typeof(Model).ToCachedType()),
+                new CachedMember(ModelType.Type.GetProperty(nameof(Model.OptionalProperty))), 
+                x => false).HasValue.ShouldEqual(hasValue);
+        }
+
+        [Test]
+        public void should_indicate_if_an_optional_field_has_a_value(
+            [Values(true, false)] bool hasValue)
+        {
+            var model = new Model();
+            if (hasValue) model.OptionalField = "fark";
+            new MemberValue(new SimpleValue(model, typeof(Model).ToCachedType()),
+                new CachedMember(ModelType.Type.GetField(nameof(Model.OptionalField))),
+                x => false).HasValue.ShouldEqual(hasValue);
         }
     }
 }

@@ -8,10 +8,12 @@ namespace Bender.Nodes.Object
         public const string MessageTypeFormat =
             "{0} '{1}' is not supported for {2}. Only {3} can be {4}.";
 
-        public TypeNotSupportedException(string typeDescription, CachedType type, Mode mode, string expected) :
+        public TypeNotSupportedException(string typeDescription, 
+            CachedType type, Mode mode, string expected) :
             base(GetMessage(typeDescription, type, mode, expected)) { }
 
-        private static string GetMessage(string typeDescription, CachedType type, Mode mode, string expected)
+        private static string GetMessage(string typeDescription, 
+            CachedType type, Mode mode, string expected)
         {
             string modeNoun;
             string modeVerb;
@@ -26,7 +28,8 @@ namespace Bender.Nodes.Object
                     modeNoun = "serialization";
                     break;
             }
-            return MessageTypeFormat.ToFormat(typeDescription.ToInitialCaps(), type.FriendlyFullName, modeNoun, expected, modeVerb);
+            return MessageTypeFormat.ToFormat(typeDescription.ToInitialCaps(), 
+                type.FriendlyFullName, modeNoun, expected, modeVerb);
         }
     }
 }

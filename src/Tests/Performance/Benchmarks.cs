@@ -181,11 +181,11 @@ namespace Tests.Performance
                 Summary = summary;
             }
 
-            public string Name { get; private set; }
-            public Format Format { get; private set; }
-            public bool Summary { get; private set; }
+            public string Name { get; }
+            public Format Format { get; }
+            public bool Summary { get; }
             public long Bytes { get; set; }
-            public bool IsBender { get { return Name == BenderSerializer; } }
+            public bool IsBender => Name == BenderSerializer;
 
             public long ColdSerialize { get; set; }
             public long ColdDeserialize { get; set; }

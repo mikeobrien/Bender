@@ -158,6 +158,72 @@ namespace Tests.Serializer.Json
             result.ShouldEqual(json);
         }
 
+        // Optional values
+
+        public class OptionalValues
+        {
+            public Optional<string> OptionalReferenceTypeProperty { get; set; }
+            public Optional<int> OptionalValueTypeProperty { get; set; }
+            public Optional<int?> OptionalNullableTypeProperty { get; set; }
+
+            public Optional<string> OptionalReferenceTypeField;
+            public Optional<int> OptionalValueTypeField;
+            public Optional<int?> OptionalNullableTypeField;
+        }
+
+        [Test]
+        public void Should_serialize_optional_values()
+        {
+            var model = new OptionalValues
+            {
+                OptionalReferenceTypeProperty = "fark",
+                OptionalValueTypeProperty = 5,
+                OptionalNullableTypeProperty = 6,
+                OptionalReferenceTypeField = "farker",
+                OptionalValueTypeField = 7,
+                OptionalNullableTypeField = 8
+            };
+            
+            var result = Serialize.Json(model, x => x.IncludePublicFields());
+
+            result.ShouldEqual("{" +
+                "\"OptionalReferenceTypeProperty\":\"fark\"," +
+                "\"OptionalValueTypeProperty\":5," +
+                "\"OptionalNullableTypeProperty\":6," +
+                "\"OptionalReferenceTypeField\":\"farker\"," +
+                "\"OptionalValueTypeField\":7," +
+                "\"OptionalNullableTypeField\":8" +
+            "}");
+        }
+
+        [Test]
+        public void Should_serialize_optional_null_values()
+        {
+            var model = new OptionalValues
+            {
+                OptionalReferenceTypeProperty = null,
+                OptionalNullableTypeProperty = null,
+                OptionalReferenceTypeField = null,
+                OptionalNullableTypeField = null
+            };
+
+            var result = Serialize.Json(model, x => x.IncludePublicFields()
+                .Serialization(s => s.IncludeNullMembers()));
+
+            result.ShouldEqual("{" +
+                "\"OptionalReferenceTypeProperty\":null," +
+                "\"OptionalNullableTypeProperty\":null," +
+                "\"OptionalReferenceTypeField\":null," +
+                "\"OptionalNullableTypeField\":null" +
+            "}");
+        }
+
+        [Test]
+        public void Should_not_serialize_empty_optional_values()
+        {
+            Serialize.Json(new OptionalValues(), x => x.IncludePublicFields()).ShouldEqual("{}");
+        }
+
         // Out of the box types
 
         public class OutOfTheBoxTypes

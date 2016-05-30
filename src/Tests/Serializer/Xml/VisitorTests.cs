@@ -1,6 +1,5 @@
 ﻿using Bender;
 using Bender.Configuration;
-using Bender.Extensions;
 using Bender.Reflection;
 using NUnit.Framework;
 using Should;
@@ -29,8 +28,8 @@ namespace Tests.Serializer.Xml
             public int? Nullable { get; set; }
         }
 
-        private readonly static Model ModelInstance = new Model { Property1 = "oh", Property2 = 5, 
-                Child = new Child { Property1 = "oh", Property2 = 6 } };
+        private static readonly Model ModelInstance = new Model { Property1 = "oh", 
+            Property2 = 5, Child = new Child { Property1 = "oh", Property2 = 6 } };
 
         private const string ModelJson = "{\"Property1\":\"oh\",\"Property2\":5," +
                                     "\"Child\":{\"Property1\":\"oh\",\"Property2\":6}}";
@@ -146,8 +145,9 @@ namespace Tests.Serializer.Xml
                 x => x.Serialization(y => y.AddVisitor<int>(
                     (s, t, o) => t.Value = 3,
                     (s, t, o) => (int)s.Value == match)))
-                .ShouldEqual(Xml.Declaration + ("<NullableModel><NonNullable>{0}</NonNullable>" + 
-                "<Nullable>{1}</Nullable></NullableModel>").ToFormat(match == 2 ? 3 : 2, match == 1 ? 3 : 1));
+                .ShouldEqual(Xml.Declaration + 
+                    $"<NullableModel><NonNullable>{(match == 2 ? 3 : 2)}</NonNullable>" + 
+                    $"<Nullable>{(match == 1 ? 3 : 1)}</Nullable></NullableModel>");
         }
 
         [Test]
@@ -178,8 +178,9 @@ namespace Tests.Serializer.Xml
             var model = new NullableModel { Nullable = 1, NonNullable = 2 };
 
             Serialize.Xml(model, options)
-                .ShouldEqual(Xml.Declaration + ("<NullableModel><NonNullable>{0}</NonNullable>" + 
-                "<Nullable>{1}</Nullable></NullableModel>").ToFormat(match == 2 ? 3 : 2, match == 1 ? 3 : 1));
+                .ShouldEqual(Xml.Declaration +
+                    $"<NullableModel><NonNullable>{(match == 2 ? 3 : 2)}</NonNullable>" + 
+                    $"<Nullable>{(match == 1 ? 3 : 1)}</Nullable></NullableModel>");
 
             Serialize.Json(model, options)
                 .ShouldEqual("{\"NonNullable\":2,\"Nullable\":1}");

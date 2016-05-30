@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,6 +22,13 @@ namespace Bender.Extensions
         public static bool IsEmpty(this string value)
         {
             return value == "";
+        }
+
+        public static bool IgnoreCase(this StringComparison comparison)
+        {
+            return comparison == StringComparison.CurrentCultureIgnoreCase ||
+                   comparison == StringComparison.InvariantCultureIgnoreCase ||
+                   comparison == StringComparison.OrdinalIgnoreCase;
         }
 
         public static string Truncate(this object value, int length)
@@ -65,7 +71,7 @@ namespace Bender.Extensions
                 value[0].ToString().ToLower() + value.Substring(1);
         }
 
-        public static string ToSeperatedCase(this string value, bool lower, string seperator)
+        public static string ToSeparatedCase(this string value, bool lower, string seperator)
         {
             if (string.IsNullOrEmpty(value)) return value;
             var result = value[0].ToString() + Regex.Replace(value.Substring(1), 

@@ -99,11 +99,11 @@ namespace Tests.Deserializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_deserialize_typed_fields(string suffix, Type type, object value, string name)
         {
-            var json = "{{ \"{0}\": {1} }}".ToFormat(name + suffix,
-                type.IsNumeric() || type.IsBoolean() ? value.ToString().ToLower() : "\"" + value + "\"");
+            var jsonValue = type.IsNumeric() || type.IsBoolean() ? value.ToString().ToLower() : "\"" + value + "\"";
+            var json = $"{{ \"{name + suffix}\": {jsonValue} }}";
 
             var result = Deserialize.Json<SimpleTypeField>(json, x => x.IncludePublicFields());
 
@@ -113,11 +113,11 @@ namespace Tests.Deserializer.Json
         }
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_deserialize_string_fields(string suffix, Type type, object value, string name)
         {
-            var json = "{{ \"{0}\": \"{1}\" }}".ToFormat(name + suffix,
-                type.IsNumeric() || type.IsBoolean() ? value.ToString().ToLower() : value);
+            var jsonValue = type.IsNumeric() || type.IsBoolean() ? value.ToString().ToLower() : value;
+            var json = $"{{ \"{name + suffix}\": \"{jsonValue}\" }}";
 
             var result = Deserialize.Json<SimpleTypeField>(json, x => x.IncludePublicFields());
 
@@ -155,10 +155,10 @@ namespace Tests.Deserializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("SimpleFieldReferenceTypes")]
+        [TestCaseSource(nameof(SimpleFieldReferenceTypes))]
         public void should_deserialize_null_reference_type_fields(string suffix, Type type, object value, string name)
         {
-            var json = "{{ \"{0}\": null }}".ToFormat(name + suffix);
+            var json = $"{{ \"{name + suffix}\": null }}";
 
             var result = Deserialize.Json<SimpleTypeField>(json, x => x.IncludePublicFields());
 
@@ -193,27 +193,27 @@ namespace Tests.Deserializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("SimpleFieldValueTypes")]
+        [TestCaseSource(nameof(SimpleFieldValueTypes))]
         public void should_fail_to_deserialize_null_value_type_fields(string suffix, Type type, object value, string name)
         {
-            var json = "{{ \"{0}\": null }}".ToFormat(name + suffix);
+            var json = $"{{ \"{name + suffix}\": null }}";
             var exception = Assert.Throws<FriendlyMappingException>(() => 
                 Deserialize.Json<SimpleTypeField>(json, x => x.IncludePublicFields()));
 
-            exception.Message.ShouldEqual(("Error deserializing json field '$.{0}' to " +
-                "'Tests.Deserializer.Json.ObjectTests.SimpleTypeField.{0}': Value cannot be null.").ToFormat(name + suffix));
+            exception.Message.ShouldEqual($"Error deserializing json field '$.{name + suffix}' to " +
+                $"'Tests.Deserializer.Json.ObjectTests.SimpleTypeField.{name + suffix}': Value cannot be null.");
             exception.FriendlyMessage.ShouldEqual(("Could not read json field " +
-                "'$.{0}': Value cannot be null.").ToFormat(name + suffix));
+                $"'$.{name + suffix}': Value cannot be null."));
             exception.InnerException.ShouldBeType<ValueCannotBeNullDeserializationException>();
         }
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_fail_to_parse_empty_fields(string suffix, Type type, object value, string name)
         {
             if (type == typeof(string)) return;
 
-            var json = "{{ \"{0}\": \"\" }}".ToFormat(name + suffix);
+            var json = $"{{ \"{name + suffix}\": \"\" }}";
             var messageType = type.GetUnderlyingNullableType();
             messageType = messageType.IsEnum ? typeof(Enum) : messageType;
             var options = Options.Create(x => x.IncludePublicFields());
@@ -222,22 +222,22 @@ namespace Tests.Deserializer.Json
 
             var elementName = messageType.Name + (type.IsNullable() ? "Nullable" : "") + suffix;
 
-            exception.Message.ShouldStartWith(("Error deserializing json field '$.{0}' to 'Tests.Deserializer." +
-                "Json.ObjectTests.SimpleTypeField.{0}': Error parsing ''. ").ToFormat(elementName));
+            exception.Message.ShouldStartWith($"Error deserializing json field '$.{name + suffix}' to " +
+                $"'Tests.Deserializer.Json.ObjectTests.SimpleTypeField.{name + suffix}': Error parsing ''. ");
 
-            exception.FriendlyMessage.ShouldEqual("Could not read json field '$.{0}': ".ToFormat(elementName) +
+            exception.FriendlyMessage.ShouldEqual($"Could not read json field '$.{name + suffix}': " +
                 Options.Create().Deserialization.FriendlyParseErrorMessages[messageType].ToFormat(""));
 
             exception.InnerException.ShouldBeType<ValueParseException>();
         }
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_fail_to_parse_empty_fields_with_custom_parse_message(string suffix, Type type, object value, string name)
         {
             if (type == typeof(string)) return;
 
-            var json = "{{ \"{0}\": \"\" }}".ToFormat(name + suffix);
+            var json = $"{{ \"{name + suffix}\": \"\" }}";
 
             var messageType = type.GetUnderlyingNullableType();
             messageType = messageType.IsEnum ? typeof(Enum) : messageType;
@@ -248,9 +248,9 @@ namespace Tests.Deserializer.Json
 
             var elementName = messageType.Name + (type.IsNullable() ? "Nullable" : "") + suffix;
 
-            exception.Message.ShouldStartWith(("Error deserializing json field '$.{0}' to 'Tests.Deserializer." +
-                "Json.ObjectTests.SimpleTypeField.{0}': Error parsing ''. ").ToFormat(elementName));
-            exception.FriendlyMessage.ShouldEqual("Could not read json field '$.{0}': yada".ToFormat(elementName));
+            exception.Message.ShouldStartWith($"Error deserializing json field '$.{elementName}' to 'Tests.Deserializer." +
+                $"Json.ObjectTests.SimpleTypeField.{elementName}': Error parsing ''. ");
+            exception.FriendlyMessage.ShouldEqual($"Could not read json field '$.{elementName}': yada");
             exception.InnerException.ShouldBeType<ValueParseException>();
         }
 
@@ -266,6 +266,96 @@ namespace Tests.Deserializer.Json
                 "Json.ObjectTests.SimpleTypeField.Int32Property': Error parsing ''. Input string was not in a correct format.");
             exception.FriendlyMessage.ShouldEqual("Could not read json field '$.Int32Property': yada");
             exception.InnerException.ShouldBeType<ValueParseException>();
+        }
+
+        // Optional values
+
+        public class OptionalValues
+        {
+            public Optional<string> OptionalReferenceTypeProperty { get; set; }
+            public Optional<int> OptionalValueTypeProperty { get; set; }
+            public Optional<int?> OptionalNullableTypeProperty { get; set; }
+
+            public Optional<string> OptionalReferenceTypeField;
+            public Optional<int> OptionalValueTypeField;
+            public Optional<int?> OptionalNullableTypeField;
+        }
+
+        private static readonly object[] OptionalTypes = TestCases.Create("Property", "Field")
+            .AddType<string>("hai", "OptionalReferenceType")
+            .AddType<int>(5, "OptionalValueType")
+            .AddType<int?>(6, "OptionalNullableType")
+            .All;
+
+        [Test]
+        [TestCaseSource(nameof(OptionalTypes))]
+        public void Should_deserialize_optional_values(string suffix, Type type, object value, string name)
+        {
+            var jsonValue = type.IsNumeric() ? value.ToString().ToLower() : "\"" + value + "\"";
+            var json = $"{{ \"{name + suffix}\": {jsonValue} }}";
+
+            var result = Deserialize.Json<OptionalValues>(json, x => x.IncludePublicFields());
+
+            var optional = result.GetPropertyOrFieldValue(name + suffix);
+            optional.GetPropertyOrFieldValue("HasValue").ShouldEqual(true);
+            optional.GetPropertyOrFieldValue("Value").ShouldEqual(value);
+        }
+
+        [Test]
+        public void Should_not_set_optional_null_values()
+        {
+            var json = "{" +
+                "\"OptionalReferenceTypeProperty\":null," +
+                "\"OptionalNullableTypeProperty\":null," +
+                "\"OptionalReferenceTypeField\":null," +
+                "\"OptionalNullableTypeField\":null" +
+            "}";
+
+            var result = Deserialize.Json<OptionalValues>(json, x => x.IncludePublicFields());
+
+            result.OptionalReferenceTypeProperty.HasValue.ShouldBeTrue();
+            result.OptionalReferenceTypeProperty.Value.ShouldBeNull();
+
+            result.OptionalValueTypeProperty.HasValue.ShouldBeFalse();
+            result.OptionalValueTypeProperty.Value.ShouldEqual(0);
+
+            result.OptionalNullableTypeProperty.HasValue.ShouldBeTrue();
+            result.OptionalNullableTypeProperty.Value.ShouldBeNull();
+
+            result.OptionalReferenceTypeField.HasValue.ShouldBeTrue();
+            result.OptionalReferenceTypeField.Value.ShouldBeNull();
+
+            result.OptionalValueTypeField.HasValue.ShouldBeFalse();
+            result.OptionalValueTypeField.Value.ShouldEqual(0);
+
+            result.OptionalNullableTypeField.HasValue.ShouldBeTrue();
+            result.OptionalNullableTypeField.Value.ShouldBeNull();
+        }
+
+        [Test]
+        public void Should_not_set_missing_values()
+        {
+            var json = "{ \"OptionalReferenceTypeProperty\": \"hai\" }";
+
+            var result = Deserialize.Json<OptionalValues>(json);
+
+            result.OptionalReferenceTypeProperty.HasValue.ShouldBeTrue();
+            result.OptionalReferenceTypeProperty.Value.ShouldEqual("hai");
+
+            result.OptionalValueTypeProperty.HasValue.ShouldBeFalse();
+            result.OptionalValueTypeProperty.Value.ShouldEqual(0);
+
+            result.OptionalNullableTypeProperty.HasValue.ShouldBeFalse();
+            result.OptionalNullableTypeProperty.Value.ShouldBeNull();
+
+            result.OptionalReferenceTypeField.HasValue.ShouldBeFalse();
+            result.OptionalReferenceTypeField.Value.ShouldBeNull();
+
+            result.OptionalValueTypeField.HasValue.ShouldBeFalse();
+            result.OptionalValueTypeField.Value.ShouldEqual(0);
+
+            result.OptionalNullableTypeField.HasValue.ShouldBeFalse();
+            result.OptionalNullableTypeField.Value.ShouldBeNull();
         }
 
         // Out of the box types
@@ -304,7 +394,7 @@ namespace Tests.Deserializer.Json
         public void should_deserialize_byte_array()
         {
             Deserialize.Json<OutOfTheBoxTypes>("{ \"ByteArray\": \"b2ggaGFp\" }")
-                .ByteArray.ShouldEqual(ASCIIEncoding.ASCII.GetBytes("oh hai"));
+                .ByteArray.ShouldEqual(Encoding.ASCII.GetBytes("oh hai"));
         }
 
         [Test]
@@ -423,7 +513,7 @@ namespace Tests.Deserializer.Json
         [TestCase("Field")]
         public void should_deserialize_fields_case_insensitively(string name)
         {
-            var json = "{{ \"{0}\": \"hai\" }}".ToFormat(name.ToUpper());
+            var json = $"{{ \"{name.ToUpper()}\": \"hai\" }}";
             var result = Deserialize.Json<CaseSensitivity>(json, x => x
                 .IncludePublicFields().Deserialization(y => y.IgnoreNameCase()));
             result.GetPropertyOrFieldValue(name).ShouldEqual("hai");
@@ -434,7 +524,7 @@ namespace Tests.Deserializer.Json
         [TestCase("Field")]
         public void should_deserialize_fields_with_case_comparison(string name)
         {
-            var json = "{{ \"{0}\": \"hai\" }}".ToFormat(name.ToUpper());
+            var json = $"{{ \"{name.ToUpper()}\": \"hai\" }}";
             var result = Deserialize.Json<CaseSensitivity>(json, x => x
                 .IncludePublicFields().Deserialization(y => y
                     .WithNameComparison(StringComparison.CurrentCultureIgnoreCase)));
@@ -446,7 +536,7 @@ namespace Tests.Deserializer.Json
         [TestCase("Field")]
         public void should_not_deserialize_fields_case_insensitively_by_default(string name)
         {
-            var json = "{{ \"{0}\": \"hai\" }}".ToFormat(name.ToUpper());
+            var json = $"{{ \"{name.ToUpper()}\": \"hai\" }}";
             var result = Deserialize.Json<CaseSensitivity>(json, x => x.IncludePublicFields());
             result.GetPropertyOrFieldValue(name).ShouldBeNull();
         }

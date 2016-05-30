@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using Bender;
 using Bender.Configuration;
 using Bender.Extensions;
 using Bender.Nodes;
-using Bender.Nodes.Object;
 using Bender.Nodes.Xml;
-using Bender.Reflection;
 using NUnit.Framework;
 using Should;
 

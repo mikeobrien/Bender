@@ -8,12 +8,14 @@ namespace Bender.Nodes.Object.Values
         private readonly IValue _value;
         private readonly CachedMember _member;
 
-        public MemberValue(IValue value, CachedMember member, Func<CachedType, bool> useActualType)
+        public MemberValue(IValue value, CachedMember member, 
+            Func<CachedType, bool> useActualType)
         {
             _value = value;
             _member = member;
             var type = member.Type;
-            SpecifiedType = useActualType(type) && Instance != null ? Instance.ToCachedType() : type;
+            SpecifiedType = useActualType(type) && Instance != null ? 
+                Instance.ToCachedType() : type;
             IsReadonly = _member.IsReadonly;
         }
 
@@ -25,8 +27,10 @@ namespace Bender.Nodes.Object.Values
 
         public CachedType SpecifiedType { get; }
         public bool IsReadonly { get; }
+        public bool HasValue => _member.HasValue(_value.Instance);
         public void EnsureValue() { }
 
-        public CachedType ActualType => Instance != null ? Instance.ToCachedType() : SpecifiedType;
+        public CachedType ActualType => Instance != null ? 
+            Instance.ToCachedType() : SpecifiedType;
     }
 }

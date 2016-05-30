@@ -100,7 +100,7 @@ namespace Tests.Extensions
         [TestCase("", "", true, "-")]
         public void should_snake_case(string source, string result, bool lower, string seperator)
         {
-            source.ToSeperatedCase(lower, seperator).ShouldEqual(result);
+            source.ToSeparatedCase(lower, seperator).ShouldEqual(result);
         }
 
         [Test]

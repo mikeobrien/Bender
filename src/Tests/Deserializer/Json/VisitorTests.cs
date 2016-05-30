@@ -1,7 +1,6 @@
 ﻿using Bender;
 using Bender.Collections;
 using Bender.Configuration;
-using Bender.Extensions;
 using Bender.Reflection;
 using NUnit.Framework;
 using Should;

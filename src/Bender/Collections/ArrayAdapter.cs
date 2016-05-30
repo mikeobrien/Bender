@@ -36,14 +36,14 @@ namespace Bender.Collections
             _array.Instance = _listType.InvokeFunc<Array>("ToArray", _list);
         }
 
-        public object Source { get { return _array; } }
+        public object Source => _array;
 
-        public bool IsReadOnly { get { return false; } }
-        public bool IsFixedSize { get { return false; } }
+        public bool IsReadOnly => false;
+        public bool IsFixedSize => false;
 
-        public int Count { get { return _list.Count; } }
-        public object SyncRoot { get { return _array.Instance; } }
-        public bool IsSynchronized { get { return false; } }
+        public int Count => _list.Count;
+        public object SyncRoot => _array.Instance;
+        public bool IsSynchronized => false;
 
         public object this[int key]
         {

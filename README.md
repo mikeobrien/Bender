@@ -19,6 +19,7 @@ Bender is a highly configurable xml, json, CSV and form url encoded serializatio
 - Options for failing on unmatched members or elements.
 - Ability to serialize and deserialize members of enumerable and dictionary implementations.
 - Ability to transform XML during deserialization.
+- Ability to define [optional types](#optional-types).
 
 ## Install
 
@@ -179,6 +180,20 @@ Options.Create(o => o
 
 In the first convention we append `EmailAddress` to the name when the property is of type `MailAddress`. Next we define a convention that prepends an `_` to every name. If we had a property named `Support` of type `MailAddress` the name would end up being `_SupportEmailAddress`.
 
+Bender also allows you to define naming conventions for enum values. Enum values are not included in the global naming convention (As demonstrated above) as it is assumed that they will differ from type and member naming conventions. Below we see the convenience method for snake casing and it's actual implementation. 
+
+```csharp
+Options.Create(o => o.UseEnumSnakeCaseNaming());
+
+Options.Create(o => o
+    .WithEnumNamingConvention(
+        (value, context) => value.Replace("_", ""),
+        (value, context) => context.Mode == Mode.Deserialize)
+    .WithEnumNamingConvention(
+        (value, context) => value.ToSeperatedCase(false, "_"),
+        (value, context) => context.Mode == Mode.Serialize);
+```
+
 ### Visitors
 
 Visitors enable you to operate on each node in the target graph. Both serialization and deserialization options contain methods for adding visitors. Each option method has an overload that applies to all and one that takes a predicate to limit its application. There are also convenience methods that apply visitors to either xml or json or specific types.
@@ -238,6 +253,57 @@ Options.Create(o => o
     .Serialization(s => s
         .AddWriter<IPAddress>(value => value.ToString())));
 ```
+
+## Optional Types
+
+Sometimes when deserializing you may want to know when source values were set. For example, an API that will only update values that were passed. Or you may only want to serialize values that have been set. One approach is to ignore all null values, using nullable value types. The problem with this is that null might actually be a valid value. To address this issue, Bender supports optional types. Optional types are akin to nullable types, with `HasValue` and `Value` properties. They can also be implicitly and explicitly cast. Lets say we have an API that lets users set a termination date, among other things, which can be null. The json will be deserialized to the following model:
+
+```csharp
+public class EmployeeModel
+{
+	public Optional<string> Name { get; set; }
+	public Optional<DateTime?> TerminationDate { get; set; }
+	...
+}
+```
+
+And lets say the user passes the following json to our API:
+
+```json
+{
+	"terminationDate": null
+}
+```
+
+The model can then be mapped appropriately since we know what values were passed:
+
+```csharp
+if (employeeModel.Name.HasValue)
+	employeeEntity.Name = employeeModel.Name;
+
+if (employeeModel.TerminationDate.HasValue)
+	employeeEntity.TerminationDate = employeeModel.TerminationDate;
+```
+
+This will ignore the name field as it was not passed but set the termination date to null.
+
+The opposite occurs on serialization. For example lets say we return the model above, with only the termination date set, from our API:
+
+```csharp
+new EmployeeModel {
+	TerminationDate = null
+}
+```
+
+This would produce the following json:
+
+```json
+{
+	"terminationDate": null
+}
+```
+
+All other properties on the model will not be serialized as they were not set. Note, the `IncludeNullMembers()` configuration option must be used to serialize null values.
 
 ## Friendly Deserialization Error Messages
 

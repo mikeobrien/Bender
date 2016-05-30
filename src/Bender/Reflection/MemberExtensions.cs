@@ -88,25 +88,45 @@ namespace Bender.Reflection
             }
         }
 
-        public static Action<object, object> BuildSetter(this FieldInfo fieldInfo)
+        public static Func<object, object> BuildGetter(this FieldInfo fieldInfo, Type type = null)
+        {
+            var instance = Expression.Parameter(typeof(object), "instance");
+            var fieldExp = Expression.Field(Expression.Convert(instance, fieldInfo.DeclaringType), fieldInfo);
+
+            return Expression.Lambda<Func<object, object>>(
+                Expression.Convert(
+                    Expression.Convert(fieldExp, type ?? fieldInfo.FieldType),
+                typeof(object)),
+                instance).Compile();
+        }
+
+        public static Func<object, object> BuildGetter(this PropertyInfo propertyInfo, Type type = null)
+        {
+            var method = propertyInfo.GetGetMethod(true);
+            var instance = Expression.Parameter(typeof(object), "instance");
+
+            return Expression.Lambda<Func<object, object>>(
+                Expression.Convert(
+                    Expression.Convert(
+                        Expression.Call(
+                            Expression.Convert(instance, method.DeclaringType), method),
+                    type ?? propertyInfo.PropertyType),
+                    typeof(object)),
+                instance).Compile();
+        }
+
+        public static Action<object, object> BuildSetter(this FieldInfo fieldInfo, Type type)
         {
             var @object = Expression.Parameter(typeof(object), "instance");
             var value = Expression.Parameter(typeof(object));
             var field = Expression.Field(Expression.Convert(@object, fieldInfo.DeclaringType), fieldInfo);
-            var assign = Expression.Assign(field, Expression.Convert(value, fieldInfo.FieldType));
+            var assign = Expression.Assign(field, Expression.Convert(
+                Expression.Convert(value, type), fieldInfo.FieldType));
 
             return Expression.Lambda<Action<object, object>>(assign, @object, value).Compile();
         }
 
-        public static Func<object, object> BuildGetter(this FieldInfo fieldInfo)
-        {
-            var @object = Expression.Parameter(typeof(object), "instance");
-            var fieldExp = Expression.Field(Expression.Convert(@object, fieldInfo.DeclaringType), fieldInfo);
-
-            return Expression.Lambda<Func<object, object>>(Expression.Convert(fieldExp, typeof(object)), @object).Compile();
-        }
-
-        public static Action<object, object> BuildSetter(this PropertyInfo propertyInfo)
+        public static Action<object, object> BuildSetter(this PropertyInfo propertyInfo, Type type)
         {
             var method = propertyInfo.GetSetMethod(true);
 
@@ -119,7 +139,7 @@ namespace Bender.Reflection
                     Expression.Call(
                         Expression.Convert(instance, method.DeclaringType),
                         method,
-                        Expression.Convert(value, method.GetParameters()[0].ParameterType)),
+                        Expression.Convert(Expression.Convert(value, type), propertyInfo.PropertyType)),
                     instance,
                     value).Compile();
         }
@@ -138,20 +158,6 @@ namespace Bender.Reflection
                         Expression.Convert(index, method.GetParameters()[0].ParameterType),
                         Expression.Convert(value, method.GetParameters()[1].ParameterType)),
                     instance, index, value).Compile();
-        }
-
-        public static Func<object, object> BuildGetter(this PropertyInfo propertyInfo)
-        {
-            var method = propertyInfo.GetGetMethod(true);
-            var instance = Expression.Parameter(typeof(object), "instance");
-
-            return Expression.Lambda<Func<object, object>>(
-                    Expression.Convert(
-                        Expression.Call(
-                            Expression.Convert(instance, method.DeclaringType),
-                            method),
-                        typeof(object)),
-                    instance).Compile();
         }
 
         public static Func<object, object, object> BuildIndexedGetter(this PropertyInfo propertyInfo)

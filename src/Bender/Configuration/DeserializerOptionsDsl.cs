@@ -1,4 +1,5 @@
 ﻿using System;
+using Bender.NamingConventions;
 using Bender.Nodes;
 using Bender.Nodes.Xml;
 using Bender.Reflection;
@@ -8,88 +9,88 @@ namespace Bender.Configuration
 {
     public class DeserializerOptionsDsl
     {
-        private readonly DeserializationOptions _options;
+        private readonly Options _options;
 
-        public DeserializerOptionsDsl(DeserializationOptions options)
+        public DeserializerOptionsDsl(Options options)
         {
             _options = options;
         }
 
         public DeserializerOptionsDsl WithObjectFactory(Func<CachedType, object[], object> factory)
         {
-            _options.ObjectFactory = factory;
+            _options.Deserialization.ObjectFactory = factory;
             return this;
         }
 
         public DeserializerOptionsDsl IgnoreNameCase()
         {
-            _options.NameComparison = StringComparison.OrdinalIgnoreCase;
+            _options.Deserialization.NameComparison = StringComparison.OrdinalIgnoreCase;
             return this;
         }
 
         public DeserializerOptionsDsl WithNameComparison(StringComparison comparison)
         {
-            _options.NameComparison = comparison;
+            _options.Deserialization.NameComparison = comparison;
             return this;
         }
 
         public DeserializerOptionsDsl IgnoreEnumNameCase()
         {
-            _options.EnumNameComparison = StringComparison.OrdinalIgnoreCase;
+            _options.Deserialization.EnumNameComparison = StringComparison.OrdinalIgnoreCase;
             return this;
         }
 
         public DeserializerOptionsDsl WithEnumNameComparison(StringComparison comparison)
         {
-            _options.EnumNameComparison = comparison;
+            _options.Deserialization.EnumNameComparison = comparison;
             return this;
         }
 
         public DeserializerOptionsDsl FailOnUnmatchedElements()
         {
-            _options.IgnoreUnmatchedElements = false;
+            _options.Deserialization.IgnoreUnmatchedElements = false;
             return this;
         }
 
         public DeserializerOptionsDsl FailOnUnmatchedMembers()
         {
-            _options.IgnoreUnmatchedMembers = false;
+            _options.Deserialization.IgnoreUnmatchedMembers = false;
             return this;
         }
 
         public DeserializerOptionsDsl IgnoreUnmatchedArrayItems()
         {
-            _options.IgnoreUnmatchedArrayItems = true;
+            _options.Deserialization.IgnoreUnmatchedArrayItems = true;
             return this;
         }
 
         public DeserializerOptionsDsl IgnoreXmlAttributes()
         {
-            _options.IgnoreXmlAttributes = true;
+            _options.Deserialization.IgnoreXmlAttributes = true;
             return this;
         }
 
         public DeserializerOptionsDsl IgnoreRootName()
         {
-            _options.IgnoreRootName = true;
+            _options.Deserialization.IgnoreRootName = true;
             return this;
         }
 
         public DeserializerOptionsDsl IgnoreArrayItemNames()
         {
-            _options.IgnoreArrayItemNames = true;
+            _options.Deserialization.IgnoreArrayItemNames = true;
             return this;
         }
 
         public DeserializerOptionsDsl WithFriendlyParseErrorMessage<T>(string message)
         {
-            _options.FriendlyParseErrorMessages[typeof(T)] = message;
+            _options.Deserialization.FriendlyParseErrorMessages[typeof(T)] = message;
             return this;
         }
 
         public DeserializerOptionsDsl WithFriendlyParseErrorMessage(Type type, string message)
         {
-            _options.FriendlyParseErrorMessages[type] = message;
+            _options.Deserialization.FriendlyParseErrorMessages[type] = message;
             return this;
         }
 
@@ -99,24 +100,57 @@ namespace Bender.Configuration
             return this;
         }
 
+        // Enum naming conventions
+
+        public DeserializerOptionsDsl WithEnumNamingConvention(
+            Func<string, string> convention)
+        {
+            _options.EnumNameConventions.Add(
+                (v, c) => convention(v),
+                (v, c) => c.Mode == Mode.Deserialize);
+            return this;
+        }
+
+        public DeserializerOptionsDsl WithEnumNamingConvention(
+            Func<string, EnumContext, string> convention)
+        {
+            _options.EnumNameConventions.Add(convention,
+                (v, c) => c.Mode == Mode.Deserialize);
+            return this;
+        }
+
+        public DeserializerOptionsDsl WithEnumNamingConvention(
+            Func<string, EnumContext, string> convention,
+            Func<string, EnumContext, bool> when)
+        {
+            _options.EnumNameConventions.Add(convention,
+                (v, c) => c.Mode == Mode.Deserialize && when(v, c));
+            return this;
+        }
+
+        public DeserializerOptionsDsl UseEnumSnakeCaseNaming()
+        {
+            return WithEnumNamingConvention((v, c) => v.Replace("_", ""));
+        }
+
         // Visitors
 
         public DeserializerOptionsDsl AddVisitor(Action<INode, NodeBase, Options> visitor)
         {
-            _options.Readers.AddVisitingReader(visitor);
+            _options.Deserialization.Readers.AddVisitingReader(visitor);
             return this;
         }
 
         public DeserializerOptionsDsl AddVisitor(Action<INode, NodeBase, Options> visitor,
             Func<INode, NodeBase, Options, bool> when)
         {
-            _options.Readers.AddVisitingReader(visitor, when);
+            _options.Deserialization.Readers.AddVisitingReader(visitor, when);
             return this;
         }
 
         public DeserializerOptionsDsl AddJsonVisitor(Action<JsonNode, NodeBase, Options> visitor)
         {
-            _options.Readers.AddVisitingReader((s, t, o) => visitor((JsonNode)s, t, o), 
+            _options.Deserialization.Readers.AddVisitingReader((s, t, o) => visitor((JsonNode)s, t, o), 
                 (s, t, o) => s.IsJson());
             return this;
         }
@@ -124,14 +158,14 @@ namespace Bender.Configuration
         public DeserializerOptionsDsl AddJsonVisitor(Action<JsonNode, NodeBase, Options> visitor,
             Func<JsonNode, NodeBase, Options, bool> when)
         {
-            _options.Readers.AddVisitingReader((s, t, o) => visitor((JsonNode)s, t, o), 
+            _options.Deserialization.Readers.AddVisitingReader((s, t, o) => visitor((JsonNode)s, t, o), 
                 (s, t, o) => s.IsJson() && when((JsonNode)s, t, o));
             return this;
         }
 
         public DeserializerOptionsDsl AddXmlVisitor(Action<XmlNodeBase, NodeBase, Options> visitor)
         {
-            _options.Readers.AddVisitingReader((s, t, o) => visitor((XmlNodeBase)s, t, o), 
+            _options.Deserialization.Readers.AddVisitingReader((s, t, o) => visitor((XmlNodeBase)s, t, o), 
                 (s, t, o) => s.IsXml());
             return this;
         }
@@ -139,28 +173,28 @@ namespace Bender.Configuration
         public DeserializerOptionsDsl AddXmlVisitor(Action<XmlNodeBase, NodeBase, Options> visitor,
             Func<XmlNodeBase, NodeBase, Options, bool> when)
         {
-            _options.Readers.AddVisitingReader((s, t, o) => visitor((XmlNodeBase)s, t, o), 
+            _options.Deserialization.Readers.AddVisitingReader((s, t, o) => visitor((XmlNodeBase)s, t, o), 
                 (s, t, o) => s.IsXml() && when((XmlNodeBase)s, t, o));
             return this;
         }
 
         public DeserializerOptionsDsl AddVisitor<T>(Action<INode, NodeBase, Options> visitor)
         {
-            _options.Readers.AddVisitingReader<T>(visitor);
+            _options.Deserialization.Readers.AddVisitingReader<T>(visitor);
             return this;
         }
 
         public DeserializerOptionsDsl AddVisitor<T>(Action<INode, NodeBase, Options> visitor,
             bool handleNullable) where T : struct
         {
-            _options.Readers.AddVisitingReader<T>(visitor, handleNullable);
+            _options.Deserialization.Readers.AddVisitingReader<T>(visitor, handleNullable);
             return this;
         }
 
         public DeserializerOptionsDsl AddVisitor<T>(Action<INode, NodeBase, Options> visitor,
             Func<INode, NodeBase, Options, bool> when)
         {
-            _options.Readers.AddVisitingReader<T>(visitor, when);
+            _options.Deserialization.Readers.AddVisitingReader<T>(visitor, when);
             return this;
         }
 
@@ -168,13 +202,13 @@ namespace Bender.Configuration
             Func<INode, NodeBase, Options, bool> when,
             bool handleNullable) where T : struct
         {
-            _options.Readers.AddVisitingReader<T>(visitor, when, handleNullable);
+            _options.Deserialization.Readers.AddVisitingReader<T>(visitor, when, handleNullable);
             return this;
         }
 
         public DeserializerOptionsDsl AddJsonVisitor<T>(Action<JsonNode, NodeBase, Options> visitor)
         {
-            _options.Readers.AddVisitingReader<T>((s, t, o) => visitor((JsonNode)s, t, o), 
+            _options.Deserialization.Readers.AddVisitingReader<T>((s, t, o) => visitor((JsonNode)s, t, o), 
                 (s, t, o) => s.IsJson());
             return this;
         }
@@ -182,7 +216,7 @@ namespace Bender.Configuration
         public DeserializerOptionsDsl AddJsonVisitor<T>(Action<JsonNode, NodeBase, Options> visitor,
             bool handleNullable) where T : struct
         {
-            _options.Readers.AddVisitingReader<T>((s, t, o) => visitor((JsonNode)s, t, o), 
+            _options.Deserialization.Readers.AddVisitingReader<T>((s, t, o) => visitor((JsonNode)s, t, o), 
                 (s, t, o) => s.IsJson(), handleNullable);
             return this;
         }
@@ -190,7 +224,7 @@ namespace Bender.Configuration
         public DeserializerOptionsDsl AddJsonVisitor<T>(Action<JsonNode, NodeBase, Options> visitor,
             Func<JsonNode, NodeBase, Options, bool> when)
         {
-            _options.Readers.AddVisitingReader<T>((s, t, o) => visitor((JsonNode)s, t, o),
+            _options.Deserialization.Readers.AddVisitingReader<T>((s, t, o) => visitor((JsonNode)s, t, o),
                 (s, t, o) => s.IsJson() && when((JsonNode)s, t, o));
             return this;
         }
@@ -199,14 +233,14 @@ namespace Bender.Configuration
             Func<JsonNode, NodeBase, Options, bool> when,
             bool handleNullable) where T : struct
         {
-            _options.Readers.AddVisitingReader<T>((s, t, o) => visitor((JsonNode)s, t, o),
+            _options.Deserialization.Readers.AddVisitingReader<T>((s, t, o) => visitor((JsonNode)s, t, o),
                 (s, t, o) => s.IsJson() && when((JsonNode)s, t, o), handleNullable);
             return this;
         }
 
         public DeserializerOptionsDsl AddXmlVisitor<T>(Action<XmlNodeBase, NodeBase, Options> visitor)
         {
-            _options.Readers.AddVisitingReader<T>((s, t, o) => visitor((XmlNodeBase)s, t, o), 
+            _options.Deserialization.Readers.AddVisitingReader<T>((s, t, o) => visitor((XmlNodeBase)s, t, o), 
                 (s, t, o) => s.IsXml());
             return this;
         }
@@ -214,7 +248,7 @@ namespace Bender.Configuration
         public DeserializerOptionsDsl AddXmlVisitor<T>(Action<XmlNodeBase, NodeBase, Options> visitor,
             bool handleNullable) where T : struct
         {
-            _options.Readers.AddVisitingReader<T>((s, t, o) => visitor((XmlNodeBase)s, t, o), 
+            _options.Deserialization.Readers.AddVisitingReader<T>((s, t, o) => visitor((XmlNodeBase)s, t, o), 
                 (s, t, o) => s.IsXml(), handleNullable);
             return this;
         }
@@ -222,7 +256,7 @@ namespace Bender.Configuration
         public DeserializerOptionsDsl AddXmlVisitor<T>(Action<XmlNodeBase, NodeBase, Options> visitor,
             Func<XmlNodeBase, NodeBase, Options, bool> when)
         {
-            _options.Readers.AddVisitingReader<T>((s, t, o) => visitor((XmlNodeBase)s, t, o),
+            _options.Deserialization.Readers.AddVisitingReader<T>((s, t, o) => visitor((XmlNodeBase)s, t, o),
                 (s, t, o) => s.IsXml() && when((XmlNodeBase)s, t, o));
             return this;
         }
@@ -231,7 +265,7 @@ namespace Bender.Configuration
             Func<XmlNodeBase, NodeBase, Options, bool> when,
             bool handleNullable) where T : struct
         {
-            _options.Readers.AddVisitingReader<T>((s, t, o) => visitor((XmlNodeBase)s, t, o),
+            _options.Deserialization.Readers.AddVisitingReader<T>((s, t, o) => visitor((XmlNodeBase)s, t, o),
                 (s, t, o) => s.IsXml() && when((XmlNodeBase)s, t, o), handleNullable);
             return this;
         }
@@ -241,67 +275,67 @@ namespace Bender.Configuration
         public DeserializerOptionsDsl AddReader(Action<INode, NodeBase, Options> reader,
             Func<INode, NodeBase, Options, bool> when)
         {
-            _options.Readers.AddReader(reader, when);
+            _options.Deserialization.Readers.AddReader(reader, when);
             return this;
         }
 
         public DeserializerOptionsDsl AddReader<T>(Action<INode, NodeBase, Options> reader)
         {
-            _options.Readers.AddReader<T>(reader);
+            _options.Deserialization.Readers.AddReader<T>(reader);
             return this;
         }
 
         public DeserializerOptionsDsl AddReader<T>(Action<INode, NodeBase, Options> reader,
             bool handleNullable) where T : struct
         {
-            _options.Readers.AddReader<T>(reader, handleNullable);
+            _options.Deserialization.Readers.AddReader<T>(reader, handleNullable);
             return this;
         }
 
         public DeserializerOptionsDsl AddReader<T>(Action<INode, NodeBase, Options> reader,
             Func<INode, NodeBase, Options, bool> where)
         {
-            _options.Readers.AddReader<T>(reader, where);
+            _options.Deserialization.Readers.AddReader<T>(reader, where);
             return this;
         }
 
         public DeserializerOptionsDsl AddReader<T>(Action<INode, NodeBase, Options> reader,
             Func<INode, NodeBase, Options, bool> where, bool handleNullable) where T : struct
         {
-            _options.Readers.AddReader<T>(reader, where, handleNullable);
+            _options.Deserialization.Readers.AddReader<T>(reader, where, handleNullable);
             return this;
         }
 
         public DeserializerOptionsDsl AddReader<T>(Func<object, T> reader)
         {
-            _options.Readers.AddValueReader((v, s, t, o) => reader(v));
+            _options.Deserialization.Readers.AddValueReader((v, s, t, o) => reader(v));
             return this;
         }
 
         public DeserializerOptionsDsl AddReader<T>(Func<object, INode, NodeBase, Options, T> reader)
         {
-            _options.Readers.AddValueReader(reader);
+            _options.Deserialization.Readers.AddValueReader(reader);
             return this;
         }
 
         public DeserializerOptionsDsl AddReader<T>(Func<object, INode, NodeBase, Options, T> reader, 
             bool handleNullable) where T : struct
         {
-            _options.Readers.AddValueReader(reader, handleNullable);
+            _options.Deserialization.Readers.AddValueReader(reader, handleNullable);
             return this;
         }
 
         public DeserializerOptionsDsl AddReader<T>(Func<object, INode, NodeBase, Options, T> reader,
             Func<object, INode, NodeBase, Options, bool> where)
         {
-            _options.Readers.AddValueReader(reader, where);
+            _options.Deserialization.Readers.AddValueReader(reader, where);
             return this;
         }
 
         public DeserializerOptionsDsl AddReader<T>(Func<object, INode, NodeBase, Options, T> reader,
             Func<object, INode, NodeBase, Options, bool> where, bool handleNullable) where T : struct
         {
-            _options.Readers.AddValueReader(reader, where, handleNullable);
+            _options.Deserialization.Readers.AddValueReader(reader, where, handleNullable);
             return this;
         }
     }

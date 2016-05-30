@@ -43,7 +43,7 @@ namespace Bender.Nodes
         {
             try
             {
-                if (_map != null) _map(source, target, _options);
+                _map?.Invoke(source, target, _options);
             }
             catch (Exception exception)
             {

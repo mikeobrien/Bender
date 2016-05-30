@@ -1,5 +1,4 @@
-﻿using Bender.Extensions;
-using Bender.Nodes;
+﻿using Bender.Nodes;
 using Bender.Nodes.Object;
 using Bender.Reflection;
 using NUnit.Framework;

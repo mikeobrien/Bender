@@ -63,15 +63,10 @@ namespace Tests.Collections.Implementations
             return _dictionary.Remove(item);
         }
 
-        public int Count
-        {
-            get { return _dictionary.Count; }
-        }
-
-        public bool IsReadOnly
-        {
-            get { return _readonly.HasValue ? _readonly.Value : _dictionary.IsReadOnly; }
-        }
+        public ICollection<string> Keys => _dictionary.Keys;
+        public ICollection<string> Values => _dictionary.Values;
+        public int Count => _dictionary.Count;
+        public bool IsReadOnly => _readonly ?? _dictionary.IsReadOnly;
 
         public bool ContainsKey(string key)
         {
@@ -97,16 +92,6 @@ namespace Tests.Collections.Implementations
         {
             get { return _dictionary[key]; }
             set { _dictionary[key] = value; }
-        }
-
-        public ICollection<string> Keys
-        {
-            get { return _dictionary.Keys; }
-        }
-
-        public ICollection<string> Values
-        {
-            get { return _dictionary.Values; }
         }
     }
 }

@@ -211,6 +211,52 @@ namespace Tests.Serializer.Xml
             result.ShouldEqual(Xml.Declaration + xml);
         }
 
+        // Optional values
+
+        public class OptionalValues
+        {
+            public Optional<string> OptionalReferenceTypeProperty { get; set; }
+            public Optional<int> OptionalValueTypeProperty { get; set; }
+            public Optional<int?> OptionalNullableTypeProperty { get; set; }
+
+            public Optional<string> OptionalReferenceTypeField;
+            public Optional<int> OptionalValueTypeField;
+            public Optional<int?> OptionalNullableTypeField;
+        }
+
+        [Test]
+        public void Should_serialize_optional_values()
+        {
+            var model = new OptionalValues
+            {
+                OptionalReferenceTypeProperty = "fark",
+                OptionalValueTypeProperty = 5,
+                OptionalNullableTypeProperty = 6,
+                OptionalReferenceTypeField = "farker",
+                OptionalValueTypeField = 7,
+                OptionalNullableTypeField = 8
+            };
+
+            var result = Serialize.Xml(model, x => x.IncludePublicFields());
+
+            result.ShouldEqual(Xml.Declaration + 
+                "<OptionalValues>" +
+                    "<OptionalReferenceTypeProperty>fark</OptionalReferenceTypeProperty>" +
+                    "<OptionalValueTypeProperty>5</OptionalValueTypeProperty>" +
+                    "<OptionalNullableTypeProperty>6</OptionalNullableTypeProperty>" +
+                    "<OptionalReferenceTypeField>farker</OptionalReferenceTypeField>" +
+                    "<OptionalValueTypeField>7</OptionalValueTypeField>" +
+                    "<OptionalNullableTypeField>8</OptionalNullableTypeField>" +
+                "</OptionalValues>");
+        }
+
+        [Test]
+        public void Should_serialize_empty_optional_value_type_values_and_omit_reference_type_values()
+        {
+            Serialize.Xml(new OptionalValues(), x => x.IncludePublicFields())
+                .ShouldEqual(Xml.Declaration + "<OptionalValues />");
+        }
+
         // Out of the box types
 
         public class OutOfTheBoxTypes
@@ -226,14 +272,16 @@ namespace Tests.Serializer.Xml
         public void should_serialize_ip_address()
         {
             Serialize.Xml(new OutOfTheBoxTypes {IPAddress = IPAddress.Parse("192.168.1.1")})
-                .ShouldEqual(Xml.Declaration + "<OutOfTheBoxTypes><IPAddress>192.168.1.1</IPAddress></OutOfTheBoxTypes>");
+                .ShouldEqual(Xml.Declaration + 
+                    "<OutOfTheBoxTypes><IPAddress>192.168.1.1</IPAddress></OutOfTheBoxTypes>");
         }
 
         [Test]
         public void should_serialize_version()
         {
             Serialize.Xml(new OutOfTheBoxTypes {Version = Version.Parse("1.2.3.4")})
-                .ShouldEqual(Xml.Declaration + "<OutOfTheBoxTypes><Version>1.2.3.4</Version></OutOfTheBoxTypes>");
+                .ShouldEqual(Xml.Declaration + 
+                    "<OutOfTheBoxTypes><Version>1.2.3.4</Version></OutOfTheBoxTypes>");
         }
 
         [Test]
@@ -241,14 +289,15 @@ namespace Tests.Serializer.Xml
         {
             Serialize.Xml(new OutOfTheBoxTypes {MailAddress = new MailAddress("test@test.com")})
                 .ShouldEqual(Xml.Declaration +
-                             "<OutOfTheBoxTypes><MailAddress>test@test.com</MailAddress></OutOfTheBoxTypes>");
+                    "<OutOfTheBoxTypes><MailAddress>test@test.com</MailAddress></OutOfTheBoxTypes>");
         }
 
         [Test]
         public void should_serialize_byte_array()
         {
             Serialize.Xml(new OutOfTheBoxTypes {ByteArray = ASCIIEncoding.ASCII.GetBytes("oh hai")})
-                .ShouldEqual(Xml.Declaration + "<OutOfTheBoxTypes><ByteArray>b2ggaGFp</ByteArray></OutOfTheBoxTypes>");
+                .ShouldEqual(Xml.Declaration + 
+                    "<OutOfTheBoxTypes><ByteArray>b2ggaGFp</ByteArray></OutOfTheBoxTypes>");
         }
 
         [Test]

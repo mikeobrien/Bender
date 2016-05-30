@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Xml.Serialization;
 using Bender.Reflection;
 using NUnit.Framework;
 using Should;
@@ -307,7 +306,7 @@ namespace Tests.Reflection
             .All;
 
         [Test]
-        [TestCaseSource("NumericValues")]
+        [TestCaseSource(nameof(NumericValues))]
         public void should_indicate_if_a_value_is_numeric(Type type, object value)
         {
             value.IsNumeric().ShouldBeTrue();
@@ -422,7 +421,7 @@ namespace Tests.Reflection
             .All;
 
         [Test]
-        [TestCaseSource("SimpleTypeParsing")]
+        [TestCaseSource(nameof(SimpleTypeParsing))]
         public void should_parse_simple_types(Type type, object value)
         {
             var result = value.ToString().ParseSimpleType(type.ToCachedType());
@@ -554,6 +553,20 @@ namespace Tests.Reflection
         public void should_convert_decimal_to_enum()
         {
             3.0m.ConvertToEnum(typeof(UriFormat)).ShouldEqual(UriFormat.SafeUnescaped);
+        }
+
+        [Test]
+        public void should_determine_if_type_is_optional_type()
+        {
+            typeof(string).IsOptional().ShouldBeFalse();
+            typeof(Optional<string>).IsOptional().ShouldBeTrue();
+        }
+
+        [Test]
+        public void should_get_underlying_optional_type()
+        {
+            typeof(string).GetUnderlyingOptionalType().ShouldEqual(typeof(string));
+            typeof(Optional<string>).GetUnderlyingOptionalType().ShouldEqual(typeof(string));
         }
     }
 }

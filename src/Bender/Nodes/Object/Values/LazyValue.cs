@@ -26,18 +26,13 @@ namespace Bender.Nodes.Object.Values
             }
         }
 
-        public CachedType SpecifiedType { get { return InnerValue.SpecifiedType; } }
-        public bool IsReadonly { get { return InnerValue.IsReadonly; } }
-        public IValue InnerValue { get; private set; }
+        public CachedType SpecifiedType => InnerValue.SpecifiedType;
+        public bool IsReadonly => InnerValue.IsReadonly;
+        public bool HasValue => InnerValue.HasValue;
+        public IValue InnerValue { get; }
 
-        public CachedType ActualType
-        {
-            get 
-            { 
-                return _initialized && InnerValue.Instance != null ?
-                    _actualType.Value : SpecifiedType;
-            }
-        }
+        public CachedType ActualType => _initialized && InnerValue
+            .Instance != null ? _actualType.Value : SpecifiedType;
 
         public void EnsureValue()
         {

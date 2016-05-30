@@ -266,6 +266,65 @@ namespace Tests.Deserializer.Xml
             exception.InnerException.ShouldBeType<ValueParseException>();
         }
 
+        // Optional values
+
+        public class OptionalValues
+        {
+            public Optional<string> OptionalReferenceTypeProperty { get; set; }
+            public Optional<int> OptionalValueTypeProperty { get; set; }
+            public Optional<int?> OptionalNullableTypeProperty { get; set; }
+
+            public Optional<string> OptionalReferenceTypeField;
+            public Optional<int> OptionalValueTypeField;
+            public Optional<int?> OptionalNullableTypeField;
+        }
+
+        private static readonly object[] OptionalTypes = TestCases.Create("Property", "Field")
+            .AddType<string>("hai", "OptionalReferenceType")
+            .AddType<int>(5, "OptionalValueType")
+            .AddType<int?>(6, "OptionalNullableType")
+            .All;
+
+        [Test]
+        [TestCaseSource(nameof(OptionalTypes))]
+        public void Should_deserialize_optional_values(string suffix, Type type, object value, string name)
+        {
+            var xml = "<OptionalValues><{0}>{1}</{0}></OptionalValues>".ToFormat(name + suffix, value);
+
+            var result = Deserialize.Xml<OptionalValues>(xml, x => x.IncludePublicFields());
+
+            var optional = result.GetPropertyOrFieldValue(name + suffix);
+            optional.GetPropertyOrFieldValue("HasValue").ShouldEqual(true);
+            optional.GetPropertyOrFieldValue("Value").ShouldEqual(value);
+        }
+
+        [Test]
+        public void Should_not_set_missing_values()
+        {
+            var xml = "<OptionalValues><OptionalReferenceTypeProperty>" +
+                       "hai</OptionalReferenceTypeProperty></OptionalValues>";
+
+            var result = Deserialize.Xml<OptionalValues>(xml);
+
+            result.OptionalReferenceTypeProperty.HasValue.ShouldBeTrue();
+            result.OptionalReferenceTypeProperty.Value.ShouldEqual("hai");
+
+            result.OptionalValueTypeProperty.HasValue.ShouldBeFalse();
+            result.OptionalValueTypeProperty.Value.ShouldEqual(0);
+
+            result.OptionalNullableTypeProperty.HasValue.ShouldBeFalse();
+            result.OptionalNullableTypeProperty.Value.ShouldBeNull();
+
+            result.OptionalReferenceTypeField.HasValue.ShouldBeFalse();
+            result.OptionalReferenceTypeField.Value.ShouldBeNull();
+
+            result.OptionalValueTypeField.HasValue.ShouldBeFalse();
+            result.OptionalValueTypeField.Value.ShouldEqual(0);
+
+            result.OptionalNullableTypeField.HasValue.ShouldBeFalse();
+            result.OptionalNullableTypeField.Value.ShouldBeNull();
+        }
+
         // Out of the box types
 
         public class OutOfTheBoxTypes

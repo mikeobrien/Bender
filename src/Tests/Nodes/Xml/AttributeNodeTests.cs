@@ -1,7 +1,6 @@
 ﻿using System.Xml.Linq;
 using Bender.Collections;
 using Bender.Configuration;
-using Bender.Extensions;
 using Bender.Nodes;
 using Bender.Nodes.Xml;
 using NUnit.Framework;

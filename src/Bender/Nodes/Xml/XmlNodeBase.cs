@@ -34,10 +34,10 @@ namespace Bender.Nodes.Xml
             else throw new XObjectNotSupportedException(@object);
         }
 
-        protected Options Options { get; private set; }
+        protected Options Options { get; }
 
-        public override string Format { get { return NodeFormat; } }
-        public override bool IsNamed { get { return true; } }
+        public override string Format => NodeFormat;
+        public override bool IsNamed => true;
 
         public XmlObjectType XmlType { get; private set; }
         public XObject Object { get; private set; }

@@ -49,7 +49,7 @@ namespace Tests.Nodes.Object
             _readerIncrementValue = (v, s, t, o) =>
             {
                 should_have_valid_parameters(v, s, t, o);
-                return s.Value == null ? 1 : (int)s.Value + 1;
+                return (int?) s.Value + 1 ?? 1;
             };
 
             _readerIncrementNullableValue = (v, s, t, o) =>
@@ -498,8 +498,8 @@ namespace Tests.Nodes.Object
         {
             _source.Value = 0;
             _readers
-                .AddValueReader<int?>(_readerIncrementNullableValue)
-                .AddValueReader<int?>(_readerIncrementNullableValue)
+                .AddValueReader(_readerIncrementNullableValue)
+                .AddValueReader(_readerIncrementNullableValue)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeTrue();
@@ -510,7 +510,7 @@ namespace Tests.Nodes.Object
         public void should_add_value_reader_but_not_read_when_type_does_not_match()
         {
             _readers
-                .AddValueReader<int>(_readerIncrementValue)
+                .AddValueReader(_readerIncrementValue)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeFalse();
@@ -570,8 +570,8 @@ namespace Tests.Nodes.Object
         {
             _source.Value = 0;
             _readers
-                .AddValueReader<int>(_readerIncrementValue, true)
-                .AddValueReader<int>(_readerIncrementValue, true)
+                .AddValueReader(_readerIncrementValue, true)
+                .AddValueReader(_readerIncrementValue, true)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeTrue();
@@ -582,7 +582,7 @@ namespace Tests.Nodes.Object
         public void should_add_value_reader_but_not_read_when_nullable_type_does_not_match()
         {
             _readers
-                .AddValueReader<int>(_readerIncrementValue, false)
+                .AddValueReader(_readerIncrementValue, false)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeFalse();
@@ -596,8 +596,8 @@ namespace Tests.Nodes.Object
         {
             _source.Value = 0;
             _readers
-                .AddValueReader<int?>(_readerIncrementNullableValue, (v, s, t, o) => true)
-                .AddValueReader<int?>(_readerIncrementNullableValue, (v, s, t, o) => true)
+                .AddValueReader(_readerIncrementNullableValue, (v, s, t, o) => true)
+                .AddValueReader(_readerIncrementNullableValue, (v, s, t, o) => true)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeTrue();
@@ -608,7 +608,7 @@ namespace Tests.Nodes.Object
         public void should_add_value_reader_but_not_read_when_type_matches_but_predicate_does_not_match()
         {
             _readers
-                .AddValueReader<int?>(_readerIncrementNullableValue, (v, s, t, o) => false)
+                .AddValueReader(_readerIncrementNullableValue, (v, s, t, o) => false)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeFalse();
@@ -619,7 +619,7 @@ namespace Tests.Nodes.Object
         public void should_add_value_reader_but_not_read_when_predicate_matches_but_type_does_not_match()
         {
             _readers
-                .AddValueReader<int>(_readerIncrementValue, (v, s, t, o) => true)
+                .AddValueReader(_readerIncrementValue, (v, s, t, o) => true)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeFalse();
@@ -633,8 +633,8 @@ namespace Tests.Nodes.Object
         {
             _source.Value = 0;
             _readers
-                .AddValueReader<int>(_readerIncrementValue, (v, s, t, o) => true, true)
-                .AddValueReader<int>(_readerIncrementValue, (v, s, t, o) => true, true)
+                .AddValueReader(_readerIncrementValue, (v, s, t, o) => true, true)
+                .AddValueReader(_readerIncrementValue, (v, s, t, o) => true, true)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeTrue();
@@ -645,7 +645,7 @@ namespace Tests.Nodes.Object
         public void should_add_value_reader_but_not_read_when_nullable_type_matches_but_predicate_does_not_match()
         {
             _readers
-                .AddValueReader<int>(_readerIncrementValue, (v, s, t, o) => false, true)
+                .AddValueReader(_readerIncrementValue, (v, s, t, o) => false, true)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeFalse();
@@ -656,7 +656,7 @@ namespace Tests.Nodes.Object
         public void should_add_value_reader_but_not_read_when_predicate_matches_but_nullable_type_does_not_match()
         {
             _readers
-                .AddValueReader<int>(_readerIncrementValue, (v, s, t, o) => true, false)
+                .AddValueReader(_readerIncrementValue, (v, s, t, o) => true, false)
                 .Mapping.Map(_source, _target);
 
             _readers.Mapping.HasMapping(_source, _target).ShouldBeFalse();

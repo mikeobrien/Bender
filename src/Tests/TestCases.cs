@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bender.Collections;
-using Bender.Extensions;
 
 namespace Tests
 {
     public class TestCases
     {
-        private object[] _params;
+        private readonly object[] _params;
         private readonly List<object[]> _cases;
 
         public TestCases(params object[] @params)

@@ -3,8 +3,8 @@ using System.Diagnostics;
 using System.Text;
 using Bender.Extensions;
 using Bender.NamingConventions;
+using Bender.Nodes;
 using Bender.Reflection;
-using Microsoft.SqlServer.Server;
 
 namespace Bender.Configuration
 {
@@ -130,11 +130,45 @@ namespace Bender.Configuration
             return this;
         }
 
+        // Enum naming conventions
+
+        public OptionsDsl WithEnumNamingConvention(
+            Func<string, string> convention)
+        {
+            _options.EnumNameConventions.Add(convention);
+            return this;
+        }
+
+        public OptionsDsl WithEnumNamingConvention(
+            Func<string, EnumContext, string> convention)
+        {
+            _options.EnumNameConventions.Add(convention);
+            return this;
+        }
+
+        public OptionsDsl WithEnumNamingConvention(
+            Func<string, EnumContext, string> convention,
+            Func<string, EnumContext, bool> when)
+        {
+            _options.EnumNameConventions.Add(convention, when);
+            return this;
+        }
+
+        public OptionsDsl UseEnumSnakeCaseNaming(bool lower = false)
+        {
+            return WithEnumNamingConvention(
+                (v, c) => v.Replace("_", ""),
+                (v, c) => c.Mode == Mode.Deserialize)
+            .WithEnumNamingConvention(
+                (v, c) => v.ToSeparatedCase(lower, "_"),
+                (v, c) => c.Mode == Mode.Serialize);
+        }
+
         // Convenience naming conventions
 
         public OptionsDsl UseSnakeCaseNaming()
         {
-            return WithNamingConvention(x => x.ToSeperatedCase(true, "_"));
+            return WithNamingConvention(x => x.ToSeparatedCase(true, "_"));
         }
 
         public OptionsDsl UseCamelCaseNaming()
@@ -159,7 +193,7 @@ namespace Bender.Configuration
 
         private OptionsDsl UseXmlDashedCaseNaming(bool lower)
         {
-            Func<string, string> toSnakeCase = x => x.ToSeperatedCase(lower, "-");
+            Func<string, string> toSnakeCase = x => x.ToSeparatedCase(lower, "-");
             WithTypeNamingConvention((n, c) => toSnakeCase(n), (t, c) => c.IsXml);
             WithArrayItemNamingConvention((n, c) => toSnakeCase(n), (t, c) => c.IsXml);
             WithMemberNamingConvention((n, c) => toSnakeCase(n), (t, c) => c.IsXml);
@@ -180,9 +214,8 @@ namespace Bender.Configuration
             Func<string, MemberContext, string> convention,
             Func<string, MemberContext, bool> when)
         {
-            // Mono 2.10.8 build fails when lambdas passed in directly.
-            _options.FieldNameConventions.Add((n, c) => convention(n, c), (n, c) => when(n, c));
-            _options.PropertyNameConventions.Add((n, c) => convention(n, c), (n, c) => when(n, c));
+            _options.FieldNameConventions.Add(convention, when);
+            _options.PropertyNameConventions.Add(convention, when);
             return this;
         }
 
@@ -279,13 +312,13 @@ namespace Bender.Configuration
 
         public OptionsDsl Serialization(Action<SerializerOptionsDsl> configure)
         {
-            configure(new SerializerOptionsDsl(_options.Serialization));
+            configure(new SerializerOptionsDsl(_options));
             return this;
         }
 
         public OptionsDsl Deserialization(Action<DeserializerOptionsDsl> configure)
         {
-            configure(new DeserializerOptionsDsl(_options.Deserialization));
+            configure(new DeserializerOptionsDsl(_options));
             return this;
         }
 

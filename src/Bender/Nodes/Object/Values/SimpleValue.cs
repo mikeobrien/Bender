@@ -12,21 +12,21 @@ namespace Bender.Nodes.Object.Values
         public SimpleValue(
             object instance,
             CachedType specifiedType, 
-            bool @readonly = false)
+            bool @readonly = false,
+            bool hasValue = true)
         {
             Instance = instance;
             SpecifiedType = specifiedType;
             IsReadonly = @readonly;
+            HasValue = hasValue;
         }
 
         public object Instance { get; set; }
-        public CachedType SpecifiedType { get; private set; }
-        public bool IsReadonly { get; private set; }
+        public CachedType SpecifiedType { get; }
+        public bool IsReadonly { get; }
+        public bool HasValue { get; }
         public void EnsureValue() { }
 
-        public CachedType ActualType
-        { 
-            get { return Instance != null ? Instance.ToCachedType() : SpecifiedType; } 
-        }
+        public CachedType ActualType => Instance != null ? Instance.ToCachedType() : SpecifiedType;
     }
 }

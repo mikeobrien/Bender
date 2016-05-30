@@ -19,9 +19,9 @@ namespace Bender.NamingConventions
         public CachedMember Member { get; private set; }
         public Type Type { get; private set; }
         public Mode Mode { get; private set; }
-        public string Format { get; private set; }
-        public bool IsXml { get { return Format == XmlNodeBase.NodeFormat; } }
-        public bool IsJson { get { return Format == JsonNode.NodeFormat; } }
+        public string Format { get; }
+        public bool IsXml => Format == XmlNodeBase.NodeFormat;
+        public bool IsJson => Format == JsonNode.NodeFormat;
     }
 
     public static class MemberContextExtensions

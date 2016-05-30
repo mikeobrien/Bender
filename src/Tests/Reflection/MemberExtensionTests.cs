@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
-using Bender.Collections;
 using Bender.Reflection;
 using NSubstitute;
 using NUnit.Framework;
@@ -280,10 +279,14 @@ namespace Tests.Reflection
             ReadonlyMembers[name].IsReadonly().ShouldBeTrue();
         }
 
+        // Property and field values
+
         public class GetAndSetPropertyAndFieldValues
         {
             public string _field;
             public string Property { get; set; }
+            public Optional<string> _optionalField;
+            public Optional<string> OptionalProperty { get; set; }
         }
 
         [Test]
@@ -291,7 +294,7 @@ namespace Tests.Reflection
         {
             var @object = new GetAndSetPropertyAndFieldValues { _field = "field" };
             typeof(GetAndSetPropertyAndFieldValues).GetField("_field")
-                .BuildGetter()(@object).ShouldEqual("field");
+                .BuildGetter(typeof(string))(@object).ShouldEqual("field");
         }
 
         [Test]
@@ -299,7 +302,7 @@ namespace Tests.Reflection
         {
             var @object = new GetAndSetPropertyAndFieldValues();
             typeof(GetAndSetPropertyAndFieldValues).GetField("_field")
-                .BuildSetter()(@object, "field");
+                .BuildSetter(typeof(string))(@object, "field");
             @object._field.ShouldEqual("field");
         }
 
@@ -308,7 +311,7 @@ namespace Tests.Reflection
         {
             var @object = new GetAndSetPropertyAndFieldValues { Property = "property" };
             typeof(GetAndSetPropertyAndFieldValues).GetProperty("Property")
-                .BuildGetter()(@object).ShouldEqual("property");
+                .BuildGetter(typeof(string))(@object).ShouldEqual("property");
         }
 
         [Test]
@@ -316,8 +319,44 @@ namespace Tests.Reflection
         {
             var @object = new GetAndSetPropertyAndFieldValues();
             typeof(GetAndSetPropertyAndFieldValues).GetProperty("Property")
-                .BuildSetter()(@object, "property");
+                .BuildSetter(typeof(string))(@object, "property");
             @object.Property.ShouldEqual("property");
+        }
+
+        [Test]
+        public void should_get_optional_field_values()
+        {
+            var @object = new GetAndSetPropertyAndFieldValues { _optionalField = "field" };
+            typeof(GetAndSetPropertyAndFieldValues).GetField("_optionalField")
+                .BuildGetter(typeof(string))(@object).ShouldEqual("field");
+        }
+
+        [Test]
+        public void should_set_optional_field_values()
+        {
+            var @object = new GetAndSetPropertyAndFieldValues();
+            typeof(GetAndSetPropertyAndFieldValues).GetField("_optionalField")
+                .BuildSetter(typeof(string))(@object, "field");
+            @object._optionalField.HasValue.ShouldBeTrue();
+            @object._optionalField.Value.ShouldEqual("field");
+        }
+
+        [Test]
+        public void should_get_optional_property_values()
+        {
+            var @object = new GetAndSetPropertyAndFieldValues { OptionalProperty = "property" };
+            typeof(GetAndSetPropertyAndFieldValues).GetProperty("OptionalProperty")
+                .BuildGetter(typeof(string))(@object).ShouldEqual("property");
+        }
+
+        [Test]
+        public void should_set_optional_property_values()
+        {
+            var @object = new GetAndSetPropertyAndFieldValues();
+            typeof(GetAndSetPropertyAndFieldValues).GetProperty("OptionalProperty")
+                .BuildSetter(typeof(string))(@object, "property");
+            @object.OptionalProperty.HasValue.ShouldBeTrue();
+            @object.OptionalProperty.Value.ShouldEqual("property");
         }
 
         // Indexer
@@ -351,8 +390,7 @@ namespace Tests.Reflection
         [Test]
         public void should_get_indexer_value()
         {
-            var indexer = new Indexer();
-            indexer["oh"] = "hai";
+            var indexer = new Indexer { ["oh"] = "hai" };
             typeof(Indexer).ToCachedType().GetIndexer()
                 .GetValue(indexer, "oh").ShouldEqual("hai");
         }

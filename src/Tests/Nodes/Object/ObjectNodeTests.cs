@@ -385,8 +385,8 @@ namespace Tests.Nodes.Object
         }
 
         [Test]
-        [TestCase("NodeInterface")]
-        [TestCase("NodeImplementation")]
+        [TestCase(nameof(NodeMembers.NodeInterface))]
+        [TestCase(nameof(NodeMembers.NodeImplementation))]
         public void should_return_node_value_when_a_node_implementation(string member)
         {
             var instance = new NodeMembers();
@@ -478,7 +478,7 @@ namespace Tests.Nodes.Object
             public string Member1 { get; set; }
         }
 
-        private readonly static ConcreteType ConcreteTypeInstance = 
+        private static readonly ConcreteType ConcreteTypeInstance = 
             new ConcreteType { Member1 = "", Member2 = "" };
 
         [Test]
@@ -503,7 +503,7 @@ namespace Tests.Nodes.Object
             public ConcreteType ConcreteType { get; set; }
         }
 
-        private readonly static Model ModelInstance = new Model
+        private static readonly Model ModelInstance = new Model
         {
             Interface = ConcreteTypeInstance,
             BaseType = ConcreteTypeInstance,
@@ -564,6 +564,25 @@ namespace Tests.Nodes.Object
             members.ShouldTotal(1);
             members.ShouldNotContainNode("NullProperty");
             members.ShouldContainNode("Property");
+        }
+
+        public class OptionalMembers
+        {
+            public Optional<string> HasValue { get; set; }
+            public Optional<string> MissingValue { get; set; }
+        }
+
+        [Test]
+        public void should_not_return_optional_members_that_do_not_have_a_value_in_serialize_mode()
+        {
+            var @object = new OptionalMembers { HasValue = "fark" };
+            var members = CreateAccessModifierNode(
+                value: new SimpleValue(@object, typeof(OptionalMembers).ToCachedType()),
+                mode: Mode.Serialize).ToList();
+
+            members.ShouldTotal(1);
+            members.ShouldNotContainNode(nameof(OptionalMembers.MissingValue));
+            members.ShouldContainNode(nameof(OptionalMembers.HasValue));
         }
 
         public class CyclicRoot

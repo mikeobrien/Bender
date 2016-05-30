@@ -24,11 +24,11 @@ namespace Tests.NamingConventions
 
         public class FieldNameConventions
         {
-            [System.Xml.Serialization.XmlAttribute]
+            [XmlAttribute]
             private string _noNameAttributeProperty;
             [Bender.Nodes.Xml.Microsoft.XmlAttribute("SomeAttribute")]
             private string _benderXmlAttributeProperty;
-            [System.Xml.Serialization.XmlAttribute("SomeAttribute")]
+            [XmlAttribute("SomeAttribute")]
             private string _systemXmlAttributeProperty;
             [XmlElement]
             private string _noNameElementProperty;
