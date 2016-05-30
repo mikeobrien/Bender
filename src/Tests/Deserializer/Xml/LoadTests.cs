@@ -7,7 +7,6 @@ using Bender.Collections;
 using Bender.Configuration;
 using Bender.Extensions;
 using Bender.Nodes;
-using Bender.Nodes.Xml;
 using NUnit.Framework;
 using Should;
 

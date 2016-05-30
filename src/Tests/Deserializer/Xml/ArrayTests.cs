@@ -54,7 +54,7 @@ namespace Tests.Deserializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("SimpleArrayTypes")]
+        [TestCaseSource(nameof(SimpleArrayTypes))]
         public void should_deserialize_typed_elements(Type type, object value, object defaultValue)
         {
             var xml = "<ArrayOf{0}><{0}>{1}</{0}></ArrayOf{0}>".ToFormat(type.GetUnderlyingNullableType().Name, value);
@@ -69,7 +69,7 @@ namespace Tests.Deserializer.Xml
         }
 
         [Test]
-        [TestCaseSource("SimpleArrayTypes")]
+        [TestCaseSource(nameof(SimpleArrayTypes))]
         public void should_deserialize_typed_attributes(Type type, object value, object defaultValue)
         {
             var xml = "<ArrayOf{0} {0}=\"{1}\" />".ToFormat(type.GetUnderlyingNullableType().Name, value);
@@ -150,7 +150,7 @@ namespace Tests.Deserializer.Xml
         }
 
         [Test]
-        [TestCaseSource("SimpleArrayTypes")]
+        [TestCaseSource(nameof(SimpleArrayTypes))]
         public void should_fail_to_parse_empty_array_items(Type type, object value, object defaultValue)
         {
             if (type == typeof(string)) return;
@@ -171,7 +171,7 @@ namespace Tests.Deserializer.Xml
         }
 
         [Test]
-        [TestCaseSource("SimpleArrayTypes")]
+        [TestCaseSource(nameof(SimpleArrayTypes))]
         public void should_fail_to_parse_empty_array_items_with_custom_parse_message(Type type, object value, object defaultValue)
         {
             if (type == typeof(string)) return;

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Bender.Nodes;
 using Bender.Nodes.FormUrlEncoded;
 using NUnit.Framework;
@@ -36,9 +32,11 @@ namespace Tests.Nodes
         [Test]
         public void should_encode_form()
         {
-            var form = new FormNode(NodeType.Object);
-            form.Add("oh", NodeType.Value, Metadata.Empty, x => x.Value = "hai");
-            form.Add(new FormValueNode("john", "zoidberg"), x => {});
+            var form = new FormNode(NodeType.Object)
+            {
+                { "oh", NodeType.Value, Metadata.Empty, x => x.Value = "hai" },
+                { new FormValueNode("john", "zoidberg"), x => { } }
+            };
             var stream = new MemoryStream();
             form.Encode(stream);
             stream.Position = 0;

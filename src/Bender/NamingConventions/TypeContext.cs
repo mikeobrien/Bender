@@ -27,12 +27,12 @@ namespace Bender.NamingConventions
         }
 
         public CachedType Type { get; private set; }
-        public bool IsRoot { get; private set; }
-        public Options Options { get; private set; }
-        public Mode Mode { get; private set; }
-        public string Format { get; private set; }
-        public bool IsXml { get { return Format == XmlNodeBase.NodeFormat; } }
-        public bool IsJson { get { return Format == JsonNode.NodeFormat; } }
+        public bool IsRoot { get; }
+        public Options Options { get; }
+        public Mode Mode { get; }
+        public string Format { get; }
+        public bool IsXml => Format == XmlNodeBase.NodeFormat;
+        public bool IsJson => Format == JsonNode.NodeFormat;
 
         public TypeContext OfType(CachedType type)
         {

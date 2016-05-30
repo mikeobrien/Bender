@@ -38,8 +38,6 @@ namespace Bender.Nodes
 
     public abstract class NodeBase : INode
     {
-        private readonly Metadata _metadata = new Metadata();
-
         protected NodeBase(INode parent = null)
         {
             Parent = parent;
@@ -50,9 +48,10 @@ namespace Bender.Nodes
         public virtual string Type { get; set; }
         public virtual string Path { get; set; }
         public virtual bool IsNamed { get; set; }
-        public virtual Metadata Metadata { get { return _metadata; } }
-        public virtual INode Parent { get; private set; }
-        public virtual bool HasParent { get; private set; }
+        public virtual Metadata Metadata { get; } = new Metadata();
+
+        public virtual INode Parent { get; }
+        public virtual bool HasParent { get; }
 
         public virtual bool HasFixedNodeType { get; set; }
 

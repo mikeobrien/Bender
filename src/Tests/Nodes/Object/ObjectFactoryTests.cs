@@ -42,7 +42,7 @@ namespace Tests.Nodes.Object
             .All;
 
         [Test]
-        [TestCaseSource("SimpleTypes")]
+        [TestCaseSource(nameof(SimpleTypes))]
         public void should_fail_to_create_simple_types(Type type)
         {
             Assert.Throws<SimpleTypeInstantiationNotSupportedException>(() => ObjectFactory.CreateInstance(type.ToCachedType()))
@@ -83,7 +83,7 @@ namespace Tests.Nodes.Object
                 Dependency = dependency;
             }
 
-            public ComplexType Dependency { get; private set; }
+            public ComplexType Dependency { get; }
         }
 
         [Test]

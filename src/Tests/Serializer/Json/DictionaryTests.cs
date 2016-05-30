@@ -48,7 +48,7 @@ namespace Tests.Serializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("SimpleDictionaryTypes")]
+        [TestCaseSource(nameof(SimpleDictionaryTypes))]
         public void should_serialize_typed_dictionary_entries(Type type, object value)
         {
             var dictionary = type.MakeGenericDictionaryType<string>().CreateInstance().As<IDictionary>();
@@ -66,7 +66,7 @@ namespace Tests.Serializer.Json
             public string Property { get; set; }
         }
 
-        private readonly static ComplexType ComplexTypeInstance = new ComplexType { Property = "hai" };
+        private static readonly ComplexType ComplexTypeInstance = new ComplexType { Property = "hai" };
 
         private static readonly object[] ComplexTypeDictionaries = TestCases.Create()
             .AddTypeAndValues(new Dictionary<string, ComplexType> {{ "item", ComplexTypeInstance }})
@@ -79,7 +79,7 @@ namespace Tests.Serializer.Json
         .All;
 
         [Test]
-        [TestCaseSource("ComplexTypeDictionaries")]
+        [TestCaseSource(nameof(ComplexTypeDictionaries))]
         public void should_serialize_dictionary_of_complex_type(Type type, object dictionary)
         {
             Serialize.Json(dictionary, type).ShouldEqual("{\"item\":{\"Property\":\"hai\"}}");
@@ -98,7 +98,7 @@ namespace Tests.Serializer.Json
         .All;
 
         [Test]
-        [TestCaseSource("ComplexTypeDictionaryOfArrays")]
+        [TestCaseSource(nameof(ComplexTypeDictionaryOfArrays))]
         public void should_serialize_dictionary_of_dictionary(Type type, object dictionary)
         {
             Serialize.Json(dictionary, type).ShouldEqual("{\"item\":[{\"Property\":\"hai\"}]}");
@@ -117,7 +117,7 @@ namespace Tests.Serializer.Json
         .All;
 
         [Test]
-        [TestCaseSource("ComplexTypeDictionaryOfDictionaries")]
+        [TestCaseSource(nameof(ComplexTypeDictionaryOfDictionaries))]
         public void should_serialize_dictionary_of_array(Type type, object dictionary)
         {
             Serialize.Json(dictionary, type).ShouldEqual("{\"item1\":{\"item2\":{\"Property\":\"hai\"}}}");
@@ -146,7 +146,7 @@ namespace Tests.Serializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("ComplexArrayMembers")]
+        [TestCaseSource(nameof(ComplexArrayMembers))]
         public void should_serialize_member_array_of_complex_type(string name, Model model)
         {
             Serialize.Json(model).ShouldEqual("{{\"{0}\":{{\"item\":{{\"Property\":\"hai\"}}}}}}".ToFormat(name));

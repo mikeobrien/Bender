@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Bender.Collections;
-using Bender.Extensions;
 using UTF8Encoding = Bender.Extensions.UTF8Encoding;
 
 namespace Bender.Nodes

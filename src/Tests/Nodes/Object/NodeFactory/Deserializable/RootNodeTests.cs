@@ -6,7 +6,6 @@ using Bender.Configuration;
 using Bender.Nodes;
 using Bender.Nodes.Object;
 using Bender.Reflection;
-using Flexo.Extensions;
 using NUnit.Framework;
 using Should;
 using NodeBase = Bender.Nodes.Object.ObjectNodeBase;
@@ -25,7 +24,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
             .All;
 
         [Test]
-        [TestCaseSource("TypeCases")]
+        [TestCaseSource(nameof(TypeCases))]
         public void should_create_node_with_name(
             Type type, object @object, string name, NodeType nodeType)
         {
@@ -37,7 +36,7 @@ namespace Tests.Nodes.Object.NodeFactory.Deserializable
         }
 
         [Test]
-        [TestCaseSource("TypeCases")]
+        [TestCaseSource(nameof(TypeCases))]
         public void should_create_node_without_name(
             Type type, object @object, string name, NodeType nodeType)
         {

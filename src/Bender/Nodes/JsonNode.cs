@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Bender.Collections;
 using Bender.Configuration;
 using Bender.Extensions;
 using Flexo;
@@ -35,7 +34,7 @@ namespace Bender.Nodes
             Element = element;
         }
 
-        public JElement Element { get; private set; }
+        public JElement Element { get; }
         public override string Format => NodeFormat;
         public override string Path => Element.Path;
         public override bool IsNamed => Element.IsNamed;

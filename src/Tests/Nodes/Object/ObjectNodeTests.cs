@@ -478,7 +478,7 @@ namespace Tests.Nodes.Object
             public string Member1 { get; set; }
         }
 
-        private readonly static ConcreteType ConcreteTypeInstance = 
+        private static readonly ConcreteType ConcreteTypeInstance = 
             new ConcreteType { Member1 = "", Member2 = "" };
 
         [Test]
@@ -503,7 +503,7 @@ namespace Tests.Nodes.Object
             public ConcreteType ConcreteType { get; set; }
         }
 
-        private readonly static Model ModelInstance = new Model
+        private static readonly Model ModelInstance = new Model
         {
             Interface = ConcreteTypeInstance,
             BaseType = ConcreteTypeInstance,

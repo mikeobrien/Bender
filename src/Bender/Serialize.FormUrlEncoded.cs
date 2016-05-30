@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text;
 using Bender.Configuration;
-using Bender.Nodes;
 using Bender.Nodes.FormUrlEncoded;
 
 namespace Bender

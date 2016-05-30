@@ -49,7 +49,7 @@ namespace Tests.Serializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("SimpleDictionaryTypes")]
+        [TestCaseSource(nameof(SimpleDictionaryTypes))]
         public void should_serialize_typed_dictionary_elements(Type type, object value)
         {
             var dictionary = type.MakeGenericDictionaryType<string>().CreateInstance().As<IDictionary>();
@@ -60,7 +60,7 @@ namespace Tests.Serializer.Xml
         }
 
         [Test]
-        [TestCaseSource("SimpleDictionaryTypes")]
+        [TestCaseSource(nameof(SimpleDictionaryTypes))]
         public void should_serialize_typed_dictionary_attributes(Type type, object value)
         {
             var dictionary = type.MakeGenericDictionaryType<string>().CreateInstance().As<IDictionary>();
@@ -77,7 +77,7 @@ namespace Tests.Serializer.Xml
             public string Property { get; set; }
         }
 
-        private readonly static ComplexType ComplexTypeInstance = new ComplexType { Property = "hai" };
+        private static readonly ComplexType ComplexTypeInstance = new ComplexType { Property = "hai" };
 
         private static readonly object[] ComplexTypeDictionaries = TestCases.Create()
             .AddTypeAndValues(new Dictionary<string, ComplexType> {{ "item", ComplexTypeInstance }})
@@ -90,7 +90,7 @@ namespace Tests.Serializer.Xml
         .All;
 
         [Test]
-        [TestCaseSource("ComplexTypeDictionaries")]
+        [TestCaseSource(nameof(ComplexTypeDictionaries))]
         public void should_serialize_dictionary_of_complex_type(Type type, object dictionary)
         {
             Serialize.Xml(dictionary, type).ShouldEqual(Xml.Declaration + "<DictionaryOf{0}><item><Property>hai</Property></item></DictionaryOf{0}>"
@@ -110,7 +110,7 @@ namespace Tests.Serializer.Xml
         .All;
 
         [Test]
-        [TestCaseSource("ComplexTypeDictionaryOfArrays")]
+        [TestCaseSource(nameof(ComplexTypeDictionaryOfArrays))]
         public void should_serialize_dictionary_of_dictionary(Type type, object dictionary)
         {
             Serialize.Xml(dictionary, type).ShouldEqual(Xml.Declaration + "<DictionaryOfArrayOfComplexType><item><ComplexType><Property>hai</Property></ComplexType></item></DictionaryOfArrayOfComplexType>");
@@ -131,7 +131,7 @@ namespace Tests.Serializer.Xml
         .All;
 
         [Test]
-        [TestCaseSource("ComplexTypeDictionaryOfDictionaries")]
+        [TestCaseSource(nameof(ComplexTypeDictionaryOfDictionaries))]
         public void should_serialize_dictionary_of_array(Type type, object dictionary)
         {
             Serialize.Xml(dictionary, type).ShouldEqual(Xml.Declaration + "<DictionaryOf{0}><item1><item2><Property>hai</Property></item2></item1></DictionaryOf{0}>"
@@ -161,7 +161,7 @@ namespace Tests.Serializer.Xml
             .All;
 
         [Test]
-        [TestCaseSource("ComplexArrayMembers")]
+        [TestCaseSource(nameof(ComplexArrayMembers))]
         public void should_serialize_member_array_of_complex_type(string name, Model model)
         {
             Serialize.Xml(model).ShouldEqual(Xml.Declaration + "<Model><{0}><item><Property>hai</Property></item></{0}></Model>".ToFormat(name));

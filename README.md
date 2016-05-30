@@ -179,6 +179,20 @@ Options.Create(o => o
 
 In the first convention we append `EmailAddress` to the name when the property is of type `MailAddress`. Next we define a convention that prepends an `_` to every name. If we had a property named `Support` of type `MailAddress` the name would end up being `_SupportEmailAddress`.
 
+Bender also allows you to define naming conventions for enum values. Enum values are not included in the global naming convention (As demonstrated above) as it is assumed that they will differ from type and member naming conventions. Below we see the convenience method for snake casing and it's actual implementation. 
+
+```csharp
+Options.Create(o => o.UseEnumSnakeCaseNaming());
+
+Options.Create(o => o
+    .WithEnumNamingConvention(
+        (value, context) => value.Replace("_", ""),
+        (value, context) => context.Mode == Mode.Deserialize)
+    .WithEnumNamingConvention(
+        (value, context) => value.ToSeperatedCase(false, "_"),
+        (value, context) => context.Mode == Mode.Serialize);
+```
+
 ### Visitors
 
 Visitors enable you to operate on each node in the target graph. Both serialization and deserialization options contain methods for adding visitors. Each option method has an overload that applies to all and one that takes a predicate to limit its application. There are also convenience methods that apply visitors to either xml or json or specific types.

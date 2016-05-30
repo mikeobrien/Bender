@@ -111,7 +111,7 @@ namespace Tests.Serializer
             .All;
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_serialize_fields(string suffix, Type type, object value, string name)
         {
             var memberName = name + suffix;
@@ -158,7 +158,7 @@ namespace Tests.Serializer
         [Test]
         public void should_serialize_byte_array()
         {
-            Serialize.FormUrlEncoded(new OutOfTheBoxTypes { ByteArray = ASCIIEncoding.ASCII.GetBytes("oh hai") })
+            Serialize.FormUrlEncoded(new OutOfTheBoxTypes { ByteArray = Encoding.ASCII.GetBytes("oh hai") })
                 .ShouldEqual("ByteArray=b2ggaGFp");
         }
     }

@@ -17,11 +17,11 @@ namespace Tests.Collections.Implementations
             _list = list;
         }
 
-        public int Count { get { return _list.Count; } }
-        public object SyncRoot { get { return _list.SyncRoot; } }
-        public bool IsSynchronized { get { return _list.IsSynchronized; } }
-        public bool IsReadOnly { get { return _list.IsReadOnly; } }
-        public bool IsFixedSize { get { return _list.IsFixedSize; } }
+        public int Count => _list.Count;
+        public object SyncRoot => _list.SyncRoot;
+        public bool IsSynchronized => _list.IsSynchronized;
+        public bool IsReadOnly => _list.IsReadOnly;
+        public bool IsFixedSize => _list.IsFixedSize;
 
         public int Add(object value)
         {

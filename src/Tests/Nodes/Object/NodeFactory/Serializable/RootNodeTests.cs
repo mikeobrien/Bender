@@ -5,7 +5,6 @@ using Bender.Configuration;
 using Bender.Nodes;
 using Bender.Nodes.Object;
 using Bender.Reflection;
-using Flexo.Extensions;
 using NUnit.Framework;
 using Should;
 using NodeBase = Bender.Nodes.Object.ObjectNodeBase;
@@ -25,7 +24,7 @@ namespace Tests.Nodes.Object.NodeFactory.Serializable
             .All;
 
         [Test]
-        [TestCaseSource("RootTypeCases")]
+        [TestCaseSource(nameof(RootTypeCases))]
         public void should_create_node_from_actual_type_overload(
             Type specifiedType, object value, string specifiedTypeName, string actualName, NodeType nodeType)
         {
@@ -36,7 +35,7 @@ namespace Tests.Nodes.Object.NodeFactory.Serializable
         }
 
         [Test]
-        [TestCaseSource("RootTypeCases")]
+        [TestCaseSource(nameof(RootTypeCases))]
         public void should_create_node_from_specified_type_overload(
             Type specifiedType, object value, string specifiedName, string actualName, NodeType nodeType)
         {

@@ -14,9 +14,9 @@ namespace Tests.Nodes.Object
     [TestFixture]
     public class ValueNodeTests
     {
-        public static Context CreateContext(Mode mode)
+        public static Context CreateContext(Mode mode, Options options = null)
         {
-            return new Context(Options.Create(), mode, "xml");
+            return new Context(options ?? Options.Create(), mode, "xml");
         }
 
         [Test]
@@ -43,15 +43,17 @@ namespace Tests.Nodes.Object
         [Test]
         public void should_return_the_value_as_the_object()
         {
-            new ValueNode(CreateContext(Mode.Serialize), null, new SimpleValue("hai", null), null, null)
-                .Value.ShouldEqual("hai");
+            new ValueNode(CreateContext(Mode.Serialize), null, new SimpleValue("hai", 
+                typeof(string).ToCachedType()), null, null)
+                    .Value.ShouldEqual("hai");
         }
 
         [Test]
         public void should_get_the_value()
         {
-            new ValueNode(CreateContext(Mode.Serialize), null, new SimpleValue("hai", null), null, null)
-                .Value.ShouldEqual("hai");
+            new ValueNode(CreateContext(Mode.Serialize), null, 
+                new SimpleValue("hai", typeof(string).ToCachedType()), null, null)
+                    .Value.ShouldEqual("hai");
         }
 
         public static readonly object[] SimpleTypes = TestCases.Create()
@@ -83,7 +85,7 @@ namespace Tests.Nodes.Object
             .All;
 
         [Test]
-        [TestCaseSource("SimpleTypes")]
+        [TestCaseSource(nameof(SimpleTypes))]
         public void should_set_simple_types(Type type, object value)
         {
             var result = new SimpleValue(type.ToCachedType());
@@ -118,7 +120,7 @@ namespace Tests.Nodes.Object
         }
 
         [Test]
-        [TestCaseSource("SimpleTypes")]
+        [TestCaseSource(nameof(SimpleTypes))]
         public void should_parse_simple_types_from_string(Type type, object value)
         {
             var result = new SimpleValue(type.ToCachedType());
@@ -127,7 +129,7 @@ namespace Tests.Nodes.Object
         }
 
         [Test]
-        [TestCaseSource("SimpleTypes")]
+        [TestCaseSource(nameof(SimpleTypes))]
         public void should_fail_to_parse_invalid_string_values_and_return_friendly_message(Type type, object value)
         {
             if (type.Is<string>()) return;
@@ -152,7 +154,7 @@ namespace Tests.Nodes.Object
         }
 
         [Test]
-        [TestCaseSource("SimpleTypes")]
+        [TestCaseSource(nameof(SimpleTypes))]
         public void should_convert_simple_types_to_string(Type type, object value)
         {
             var result = new SimpleValue(typeof(string).ToCachedType());
@@ -177,7 +179,7 @@ namespace Tests.Nodes.Object
             .All;
 
         [Test]
-        [TestCaseSource("SimpleNumericTypes")]
+        [TestCaseSource(nameof(SimpleNumericTypes))]
         public void should_convert_simple_numeric_types_to_decimal(Type type, object value)
         {
             var result = new SimpleValue(typeof(decimal).ToCachedType());
@@ -239,6 +241,45 @@ namespace Tests.Nodes.Object
             Assert.Throws<ValueCannotBeNullDeserializationException>(() =>
                 new ValueNode(CreateContext(Mode.Deserialize), null,
                     new SimpleValue(type.ToCachedType()), null, null).Value = null);
+        }
+
+        [Test]
+        public void should_set_enum_with_custom_naming_convention()
+        {
+            var result = new SimpleValue(typeof(UriFormat).ToCachedType());
+            new ValueNode(CreateContext(Mode.Deserialize, Options.Create(
+                x => x.UseEnumSnakeCaseNaming())), null, result, 
+                null, null).Value = "Safe_Unescaped";
+            result.Instance.ShouldEqual(UriFormat.SafeUnescaped);
+        }
+
+        [Test]
+        public void should_get_enum_with_custom_naming_convention()
+        {
+            var result = new SimpleValue(UriFormat.SafeUnescaped, 
+                typeof(UriFormat).ToCachedType());
+            new ValueNode(CreateContext(Mode.Serialize, Options.Create(
+                x => x.UseEnumSnakeCaseNaming())), null, result,
+                null, null).Value.ShouldEqual("Safe_Unescaped");
+        }
+
+        [Test]
+        public void should_set_enum_case_insensitively_when_configured()
+        {
+            var result = new SimpleValue(typeof(UriFormat).ToCachedType());
+            new ValueNode(CreateContext(Mode.Deserialize, Options.Create(
+                x => x.Deserialization(y => y.IgnoreEnumNameCase()))), null, result,
+                null, null).Value = "safeunescaped";
+            result.Instance.ShouldEqual(UriFormat.SafeUnescaped);
+        }
+
+        [Test]
+        public void should_fail_to_set_enum_case_insensitively_when_not_configured()
+        {
+            var result = new SimpleValue(typeof(UriFormat).ToCachedType());
+            Assert.Throws<ValueParseException> (() => new ValueNode(CreateContext(Mode.Deserialize), 
+                    null, result, null, null).Value = "safeunescaped")
+                .FriendlyMessage.ShouldEqual("Option 'safeunescaped' is not valid.");
         }
     }
 }

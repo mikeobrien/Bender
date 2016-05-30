@@ -98,10 +98,10 @@ namespace Tests.Nodes
         public void should_indicate_when_there_is_a_visitor()
         {
             _conventions
-                .Add((s, t, o) => { },
-                     (s, t, o) => s.Value == "a" && t.Value == "b")
-                .Add((s, t, o) => { },
-                     (s, t, o) => s.Value == "c" && t.Value == "d");
+                .Add((s, t, o) => { }, (s, t, o) => 
+                     (string)s.Value == "a" && (string)t.Value == "b")
+                .Add((s, t, o) => { }, (s, t, o) => 
+                     (string)s.Value == "c" && (string)t.Value == "d");
 
             _source.Value = "a";
             _target.Value = "b";

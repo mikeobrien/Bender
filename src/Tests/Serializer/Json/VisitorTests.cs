@@ -29,7 +29,7 @@ namespace Tests.Serializer.Json
             public int? Nullable { get; set; }
         }
 
-        private readonly static Model ModelInstance = new Model { Property1 = "oh", Property2 = 5, 
+        private static readonly Model ModelInstance = new Model { Property1 = "oh", Property2 = 5, 
                 Child = new Child { Property1 = "oh", Property2 = 6 } };
 
         private const string ModelXml = Xml.Xml.Declaration + 

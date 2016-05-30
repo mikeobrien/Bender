@@ -17,13 +17,13 @@ namespace Tests.Collections.Implementations
             _dictionary = dictionary;
         }
 
-        public ICollection Keys { get { return _dictionary.Keys; } }
-        public ICollection Values { get { return _dictionary.Values; } }
-        public bool IsReadOnly { get { return _dictionary.IsReadOnly; } }
-        public bool IsFixedSize { get { return _dictionary.IsFixedSize; } }
-        public int Count { get { return _dictionary.Count; } }
-        public object SyncRoot { get { return _dictionary.SyncRoot; } }
-        public bool IsSynchronized { get { return _dictionary.IsSynchronized; } }
+        public ICollection Keys => _dictionary.Keys;
+        public ICollection Values => _dictionary.Values;
+        public bool IsReadOnly => _dictionary.IsReadOnly;
+        public bool IsFixedSize => _dictionary.IsFixedSize;
+        public int Count => _dictionary.Count;
+        public object SyncRoot => _dictionary.SyncRoot;
+        public bool IsSynchronized => _dictionary.IsSynchronized;
 
         public bool Contains(object key)
         {

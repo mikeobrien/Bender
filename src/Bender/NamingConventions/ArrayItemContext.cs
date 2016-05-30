@@ -18,13 +18,13 @@ namespace Bender.NamingConventions
         }
 
         public CachedType Type { get; private set; }
-        public CachedMember Member { get; private set; }
-        public bool HasMember { get { return Member != null; } }
+        public CachedMember Member { get; }
+        public bool HasMember => Member != null;
         public Options Options { get; private set; }
         public Mode Mode { get; private set; }
-        public string Format { get; private set; }
-        public bool IsXml { get { return Format == XmlNodeBase.NodeFormat; } }
-        public bool IsJson { get { return Format == JsonNode.NodeFormat; } }
+        public string Format { get; }
+        public bool IsXml => Format == XmlNodeBase.NodeFormat;
+        public bool IsJson => Format == JsonNode.NodeFormat;
     }
 
     public static class ArrayItemContextExtensions

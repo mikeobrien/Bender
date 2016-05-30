@@ -99,7 +99,7 @@ namespace Tests.Deserializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_deserialize_typed_fields(string suffix, Type type, object value, string name)
         {
             var json = "{{ \"{0}\": {1} }}".ToFormat(name + suffix,
@@ -113,7 +113,7 @@ namespace Tests.Deserializer.Json
         }
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_deserialize_string_fields(string suffix, Type type, object value, string name)
         {
             var json = "{{ \"{0}\": \"{1}\" }}".ToFormat(name + suffix,
@@ -155,7 +155,7 @@ namespace Tests.Deserializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("SimpleFieldReferenceTypes")]
+        [TestCaseSource(nameof(SimpleFieldReferenceTypes))]
         public void should_deserialize_null_reference_type_fields(string suffix, Type type, object value, string name)
         {
             var json = "{{ \"{0}\": null }}".ToFormat(name + suffix);
@@ -193,7 +193,7 @@ namespace Tests.Deserializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("SimpleFieldValueTypes")]
+        [TestCaseSource(nameof(SimpleFieldValueTypes))]
         public void should_fail_to_deserialize_null_value_type_fields(string suffix, Type type, object value, string name)
         {
             var json = "{{ \"{0}\": null }}".ToFormat(name + suffix);
@@ -208,7 +208,7 @@ namespace Tests.Deserializer.Json
         }
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_fail_to_parse_empty_fields(string suffix, Type type, object value, string name)
         {
             if (type == typeof(string)) return;
@@ -232,7 +232,7 @@ namespace Tests.Deserializer.Json
         }
 
         [Test]
-        [TestCaseSource("SimpleFieldTypes")]
+        [TestCaseSource(nameof(SimpleFieldTypes))]
         public void should_fail_to_parse_empty_fields_with_custom_parse_message(string suffix, Type type, object value, string name)
         {
             if (type == typeof(string)) return;
@@ -304,7 +304,7 @@ namespace Tests.Deserializer.Json
         public void should_deserialize_byte_array()
         {
             Deserialize.Json<OutOfTheBoxTypes>("{ \"ByteArray\": \"b2ggaGFp\" }")
-                .ByteArray.ShouldEqual(ASCIIEncoding.ASCII.GetBytes("oh hai"));
+                .ByteArray.ShouldEqual(Encoding.ASCII.GetBytes("oh hai"));
         }
 
         [Test]

@@ -1,12 +1,11 @@
 using System.Xml.Serialization;
 using Bender.Collections;
 using Bender.Extensions;
-using Bender.Nodes;
 using Bender.Nodes.Xml;
 
 namespace Bender.NamingConventions
 {
-    public class ArrayItemConventions
+    public class ArrayItemNamingConventions
     {
         public static NamingConventions<ArrayItemContext> Create()
         {

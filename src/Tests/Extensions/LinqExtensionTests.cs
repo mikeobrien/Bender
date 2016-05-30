@@ -6,7 +6,6 @@ using System.Linq;
 using System.Security.Policy;
 using Bender.Collections;
 using NUnit.Framework;
-using Bender.Extensions;
 using Should;
 
 namespace Tests.Extensions

@@ -81,20 +81,20 @@ namespace Tests.Deserializer.Json
         public const string Json = "{ \"Oh\": \"Hai\" }";
         public const string LowerCaseJson = "{ \"oh\": \"Hai\" }";        
         
-        private readonly static byte[] JsonBytesUtf8 = Encoding.UTF8.GetBytes(Json);
-        private readonly static byte[] JsonBytesUnicode = Encoding.BigEndianUnicode.GetBytes(Json);
-        private readonly static byte[] LowerCaseJsonBytesUtf8 = Encoding.UTF8.GetBytes(LowerCaseJson);
-        private readonly static byte[] LowerCaseJsonBytesUnicode = Encoding.BigEndianUnicode.GetBytes(LowerCaseJson);
+        private static readonly byte[] JsonBytesUtf8 = Encoding.UTF8.GetBytes(Json);
+        private static readonly byte[] JsonBytesUnicode = Encoding.BigEndianUnicode.GetBytes(Json);
+        private static readonly byte[] LowerCaseJsonBytesUtf8 = Encoding.UTF8.GetBytes(LowerCaseJson);
+        private static readonly byte[] LowerCaseJsonBytesUnicode = Encoding.BigEndianUnicode.GetBytes(LowerCaseJson);
 
-        private readonly static Stream JsonStreamUtf8 = new MemoryStream(JsonBytesUtf8);
-        private readonly static Stream JsonStreamUnicode = new MemoryStream(JsonBytesUnicode);
-        private readonly static Stream LowerCaseJsonStreamUtf8 = new MemoryStream(LowerCaseJsonBytesUtf8);
-        private readonly static Stream LowerCaseJsonStreamUnicode = new MemoryStream(LowerCaseJsonBytesUnicode);
+        private static readonly Stream JsonStreamUtf8 = new MemoryStream(JsonBytesUtf8);
+        private static readonly Stream JsonStreamUnicode = new MemoryStream(JsonBytesUnicode);
+        private static readonly Stream LowerCaseJsonStreamUtf8 = new MemoryStream(LowerCaseJsonBytesUtf8);
+        private static readonly Stream LowerCaseJsonStreamUnicode = new MemoryStream(LowerCaseJsonBytesUnicode);
 
-        private readonly static string JsonPathUtf8 = Path.GetTempFileName();
-        private readonly static string JsonPathUnicode = Path.GetTempFileName();
-        private readonly static string LowerCaseJsonPathUtf8 = Path.GetTempFileName();
-        private readonly static string LowerCaseJsonPathUnicode = Path.GetTempFileName();
+        private static readonly string JsonPathUtf8 = Path.GetTempFileName();
+        private static readonly string JsonPathUnicode = Path.GetTempFileName();
+        private static readonly string LowerCaseJsonPathUtf8 = Path.GetTempFileName();
+        private static readonly string LowerCaseJsonPathUnicode = Path.GetTempFileName();
 
         [SetUp]
         public void Setup()
@@ -178,7 +178,7 @@ namespace Tests.Deserializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("ToObjectCases")]
+        [TestCaseSource(nameof(ToObjectCases))]
         public void should_deserialize_to_object(Func<object> deserialize)
         {
             deserialize().As<Model>().Oh.ShouldEqual("Hai");
@@ -222,7 +222,7 @@ namespace Tests.Deserializer.Json
             .All;
 
         [Test]
-        [TestCaseSource("ToNodeCases")]
+        [TestCaseSource(nameof(ToNodeCases))]
         public void should_deserialize_to_node(Func<INode> deserialize)
         {
             deserialize().GetNode("Oh").Value.ShouldEqual("Hai");;

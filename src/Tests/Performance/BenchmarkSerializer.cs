@@ -42,8 +42,8 @@ namespace Tests.Performance
         }
 
         public string Name { get; set; }
-        public Format Format { get; private set; }
-        public bool Summary { get; private set; }
+        public Format Format { get; }
+        public bool Summary { get; }
 
         public void Run(Type type, string source, bool warm = false, bool dryRun = false)
         {
