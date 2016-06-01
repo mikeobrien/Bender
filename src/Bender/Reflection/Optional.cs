@@ -5,7 +5,12 @@
         bool HasValue { get; }
     }
 
-    public struct Optional<T> : IOptional
+    public interface IOptional<T> : IOptional
+    {
+        T Value { get; set; }
+    }
+
+    public struct Optional<T> : IOptional<T>
     {
         private T _value;
 
