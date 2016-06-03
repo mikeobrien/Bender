@@ -81,40 +81,46 @@ namespace Bender.Configuration
 
         // Enum naming conventions
 
-        public SerializerOptionsDsl WithEnumNamingConvention(
+        public SerializerOptionsDsl EnumValuesAsNumeric()
+        {
+            _options.Serialization.NumericEnumValues = true;
+            return this;
+        }
+
+        public SerializerOptionsDsl WithEnumValueNamingConvention(
             Func<string, string> convention)
         {
-            _options.EnumNameConventions.Add(
+            _options.EnumValueNameConventions.Add(
                 (v, c) => convention(v),
                 (v, c) => c.Mode == Mode.Serialize);
             return this;
         }
 
-        public SerializerOptionsDsl WithEnumNamingConvention(
+        public SerializerOptionsDsl WithEnumValueNamingConvention(
             Func<string, EnumContext, string> convention)
         {
-            _options.EnumNameConventions.Add(convention,
+            _options.EnumValueNameConventions.Add(convention,
                 (v, c) => c.Mode == Mode.Serialize);
             return this;
         }
 
-        public SerializerOptionsDsl WithEnumNamingConvention(
+        public SerializerOptionsDsl WithEnumValueNamingConvention(
             Func<string, EnumContext, string> convention,
             Func<string, EnumContext, bool> when)
         {
-            _options.EnumNameConventions.Add(convention,
+            _options.EnumValueNameConventions.Add(convention,
                 (v, c) => c.Mode == Mode.Serialize && when(v, c));
             return this;
         }
 
         public SerializerOptionsDsl UseEnumCamelCaseNaming()
         {
-            return WithEnumNamingConvention((v, c) => v.ToCamelCase());
+            return WithEnumValueNamingConvention((v, c) => v.ToCamelCase());
         }
 
         public SerializerOptionsDsl UseEnumSnakeCaseNaming(bool lower = false)
         {
-            return WithEnumNamingConvention((v, c) => v.ToSeparatedCase(lower, "_"));
+            return WithEnumValueNamingConvention((v, c) => v.ToSeparatedCase(lower, "_"));
         }
 
         // Visitors

@@ -81,7 +81,7 @@
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="NamingConventions\EnumContext.cs" />
     <Compile Include="NamingConventions\ArrayItemContext.cs" />
-    <Compile Include="NamingConventions\EnumNamingConventions.cs" />
+    <Compile Include="NamingConventions\EnumValueNamingConventions.cs" />
     <Compile Include="NamingConventions\MemberContext.cs" />
     <Compile Include="NamingConventions\ArrayItemNamingConventions.cs" />
     <Compile Include="NamingConventions\TypeContext.cs" />

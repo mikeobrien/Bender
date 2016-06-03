@@ -13,6 +13,7 @@ namespace Bender.Configuration
         public DeserializationOptions(Options options)
         {
             NameComparison = StringComparison.Ordinal;
+            EnumValueComparison = StringComparison.OrdinalIgnoreCase;
             IgnoreXmlAttributes = false;
 
             FriendlyParseErrorMessages = new Dictionary<Type, string>
@@ -57,7 +58,7 @@ namespace Bender.Configuration
         }
 
         public StringComparison NameComparison { get; set; }
-        public StringComparison EnumNameComparison { get; set; }
+        public StringComparison EnumValueComparison { get; set; }
 
         public bool IgnoreUnmatchedElements { get; set; }
         public bool IgnoreUnmatchedMembers { get; set; }

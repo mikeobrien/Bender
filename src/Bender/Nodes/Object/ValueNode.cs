@@ -63,10 +63,10 @@ namespace Bender.Nodes.Object
                         {
                             if (type.IsEnum)
                             {
-                                Source.Instance = Context.Options.EnumNameConventions
+                                Source.Instance = Context.Options.EnumValueNameConventions
                                     .GetName(value, SpecifiedType, Context)
                                     .ParseEnum(SpecifiedType, Context.Options.Deserialization
-                                        .EnumNameComparison.IgnoreCase());
+                                        .EnumValueComparison.IgnoreCase());
                             }
                             else Source.Instance = value.As<string>().ParseSimpleType(SpecifiedType);
                         }
@@ -99,9 +99,9 @@ namespace Bender.Nodes.Object
                 var type = SpecifiedType.UnderlyingType;
                 if (type.IsEnum)
                 {
-                    return Context.Options.EnumNameConventions
-                        .GetName(base.Value, SpecifiedType, Context);
-            }
+                    return Context.Options.Serialization.NumericEnumValues ? (object)(int)base.Value :
+                        Context.Options.EnumValueNameConventions.GetName(base.Value, SpecifiedType, Context);
+                }
                 return base.Value;
             }
         }

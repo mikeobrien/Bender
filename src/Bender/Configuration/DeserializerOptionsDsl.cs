@@ -34,15 +34,15 @@ namespace Bender.Configuration
             return this;
         }
 
-        public DeserializerOptionsDsl IgnoreEnumNameCase()
+        public DeserializerOptionsDsl WithCaseSensitiveEnumValues()
         {
-            _options.Deserialization.EnumNameComparison = StringComparison.OrdinalIgnoreCase;
+            _options.Deserialization.EnumValueComparison = StringComparison.Ordinal;
             return this;
         }
 
-        public DeserializerOptionsDsl WithEnumNameComparison(StringComparison comparison)
+        public DeserializerOptionsDsl WithEnumValueComparison(StringComparison comparison)
         {
-            _options.Deserialization.EnumNameComparison = comparison;
+            _options.Deserialization.EnumValueComparison = comparison;
             return this;
         }
 
@@ -105,7 +105,7 @@ namespace Bender.Configuration
         public DeserializerOptionsDsl WithEnumNamingConvention(
             Func<string, string> convention)
         {
-            _options.EnumNameConventions.Add(
+            _options.EnumValueNameConventions.Add(
                 (v, c) => convention(v),
                 (v, c) => c.Mode == Mode.Deserialize);
             return this;
@@ -114,7 +114,7 @@ namespace Bender.Configuration
         public DeserializerOptionsDsl WithEnumNamingConvention(
             Func<string, EnumContext, string> convention)
         {
-            _options.EnumNameConventions.Add(convention,
+            _options.EnumValueNameConventions.Add(convention,
                 (v, c) => c.Mode == Mode.Deserialize);
             return this;
         }
@@ -123,7 +123,7 @@ namespace Bender.Configuration
             Func<string, EnumContext, string> convention,
             Func<string, EnumContext, bool> when)
         {
-            _options.EnumNameConventions.Add(convention,
+            _options.EnumValueNameConventions.Add(convention,
                 (v, c) => c.Mode == Mode.Deserialize && when(v, c));
             return this;
         }

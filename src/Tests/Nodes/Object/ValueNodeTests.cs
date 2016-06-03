@@ -264,22 +264,42 @@ namespace Tests.Nodes.Object
         }
 
         [Test]
-        public void should_set_enum_case_insensitively_when_configured()
+        public void should_fail_to_set_enum_value_case_sensitively_when_configured()
         {
             var result = new SimpleValue(typeof(UriFormat).ToCachedType());
-            new ValueNode(CreateContext(Mode.Deserialize, Options.Create(
-                x => x.Deserialization(y => y.IgnoreEnumNameCase()))), null, result,
+            Assert.Throws<ValueParseException> (() => new ValueNode(CreateContext(Mode.Deserialize, 
+                Options.Create(x => x.Deserialization(y => y.WithCaseSensitiveEnumValues()))), 
+                    null, result, null, null).Value = "safeunescaped")
+                .FriendlyMessage.ShouldEqual("Option 'safeunescaped' is not valid.");
+        }
+
+        [Test]
+        public void should_set_enum_value_case_insensitively_when_not_configured()
+        {
+            var result = new SimpleValue(typeof(UriFormat).ToCachedType());
+            new ValueNode(CreateContext(Mode.Deserialize), null, result,
                 null, null).Value = "safeunescaped";
             result.Instance.ShouldEqual(UriFormat.SafeUnescaped);
         }
 
         [Test]
-        public void should_fail_to_set_enum_case_insensitively_when_not_configured()
+        public void should_get_enum_numeric_value()
+        {
+            var result = new SimpleValue(UriFormat.SafeUnescaped,
+                typeof(UriFormat).ToCachedType());
+            new ValueNode(CreateContext(Mode.Serialize, Options.Create(x => 
+                x.Serialization(y => y.EnumValuesAsNumeric()))), null, result,
+                null, null).Value.ShouldEqual(3);
+        }
+
+        [Test]
+        public void should_set_enum_numeric_value_when_configured(
+            [Values(3, "3")] object enumValue)
         {
             var result = new SimpleValue(typeof(UriFormat).ToCachedType());
-            Assert.Throws<ValueParseException> (() => new ValueNode(CreateContext(Mode.Deserialize), 
-                    null, result, null, null).Value = "safeunescaped")
-                .FriendlyMessage.ShouldEqual("Option 'safeunescaped' is not valid.");
+            new ValueNode(CreateContext(Mode.Deserialize), 
+                null, result, null, null).Value = enumValue;
+            result.Instance.ShouldEqual(UriFormat.SafeUnescaped);
         }
     }
 }

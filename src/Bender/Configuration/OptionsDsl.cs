@@ -135,14 +135,14 @@ namespace Bender.Configuration
         public OptionsDsl WithEnumNamingConvention(
             Func<string, string> convention)
         {
-            _options.EnumNameConventions.Add(convention);
+            _options.EnumValueNameConventions.Add(convention);
             return this;
         }
 
         public OptionsDsl WithEnumNamingConvention(
             Func<string, EnumContext, string> convention)
         {
-            _options.EnumNameConventions.Add(convention);
+            _options.EnumValueNameConventions.Add(convention);
             return this;
         }
 
@@ -150,7 +150,7 @@ namespace Bender.Configuration
             Func<string, EnumContext, string> convention,
             Func<string, EnumContext, bool> when)
         {
-            _options.EnumNameConventions.Add(convention, when);
+            _options.EnumValueNameConventions.Add(convention, when);
             return this;
         }
 

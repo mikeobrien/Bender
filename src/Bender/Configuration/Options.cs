@@ -12,7 +12,7 @@ namespace Bender.Configuration
         {
             Serialization = new SerializationOptions(this);
             Deserialization = new DeserializationOptions(this);
-            EnumNameConventions = EnumNamingConventions.Create();
+            EnumValueNameConventions = EnumValueNamingConventions.Create();
             PropertyNameConventions = MemberNamingConventions.Create();
             FieldNameConventions = MemberNamingConventions.Create();
             ArrayItemNameConventions = ArrayItemNamingConventions.Create();
@@ -31,7 +31,7 @@ namespace Bender.Configuration
         public string CsvQualifier { get; set; } = "\"";
         public string CsvNewLine { get; set; } = "\r\n";
 
-        public NamingConventions<EnumContext> EnumNameConventions { get; set; }
+        public NamingConventions<EnumContext> EnumValueNameConventions { get; set; }
         public NamingConventions<MemberContext> FieldNameConventions { get; set; }
         public NamingConventions<MemberContext> PropertyNameConventions { get; set; }
         public NamingConventions<ArrayItemContext> ArrayItemNameConventions { get; set; }

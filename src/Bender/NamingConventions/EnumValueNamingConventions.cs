@@ -1,6 +1,6 @@
 namespace Bender.NamingConventions
 {
-    public class EnumNamingConventions
+    public class EnumValueNamingConventions
     {
         public static NamingConventions<EnumContext> Create()
         {
