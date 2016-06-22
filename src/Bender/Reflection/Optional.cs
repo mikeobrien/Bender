@@ -3,11 +3,12 @@
     public interface IOptional
     {
         bool HasValue { get; }
+        object Value { get; set; }
     }
 
     public interface IOptional<T> : IOptional
     {
-        T Value { get; set; }
+        new T Value { get; set; }
     }
 
     public struct Optional<T> : IOptional<T>
@@ -15,6 +16,12 @@
         private T _value;
 
         public bool HasValue { get; private set; }
+
+        object IOptional.Value
+        {
+            get { return Value; }
+            set { Value = (T)value; }
+        }
 
         public T Value
         {
