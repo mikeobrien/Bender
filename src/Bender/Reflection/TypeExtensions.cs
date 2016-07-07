@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using Bender.Extensions;
 using Bender.Collections;
@@ -258,6 +259,42 @@ namespace Bender.Reflection
         public static T NullOrDefault<T>()
         {
             return typeof(T) == typeof(string) ? (T)(object)null : default(T);
+        }
+
+        public static bool IsTypeOf(this Type actual, Type expected)
+        {
+            return actual.IsGenericType && expected.IsGenericTypeDefinition
+                ? actual.GetGenericTypeDefinition() == expected
+                : actual == expected;
+        }
+
+        public static Type UnwrapOptionalType(this Type type)
+        {
+            if (type == null) return null;
+            return type.IsTypeOf(typeof(Optional<>)) || 
+                type.IsTypeOf(typeof(IOptional<>)) ? 
+                type.GetGenericArguments()[0] : type;
+        }
+
+        public static object UnwrapOptionalValue(this object value)
+        {
+            if (value == null) return null;
+            return value is IOptional ? value.As<IOptional>().Value : value;
+        }
+
+        public static object WrapOptional(this object value, Type type)
+        {
+            var optional = Activator.CreateInstance(
+                typeof(Optional<>).MakeGenericType(type));
+            optional.As<IOptional>().Value = value;
+            return optional;
+        }
+
+        public static object WrapOptional<T>(this T value)
+        {
+            var type = typeof(T) == typeof(object) && value != null ?
+                value.GetType() : typeof(T);
+            return value.WrapOptional(type);
         }
     }
 }

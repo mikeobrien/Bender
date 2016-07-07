@@ -568,5 +568,67 @@ namespace Tests.Reflection
             typeof(string).GetUnderlyingOptionalType().ShouldEqual(typeof(string));
             typeof(Optional<string>).GetUnderlyingOptionalType().ShouldEqual(typeof(string));
         }
+
+        public static object[][] IsTypeOfCases = TestCaseSource.Create(x => x
+            .Add(typeof(string), typeof(string), true)
+            .Add(typeof(string), typeof(int), false)
+            .Add(typeof(List<string>), typeof(List<>), true)
+            .Add(typeof(List<>), typeof(List<string>), false)
+            .Add(typeof(List<string>), typeof(List<string>), true));
+
+        [Test]
+        [TestCaseSource(nameof(IsTypeOfCases))]
+        public void Should_indicate_if_types_match(Type actual, Type expected, bool matches)
+        {
+            actual.IsTypeOf(expected).ShouldEqual(matches);
+        }
+
+        public static object[][] UnwrapOptionalTypeCases = TestCaseSource.Create(x => x
+            .Add(null, null)
+            .Add(typeof(string), typeof(string))
+            .Add(typeof(List<string>), typeof(List<string>))
+            .Add(typeof(IList<string>), typeof(IList<string>))
+            .Add(typeof(IOptional<string>), typeof(string))
+            .Add(typeof(Optional<string>), typeof(string)));
+
+        [Test]
+        [TestCaseSource(nameof(UnwrapOptionalTypeCases))]
+        public void Should_unwrap_optional_types(Type type, Type expected)
+        {
+            type.UnwrapOptionalType().ShouldEqual(expected);
+        }
+
+        public static object[][] UnwrapOptionalValueCases = TestCaseSource.Create(x => x
+            .Add(null, null, null)
+            .Add("fark", "fark", typeof(string))
+            .Add((Optional<string>)"fark", "fark", typeof(string))
+            .Add((Optional<int>)5, 5, typeof(int))
+            .Add((Optional<int?>)5, 5, typeof(int)));
+
+        [Test]
+        [TestCaseSource(nameof(UnwrapOptionalValueCases))]
+        public void Should_unwrap_optional_values(object value, 
+            object expectedValue, Type expectedType)
+        {
+            var actual = value.UnwrapOptionalValue();
+            actual.ShouldEqual(expectedValue);
+            actual?.GetType().ShouldEqual(expectedType);
+        }
+
+        public static object[][] WrapOptionalValueCases = TestCaseSource.Create(x => x
+            .Add(null, (Optional<object>)null, typeof(Optional<object>))
+            .Add("fark", (Optional<string>)"fark", typeof(Optional<string>))
+            .Add(5, (Optional<int>)5, typeof(Optional<int>))
+            .Add((int?)5, (Optional<int>)5, typeof(Optional<int>)));
+
+        [Test]
+        [TestCaseSource(nameof(WrapOptionalValueCases))]
+        public void Should_wrap_optional_value(object value,
+            object expectedValue, Type expectedType)
+        {
+            var actual = value.WrapOptional();
+            actual.ShouldEqual(expectedValue);
+            actual?.GetType().ShouldEqual(expectedType);
+        }
     }
 }

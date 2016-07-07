@@ -1,4 +1,6 @@
-﻿namespace Bender.Reflection
+﻿using Bender.Collections;
+
+namespace Bender.Reflection
 {
     public interface IOptional
     {
@@ -41,6 +43,18 @@
         public static implicit operator T(Optional<T> optional)
         {
             return optional.Value;
+        }
+
+        public override bool Equals(object @object)
+        {
+            return _value != null && @object is IOptional ? 
+                _value.Equals(@object.As<IOptional>().Value) :
+                base.Equals(@object);
+        }
+
+        public override int GetHashCode()
+        {
+            return _value?.GetHashCode() ?? base.GetHashCode();
         }
     }
 }

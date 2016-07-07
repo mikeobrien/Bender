@@ -117,6 +117,7 @@
     <Compile Include="Performance\Profiling.cs" />
     <Compile Include="Serializer\CharacterSeparatedTests.cs" />
     <Compile Include="Serializer\FormUrlEncodedTests.cs" />
+    <Compile Include="TestCaseSource.cs" />
     <Compile Include="TestExtensions.cs" />
     <Compile Include="Reflection\CachedMemberTests.cs" />
     <Compile Include="Reflection\CachedTypeTests.cs" />
