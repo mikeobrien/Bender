@@ -3,7 +3,7 @@ using Bender;
 using NUnit.Framework;
 using Should;
 
-namespace Tests.Serializer
+namespace Tests.Serializer.CharacterSeparated
 {
     [TestFixture]
     public class CharacterSeparated

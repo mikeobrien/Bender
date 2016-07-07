@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -89,7 +90,8 @@
     <Compile Include="Collections\Implementations\GenericEnumerableImpl.cs" />
     <Compile Include="Collections\Implementations\GenericListImpl.cs" />
     <Compile Include="Collections\Implementations\ListImpl.cs" />
-    <Compile Include="Deserializer\CharacterSeparatedTests.cs" />
+    <Compile Include="Deserializer\CharacterSeparated\LoadTests.cs" />
+    <Compile Include="Deserializer\CharacterSeparated\Tests.cs" />
     <Compile Include="Deserializer\FormUrlEncodedTests.cs" />
     <Compile Include="Deserializer\Json\VisitorTests.cs" />
     <Compile Include="Deserializer\Json\ReaderTests.cs" />
@@ -115,7 +117,8 @@
     <Compile Include="Nodes\FormUrlEncodedTests.cs" />
     <Compile Include="Nodes\Object\ExceptionTests.cs" />
     <Compile Include="Performance\Profiling.cs" />
-    <Compile Include="Serializer\CharacterSeparatedTests.cs" />
+    <Compile Include="Serializer\CharacterSeparated\SaveTests.cs" />
+    <Compile Include="Serializer\CharacterSeparated\Tests.cs" />
     <Compile Include="Serializer\FormUrlEncodedTests.cs" />
     <Compile Include="TestCaseSource.cs" />
     <Compile Include="TestExtensions.cs" />

@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -66,6 +67,7 @@
     <Compile Include="Deserializer.Json.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\UTF8Encoding.cs" />
+    <Compile Include="Nodes\CharacterSeparated\Encoder.cs" />
     <Compile Include="Nodes\CharacterSeparated\FileNode.cs" />
     <Compile Include="Nodes\CharacterSeparated\RowNode.cs" />
     <Compile Include="Nodes\CharacterSeparated\ValueNode.cs" />

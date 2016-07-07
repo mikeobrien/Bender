@@ -76,8 +76,8 @@ namespace Bender
 
         public void SerializeCsvStream(object source, Type type, Stream stream, Encoding encoding = null)
         {
-            SerializeStream(source, type, (s, o) => new FileNode(s.NodeType, type, o), 
-                FileNode.NodeFormat, stream, encoding);
+            SerializeStream(source, type, (s, o) => new FileNode(s.NodeType, 
+                type, o, stream, encoding), FileNode.NodeFormat, stream, encoding);
         }
 
         // File
@@ -94,8 +94,10 @@ namespace Bender
 
         public void SerializeCsvFile(object source, Type type, string path, Encoding encoding = null)
         {
-            SerializeStream(source, type, (s, o) => new FileNode(s.NodeType, type, o), 
-                FileNode.NodeFormat, encoding).SaveToFile(path);
+            using (var target = File.Create(path))
+            {
+                SerializeCsvStream(source, type, target, encoding);
+            }
         }
 
         // Nodes

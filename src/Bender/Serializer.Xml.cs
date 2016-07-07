@@ -10,7 +10,6 @@ namespace Bender
     public partial class Serializer
     {
         // XElement
-
         public XElement SerializeXmlElement(object source)
         {
             return SerializeXmlElement(source, source.GetType());
