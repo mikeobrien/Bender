@@ -3,9 +3,9 @@ namespace Bender.Nodes.CharacterSeparated
     public class ValueNode : NodeBase
     {
         private string _name;
-        private string _value;
+        private object _value;
 
-        public ValueNode(string name, string value = null)
+        public ValueNode(string name, INode parent, object value = null) : base(parent)
         {
             _name = name;
             _value = value;
@@ -44,7 +44,7 @@ namespace Bender.Nodes.CharacterSeparated
 
         protected override void SetValue(object value)
         {
-            _value = value?.ToString() ?? "";
+            _value = value ?? "";
         }
     }
 }

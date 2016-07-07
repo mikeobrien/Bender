@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Numerics;
 using Bender.Extensions;
 using Bender.Collections;
 
@@ -158,7 +159,8 @@ namespace Bender.Reflection
         public static bool IsNumeric(this object value)
         {
             return value is decimal || value is float || value is double || value is sbyte || value is byte ||
-                   value is short || value is ushort || value is int || value is uint || value is long || value is ulong;
+                   value is short || value is ushort || value is int || value is uint || value is long || 
+                   value is ulong || value is BigInteger || value is Complex;
         }
                   
         public static bool IsNumeric(this Type type)
@@ -174,7 +176,9 @@ namespace Bender.Reflection
                 type == typeof(int) || type == typeof(int?) || 
                 type == typeof(uint) || type == typeof(uint?) || 
                 type == typeof(long) || type == typeof(long?) || 
-                type == typeof(ulong) || type == typeof(ulong?);
+                type == typeof(ulong) || type == typeof(ulong?) ||
+                type == typeof(BigInteger) || type == typeof(BigInteger?) ||
+                type == typeof(Complex) || type == typeof(Complex?);
         }
 
         public static bool IsBoolean(this Type type)

@@ -55,13 +55,19 @@ namespace Bender.Configuration
 
         // CSV Options
 
+        public OptionsDsl WithNoCsvHeader()
+        {
+            _options.CsvHeader = false;
+            return this;
+        }
+
         public OptionsDsl WithCsvDelimiter(string delimiter)
         {
             _options.CsvDelimiter = delimiter;
             return this;
         }
 
-        public OptionsDsl TabSeperated()
+        public OptionsDsl TabSeparatedCsv()
         {
             _options.CsvDelimiter = "\t";
             return this;

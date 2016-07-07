@@ -14,7 +14,7 @@ namespace Bender.Nodes.CharacterSeparated
             _rowNumber = rowNumber;
         }
         
-        public override string Type => "csv row";
+        public override string Type => "row";
         public override string Format => FileNode.NodeFormat;
         public override bool IsNamed => false;
         public override string Path => $"[{_rowNumber}]";
@@ -32,8 +32,8 @@ namespace Bender.Nodes.CharacterSeparated
 
         protected override void AddNode(INode node, bool named, Action<INode> modify)
         {
-            if (node is ValueNode) _values.Add(((ValueNode)node));
-            else _values.Add(new ValueNode(node.Name).Configure(modify).As<ValueNode>());
+            if (node is ValueNode) _values.Add((ValueNode)node);
+            else _values.Add(new ValueNode(node.Name, this).Configure(modify).As<ValueNode>());
         }
 
         protected override IEnumerable<INode> GetNodes()

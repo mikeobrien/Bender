@@ -21,7 +21,7 @@ namespace Tests.Nodes
         }
 
         private const string Data = "\"Property\",\"Null\"," + 
-            "\"Field\"\r\n\"oh,\",\"\",\"\"\"hai\"\"\"\r\n";
+            "\"Field\"\r\n\"oh,\",,\"\"\"hai\"\"\"\r\n";
 
         [Test]
         public void should_encode_csv()
@@ -31,9 +31,9 @@ namespace Tests.Nodes
                 x.IncludePublicFields()));
             var row = new RowNode(1)
             {
-                { new ValueNode("Property", "oh,"), x => {} },
-                { new ValueNode("Field", "\"hai\""), x => {} },
-                { new ValueNode("Null"), x => {} }
+                { new ValueNode("Property", null, "oh,"), x => {} },
+                { new ValueNode("Field", null, "\"hai\""), x => {} },
+                { new ValueNode("Null", null), x => {} }
             };
             file.Add(row, x => {});
             file.EncodeToString().ShouldEqual(Data);
@@ -57,7 +57,7 @@ namespace Tests.Nodes
             rowValue.Value.ShouldEqual("oh,");
             rowValue = rowValues[1];
             rowValue.NodeType.ShouldEqual(NodeType.Value);
-            rowValue.Value.ShouldEqual("");
+            rowValue.Value.ShouldBeNull();
             rowValue = rowValues[2];
             rowValue.NodeType.ShouldEqual(NodeType.Value);
             rowValue.Value.ShouldEqual("\"hai\"");
