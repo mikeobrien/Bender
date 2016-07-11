@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using Bender.Collections;
 using Bender.Configuration;
@@ -69,8 +70,9 @@ namespace Tests.Nodes.Object.NodeFactory.Serializable
                 NodeName, value, _parent,
                 _context, member).As<NodeBase>();
 
-            node.ShouldNotBeEmpty();
-            node.ShouldAllMatch(x => x.Name == "item");
+            var nodes = node.ToList();
+            nodes.ShouldNotBeEmpty();
+            nodes.ShouldAllMatch(x => x.Name == "item");
 
             node_should_be_in_valid_state(node, @object, 
                 value, NodeType.Array, @object.GetType());

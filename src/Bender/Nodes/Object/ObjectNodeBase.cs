@@ -17,11 +17,13 @@ namespace Bender.Nodes.Object
             IValue source,
             CachedMember member,
             INode parent,  
-            Context context) : base(parent)
+            Context context,
+            int? index = null) : base(parent)
         {
             _name = name;
             Source = source;
             Context = context;
+            Index = index;
             Member = member;
             HasMember = member != null;
             if (HasMember) Metadata.Add(member.Attributes);
@@ -38,6 +40,7 @@ namespace Bender.Nodes.Object
         public CachedType SpecifiedType => Source.SpecifiedType;
         public CachedType ActualType => Source.ActualType;
         public Mode Mode => Context.Mode;
+        public int? Index { get; }
 
         protected Context Context { get; }
 
@@ -51,13 +54,23 @@ namespace Bender.Nodes.Object
         {
             get
             {
-                return this.Walk(x => x.Parent.As<ObjectNodeBase>()).Reverse().Select(x => 
-                    x.HasParent && (x.Parent is EnumerableNode || x.Parent is DictionaryNode)
-                    ? "[" + (x.Parent is EnumerableNode ? x.Parent.ToList().IndexOf(x).Map(y => y >= 0 ? y.ToString() : "") : "\"{0}\"".ToFormat(x.Name)) + "]"
-                    : (x.HasParent ? "." + (x.HasMember ? x.Member.Name : x.Name) : 
-                        (Context.Mode == Mode.Deserialize ? x.SpecifiedType : x.ActualType).FriendlyFullName)).Aggregate()
-                    .Replace("+", ".");
+                return this.Walk(x => x.Parent.As<ObjectNodeBase>())
+                    .Reverse().Select(BuildPath).Aggregate();
             }
+        }
+
+        private string BuildPath(ObjectNodeBase node)
+        {
+            string path;
+            if (node.HasParent && (node.Parent is EnumerableNode || node.Parent is DictionaryNode))
+                path = "[" + (node.Parent is EnumerableNode ? node.Index?.ToString() : 
+                    "\"{0}\"".ToFormat(node.Name)) + "]";
+            else
+                path = node.HasParent ? "." + (node.HasMember ? node.Member.Name : node.Name) : 
+                    (Context.Mode == Mode.Deserialize ? node.SpecifiedType : 
+                        node.ActualType).FriendlyFullName;
+
+            return path.Replace("+", ".");
         }
 
         protected override string GetName()

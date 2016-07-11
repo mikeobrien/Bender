@@ -36,8 +36,9 @@ namespace Bender.Nodes.Object
             string name,
             IValue source,
             CachedMember member,
-            INode parent)
-            : base(name, source, member, parent, context)
+            INode parent,
+            int? index = null)
+            : base(name, source, member, parent, context, index)
         {
             _friendlyParseMessages = Context.Options.Deserialization.FriendlyParseErrorMessages;
         }

@@ -22,21 +22,21 @@ namespace Bender.Nodes.Object
     {
         private readonly Lazy<IList> _list;
         private readonly CachedType _itemType;
-        private readonly Lazy<IEnumerable<INode>> _nodes; 
+        private bool _enumerated;
 
         public EnumerableNode(
             Context context, 
             string name, 
             IValue enumerable, 
             CachedMember member,
-            INode parent)
-            : base(name, enumerable, member, parent, context)
+            INode parent,
+            int? index = null)
+            : base(name, enumerable, member, parent, context, index)
         {
             _list = new Lazy<IList>(() => 
                 enumerable.Instance.MapOrDefault(x => enumerable.ActualType.IsArray ? 
                     ArrayAdapter.Create(enumerable) : GenericListAdapter.Create(x)));
             if (SpecifiedType.IsGenericEnumerable) _itemType = enumerable.SpecifiedType.GenericEnumerableType;
-            _nodes = new Lazy<IEnumerable<INode>>(EnumerateNodes);
         }
 
         public override string Type => "list";
@@ -86,17 +86,23 @@ namespace Bender.Nodes.Object
 
         protected override IEnumerable<INode> GetNodes()
         {
-            return Context.Mode.IsDeserialize() ? Enumerable.Empty<INode>() : _nodes.Value;
+            return Context.Mode.IsDeserialize() ? Enumerable.Empty<INode>() : EnumerateNodes();
         }
 
         private IEnumerable<INode> EnumerateNodes()
         {
+            // This is more of an internal check to make sure nothing 
+            // in the library enumerates multiple times.
+            if (_enumerated) throw new Exception("Should not enumerate more than once.");
+            _enumerated = true;
+            var index = 0;
             return Value.As<IEnumerable>().Cast<object>()
                 .Where(x => x != null && this.Walk<INode>(y => y.Parent).All(y => y.Value != x))
                 .Select(x => ValueFactory.Create(x, _itemType, Context.Options))
                 .Where(x => x.SpecifiedType, x => Context.Options, Context.Options.TypeFilter)
                 .Select(x => x.ActualType.CanBeCastTo<INode>() ? x.Instance.As<INode>() :
-                    NodeFactory.CreateSerializable(GetItemName(x.SpecifiedType), x, this, Context)).ToList();
+                    NodeFactory.CreateSerializable(GetItemName(x.SpecifiedType), 
+                        x, this, Context, index: index++));
         } 
 
         private string GetItemName(CachedType type)

@@ -173,19 +173,22 @@ namespace Tests.Nodes.Object
 
             node.Path.ShouldEqual(baseName);
 
-            var valueNode = node.GetNode("ValueNode");
+            var nodes = node.ToList();
+
+            var valueNode = nodes.GetNode("ValueNode");
             valueNode.ShouldBeType<ValueNode>();
             valueNode.Path.ShouldEqual(baseName + ".ValueNode");
 
-            var enumerableNode = node.GetNode("EnumerableNode");
+            var enumerableNode = nodes.GetNode("EnumerableNode");
             enumerableNode.ShouldBeType<EnumerableNode>();
             enumerableNode.Path.ShouldEqual(baseName + ".EnumerableNode");
-            enumerableNode.First().Path.ShouldEqual(baseName + ".EnumerableNode[0]");
-            enumerableNode.Skip(1).First().Path.ShouldEqual(baseName + ".EnumerableNode[1]");
-            enumerableNode.Skip(2).First().Path.ShouldEqual(baseName + ".EnumerableNode[2]");
-            enumerableNode.Skip(3).First().Path.ShouldEqual(baseName + ".EnumerableNode[3]");
+            var childNodes = enumerableNode.ToList();
+            childNodes.First().Path.ShouldEqual(baseName + ".EnumerableNode[0]");
+            childNodes.Skip(1).First().Path.ShouldEqual(baseName + ".EnumerableNode[1]");
+            childNodes.Skip(2).First().Path.ShouldEqual(baseName + ".EnumerableNode[2]");
+            childNodes.Skip(3).First().Path.ShouldEqual(baseName + ".EnumerableNode[3]");
 
-            var dictionaryNode = node.GetNode("DictionaryNode");
+            var dictionaryNode = nodes.GetNode("DictionaryNode");
             dictionaryNode.ShouldBeType<DictionaryNode>();
             dictionaryNode.Path.ShouldEqual(baseName + ".DictionaryNode");
             dictionaryNode.GetNode("one").Path.ShouldEqual(baseName + ".DictionaryNode[\"one\"]");
@@ -193,7 +196,7 @@ namespace Tests.Nodes.Object
             dictionaryNode.GetNode("three").Path.ShouldEqual(baseName + ".DictionaryNode[\"three\"]");
             dictionaryNode.GetNode("four").Path.ShouldEqual(baseName + ".DictionaryNode[\"four\"]");
 
-            var objectNode = node.GetNode("ObjectNode");
+            var objectNode = nodes.GetNode("ObjectNode");
             objectNode.ShouldBeType<ObjectNode>();
             objectNode.Path.ShouldEqual(baseName + ".ObjectNode");
             objectNode.GetNode("ValueNode").Path.ShouldEqual(baseName + ".ObjectNode.ValueNode");
@@ -237,19 +240,22 @@ namespace Tests.Nodes.Object
 
             node.Path.ShouldEqual(baseName);
 
-            var valueNode = node.First();
+            var nodes = node.ToList();
+
+            var valueNode = nodes.First();
             valueNode.ShouldBeType<ValueNode>();
             valueNode.Path.ShouldEqual(baseName + "[0]");
 
-            var enumerableNode = node.Skip(1).First();
+            var enumerableNode = nodes.Skip(1).First();
             enumerableNode.ShouldBeType<EnumerableNode>();
             enumerableNode.Path.ShouldEqual(baseName + "[1]");
-            enumerableNode.First().Path.ShouldEqual(baseName + "[1][0]");
-            enumerableNode.Skip(1).First().Path.ShouldEqual(baseName + "[1][1]");
-            enumerableNode.Skip(2).First().Path.ShouldEqual(baseName + "[1][2]");
-            enumerableNode.Skip(3).First().Path.ShouldEqual(baseName + "[1][3]");
+            var childNodes = enumerableNode.ToList();
+            childNodes.First().Path.ShouldEqual(baseName + "[1][0]");
+            childNodes.Skip(1).First().Path.ShouldEqual(baseName + "[1][1]");
+            childNodes.Skip(2).First().Path.ShouldEqual(baseName + "[1][2]");
+            childNodes.Skip(3).First().Path.ShouldEqual(baseName + "[1][3]");
 
-            var dictionaryNode = node.Skip(2).First();
+            var dictionaryNode = nodes.Skip(2).First();
             dictionaryNode.ShouldBeType<DictionaryNode>();
             dictionaryNode.Path.ShouldEqual(baseName + "[2]");
             dictionaryNode.GetNode("one").Path.ShouldEqual(baseName + "[2][\"one\"]");
@@ -257,7 +263,7 @@ namespace Tests.Nodes.Object
             dictionaryNode.GetNode("three").Path.ShouldEqual(baseName + "[2][\"three\"]");
             dictionaryNode.GetNode("four").Path.ShouldEqual(baseName + "[2][\"four\"]");
 
-            var objectNode = node.Skip(3).First();
+            var objectNode = nodes.Skip(3).First();
             objectNode.ShouldBeType<ObjectNode>();
             objectNode.Path.ShouldEqual(baseName + "[3]");
             objectNode.GetNode("ValueNode").Path.ShouldEqual(baseName + "[3].ValueNode");
@@ -301,19 +307,22 @@ namespace Tests.Nodes.Object
 
             node.Path.ShouldEqual(baseName);
 
-            var valueNode = node.First();
+            var nodes = node.ToList();
+
+            var valueNode = nodes.First();
             valueNode.ShouldBeType<ValueNode>();
             valueNode.Path.ShouldEqual(baseName + "[\"one\"]");
 
-            var enumerableNode = node.Skip(1).First();
+            var enumerableNode = nodes.Skip(1).First();
             enumerableNode.ShouldBeType<EnumerableNode>();
             enumerableNode.Path.ShouldEqual(baseName + "[\"two\"]");
-            enumerableNode.First().Path.ShouldEqual(baseName + "[\"two\"][0]");
-            enumerableNode.Skip(1).First().Path.ShouldEqual(baseName + "[\"two\"][1]");
-            enumerableNode.Skip(2).First().Path.ShouldEqual(baseName + "[\"two\"][2]");
-            enumerableNode.Skip(3).First().Path.ShouldEqual(baseName + "[\"two\"][3]");
+            var childNodes = enumerableNode.ToList();
+            childNodes.First().Path.ShouldEqual(baseName + "[\"two\"][0]");
+            childNodes.Skip(1).First().Path.ShouldEqual(baseName + "[\"two\"][1]");
+            childNodes.Skip(2).First().Path.ShouldEqual(baseName + "[\"two\"][2]");
+            childNodes.Skip(3).First().Path.ShouldEqual(baseName + "[\"two\"][3]");
 
-            var dictionaryNode = node.Skip(2).First();
+            var dictionaryNode = nodes.Skip(2).First();
             dictionaryNode.ShouldBeType<DictionaryNode>();
             dictionaryNode.Path.ShouldEqual(baseName + "[\"three\"]");
             dictionaryNode.GetNode("one").Path.ShouldEqual(baseName + "[\"three\"][\"one\"]");
@@ -321,7 +330,7 @@ namespace Tests.Nodes.Object
             dictionaryNode.GetNode("three").Path.ShouldEqual(baseName + "[\"three\"][\"three\"]");
             dictionaryNode.GetNode("four").Path.ShouldEqual(baseName + "[\"three\"][\"four\"]");
 
-            var objectNode = node.Skip(3).First();
+            var objectNode = nodes.Skip(3).First();
             objectNode.ShouldBeType<ObjectNode>();
             objectNode.Path.ShouldEqual(baseName + "[\"four\"]");
             objectNode.GetNode("ValueNode").Path.ShouldEqual(baseName + "[\"four\"].ValueNode");

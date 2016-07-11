@@ -382,8 +382,9 @@ namespace Tests.Nodes.Object
             var member = new CachedMember(typeof(ArrayItemMember).GetProperty("SomeProperty"));
             var node = CreateNodeOfType(new List<string> { "oh", "hai" },
                 mode: Mode.Serialize, member: member);
-            node.ShouldNotBeEmpty();
-            node.ShouldAllMatch(x => x.Name == "item");
+            var nodes = node.ToList();
+            nodes.ShouldNotBeEmpty();
+            nodes.ShouldAllMatch(x => x.Name == "item");
         }
 
         public class CyclicRoot
@@ -407,8 +408,9 @@ namespace Tests.Nodes.Object
                 new SimpleValue(root, typeof(CyclicRoot).ToCachedType()), null, null).ToList();
 
             var child = members.GetNode(name);
-            child.ShouldTotal(1);
-            child.Cast<NodeBase>().ShouldAllMatch(x => x.Value != root);
+            var children = child.ToList();
+            children.ShouldTotal(1);
+            children.Cast<NodeBase>().ShouldAllMatch(x => x.Value != root);
         }
 
         [Test]

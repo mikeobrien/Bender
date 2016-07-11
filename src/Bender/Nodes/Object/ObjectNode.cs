@@ -39,8 +39,9 @@ namespace Bender.Nodes.Object
             string name,
             IValue @object,
             CachedMember member,
-            INode parent) :
-                base(name, @object, member, parent, context)
+            INode parent,
+            int? index = null) :
+                base(name, @object, member, parent, context, index)
         {
             _members = new Lazy<IEnumerable<MemberDefinition>>(EnumerateMembers);
             _nodes = new Lazy<IEnumerable<INode>>(EnumerateNodes);

@@ -20,8 +20,9 @@ namespace Bender.Nodes.Object
             string name, 
             IValue dictionary, 
             CachedMember member,
-            INode parent)
-            : base(name, dictionary, member, parent, context)
+            INode parent,
+            int? index = null)
+            : base(name, dictionary, member, parent, context, index)
         {
             _dictionary = new Lazy<IDictionary>(() =>
                 dictionary.Instance.MapOrDefault(GenericDictionaryAdapter.Create));

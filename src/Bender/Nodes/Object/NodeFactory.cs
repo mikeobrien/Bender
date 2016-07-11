@@ -30,17 +30,17 @@ namespace Bender.Nodes.Object
         }
 
         public static ObjectNodeBase CreateSerializable(string name, IValue @object, INode parent,
-            Context context, CachedMember member = null)
+            Context context, CachedMember member = null, int? index = null)
         {
-            if (@object.Instance == null) return new ValueNode(context, name, @object, member, parent);
+            if (@object.Instance == null) return new ValueNode(context, name, @object, member, parent, index);
             switch (GetTypeKind(@object.SpecifiedType, context.Options))
             {
                 case TypeKind.Simple:
                     if (parent == null) throw new TypeNotSupportedException("simple type", @object.SpecifiedType, Mode.Serialize, "complex types");
-                    return new ValueNode(context, name, @object, member, parent);
-                case TypeKind.Dictionary: return new DictionaryNode(context, name, @object, member, parent);
-                case TypeKind.Enumerable: return new EnumerableNode(context, name, @object, member, parent);
-                default: return new ObjectNode(context, name, @object, member, parent);
+                    return new ValueNode(context, name, @object, member, parent, index);
+                case TypeKind.Dictionary: return new DictionaryNode(context, name, @object, member, parent, index);
+                case TypeKind.Enumerable: return new EnumerableNode(context, name, @object, member, parent, index);
+                default: return new ObjectNode(context, name, @object, member, parent, index);
             }
         }
 
