@@ -16,7 +16,7 @@
       <iconUrl>https://github.com/mikeobrien/Bender/raw/master/misc/logo.png</iconUrl>
       <tags>xml json serialization deserialization deserializer serializer</tags>
       <dependencies>
-         <dependency id="flexo" version="1.0.0" />
+         <dependency id="flexo" version="1.0.24" />
       </dependencies>
    </metadata>
 </package>
