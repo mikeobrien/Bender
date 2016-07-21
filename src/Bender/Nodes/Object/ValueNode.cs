@@ -58,6 +58,8 @@ namespace Bender.Nodes.Object
                 if (value != null && !type.IsTypeOf(value))
                 {
                     if (type.Is<string>()) Source.Instance = value.ToString();
+                    else if (value as string == "" && !type.Is<string>() && SpecifiedType.IsNullable)
+                        Source.Instance = null;
                     else if (value is string && !type.Is<string>() && type.IsSimpleType)
                     {
                         try

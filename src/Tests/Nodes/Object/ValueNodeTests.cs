@@ -216,6 +216,34 @@ namespace Tests.Nodes.Object
             value.Instance.ShouldBeNull();
         }
 
+        [Test]
+        [TestCase(typeof(UriFormat?))]
+        [TestCase(typeof(DateTime?))]
+        [TestCase(typeof(TimeSpan?))]
+        [TestCase(typeof(Guid?))]
+        [TestCase(typeof(Boolean?))]
+        [TestCase(typeof(Byte?))]
+        [TestCase(typeof(SByte?))]
+        [TestCase(typeof(Int16?))]
+        [TestCase(typeof(UInt16?))]
+        [TestCase(typeof(Int32?))]
+        [TestCase(typeof(UInt32?))]
+        [TestCase(typeof(Int64?))]
+        [TestCase(typeof(UInt64?))]
+        [TestCase(typeof(IntPtr?))]
+        [TestCase(typeof(UIntPtr?))]
+        [TestCase(typeof(Char?))]
+        [TestCase(typeof(Double?))]
+        [TestCase(typeof(Single?))]
+        [TestCase(typeof(Decimal?))]
+        public void should_set_null_on_nullable_types_when_empty_string_is_passed(Type type)
+        {
+            var value = new SimpleValue(type.ToCachedType());
+            new ValueNode(CreateContext(Mode.Deserialize), null, 
+                value, null, null).Value = "";
+            value.Instance.ShouldBeNull();
+        }
+
         [Test]            
         [TestCase(typeof(UriFormat))]
         [TestCase(typeof(DateTime))]

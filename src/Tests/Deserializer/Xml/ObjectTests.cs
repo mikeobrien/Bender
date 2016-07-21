@@ -124,6 +124,44 @@ namespace Tests.Deserializer.Xml
             result.GetPropertyOrFieldValue(name + suffix).ShouldEqual(value);
         }
 
+        private static readonly object[] SimpleFieldNullableTypes = TestCases.Create("Property", "Field")
+            .AddType<UriFormat?>(UriFormat.UriEscaped, "EnumNullable")
+
+            .AddType<DateTime?>(DateTime.Today, "DateTimeNullable")
+            .AddType<TimeSpan?>(TimeSpan.MaxValue, "TimeSpanNullable")
+            .AddType<Guid?>(RandomGuid, "GuidNullable")
+
+            .AddType<Boolean?>(true, "BooleanNullable")
+            .AddType<Byte?>(55, "ByteNullable")
+            .AddType<SByte?>(66, "SByteNullable")
+            .AddType<Int16?>(77, "Int16Nullable")
+            .AddType<UInt16?>(88, "UInt16Nullable")
+            .AddType<Int32?>(99, "Int32Nullable")
+            .AddType<UInt32?>(110, "UInt32Nullable")
+            .AddType<Int64?>(111, "Int64Nullable")
+            .AddType<UInt64?>(120, "UInt64Nullable")
+            .AddType<IntPtr?>(new IntPtr(130), "IntPtrNullable")
+            .AddType<UIntPtr?>(new UIntPtr(140), "UIntPtrNullable")
+            .AddType<Char?>('b', "CharNullable")
+            .AddType<Double?>(150, "DoubleNullable")
+            .AddType<Single?>(160, "SingleNullable")
+            .AddType<Decimal?>(170, "DecimalNullable")
+
+            .All;
+
+        [Test]
+        [TestCaseSource(nameof(SimpleFieldNullableTypes))]
+        public void should_deserialize_empty_string_as_null_for_nullable_types(string suffix, Type type, object value, string name)
+        {
+            var xml = "<SimpleTypeField><{0}></{0}></SimpleTypeField>".ToFormat(name + suffix);
+
+            var result = Deserialize.Xml<SimpleTypeField>(xml, x => x.IncludePublicFields());
+
+            result.ShouldNotBeNull();
+            result.ShouldBeType<SimpleTypeField>();
+            result.GetPropertyOrFieldValue(name + suffix).ShouldBeNull();
+        }
+
         private static readonly object[] SimpleFieldReferenceTypes = TestCases.Create("Property", "Field")
             .AddType<string>("1", "String")
             .AddType<Uri>(new Uri("http://www.xkcd.com"), "Uri")
@@ -205,12 +243,37 @@ namespace Tests.Deserializer.Xml
             exception.InnerException.ShouldBeType<ValueCannotBeNullDeserializationException>();
         }
 
+        private static readonly object[] SimpleNonNullableFieldTypes = TestCases.Create("Property", "Field")
+            .AddType<Uri>(new Uri("http://www.xkcd.com"), "Uri")
+
+            .AddType<UriFormat>(UriFormat.UriEscaped, "Enum")
+
+            .AddType<DateTime>(DateTime.Today, "DateTime")
+            .AddType<TimeSpan>(TimeSpan.MaxValue, "TimeSpan")
+            .AddType<Guid>(RandomGuid, "Guid")
+
+            .AddType<Boolean>(true, "Boolean")
+            .AddType<Byte>(5, "Byte")
+            .AddType<SByte>(6, "SByte")
+            .AddType<Int16>(7, "Int16")
+            .AddType<UInt16>(8, "UInt16")
+            .AddType<Int32>(9, "Int32")
+            .AddType<UInt32>(10, "UInt32")
+            .AddType<Int64>(11, "Int64")
+            .AddType<UInt64>(12, "UInt64")
+            .AddType<IntPtr>(new IntPtr(13), "IntPtr")
+            .AddType<UIntPtr>(new UIntPtr(14), "UIntPtr")
+            .AddType<Char>('a', "Char")
+            .AddType<Double>(15, "Double")
+            .AddType<Single>(16, "Single")
+            .AddType<Decimal>(17, "Decimal")
+
+            .All;
+
         [Test]
-        [TestCaseSource(nameof(SimpleFieldTypes))]
+        [TestCaseSource(nameof(SimpleNonNullableFieldTypes))]
         public void should_fail_to_parse_empty_value_elements(string suffix, Type type, object value, string name)
         {
-            if (type == typeof(string)) return;
-
             var xml = "<SimpleTypeField><{0}></{0}></SimpleTypeField>".ToFormat(name + suffix);
             var messageType = type.GetUnderlyingNullableType();
             messageType = messageType.IsEnum ? typeof(Enum) : messageType;
@@ -230,11 +293,9 @@ namespace Tests.Deserializer.Xml
         }
 
         [Test]
-        [TestCaseSource(nameof(SimpleFieldTypes))]
+        [TestCaseSource(nameof(SimpleNonNullableFieldTypes))]
         public void should_fail_to_parse_empty_fields_with_custom_parse_message(string suffix, Type type, object value, string name)
         {
-            if (type == typeof(string)) return;
-
             var xml = "<SimpleTypeField><{0}></{0}></SimpleTypeField>".ToFormat(name + suffix);
 
             var messageType = type.GetUnderlyingNullableType();

@@ -59,7 +59,7 @@ namespace Bender.Configuration
 
         public StringComparison NameComparison { get; set; }
         public StringComparison EnumValueComparison { get; set; }
-
+        
         public bool IgnoreUnmatchedElements { get; set; }
         public bool IgnoreUnmatchedMembers { get; set; }
 

@@ -149,8 +149,26 @@ namespace Tests.Deserializer.Xml
         }
 
         [Test]
-        [TestCaseSource(nameof(SimpleDictionaryTypes))]
-        public void should_fail_to_parse_empty_dictionary_entries(Type type, object value, object defaultValue)
+        [TestCase(typeof(UriFormat))]
+        [TestCase(typeof(DateTime))]
+        [TestCase(typeof(TimeSpan))]
+        [TestCase(typeof(Guid))]
+        [TestCase(typeof(Boolean))]
+        [TestCase(typeof(Byte))]
+        [TestCase(typeof(SByte))]
+        [TestCase(typeof(Int16))]
+        [TestCase(typeof(UInt16))]
+        [TestCase(typeof(Int32))]
+        [TestCase(typeof(UInt32))]
+        [TestCase(typeof(Int64))]
+        [TestCase(typeof(UInt64))]
+        [TestCase(typeof(IntPtr))]
+        [TestCase(typeof(UIntPtr))]
+        [TestCase(typeof(Char))]
+        [TestCase(typeof(Double))]
+        [TestCase(typeof(Single))]
+        [TestCase(typeof(Decimal))]
+        public void should_fail_to_parse_empty_dictionary_entries(Type type)
         {
             if (type == typeof(string)) return;
 
@@ -170,8 +188,26 @@ namespace Tests.Deserializer.Xml
         }
 
         [Test]
-        [TestCaseSource(nameof(SimpleDictionaryTypes))]
-        public void should_fail_to_parse_empty_dictionary_entries_with_custom_parse_message(Type type, object value, object defaultValue)
+        [TestCase(typeof(UriFormat))]
+        [TestCase(typeof(DateTime))]
+        [TestCase(typeof(TimeSpan))]
+        [TestCase(typeof(Guid))]
+        [TestCase(typeof(Boolean))]
+        [TestCase(typeof(Byte))]
+        [TestCase(typeof(SByte))]
+        [TestCase(typeof(Int16))]
+        [TestCase(typeof(UInt16))]
+        [TestCase(typeof(Int32))]
+        [TestCase(typeof(UInt32))]
+        [TestCase(typeof(Int64))]
+        [TestCase(typeof(UInt64))]
+        [TestCase(typeof(IntPtr))]
+        [TestCase(typeof(UIntPtr))]
+        [TestCase(typeof(Char))]
+        [TestCase(typeof(Double))]
+        [TestCase(typeof(Single))]
+        [TestCase(typeof(Decimal))]
+        public void should_fail_to_parse_empty_dictionary_entries_with_custom_parse_message(Type type)
         {
             if (type == typeof(string)) return;
 

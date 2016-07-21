@@ -141,12 +141,37 @@ namespace Tests.Deserializer
             result.GetPropertyOrFieldValue(name + suffix).ShouldEqual(value);
         }
 
+        private static readonly object[] SimpleNonNullableFieldTypes = TestCases.Create("Property", "Field")
+            .AddType<Uri>(new Uri("http://www.xkcd.com"), "Uri")
+
+            .AddType<UriFormat>(UriFormat.UriEscaped, "Enum")
+
+            .AddType<DateTime>(DateTime.Today, "DateTime")
+            .AddType<TimeSpan>(TimeSpan.MaxValue, "TimeSpan")
+            .AddType<Guid>(RandomGuid, "Guid")
+
+            .AddType<Boolean>(true, "Boolean")
+            .AddType<Byte>(5, "Byte")
+            .AddType<SByte>(6, "SByte")
+            .AddType<Int16>(7, "Int16")
+            .AddType<UInt16>(8, "UInt16")
+            .AddType<Int32>(9, "Int32")
+            .AddType<UInt32>(10, "UInt32")
+            .AddType<Int64>(11, "Int64")
+            .AddType<UInt64>(12, "UInt64")
+            .AddType<IntPtr>(new IntPtr(13), "IntPtr")
+            .AddType<UIntPtr>(new UIntPtr(14), "UIntPtr")
+            .AddType<Char>('a', "Char")
+            .AddType<Double>(15, "Double")
+            .AddType<Single>(16, "Single")
+            .AddType<Decimal>(17, "Decimal")
+
+            .All;
+
         [Test]
-        [TestCaseSource(nameof(SimpleFieldTypes))]
+        [TestCaseSource(nameof(SimpleNonNullableFieldTypes))]
         public void should_fail_to_parse_empty_fields(string suffix, Type type, object value, string name)
         {
-            if (type == typeof(string)) return;
-
             var form = "{0}=".ToFormat(name + suffix);
             var messageType = type.GetUnderlyingNullableType();
             messageType = messageType.IsEnum ? typeof(Enum) : messageType;
@@ -166,11 +191,9 @@ namespace Tests.Deserializer
         }
 
         [Test]
-        [TestCaseSource(nameof(SimpleFieldTypes))]
+        [TestCaseSource(nameof(SimpleNonNullableFieldTypes))]
         public void should_fail_to_parse_empty_fields_with_custom_parse_message(string suffix, Type type, object value, string name)
         {
-            if (type == typeof(string)) return;
-
             var form = "{0}=".ToFormat(name + suffix);
 
             var messageType = type.GetUnderlyingNullableType();
