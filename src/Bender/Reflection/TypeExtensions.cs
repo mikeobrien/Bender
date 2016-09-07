@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using Bender.Extensions;
 using Bender.Collections;
 
@@ -240,9 +241,25 @@ namespace Bender.Reflection
 
         // Nullable types
 
+        public static bool IsOptional(this PropertyInfo property)
+        {
+            return property.PropertyType.IsOptional();
+        }
+
+        public static bool IsOptional<T>(this PropertyInfo property)
+        {
+            return property.PropertyType.IsOptional<T>();
+        }
+
         public static bool IsOptional(this Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Optional<>);
+        }
+
+        public static bool IsOptional<T>(this Type type)
+        {
+            return type != null && type.IsOptional() && type.UnwrapOptionalType()
+                .GetUnderlyingNullableType() == typeof(T);
         }
 
         public static Type GetUnderlyingOptionalType(this Type type)

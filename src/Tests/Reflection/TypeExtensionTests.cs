@@ -563,6 +563,17 @@ namespace Tests.Reflection
         }
 
         [Test]
+        [TestCase(null, false)]
+        [TestCase(typeof(int), false)]
+        [TestCase(typeof(Optional<int>), true)]
+        [TestCase(typeof(Optional<int?>), true)]
+        public void should_determine_if_type_is_optional_type_of_type(
+            Type type, bool expected)
+        {
+            type.IsOptional<int>().ShouldEqual(expected);
+        }
+
+        [Test]
         public void should_get_underlying_optional_type()
         {
             typeof(string).GetUnderlyingOptionalType().ShouldEqual(typeof(string));
