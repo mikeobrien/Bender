@@ -37,11 +37,11 @@ public class Model
     public string Property { get; set; } 
 }
 
-var model = Deserialize.Json<Model>("{\"Property\":\"value\"}");
-var model = Deserialize.Xml<Model>("<Model><Property>value</Property></Model>");
+var model = "{\"Property\":\"value\"}".DeserializeJson<Model>();
+var model = "<Model><Property>value</Property></Model>".DeserializeXml<Model>();
 
-var json = Serialize.Json(new Model { Property = "value" });
-var xml = Serialize.Xml(new Model { Property = "value" });
+var json = new Model { Property = "value" }.SerializeJson();
+var xml = new Model { Property = "value" }.SerializeXml();
 ```
 
 Additional convenience methods take or return a `byte[]`, `Stream`, file path, `XDocument`, `XElement` and `INode`. 
@@ -51,7 +51,7 @@ Additional convenience methods take or return a `byte[]`, `Stream`, file path, `
 Bender can be configured in a number of different ways depending on your needs.  First, the configuration DSL is available on all convenience and factory methods:
 
 ```csharp
-var model = Deserialize.Json<Model>("{ ... }", o => { ... });
+var model = "{ ... }".DeserializeJson<Model>(o => { ... });
 var serializer = Serializer.Create(o => { ... });
 var deserializer = Deserializer.Create(o => { ... });
 ```
@@ -61,7 +61,7 @@ Second, you can create options with the options factory method and pass those in
 ```csharp
 var options = Options.Create(o => { ... });
 
-var model = Deserialize.Json<Model>("{ ... }", options);
+var model = "{ ... }".DeserializeJson<Model>(options);
 var serializer = new Serializer(options);
 var deserializer = new Deserializer(options);
 ```

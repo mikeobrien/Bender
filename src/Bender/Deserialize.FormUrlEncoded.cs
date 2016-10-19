@@ -40,6 +40,38 @@ namespace Bender
             return Deserializer.Create(configure).DeserializeFormUrlEncoded(form);
         }
 
+        // String extensions
+
+        public static T DeserializeFormUrlEncoded<T>(this string form, Options options)
+        {
+            return FormUrlEncoded<T>(form, options);
+        }
+
+        public static T DeserializeFormUrlEncoded<T>(this string form, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncoded<T>(form, configure);
+        }
+
+        public static object DeserializeFormUrlEncoded(this string form, Type type, Options options)
+        {
+            return FormUrlEncoded(form, type, options);
+        }
+
+        public static object DeserializeFormUrlEncoded(this string form, Type type, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncoded(form, type, configure);
+        }
+
+        public static FormNode DeserializeFormUrlEncoded(this string form, Options options)
+        {
+            return FormUrlEncoded(form, options);
+        }
+
+        public static FormNode DeserializeFormUrlEncoded(this string form, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncoded(form, configure);
+        }
+
         // Bytes
 
         public static T FormUrlEncoded<T>(byte[] bytes, Action<OptionsDsl> configure = null)
@@ -100,6 +132,68 @@ namespace Bender
         public static FormNode FormUrlEncoded(byte[] bytes, Encoding encoding, Options options)
         {
             return Deserializer.Create(options).DeserializeFormUrlEncoded(bytes, encoding);
+        }
+
+        // Bytes extensions
+
+        public static T DeserializeFormUrlEncoded<T>(this byte[] bytes, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncoded<T>(bytes, configure);
+        }
+
+        public static T DeserializeFormUrlEncoded<T>(this byte[] bytes, Options options)
+        {
+            return FormUrlEncoded<T>(bytes, options);
+        }
+
+        public static T DeserializeFormUrlEncoded<T>(this byte[] bytes, Encoding encoding, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncoded<T>(bytes, encoding, configure);
+        }
+
+        public static T DeserializeFormUrlEncoded<T>(this byte[] bytes, Encoding encoding, Options options)
+        {
+            return FormUrlEncoded<T>(bytes, encoding, options);
+        }
+
+        public static object DeserializeFormUrlEncoded(this byte[] bytes, Type type, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncoded(bytes, type, configure);
+        }
+
+        public static object DeserializeFormUrlEncoded(this byte[] bytes, Type type, Options options)
+        {
+            return FormUrlEncoded(bytes, type, options);
+        }
+
+        public static FormNode DeserializeFormUrlEncoded(this byte[] bytes, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncoded(bytes, configure);
+        }
+
+        public static FormNode DeserializeFormUrlEncoded(this byte[] bytes, Options options)
+        {
+            return FormUrlEncoded(bytes, options);
+        }
+
+        public static object DeserializeFormUrlEncoded(this byte[] bytes, Type type, Encoding encoding, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncoded(bytes, type, encoding, configure);
+        }
+
+        public static object DeserializeFormUrlEncoded(this byte[] bytes, Type type, Encoding encoding, Options options)
+        {
+            return FormUrlEncoded(bytes, type, encoding, options);
+        }
+
+        public static FormNode DeserializeFormUrlEncoded(this byte[] bytes, Encoding encoding, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncoded(bytes, encoding, configure);
+        }
+
+        public static FormNode DeserializeFormUrlEncoded(this byte[] bytes, Encoding encoding, Options options)
+        {
+            return FormUrlEncoded(bytes, encoding, options);
         }
 
         // Stream
@@ -164,6 +258,68 @@ namespace Bender
             return Deserializer.Create(options).DeserializeFormUrlEncoded(stream, encoding);
         }
 
+        // Stream extensions
+
+        public static T DeserializeFormUrlEncoded<T>(this Stream stream, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncoded<T>(stream, configure);
+        }
+
+        public static T DeserializeFormUrlEncoded<T>(this Stream stream, Options options)
+        {
+            return FormUrlEncoded<T>(stream, options);
+        }
+
+        public static T DeserializeFormUrlEncoded<T>(this Stream stream, Encoding encoding, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncoded<T>(stream, encoding, configure);
+        }
+
+        public static T DeserializeFormUrlEncoded<T>(this Stream stream, Encoding encoding, Options options)
+        {
+            return FormUrlEncoded<T>(stream, encoding, options);
+        }
+
+        public static object DeserializeFormUrlEncoded(this Stream stream, Type type, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncoded(stream, type, configure);
+        }
+
+        public static object DeserializeFormUrlEncoded(this Stream stream, Type type, Options options)
+        {
+            return FormUrlEncoded(stream, type, options);
+        }
+
+        public static FormNode DeserializeFormUrlEncoded(this Stream stream, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncoded(stream, configure);
+        }
+
+        public static FormNode DeserializeFormUrlEncoded(this Stream stream, Options options)
+        {
+            return FormUrlEncoded(stream, options);
+        }
+
+        public static object DeserializeFormUrlEncoded(this Stream stream, Type type, Encoding encoding, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncoded(stream, type, encoding, configure);
+        }
+
+        public static object DeserializeFormUrlEncoded(this Stream stream, Type type, Encoding encoding, Options options)
+        {
+            return FormUrlEncoded(stream, type, encoding, options);
+        }
+
+        public static FormNode DeserializeFormUrlEncoded(this Stream stream, Encoding encoding, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncoded(stream, encoding, configure);
+        }
+
+        public static FormNode DeserializeFormUrlEncoded(this Stream stream, Encoding encoding, Options options)
+        {
+            return FormUrlEncoded(stream, encoding, options);
+        }
+
         // File
 
         public static T FormUrlEncodedFile<T>(string path, Action<OptionsDsl> configure = null)
@@ -224,6 +380,68 @@ namespace Bender
         public static FormNode FormUrlEncodedFile(string path, Encoding encoding, Options options)
         {
             return Deserializer.Create(options).DeserializeFormUrlEncodedFile(path, encoding);
+        }
+
+        // File extensions
+
+        public static T DeserializeFormUrlEncodedFile<T>(this string path, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncodedFile<T>(path, configure);
+        }
+
+        public static T DeserializeFormUrlEncodedFile<T>(this string path, Options options)
+        {
+            return FormUrlEncodedFile<T>(path, options);
+        }
+
+        public static T DeserializeFormUrlEncodedFile<T>(this string path, Encoding encoding, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncodedFile<T>(path, encoding, configure);
+        }
+
+        public static T DeserializeFormUrlEncodedFile<T>(this string path, Encoding encoding, Options options)
+        {
+            return FormUrlEncodedFile<T>(path, encoding, options);
+        }
+
+        public static object DeserializeFormUrlEncodedFile(this string path, Type type, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncodedFile(path, type, configure);
+        }
+
+        public static object DeserializeFormUrlEncodedFile(this string path, Type type, Options options)
+        {
+            return FormUrlEncodedFile(path, type, options);
+        }
+
+        public static FormNode DeserializeFormUrlEncodedFile(this string path, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncodedFile(path, configure);
+        }
+
+        public static FormNode DeserializeFormUrlEncodedFile(this string path, Options options)
+        {
+            return FormUrlEncodedFile(path, options);
+        }
+
+        public static object DeserializeFormUrlEncodedFile(this string path, Type type, Encoding encoding, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncodedFile(path, type, encoding, configure);
+        }
+
+        public static object DeserializeFormUrlEncodedFile(this string path, Type type, Encoding encoding, Options options)
+        {
+            return FormUrlEncodedFile(path, type, encoding, options);
+        }
+
+        public static FormNode DeserializeFormUrlEncodedFile(this string path, Encoding encoding, Action<OptionsDsl> configure = null)
+        {
+            return FormUrlEncodedFile(path, encoding, configure);
+        }
+
+        public static FormNode DeserializeFormUrlEncodedFile(this string path, Encoding encoding, Options options)
+        {
+            return FormUrlEncodedFile(path, encoding, options);
         }
     }
 }
