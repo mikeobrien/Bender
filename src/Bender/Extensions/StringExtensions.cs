@@ -62,13 +62,29 @@ namespace Bender.Extensions
 
         public static string ToInitialCaps(this string value)
         {
-            return !value.IsNullOrEmpty() ? value.Substring(0, 1).ToUpper() + value.Substring(1) : value;
+            return !value.IsNullOrEmpty() ? 
+                value.Substring(0, 1).ToUpper() + 
+                value.Substring(1) : value;
         }
 
         public static string ToCamelCase(this string value)
         {
-            return string.IsNullOrEmpty(value) ? value : 
-                value[0].ToString().ToLower() + value.Substring(1);
+            if (string.IsNullOrEmpty(value) || 
+                !char.IsUpper(value[0])) return value;
+
+            var chars = value.ToCharArray();
+
+            for (var i = 0; i < chars.Length; i++)
+            {
+                if (i == 1 && !char.IsUpper(chars[i])) break;
+
+                var hasNext = i + 1 < chars.Length;
+                if (i > 0 && hasNext && !char.IsUpper(chars[i + 1])) break;
+
+                chars[i] = char.ToLowerInvariant(chars[i]);
+            }
+
+            return new string(chars);
         }
 
         public static string ToSeparatedCase(this string value, bool lower, string seperator)

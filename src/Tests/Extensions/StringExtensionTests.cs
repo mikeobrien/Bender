@@ -71,10 +71,30 @@ namespace Tests.Extensions
         }
 
         [Test]
-        [TestCase("OhHai", "ohHai")]
-        [TestCase("O", "o")]
-        [TestCase("Oh", "oh")]
         [TestCase("", "")]
+        [TestCase(null, null)]
+        [TestCase("URLValue", "urlValue")]
+        [TestCase("URL", "url")]
+        [TestCase("ID", "id")]
+        [TestCase("I", "i")]
+        [TestCase("Person", "person")]
+        [TestCase("iPhone", "iPhone")]
+        [TestCase("IPhone", "iPhone")]
+        [TestCase("I Phone", "i Phone")]
+        [TestCase("I  Phone", "i  Phone")]
+        [TestCase(" IPhone", " IPhone")]
+        [TestCase(" IPhone ", " IPhone ")]
+        [TestCase("IsCIA", "isCIA")]
+        [TestCase("VmQ", "vmQ")]
+        [TestCase("Xml2Json", "xml2Json")]
+        [TestCase("SnAkEcAsE", "snAkEcAsE")]
+        [TestCase("SnA__kEcAsE", "snA__kEcAsE")]
+        [TestCase("SnA__ kEcAsE", "snA__ kEcAsE")]
+        [TestCase("already_snake_case_ ", "already_snake_case_ ")]
+        [TestCase("IsJSONProperty", "isJSONProperty")]
+        [TestCase("SHOUTING_CASE", "shoutinG_CASE")]
+        [TestCase("9999-12-31T23:59:59.9999999Z", "9999-12-31T23:59:59.9999999Z")]
+        [TestCase("Hi!! This is text. Time to test.", "hi!! This is text. Time to test.")]
         public void should_camel_case(string source, string result)
         {
             source.ToCamelCase().ShouldEqual(result);
