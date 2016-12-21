@@ -390,7 +390,7 @@ namespace Tests.Nodes.Xml
             node.Encode().ShouldEqual(Declaration + "<Oh><Hai xmlns=\"http://namespace.org\">There</Hai></Oh>");
         }
 
-        private readonly object[][] _prefixAttributeCases = {
+        private static readonly object[][] PrefixAttributeCases = {
             new object[] { new XmlRootAttribute { Namespace = "abc" } },
             new object[] { new XmlTypeAttribute { Namespace = "abc" } },
             new object[] { new XmlElementAttribute { Namespace = "abc" } },
@@ -399,7 +399,7 @@ namespace Tests.Nodes.Xml
             new object[] { new XmlElementAttribute { Namespace = "http://namespace.org" } }};
 
         [Test]
-        [TestCaseSource(nameof(_prefixAttributeCases))]
+        [TestCaseSource(nameof(PrefixAttributeCases))]
         public void should_set_namespace_prefix_from_xml_attribute(Attribute attribute)
         {
             var node = ElementNode.Create("Oh", Metadata.Empty, Options.Create(x => x.Serialization(y => y

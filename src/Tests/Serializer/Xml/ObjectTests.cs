@@ -520,7 +520,7 @@ namespace Tests.Serializer.Xml
         [XmlType("element", Namespace = "http://namespace.org")]
         public class XmlTypeNamespace { }
 
-        private readonly object[][] _prefixAttributeTypeCases =
+        private static readonly object[][] PrefixAttributeTypeCases =
         {
             new object[] {typeof (XmlRootNamespacePrefix)},
             new object[] {typeof (XmlRootNamespacePrefix)},
@@ -529,7 +529,7 @@ namespace Tests.Serializer.Xml
         };
 
         [Test]
-        [TestCaseSource(nameof(_prefixAttributeTypeCases))]
+        [TestCaseSource(nameof(PrefixAttributeTypeCases))]
         public void should_set_type_namespace_prefix_from_xml_attribute(Type type)
         {
             Serialize.Xml(type.CreateInstance(), x => x.Serialization(y =>

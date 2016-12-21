@@ -17,7 +17,7 @@ using JsonSerializer = ServiceStack.Text.JsonSerializer;
 
 namespace Tests.Performance
 {
-    [TestFixture, Ignore]
+    [TestFixture, Ignore("Manual tests")]
     public class PerformanceTests
     {
         private IEnumerable<Benchmarks.Benchmark> _xmlResults;

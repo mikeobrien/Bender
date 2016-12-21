@@ -46,7 +46,7 @@ namespace Tests.Reflection
         private static readonly CachedMember OptionalProperty = new CachedMember(OptionalPropertyInfo);
         private static readonly CachedMember OptionalField = new CachedMember(OptionalFieldInfo);
 
-        public object[] Cases = TestCases.Create()
+        public static object[] Cases = TestCases.Create()
             .Add(Property, PropertyInfo)
             .Add(Field, FieldInfo)
             .Add(OptionalProperty, OptionalPropertyInfo)

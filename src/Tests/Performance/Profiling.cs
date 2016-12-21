@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace Tests.Performance
 {
-    [TestFixture]
+    [TestFixture, Ignore("Manual tests")]
     public class Profiling
     {
         private object _object;
