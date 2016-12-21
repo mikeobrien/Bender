@@ -76,6 +76,19 @@ namespace Tests.Deserializer.Json
             #endif
         }
 
+        public class NonNullableModel
+        {
+            public int Value { get; set; }
+        }
+
+        [Test]
+        public void should_return_friendly_error_message_when_passing_a_null_to_a_non_nullable_member()
+        {
+            var message = Assert.Throws<FriendlyMappingException>(() => Bender.Deserializer.Create()
+                .DeserializeJson<NonNullableModel>("{ \"Value\": null }")).FriendlyMessage;
+            message.ShouldEqual("Could not read json field '$.Value': Value cannot be null.");
+        }
+
         // String 
 
         public const string Json = "{ \"Oh\": \"Hai\" }";
