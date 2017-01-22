@@ -16,7 +16,7 @@ namespace Bender.Extensions
 
         public static bool IsNullOrEmpty(this string value)
         {
-            return string.IsNullOrEmpty(value);
+            return String.IsNullOrEmpty(value);
         }
 
         public static bool IsEmpty(this string value)
@@ -29,6 +29,16 @@ namespace Bender.Extensions
             return comparison == StringComparison.CurrentCultureIgnoreCase ||
                    comparison == StringComparison.InvariantCultureIgnoreCase ||
                    comparison == StringComparison.OrdinalIgnoreCase;
+        }
+
+        public static bool StartsWithIgnoreCase(this string source, string compare)
+        {
+            return source.StartsWith(compare, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool EqualsIgnoreCase(this string source, string compare)
+        {
+            return source.Equals(compare, StringComparison.OrdinalIgnoreCase);
         }
 
         public static string Truncate(this object value, int length)
@@ -52,7 +62,7 @@ namespace Bender.Extensions
 
         public static string ToFormat(this string value, params object[] args)
         {
-            return args.Any() ? string.Format(value, args) : value;
+            return args.Any() ? String.Format(value, args) : value;
         }
 
         public static string RemoveNewLines(this string value)
@@ -69,19 +79,19 @@ namespace Bender.Extensions
 
         public static string ToCamelCase(this string value)
         {
-            if (string.IsNullOrEmpty(value) || 
-                !char.IsUpper(value[0])) return value;
+            if (String.IsNullOrEmpty(value) || 
+                !Char.IsUpper(value[0])) return value;
 
             var chars = value.ToCharArray();
 
             for (var i = 0; i < chars.Length; i++)
             {
-                if (i == 1 && !char.IsUpper(chars[i])) break;
+                if (i == 1 && !Char.IsUpper(chars[i])) break;
 
                 var hasNext = i + 1 < chars.Length;
-                if (i > 0 && hasNext && !char.IsUpper(chars[i + 1])) break;
+                if (i > 0 && hasNext && !Char.IsUpper(chars[i + 1])) break;
 
-                chars[i] = char.ToLowerInvariant(chars[i]);
+                chars[i] = Char.ToLowerInvariant(chars[i]);
             }
 
             return new string(chars);
@@ -89,7 +99,7 @@ namespace Bender.Extensions
 
         public static string ToSeparatedCase(this string value, bool lower, string seperator)
         {
-            if (string.IsNullOrEmpty(value)) return value;
+            if (String.IsNullOrEmpty(value)) return value;
             var result = value[0].ToString() + Regex.Replace(value.Substring(1), 
                 "((?<=[a-z])[A-Z]|[A-Z](?=[a-z]))", seperator + "$1");
             return lower ? result.ToLower() : result;

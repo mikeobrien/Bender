@@ -51,7 +51,7 @@ namespace Tests
             return AddCase(new List<object> { typeof(T) }.Concat(@params));
         }
 
-        public TestCases Add(Action<object[]> config, params object[] @params)
+        public TestCases AddConfig(Action<object[]> config, params object[] @params)
         {
             config(_params);
             return AddCase(@params);
@@ -69,6 +69,6 @@ namespace Tests
             return this;
         }
 
-        public object[] All { get { return _cases.ToArray(); } }
+        public object[][] All => _cases.ToArray();
     }
 }

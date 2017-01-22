@@ -395,9 +395,9 @@ namespace Tests.Nodes.Object
         }
 
         public static object[] CyclicCases = TestCases.Create(new CyclicRoot())
-            .Add(x => x[0].As<CyclicRoot>().ArrayList = new ArrayList { x[0], new CyclicRoot() }, "ArrayList")
-            .Add(x => x[0].As<CyclicRoot>().List = new List<CyclicRoot> { x[0].As<CyclicRoot>(), new CyclicRoot() }, "List")
-            .Add(x => x[0].As<CyclicRoot>().ObjectList = new List<object> { x[0], new CyclicRoot() }, "ObjectList")
+            .AddConfig(x => x[0].As<CyclicRoot>().ArrayList = new ArrayList { x[0], new CyclicRoot() }, "ArrayList")
+            .AddConfig(x => x[0].As<CyclicRoot>().List = new List<CyclicRoot> { x[0].As<CyclicRoot>(), new CyclicRoot() }, "List")
+            .AddConfig(x => x[0].As<CyclicRoot>().ObjectList = new List<object> { x[0], new CyclicRoot() }, "ObjectList")
             .All;
 
         [Test]

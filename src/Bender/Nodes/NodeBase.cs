@@ -89,14 +89,16 @@ namespace Bender.Nodes
             }
         }
 
+        private string _name;
+
         protected virtual string GetName()
         {
-            throw new NameNotSupportedException();
+            return _name;
         }
 
         protected virtual void SetName(string name)
         {
-            throw new NameNotSupportedException();
+            _name = name;
         }
 
         public virtual object Value

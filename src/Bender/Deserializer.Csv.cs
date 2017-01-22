@@ -9,19 +9,19 @@ namespace Bender
     {
         // String
 
-        public T DeserializeCsv<T>(string json)
+        public T DeserializeCsv<T>(string csv)
         {
-            return (T)DeserializeCsv(json, typeof(T));
+            return (T)DeserializeCsv(csv, typeof(T));
         }
 
-        public object DeserializeCsv(string json, Type type)
+        public object DeserializeCsv(string csv, Type type)
         {
-            return Deserialize(new FileNode(json, _options), type);
+            return Deserialize(new FileNode(csv, _options, type), type);
         }
 
-        public FileNode DeserializeCsv(string json)
+        public FileNode DeserializeCsv(string csv)
         {
-            return new FileNode(json, _options);
+            return new FileNode(csv, _options);
         }
 
         // Bytes
@@ -33,12 +33,12 @@ namespace Bender
 
         public object DeserializeCsv(byte[] bytes, Type type, Encoding encoding = null)
         {
-            return Deserialize(new FileNode(bytes, _options, encoding ?? Encoding.UTF8), type);
+            return Deserialize(new FileNode(bytes, _options, type, encoding ?? Encoding.UTF8), type);
         }
 
         public FileNode DeserializeCsv(byte[] bytes, Encoding encoding = null)
         {
-            return new FileNode(bytes, _options, encoding ?? Encoding.UTF8);
+            return new FileNode(bytes, _options, encoding: encoding ?? Encoding.UTF8);
         }
 
         // Stream
@@ -50,12 +50,12 @@ namespace Bender
 
         public object DeserializeCsv(Stream stream, Type type, Encoding encoding = null)
         {
-            return Deserialize(new FileNode(stream, _options, encoding ?? Encoding.UTF8), type);
+            return Deserialize(new FileNode(stream, _options, type, encoding ?? Encoding.UTF8), type);
         }
 
         public FileNode DeserializeCsv(Stream stream, Encoding encoding = null)
         {
-            return new FileNode(stream, _options, encoding ?? Encoding.UTF8);
+            return new FileNode(stream, _options, encoding: encoding ?? Encoding.UTF8);
         }
 
         // File

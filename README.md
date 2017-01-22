@@ -132,6 +132,8 @@ var deserializer = new Deserializer(options);
 | `IgnoreRootName` | Does not attempt to match the root element name. |
 | `IgnoreUnmatchedArrayItems` | Ignores array items whose names do not match. This throws an exception by default. |
 | `IgnoreArrayItemNames` | Does not attempt to match array item element names. |
+| `IgnoreNullsForValueTypes` | Ignores null source values when the target is a value type (which would otherwise cause an exception). |
+| `IgnoreEmptyCsvValues` | Ignore empty CSV values (e.g. fields with nothing or only whitespace between the separators: `1,,3,4`). |
 | `FailOnUnmatchedElements` | Fail if an element exists but not it's corresponding member. |
 | `FailOnUnmatchedMembers` | Fail if a member exists but not it's corresponding element. |
 | `TreatDatesAsUtcAndConvertToLocal` | Treat dates as local but serialize as UTC. |

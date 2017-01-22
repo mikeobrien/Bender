@@ -93,8 +93,11 @@ namespace Bender.Nodes.Object
                         }
                     }
                 }
-                else if (value == null && SpecifiedType.IsValueType && !SpecifiedType.IsNullable) 
-                    throw new ValueCannotBeNullDeserializationException();
+                else if (value == null && SpecifiedType.IsValueType && !SpecifiedType.IsNullable)
+                {
+                    if (!Context.Options.Deserialization.IgnoreNullsForValueTypes)
+                        throw new ValueCannotBeNullDeserializationException();
+                }
                 else Source.Instance = value;
             }
             get

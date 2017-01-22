@@ -49,6 +49,8 @@ namespace Bender.Configuration
 
             IgnoreUnmatchedElements = true;
             IgnoreUnmatchedMembers = true;
+            IgnoreNullsForValueTypes = false;
+            IgnoreEmptyCsvValues = false;
 
             Readers.AddValueReader((v, s, t, o) => Version.Parse(v.ToString()));
             Readers.AddValueReader((v, s, t, o) => new MailAddress(v.ToString()));
@@ -67,7 +69,9 @@ namespace Bender.Configuration
         public bool IgnoreRootName { get; set; }
         public bool IgnoreArrayItemNames { get; set; }
         public bool IgnoreUnmatchedArrayItems { get; set; }
-        
+        public bool IgnoreNullsForValueTypes { get; set; }
+        public bool IgnoreEmptyCsvValues { get; set; }
+
         public Dictionary<Type, string> FriendlyParseErrorMessages { get; set; }
         public Func<CachedType, object[], object> ObjectFactory { get; set; }
 

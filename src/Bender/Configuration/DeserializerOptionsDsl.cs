@@ -82,6 +82,18 @@ namespace Bender.Configuration
             return this;
         }
 
+        public DeserializerOptionsDsl IgnoreNullsForValueTypes()
+        {
+            _options.Deserialization.IgnoreNullsForValueTypes = true;
+            return this;
+        }
+
+        public DeserializerOptionsDsl IgnoreEmptyCsvValues()
+        {
+            _options.Deserialization.IgnoreEmptyCsvValues = true;
+            return this;
+        }
+
         public DeserializerOptionsDsl WithFriendlyParseErrorMessage<T>(string message)
         {
             _options.Deserialization.FriendlyParseErrorMessages[typeof(T)] = message;

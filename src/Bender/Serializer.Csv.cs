@@ -22,8 +22,8 @@ namespace Bender
 
         public string SerializeCsv(object source, Type type)
         {
-            return SerializeString(source, type, (s, o) => 
-                new FileNode(s.NodeType, type, o), FileNode.NodeFormat);
+            return FileNode.SerializeString(source?.GetType(), type, factory => SerializeNodes(
+                source, type, factory, FileNode.NodeFormat));
         }
 
         // Bytes
@@ -40,8 +40,7 @@ namespace Bender
 
         public byte[] SerializeCsvBytes(object source, Type type, Encoding encoding = null)
         {
-            return SerializeBytes(source, type, (s, o) => new FileNode(
-                s.NodeType, type, o), FileNode.NodeFormat, encoding);
+            return SerializeCsvStream(source, type, encoding).ReadAllBytes();
         }
 
         // Return Stream
@@ -58,8 +57,8 @@ namespace Bender
 
         public Stream SerializeCsvStream(object source, Type type, Encoding encoding = null)
         {
-            return SerializeStream(source, type, (s, o) => new FileNode(
-                s.NodeType, type, o), FileNode.NodeFormat, encoding);
+            return FileNode.SerializeStream(source?.GetType(), type, factory => SerializeNodes(
+                source, type, factory, FileNode.NodeFormat), encoding);
         }
 
         // To Stream
@@ -76,8 +75,8 @@ namespace Bender
 
         public void SerializeCsvStream(object source, Type type, Stream stream, Encoding encoding = null)
         {
-            SerializeStream(source, type, (s, o) => new FileNode(s.NodeType, 
-                type, o, stream, encoding), FileNode.NodeFormat, stream, encoding);
+            FileNode.SerializeStream(stream, source?.GetType(), type, factory => SerializeNodes(
+                source, type, factory, FileNode.NodeFormat), encoding);
         }
 
         // File
@@ -94,28 +93,8 @@ namespace Bender
 
         public void SerializeCsvFile(object source, Type type, string path, Encoding encoding = null)
         {
-            using (var target = File.Create(path))
-            {
-                SerializeCsvStream(source, type, target, encoding);
-            }
-        }
-
-        // Nodes
-
-        public FileNode SerializeCsvNodes(object source)
-        {
-            return SerializeCsvNodes(source, source.GetType());
-        }
-
-        public FileNode SerializeCsvNodes<T>(T source)
-        {
-            return SerializeCsvNodes(source, typeof(T));
-        }
-
-        public FileNode SerializeCsvNodes(object source, Type type)
-        {
-            return (FileNode)SerializeNodes(source, type, (s, o) => 
-                new FileNode(s.NodeType, type, o), FileNode.NodeFormat);
+            FileNode.SerializeFile(path, source?.GetType(), type, factory => SerializeNodes(
+                source, type, factory, FileNode.NodeFormat), encoding);
         }
     }
 }

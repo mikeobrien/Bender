@@ -1,20 +1,25 @@
+using System.Linq;
+using Bender.Collections;
+
 namespace Bender.Nodes.CharacterSeparated
 {
     public class ValueNode : NodeBase
     {
-        private string _name;
         private object _value;
 
-        public ValueNode(string name, INode parent, object value = null) : base(parent)
+        public ValueNode(string name, string columnName, 
+            INode parent, object value = null) : base(parent)
         {
-            _name = name;
+            Name = name;
+            ColumnName = columnName;
             _value = value;
         }
 
+        public string ColumnName { get; }
         public override string Type => "csv value";
         public override string Format => FileNode.NodeFormat;
         public override bool IsNamed => true;
-        public override string Path => $"{Parent.Path}.{_name}";
+        public override string Path => Parent.Walk(x => x.Parent).Last().Path + ColumnName;
 
         protected override NodeType GetNodeType()
         {
@@ -25,16 +30,6 @@ namespace Bender.Nodes.CharacterSeparated
         {
             if (nodeType != NodeType.Value)
                 throw new BenderException("CSV values must be value nodes.");
-        }
-
-        protected override string GetName()
-        {
-            return _name;
-        }
-
-        protected override void SetName(string name)
-        {
-            _name = name;
         }
 
         protected override object GetValue()

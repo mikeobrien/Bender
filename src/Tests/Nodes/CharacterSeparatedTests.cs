@@ -26,17 +26,20 @@ namespace Tests.Nodes
         [Test]
         public void should_encode_csv()
         {
+            var result = new StringBuilder();
+            var writer = new StringWriter(result);
             var file = new FileNode(NodeType.Array, 
-                typeof(List<Record>), Options.Create(x => 
-                x.IncludePublicFields()));
+                typeof(List<Record>), typeof(List<Record>), 
+                Options.Create(x => x.IncludePublicFields()), writer);
             var row = new RowNode(1)
             {
-                { new ValueNode("Property", null, "oh,"), x => {} },
-                { new ValueNode("Field", null, "\"hai\""), x => {} },
-                { new ValueNode("Null", null), x => {} }
+                { new ValueNode("Property", "Property", null, "oh,"), x => {} },
+                { new ValueNode("Field", "Field", null, "\"hai\""), x => {} },
+                { new ValueNode("Null", "Null", null), x => {} }
             };
             file.Add(row, x => {});
-            file.EncodeToString().ShouldEqual(Data);
+            writer.Flush();
+            result.ToString().ShouldEqual(Data);
         }
 
         [Test]
@@ -49,7 +52,7 @@ namespace Tests.Nodes
             var rowNodes = fileNode.ToList();
             rowNodes.Count.ShouldEqual(1);
             var rowNode = rowNodes.First();
-            rowNode.NodeType.ShouldEqual(NodeType.Object);
+            rowNode.NodeType.ShouldEqual(NodeType.Variable);
             var rowValues = rowNode.ToList();
             rowValues.Count.ShouldEqual(3);
             var rowValue = rowValues[0];

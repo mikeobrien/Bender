@@ -113,7 +113,7 @@ namespace Tests.Deserializer.CharacterSeparated
             var exception = Assert.Throws<MappingException>(() => 
                 Deserialize.Csv("\"Property\"\r\n\"hai\"", type));
 
-            exception.Message.ShouldEqual(("Error deserializing character separated row '[1]' to " +
+            exception.Message.ShouldEqual(("Error deserializing character separated row '1:' to " +
                 "'{0}': Non generic {1} '{0}' is not supported for deserialization. Only " +
                 "generic lists and generic enumerable interfaces can be deserialized.")
                     .ToFormat(type.GetFriendlyTypeFullName(), type.IsList() ? "list" : "enumerable"));
@@ -127,7 +127,7 @@ namespace Tests.Deserializer.CharacterSeparated
                 Deserialize.Csv<GenericEnumerableImpl<ComplexType>>(
                     "\"Property\"\r\n\"hai\""));
 
-            exception.Message.ShouldEqual("Error deserializing character separated row '[1]' to " +
+            exception.Message.ShouldEqual("Error deserializing character separated row '1:' to " +
                 "'Tests.Collections.Implementations.GenericEnumerableImpl<Tests.Deserializer.CharacterSeparated.ArrayTests.ComplexType>': " +
                 "Enumerable 'Tests.Collections.Implementations.GenericEnumerableImpl<Tests.Deserializer.CharacterSeparated.ArrayTests.ComplexType>' " +
                 "is not supported for deserialization. Only generic lists and generic enumerable interfaces can be deserialized.");

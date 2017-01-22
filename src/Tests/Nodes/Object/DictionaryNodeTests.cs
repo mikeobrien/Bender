@@ -285,11 +285,11 @@ namespace Tests.Nodes.Object
         }
 
         public static object[] CyclicCases = TestCases.Create(new CyclicRoot())
-            .Add(x => x[0].As<CyclicRoot>().Hashtable = new Hashtable 
+            .AddConfig(x => x[0].As<CyclicRoot>().Hashtable = new Hashtable 
                 { { "item1", x[0] }, { "item2", new CyclicRoot() } }, "Hashtable")
-            .Add(x => x[0].As<CyclicRoot>().Dictionary = new Dictionary<string, CyclicRoot> 
+            .AddConfig(x => x[0].As<CyclicRoot>().Dictionary = new Dictionary<string, CyclicRoot> 
                 { { "item1", x[0].As<CyclicRoot>() }, { "item2", new CyclicRoot() } }, "Dictionary")
-            .Add(x => x[0].As<CyclicRoot>().ObjectDictionary = new Dictionary<string, object> 
+            .AddConfig(x => x[0].As<CyclicRoot>().ObjectDictionary = new Dictionary<string, object> 
                 { { "item1", x[0] }, { "item2", new CyclicRoot() } }, "ObjectDictionary")
             .All;
         

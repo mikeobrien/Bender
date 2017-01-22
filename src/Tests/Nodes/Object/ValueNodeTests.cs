@@ -272,6 +272,20 @@ namespace Tests.Nodes.Object
         }
 
         [Test]
+        public void should_ignore_nulls_for_value_types_when_configured()
+        {
+            var options = Options.Create(x => x.Deserialization(
+                d => d.IgnoreNullsForValueTypes()));
+            var value = new SimpleValue(typeof(Guid).ToCachedType());
+            value.Instance = Guid.Empty;
+
+            new ValueNode(CreateContext(Mode.Deserialize, options), 
+                null, value, null, null).Value = null;
+
+            value.Instance.ShouldEqual(Guid.Empty);
+        }
+
+        [Test]
         public void should_set_enum_with_custom_naming_convention()
         {
             var result = new SimpleValue(typeof(UriFormat).ToCachedType());

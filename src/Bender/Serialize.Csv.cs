@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text;
 using Bender.Configuration;
-using Bender.Nodes.CharacterSeparated;
 
 namespace Bender
 {
@@ -566,70 +565,6 @@ namespace Bender
         public static void SerializeCsvFile(this object source, Type type, string path, Encoding encoding, Action<OptionsDsl> configure = null)
         {
             CsvFile(source, type, path, encoding, configure);
-        }
-
-        // Nodes
-
-        public static FileNode CsvNodes(object source, Options options)
-        {
-            return Serializer.Create(options).SerializeCsvNodes(source);
-        }
-
-        public static FileNode CsvNodes(object source, Action<OptionsDsl> configure = null)
-        {
-            return Serializer.Create(configure).SerializeCsvNodes(source);
-        }
-
-        public static FileNode CsvNodes<T>(T source, Options options)
-        {
-            return Serializer.Create(options).SerializeCsvNodes(source);
-        }
-
-        public static FileNode CsvNodes<T>(T source, Action<OptionsDsl> configure = null)
-        {
-            return Serializer.Create(configure).SerializeCsvNodes(source);
-        }
-
-        public static FileNode CsvNodes(object source, Type type, Options options)
-        {
-            return Serializer.Create(options).SerializeCsvNodes(source, type);
-        }
-
-        public static FileNode CsvNodes(object source, Type type, Action<OptionsDsl> configure = null)
-        {
-            return Serializer.Create(configure).SerializeCsvNodes(source, type);
-        }
-
-        // Nodes extensions
-
-        public static FileNode SerializeCsvNodes(this object source, Options options)
-        {
-            return CsvNodes(source, options);
-        }
-
-        public static FileNode SerializeCsvNodes(this object source, Action<OptionsDsl> configure = null)
-        {
-            return CsvNodes(source, configure);
-        }
-
-        public static FileNode SerializeCsvNodes<T>(this T source, Options options)
-        {
-            return CsvNodes(source, options);
-        }
-
-        public static FileNode SerializeCsvNodes<T>(this T source, Action<OptionsDsl> configure = null)
-        {
-            return CsvNodes(source, configure);
-        }
-
-        public static FileNode SerializeCsvNodes(this object source, Type type, Options options)
-        {
-            return CsvNodes(source, type, options);
-        }
-
-        public static FileNode SerializeCsvNodes(this object source, Type type, Action<OptionsDsl> configure = null)
-        {
-            return CsvNodes(source, type, configure);
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Bender.Reflection
 
         public static CachedType GetType(Type type)
         {
+            if (type == null) return null;
             if (!Cache.ContainsKey(type))
             {
                 var cachedType = new CachedType(type);

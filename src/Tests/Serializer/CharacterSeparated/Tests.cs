@@ -23,9 +23,70 @@ namespace Tests.Serializer.CharacterSeparated
         {
             Serialize.Csv(new List<Record>
             {
-                new Record { Property = "oh", Field = "\"hai\"" }
+                new Record { Property = "oh", Field = "\"hai\"" },
+                new Record { Property = "fark", Field = "\"farker\"" }
             }, x => x.IncludePublicFields()).ShouldEqual(
-                "\"Property\",\"Field\"\r\n\"oh\",\"\"\"hai\"\"\"\r\n");
+                "\"Property\",\"Field\"\r\n" +
+                "\"oh\",\"\"\"hai\"\"\"\r\n" +
+                "\"fark\",\"\"\"farker\"\"\"\r\n");
+        }
+
+        public class NestedRecordParent
+        {
+            public string Field;
+            public string Property { get; set; }
+            public NestedRecordChild Child { get; set; }
+        }
+
+        public class NestedRecordChild
+        {
+            public string Field;
+            public string Property { get; set; }
+        }
+
+        public static object[][] NestedObjectTestCases = TestCases.Create()
+            .Add(new List<NestedRecordParent>
+                {
+                    new NestedRecordParent
+                    {
+                        Property = "oh2", Field = "\"hai2\""
+                    },
+                    new NestedRecordParent
+                    {
+                        Property = "oh", Field = "\"hai\"",
+                        Child = new NestedRecordChild
+                        {
+                            Property = "fark", Field = "\"farker\""
+                        }
+                    }
+                }, 
+                "\"Property\",\"Field\",\"ChildProperty\",\"ChildField\"\r\n" +
+                "\"oh2\",\"\"\"hai2\"\"\",,\r\n" +
+                "\"oh\",\"\"\"hai\"\"\",\"fark\",\"\"\"farker\"\"\"\r\n")
+            .Add(new List<NestedRecordParent>
+                {
+                    new NestedRecordParent
+                    {
+                        Property = "oh", Field = "\"hai\"",
+                        Child = new NestedRecordChild
+                        {
+                            Property = "fark", Field = "\"farker\""
+                        }
+                    },
+                    new NestedRecordParent
+                    {
+                        Property = "oh2", Field = "\"hai2\""
+                    }
+                },
+                "\"Property\",\"Field\",\"ChildProperty\",\"ChildField\"\r\n" +
+                "\"oh\",\"\"\"hai\"\"\",\"fark\",\"\"\"farker\"\"\"\r\n" +
+                "\"oh2\",\"\"\"hai2\"\"\",,\r\n").All;
+
+        [Test]
+        [TestCaseSource(nameof(NestedObjectTestCases))]
+        public void should_serialize_nested_objects_as_csv(List<NestedRecordParent> source, string result)
+        {
+            Serialize.Csv(source, x => x.IncludePublicFields()).ShouldEqual(result);
         }
 
         [Test]

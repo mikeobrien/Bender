@@ -67,10 +67,13 @@
     <Compile Include="Deserializer.Xml.cs" />
     <Compile Include="Deserializer.Json.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Extensions\UTF8Encoding.cs" />
-    <Compile Include="Nodes\CharacterSeparated\Encoder.cs" />
+    <Compile Include="Nodes\CharacterSeparated\CsvReader.cs" />
+    <Compile Include="Nodes\CharacterSeparated\CsvWriter.cs" />
     <Compile Include="Nodes\CharacterSeparated\FileNode.cs" />
     <Compile Include="Nodes\CharacterSeparated\RowNode.cs" />
+    <Compile Include="Nodes\CharacterSeparated\RowObjectNode.cs" />
     <Compile Include="Nodes\CharacterSeparated\ValueNode.cs" />
     <Compile Include="Nodes\FormUrlEncoded\FormNode.cs" />
     <Compile Include="Nodes\FormUrlEncoded\FormValueNode.cs" />

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Bender;
 using Bender.Collections;
-using Bender.Extensions;
 using Bender.Reflection;
 using NUnit.Framework;
 using Should;
@@ -58,8 +57,8 @@ namespace Tests.Serializer.CharacterSeparated
         {
             var model = Activator.CreateInstance(typeof(SimpleTypeModel<>).MakeGenericType(type));
             model.SetPropertyOrFieldValue("Value", value);
-            var list = model.GetType().MakeGenericListType().CreateInstance().As<IList>();
-            list.Add(model);
+            var list = model.GetType().MakeGenericListType().CreateInstance();
+            list.As<IList>().Add(model);
             Serialize.Csv(list).ShouldEqual("\"Value\"\r\n" + 
                 (type.IsNumeric() || type.IsBoolean()
                 ? value.ToString().ToLower() : $"\"{value}\"") + "\r\n");
@@ -91,7 +90,8 @@ namespace Tests.Serializer.CharacterSeparated
         [TestCaseSource(nameof(ComplexTypeArrays))]
         public void should_serialize_list_of_complex_type(Type type, object list)
         {
-            Serialize.Csv(list, type).ShouldEqual("\"Property\"\r\n\"hai\"\r\n");
+            Serialize.Csv(list, type).ShouldEqual((type.IsGenericEnumerable() ? 
+                "\"Property\"\r\n" : "") + "\"hai\"\r\n");
         }
 
         // Actual vs specified type
@@ -110,7 +110,7 @@ namespace Tests.Serializer.CharacterSeparated
         [Test]
         public void should_serialize_specified_type_by_default()
         {
-            Serialize.Csv(new List<ActualType> { new ActualType 
+            Serialize.Csv(new List<ActualType> { new ActualType
                 { Actual = "oh", Specified = "hai" } }, typeof(List<ISpecifiedType>))
                 .ShouldEqual("\"Specified\"\r\n\"hai\"\r\n");
         }
@@ -118,7 +118,7 @@ namespace Tests.Serializer.CharacterSeparated
         [Test]
         public void should_serialize_actual_type_when_configured()
         {
-            Serialize.Csv(new List<ActualType> { new ActualType 
+            Serialize.Csv(new List<ActualType> { new ActualType
                 { Actual = "oh", Specified = "hai" } }, typeof(List<ISpecifiedType>),
                 x => x.Serialization(y => y.UseActualType()))
                 .ShouldEqual("\"Actual\",\"Specified\"\r\n\"oh\",\"hai\"\r\n");
