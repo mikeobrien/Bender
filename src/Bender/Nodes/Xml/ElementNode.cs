@@ -139,8 +139,11 @@ namespace Bender.Nodes.Xml
                 else if (node.Metadata.Contains<XmlSiblingsAttribute>()) xmlNode = this;
                 else
                 {
-                    xmlNode = new ElementNode(Element.CreateElement(GetNodeName(node.Name, 
-                        @namespace)), Options, @namespace, this);
+                    xmlNode = new ElementNode(Element.CreateElement(GetNodeName(
+                        node.Name, @namespace)), Options, @namespace, this);
+                    node.Metadata.GetAll<WithAttributeAttribute>().ForEach(x => 
+                        xmlNode.Element.Add(new XAttribute(x.Name, x.Value)));
+
                 }
                 xmlNode.Configure(modify);
             }

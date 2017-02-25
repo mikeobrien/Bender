@@ -7,6 +7,7 @@ using System.Text;
 using System.Xml.Serialization;
 using Bender;
 using Bender.Extensions;
+using Bender.Nodes.Xml;
 using Bender.Reflection;
 using NUnit.Framework;
 using Should;
@@ -887,6 +888,21 @@ namespace Tests.Serializer.Xml
                 x => x.Serialization(y => y.XmlValuesAsAttributes().AddXmlNamespace("abc", "urn:yada")
                     .AddXmlVisitor<string>((s, t, o) => t.SetNamespacePrefix("abc"))))
                 .ShouldEqual(Xml.Declaration + "<Namespaces xmlns:abc=\"urn:yada\" abc:Oh=\"hai\" />");
+        }
+
+        // Attributes
+
+        public class WithAttribute
+        {
+            [WithAttribute("fark", "farker")]
+            public string Content { get; set; }
+        }
+
+        [Test]
+        public void should_add_attribute_to_element()
+        {
+            Serialize.Xml(new WithAttribute { Content = "hai" })
+                .ShouldEqual(Xml.Declaration + "<WithAttribute><Content fark=\"farker\">hai</Content></WithAttribute>");
         }
     }
 }

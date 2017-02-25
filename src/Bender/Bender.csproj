@@ -78,6 +78,7 @@
     <Compile Include="Nodes\FormUrlEncoded\FormNode.cs" />
     <Compile Include="Nodes\FormUrlEncoded\FormValueNode.cs" />
     <Compile Include="Nodes\Object\Exceptions.cs" />
+    <Compile Include="Nodes\Xml\WithAttributeAttribute.cs" />
     <Compile Include="Reflection\Optional.cs" />
     <Compile Include="Nodes\Xml\Microsoft\XmlAttributeAttribute.cs" />
     <Compile Include="Nodes\Xml\XmlSiblingsAttribute.cs" />

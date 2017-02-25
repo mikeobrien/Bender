@@ -165,6 +165,7 @@ Bender supports a number of attributes that override serialization and deseriali
 | `XmlAttributeAttribute` | XML | Indicates that a member should be serialized as an XML attribute and optionally overrides it's name. |
 | `XmlArrayItemAttribute` | XML | Overrides the name of an enumerable item. |
 | `XmlSiblingsAttribute` | XML | Serializes or deserializes an enumerable item as a sibling of other members in the type. |
+| `WithAttributeAttribute` | XML | Adds an attribute to an element. |
 
 ### Naming Conventions
 
