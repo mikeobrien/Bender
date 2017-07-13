@@ -430,6 +430,13 @@ namespace Tests.Reflection
         }
 
         [Test]
+        public void Should_parse_microsoft_json_datetime()
+        {
+            "/Date(499797261000)/".ParseSimpleType(typeof(DateTime).ToCachedType())
+                .ShouldEqual(new DateTime(1985, 11, 2, 12, 34, 21));
+        }
+
+        [Test]
         public void should_parse_enum_integer()
         {
             "2".ParseSimpleType(typeof(UriFormat).ToCachedType()).ShouldEqual(UriFormat.Unescaped);

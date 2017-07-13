@@ -228,7 +228,7 @@ namespace Bender.Reflection
                 case TypeCode.Single: return Single.Parse(value);
                 case TypeCode.Double: return Double.Parse(value);
                 case TypeCode.Decimal: return Decimal.Parse(value);
-                case TypeCode.DateTime: return DateTime.Parse(value);
+                case TypeCode.DateTime: return value.TryParseMicrosoftJsonDateFormat() ?? DateTime.Parse(value);
                 default:
                     if (type.Is<Guid>(true)) return Guid.Parse(value);
                     if (type.Is<TimeSpan>(true)) return TimeSpan.Parse(value);
