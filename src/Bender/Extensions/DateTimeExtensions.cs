@@ -27,7 +27,7 @@ namespace Bender.Extensions
             {
                 try
                 {
-                    return new DateTime(1970, 1, 1, 0, 0, 0, 0)
+                    return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         .AddMilliseconds(epoch).ToLocalTime();
                 }
                 catch

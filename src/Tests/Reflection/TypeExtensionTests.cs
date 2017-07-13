@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using Bender;
+using Bender.Collections;
 using Bender.Reflection;
 using NUnit.Framework;
 using Should;
@@ -428,12 +430,11 @@ namespace Tests.Reflection
             result.ShouldEqual(value);
             result.ShouldBeType(type.GetUnderlyingNullableType());
         }
-
         [Test]
         public void Should_parse_microsoft_json_datetime()
         {
-            "/Date(499797261000)/".ParseSimpleType(typeof(DateTime).ToCachedType())
-                .ShouldEqual(new DateTime(1985, 11, 2, 12, 34, 21));
+            "/Date(499800861000)/".ParseSimpleType(typeof(DateTime).ToCachedType()).As<DateTime>()
+                .ShouldBeWithinSeconds(new DateTime(1985, 11, 2, 12, 34, 21));
         }
 
         [Test]

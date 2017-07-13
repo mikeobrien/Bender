@@ -18,8 +18,8 @@ namespace Tests.Extensions
         [Test]
         public void Should_parse_microsoft_json_datetime()
         {
-            "/Date(499797261000)/".TryParseMicrosoftJsonDateFormat()
-                .ShouldEqual(new DateTime(1985, 11, 2, 12, 34, 21));
+            "/Date(499800861000)/".TryParseMicrosoftJsonDateFormat()
+                .ShouldBeWithinSeconds(new DateTime(1985, 11, 2, 12, 34, 21, DateTimeKind.Local));
         }
 
         [TestCase(null)]

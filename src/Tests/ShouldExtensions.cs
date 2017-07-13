@@ -6,7 +6,6 @@ using System.Linq;
 using Bender.Extensions;
 using Bender.Nodes;
 using NSubstitute;
-using NSubstitute.Core;
 using Should;
 
 namespace Tests
@@ -17,6 +16,17 @@ namespace Tests
         {
             stream1.ReadAllBytes().ShouldEqual(stream2.ReadAllBytes());
             return stream1;
+        }
+
+        public static void ShouldBeWithinSeconds(this DateTime datetime, DateTime expected)
+        {
+            datetime.ShouldBeInRange(expected.AddSeconds(-5), expected.AddSeconds(5));
+        }
+
+        public static void ShouldBeWithinSeconds(this DateTime? datetime, DateTime expected)
+        {
+            datetime.ShouldNotEqual(null);
+            datetime.Value.ShouldBeWithinSeconds(expected);
         }
 
         public static Type ShouldBe<T>(this Type type)
