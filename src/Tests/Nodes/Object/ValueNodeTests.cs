@@ -343,5 +343,37 @@ namespace Tests.Nodes.Object
                 null, result, null, null).Value = enumValue;
             result.Instance.ShouldEqual(UriFormat.SafeUnescaped);
         }
+
+        [Test]
+        public void should_return_raw_non_numeric_float_when_configured(
+            [Values(float.NaN, float.NegativeInfinity, float.PositiveInfinity,
+                double.NaN, double.NegativeInfinity, double.PositiveInfinity)] object value)
+        {
+            var result = new SimpleValue(value, value.GetType().ToCachedType());
+            new ValueNode(CreateContext(Mode.Serialize), null, result,
+                null, null).Value.ShouldEqual(value);
+        }
+
+        [Test]
+        public void should_return_name_of_non_numeric_float_when_configured(
+            [Values(float.NaN, float.NegativeInfinity, float.PositiveInfinity,
+                double.NaN, double.NegativeInfinity, double.PositiveInfinity)] object value)
+        {
+            var result = new SimpleValue(value, value.GetType().ToCachedType());
+            new ValueNode(CreateContext(Mode.Serialize, Options.Create(
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsName()))), null, result,
+                null, null).Value.ShouldEqual(value.ToString());
+        }
+
+        [Test]
+        public void should_return_zero_non_numeric_float_when_configured(
+            [Values(float.NaN, float.NegativeInfinity, float.PositiveInfinity,
+                double.NaN, double.NegativeInfinity, double.PositiveInfinity)] object value)
+        {
+            var result = new SimpleValue(value, value.GetType().ToCachedType());
+            new ValueNode(CreateContext(Mode.Serialize, Options.Create(
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsZero()))), null, result,
+                null, null).Value.ShouldEqual(0);
+        }
     }
 }

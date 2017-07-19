@@ -68,6 +68,7 @@
     <Compile Include="Deserializer.Json.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
+    <Compile Include="Extensions\NumericExtensions.cs" />
     <Compile Include="Extensions\UTF8Encoding.cs" />
     <Compile Include="Nodes\CharacterSeparated\CsvReader.cs" />
     <Compile Include="Nodes\CharacterSeparated\CsvWriter.cs" />

@@ -904,5 +904,131 @@ namespace Tests.Serializer.Xml
             Serialize.Xml(new WithAttribute { Content = "hai" })
                 .ShouldEqual(Xml.Declaration + "<WithAttribute><Content fark=\"farker\">hai</Content></WithAttribute>");
         }
+
+        // Non numeric float handling
+
+        public class FloatValue
+        {
+            public float Value { get; set; }
+        }
+
+        [Test]
+        public void should_return_raw_non_numeric_float_when_configured(
+            [Values(float.NaN, float.NegativeInfinity, float.PositiveInfinity)] float value)
+        {
+            Serialize.Xml(new FloatValue { Value = value })
+                .ShouldEqual($"{Xml.Declaration}<FloatValue><Value>{value}</Value></FloatValue>");
+        }
+
+        [Test]
+        public void should_return_name_of_non_numeric_float_when_configured(
+            [Values(float.NaN, float.NegativeInfinity, float.PositiveInfinity)] float value)
+        {
+            Serialize.Xml(new FloatValue { Value = value },
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsName()))
+                .ShouldEqual($"{Xml.Declaration}<FloatValue><Value>{value}</Value></FloatValue>");
+        }
+
+        [Test]
+        public void should_return_zero_non_numeric_float_when_configured(
+            [Values(float.NaN, float.NegativeInfinity, float.PositiveInfinity)] float value)
+        {
+            Serialize.Xml(new FloatValue { Value = value },
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsZero()))
+                .ShouldEqual($"{Xml.Declaration}<FloatValue><Value>0</Value></FloatValue>");
+        }
+
+        public class NullableFloatValue
+        {
+            public float? Value { get; set; }
+        }
+
+        [Test]
+        public void should_return_raw_non_numeric_nullable_float_when_configured(
+            [Values(float.NaN, float.NegativeInfinity, float.PositiveInfinity)] float value)
+        {
+            Serialize.Xml(new NullableFloatValue { Value = value })
+                .ShouldEqual($"{Xml.Declaration}<NullableFloatValue><Value>{value}</Value></NullableFloatValue>");
+        }
+
+        [Test]
+        public void should_return_name_of_non_numeric_nullable_float_when_configured(
+            [Values(float.NaN, float.NegativeInfinity, float.PositiveInfinity)] float value)
+        {
+            Serialize.Xml(new NullableFloatValue { Value = value },
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsName()))
+                .ShouldEqual($"{Xml.Declaration}<NullableFloatValue><Value>{value}</Value></NullableFloatValue>");
+        }
+
+        [Test]
+        public void should_return_zero_non_numeric_nullable_float_when_configured(
+            [Values(float.NaN, float.NegativeInfinity, float.PositiveInfinity)] float value)
+        {
+            Serialize.Xml(new NullableFloatValue { Value = value },
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsZero()))
+                .ShouldEqual($"{Xml.Declaration}<NullableFloatValue><Value>0</Value></NullableFloatValue>");
+        }
+
+        public class DoubleValue
+        {
+            public double Value { get; set; }
+        }
+
+        [Test]
+        public void should_return_raw_non_numeric_double_when_configured(
+            [Values(double.NaN, double.NegativeInfinity, double.PositiveInfinity)] double value)
+        {
+            Serialize.Xml(new DoubleValue { Value = value })
+                .ShouldEqual($"{Xml.Declaration}<DoubleValue><Value>{value}</Value></DoubleValue>");
+        }
+
+        [Test]
+        public void should_return_name_of_non_numeric_double_when_configured(
+            [Values(double.NaN, double.NegativeInfinity, double.PositiveInfinity)] double value)
+        {
+            Serialize.Xml(new DoubleValue { Value = value },
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsName()))
+                .ShouldEqual($"{Xml.Declaration}<DoubleValue><Value>{value}</Value></DoubleValue>");
+        }
+
+        [Test]
+        public void should_return_zero_non_numeric_double_when_configured(
+            [Values(double.NaN, double.NegativeInfinity, double.PositiveInfinity)] double value)
+        {
+            Serialize.Xml(new DoubleValue { Value = value },
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsZero()))
+                .ShouldEqual($"{Xml.Declaration}<DoubleValue><Value>0</Value></DoubleValue>");
+        }
+
+        public class NullableDoubleValue
+        {
+            public double? Value { get; set; }
+        }
+
+        [Test]
+        public void should_return_raw_non_numeric_nullable_double_when_configured(
+            [Values(double.NaN, double.NegativeInfinity, double.PositiveInfinity)] double value)
+        {
+            Serialize.Xml(new NullableDoubleValue { Value = value })
+                .ShouldEqual($"{Xml.Declaration}<NullableDoubleValue><Value>{value}</Value></NullableDoubleValue>");
+        }
+
+        [Test]
+        public void should_return_name_of_non_numeric_nullable_double_when_configured(
+            [Values(double.NaN, double.NegativeInfinity, double.PositiveInfinity)] double value)
+        {
+            Serialize.Xml(new NullableDoubleValue { Value = value },
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsName()))
+                .ShouldEqual($"{Xml.Declaration}<NullableDoubleValue><Value>{value}</Value></NullableDoubleValue>");
+        }
+
+        [Test]
+        public void should_return_zero_non_numeric_nullable_double_when_configured(
+            [Values(double.NaN, double.NegativeInfinity, double.PositiveInfinity)] double value)
+        {
+            Serialize.Xml(new NullableDoubleValue { Value = value },
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsZero()))
+                .ShouldEqual($"{Xml.Declaration}<NullableDoubleValue><Value>0</Value></NullableDoubleValue>");
+        }
     }
 }

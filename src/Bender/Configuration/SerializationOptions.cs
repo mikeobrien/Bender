@@ -12,6 +12,8 @@ namespace Bender.Configuration
 
     public enum SerializationType { SpecifiedType, ActualType }
 
+    public enum NonNumericFloatSerializationMode { Raw, Name, Zero }
+
     public static class SerializationTypeExtensions
     {
         public static bool IsSpecified(this SerializationType type)
@@ -46,6 +48,8 @@ namespace Bender.Configuration
         public bool IncludeNullMembers { get; set; }
         public bool NumericEnumValues { get; set; }
         public SerializationType SerializationType { get; set; }
+        public NonNumericFloatSerializationMode NonNumericFloatMode { get; set; } = 
+            NonNumericFloatSerializationMode.Raw;
 
         public XmlValueNodeType XmlValueNodeType { get; set; }
         public XNamespace DefaultXmlNamespace { get; set; }

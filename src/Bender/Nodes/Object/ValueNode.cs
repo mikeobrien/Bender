@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Bender.Collections;
+using Bender.Configuration;
 using Bender.Extensions;
 using Bender.Nodes.Object.Values;
 using Bender.Reflection;
@@ -52,64 +53,82 @@ namespace Bender.Nodes.Object
 
         public override object Value
         {
-            set
+            set => SetValue(value);
+            get => GetValue();
+        }
+
+        protected override void SetValue(object value)
+        {
+            var type = SpecifiedType.UnderlyingType;
+            if (value != null && !type.IsTypeOf(value))
             {
-                var type = SpecifiedType.UnderlyingType;
-                if (value != null && !type.IsTypeOf(value))
+                if (type.Is<string>()) Source.Instance = value.ToString();
+                else if (value as string == "" && !type.Is<string>() && SpecifiedType.IsNullable)
+                    Source.Instance = null;
+                else if (value is string && !type.Is<string>() && type.IsSimpleType)
                 {
-                    if (type.Is<string>()) Source.Instance = value.ToString();
-                    else if (value as string == "" && !type.Is<string>() && SpecifiedType.IsNullable)
-                        Source.Instance = null;
-                    else if (value is string && !type.Is<string>() && type.IsSimpleType)
+                    try
                     {
-                        try
+                        if (type.IsEnum)
                         {
-                            if (type.IsEnum)
-                            {
-                                Source.Instance = Context.Options.EnumValueNameConventions
-                                    .GetName(value, SpecifiedType, Context)
-                                    .ParseEnum(SpecifiedType, Context.Options.Deserialization
-                                        .EnumValueComparison.IgnoreCase());
-                            }
-                            else Source.Instance = value.As<string>().ParseSimpleType(SpecifiedType);
+                            Source.Instance = Context.Options.EnumValueNameConventions
+                                .GetName(value, SpecifiedType, Context)
+                                .ParseEnum(SpecifiedType, Context.Options.Deserialization
+                                    .EnumValueComparison.IgnoreCase());
                         }
-                        catch (Exception exception)
-                        {
-                            throw new ValueParseException(exception, value, _friendlyParseMessages[
-                                type.IsEnum ? typeof(Enum) : type.Type].ToFormat(value.Truncate(50)));
-                        }
+                        else Source.Instance = value.As<string>().ParseSimpleType(SpecifiedType);
                     }
-                    else
+                    catch (Exception exception)
                     {
-                        try
-                        {
-                            Source.Instance = type.IsEnum ?
-                                value.ConvertToEnum(type.Type) : 
-                                Convert.ChangeType(value, type.Type);
-                        }
-                        catch (Exception exception)
-                        {
-                            throw new ValueConversionException(exception, value, value.ToCachedType(), type);
-                        }
+                        throw new ValueParseException(exception, value, _friendlyParseMessages[
+                            type.IsEnum ? typeof(Enum) : type.Type].ToFormat(value.Truncate(50)));
                     }
                 }
-                else if (value == null && SpecifiedType.IsValueType && !SpecifiedType.IsNullable)
+                else
                 {
-                    if (!Context.Options.Deserialization.IgnoreNullsForValueTypes)
-                        throw new ValueCannotBeNullDeserializationException();
+                    try
+                    {
+                        Source.Instance = type.IsEnum ?
+                            value.ConvertToEnum(type.Type) : 
+                            Convert.ChangeType(value, type.Type);
+                    }
+                    catch (Exception exception)
+                    {
+                        throw new ValueConversionException(exception, value, value.ToCachedType(), type);
+                    }
                 }
-                else Source.Instance = value;
             }
-            get
+            else if (value == null && SpecifiedType.IsValueType && !SpecifiedType.IsNullable)
             {
-                var type = SpecifiedType.UnderlyingType;
-                if (type.IsEnum)
-                {
-                    return Context.Options.Serialization.NumericEnumValues ? (object)(int)base.Value :
-                        Context.Options.EnumValueNameConventions.GetName(base.Value, SpecifiedType, Context);
-                }
-                return base.Value;
+                if (!Context.Options.Deserialization.IgnoreNullsForValueTypes)
+                    throw new ValueCannotBeNullDeserializationException();
             }
+            else Source.Instance = value;
+        }
+
+        protected override object GetValue()
+        {
+            var type = SpecifiedType.UnderlyingType;
+            var value = base.Value;
+
+            if (type.IsEnum)
+            {
+                return Context.Options.Serialization.NumericEnumValues ? (object)(int)value :
+                    Context.Options.EnumValueNameConventions.GetName(value, SpecifiedType, Context);
+            }
+
+            if (value != null && Context.Options.Serialization.NonNumericFloatMode != 
+                    NonNumericFloatSerializationMode.Raw &&
+                ((type.Is<float>(true) && value.As<float>().IsNonNumeric()) || 
+                (type.Is<double>(true) && value.As<double>().IsNonNumeric())))
+            {
+                switch (Context.Options.Serialization.NonNumericFloatMode)
+                {
+                    case NonNumericFloatSerializationMode.Name: return value.ToString();
+                    case NonNumericFloatSerializationMode.Zero: return 0;
+                }
+            }
+            return value;
         }
     }
 }

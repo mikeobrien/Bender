@@ -666,5 +666,131 @@ namespace Tests.Serializer.Json
                   "\"-[FieldValue]^\":\"o\"," +
                   "\"@[FieldValue2]^%\":\"rly\"}");
         }
+
+        // Non numeric float handling
+
+        public class FloatValue
+        {
+            public float Value { get; set; }
+        }
+
+        [Test]
+        public void should_return_raw_non_numeric_float_when_configured(
+            [Values(float.NaN, float.NegativeInfinity, float.PositiveInfinity)] float value)
+        {
+            Serialize.Json(new FloatValue { Value = value })
+                .ShouldEqual($"{{\"Value\":{value}}}");
+        }
+
+        [Test]
+        public void should_return_name_of_non_numeric_float_when_configured(
+            [Values(float.NaN, float.NegativeInfinity, float.PositiveInfinity)] float value)
+        {
+            Serialize.Json(new FloatValue { Value = value }, 
+                x => x.Serialization(s => s.WriteNonNumericFloatsAsName()))
+                .ShouldEqual($"{{\"Value\":\"{value}\"}}");
+        }
+
+        [Test]
+        public void should_return_zero_non_numeric_float_when_configured(
+            [Values(float.NaN, float.NegativeInfinity, float.PositiveInfinity)] float value)
+        {
+            Serialize.Json(new FloatValue { Value = value },
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsZero()))
+                .ShouldEqual("{\"Value\":0}");
+        }
+
+        public class NullableFloatValue
+        {
+            public float? Value { get; set; }
+        }
+
+        [Test]
+        public void should_return_raw_non_numeric_nullable_float_when_configured(
+            [Values(float.NaN, float.NegativeInfinity, float.PositiveInfinity)] float value)
+        {
+            Serialize.Json(new NullableFloatValue { Value = value })
+                .ShouldEqual($"{{\"Value\":{value}}}");
+        }
+
+        [Test]
+        public void should_return_name_of_non_numeric_nullable_float_when_configured(
+            [Values(float.NaN, float.NegativeInfinity, float.PositiveInfinity)] float value)
+        {
+            Serialize.Json(new NullableFloatValue { Value = value },
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsName()))
+                .ShouldEqual($"{{\"Value\":\"{value}\"}}");
+        }
+
+        [Test]
+        public void should_return_zero_non_numeric_nullable_float_when_configured(
+            [Values(float.NaN, float.NegativeInfinity, float.PositiveInfinity)] float value)
+        {
+            Serialize.Json(new NullableFloatValue { Value = value },
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsZero()))
+                .ShouldEqual("{\"Value\":0}");
+        }
+
+        public class DoubleValue
+        {
+            public double Value { get; set; }
+        }
+
+        [Test]
+        public void should_return_raw_non_numeric_double_when_configured(
+            [Values(double.NaN, double.NegativeInfinity, double.PositiveInfinity)] double value)
+        {
+            Serialize.Json(new DoubleValue { Value = value })
+                .ShouldEqual($"{{\"Value\":{value}}}");
+        }
+
+        [Test]
+        public void should_return_name_of_non_numeric_double_when_configured(
+            [Values(double.NaN, double.NegativeInfinity, double.PositiveInfinity)] double value)
+        {
+            Serialize.Json(new DoubleValue { Value = value },
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsName()))
+                .ShouldEqual($"{{\"Value\":\"{value}\"}}");
+        }
+
+        [Test]
+        public void should_return_zero_non_numeric_double_when_configured(
+            [Values(double.NaN, double.NegativeInfinity, double.PositiveInfinity)] double value)
+        {
+            Serialize.Json(new DoubleValue { Value = value },
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsZero()))
+                .ShouldEqual("{\"Value\":0}");
+        }
+
+        public class NullableDoubleValue
+        {
+            public double? Value { get; set; }
+        }
+
+        [Test]
+        public void should_return_raw_non_numeric_nullable_double_when_configured(
+            [Values(double.NaN, double.NegativeInfinity, double.PositiveInfinity)] double value)
+        {
+            Serialize.Json(new NullableDoubleValue { Value = value })
+                .ShouldEqual($"{{\"Value\":{value}}}");
+        }
+
+        [Test]
+        public void should_return_name_of_non_numeric_nullable_double_when_configured(
+            [Values(double.NaN, double.NegativeInfinity, double.PositiveInfinity)] double value)
+        {
+            Serialize.Json(new NullableDoubleValue { Value = value },
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsName()))
+                .ShouldEqual($"{{\"Value\":\"{value}\"}}");
+        }
+
+        [Test]
+        public void should_return_zero_non_numeric_nullable_double_when_configured(
+            [Values(double.NaN, double.NegativeInfinity, double.PositiveInfinity)] double value)
+        {
+            Serialize.Json(new NullableDoubleValue { Value = value },
+                    x => x.Serialization(s => s.WriteNonNumericFloatsAsZero()))
+                .ShouldEqual("{\"Value\":0}");
+        }
     }
 }

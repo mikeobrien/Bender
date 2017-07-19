@@ -47,6 +47,20 @@ namespace Bender.Configuration
             return this;
         }
 
+        public SerializerOptionsDsl WriteNonNumericFloatsAsName()
+        {
+            _options.Serialization.NonNumericFloatMode = 
+                NonNumericFloatSerializationMode.Name;
+            return this;
+        }
+
+        public SerializerOptionsDsl WriteNonNumericFloatsAsZero()
+        {
+            _options.Serialization.NonNumericFloatMode =
+                NonNumericFloatSerializationMode.Zero;
+            return this;
+        }
+
         public SerializerOptionsDsl AsSimpleType<T>()
         {
             AddWriter<T>((v, s, t, o) => v.ToString());

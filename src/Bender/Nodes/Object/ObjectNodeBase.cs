@@ -46,8 +46,8 @@ namespace Bender.Nodes.Object
 
         public override object Value
         {
-            get { return Source.Instance; }
-            set { Source.Instance = value; }
+            get => Source.Instance;
+            set => Source.Instance = value;
         }
 
         public override string Path
