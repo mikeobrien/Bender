@@ -14,7 +14,7 @@ namespace Bender.Nodes.Object
         public const string MessageFormat = FriendlyMessageFormat + " Deserializing '{3}'.";
 
         public InvalidRootNameDeserializationException(CachedType type, string format, string actual, string expected) :
-            base(MessageFormat, FriendlyMessageFormat, format.ToInitialCaps(), actual, expected, type.FriendlyFullName) { }
+            base(MessageFormat, FriendlyMessageFormat, format.ToInitialCap(), actual, expected, type.FriendlyFullName) { }
     }
 
     public static class NodeFactory

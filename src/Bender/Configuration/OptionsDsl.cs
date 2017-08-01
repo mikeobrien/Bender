@@ -182,6 +182,11 @@ namespace Bender.Configuration
             return WithNamingConvention(x => x.ToCamelCase());
         }
 
+        public OptionsDsl UsePascalCaseNaming()
+        {
+            return WithNamingConvention(x => x.ToInitialCap());
+        }
+
         public OptionsDsl UseJsonCamelCaseNaming()
         {
             return WithMemberNamingConvention((n, c) => n.ToCamelCase(), (n, c) => c.IsJson);

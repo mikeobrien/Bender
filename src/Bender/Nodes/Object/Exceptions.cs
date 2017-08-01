@@ -28,7 +28,7 @@ namespace Bender.Nodes.Object
                     modeNoun = "serialization";
                     break;
             }
-            return MessageTypeFormat.ToFormat(typeDescription.ToInitialCaps(), 
+            return MessageTypeFormat.ToFormat(typeDescription.ToInitialCap(), 
                 type.FriendlyFullName, modeNoun, expected, modeVerb);
         }
     }

@@ -25,7 +25,7 @@ namespace Bender.Nodes.Object
         public const string MessageFormat = "{0} '{1}' is not recognized.";
 
         public UnrecognizedNodeDeserializationException(INode node) : 
-            base(MessageFormat, MessageFormat, node.Type.ToInitialCaps(), node.Name) { }
+            base(MessageFormat, MessageFormat, node.Type.ToInitialCap(), node.Name) { }
     }
 
     public class ObjectNode : ObjectNodeBase

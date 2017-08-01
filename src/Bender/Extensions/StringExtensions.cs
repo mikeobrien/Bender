@@ -70,7 +70,7 @@ namespace Bender.Extensions
             return value.Replace(Environment.NewLine, " ");
         }
 
-        public static string ToInitialCaps(this string value)
+        public static string ToInitialCap(this string value)
         {
             return !value.IsNullOrEmpty() ? 
                 value.Substring(0, 1).ToUpper() + 

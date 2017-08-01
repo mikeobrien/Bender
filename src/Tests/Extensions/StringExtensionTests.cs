@@ -67,7 +67,7 @@ namespace Tests.Extensions
         [TestCase("hai", "Hai")]
         public void should_initial_cap(string value, string result)
         {
-            value.ToInitialCaps().ShouldEqual(result);
+            value.ToInitialCap().ShouldEqual(result);
         }
 
         [Test]
