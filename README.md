@@ -2,6 +2,8 @@
 
 <img src="https://raw.github.com/mikeobrien/Bender/master/misc/logo.png"/> 
 
+### Bender is no longer being maintained. If you are already using it, consider migrating to an actively developed serializer like JSON.NET.
+
 Bender is a highly configurable xml, json, CSV and form url encoded serialization library for .NET. Unlike other serializers, Bender gives you complete control over the serialization process though a simple API.
 
 - Not strongly named.

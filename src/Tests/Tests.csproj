@@ -122,6 +122,7 @@
     <Compile Include="Serializer\CharacterSeparated\SaveTests.cs" />
     <Compile Include="Serializer\CharacterSeparated\Tests.cs" />
     <Compile Include="Serializer\FormUrlEncodedTests.cs" />
+    <Compile Include="Deserializer\Json\NamingConventionTests.cs" />
     <Compile Include="TestExtensions.cs" />
     <Compile Include="Reflection\CachedMemberTests.cs" />
     <Compile Include="Reflection\CachedTypeTests.cs" />
